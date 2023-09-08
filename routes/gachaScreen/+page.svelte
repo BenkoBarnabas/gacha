@@ -6,6 +6,7 @@
     import bannerBG from "../../lib/assets/gacha/bannerBg.png"
     import bannerText from "../../lib/assets/gacha/bannerText.png"
     import rollCard from "../../lib/assets/gacha/rollBg.png"
+    import stars from "../../lib/assets/gacha/stars.png"
 
     var whichBanner //if SN banner active true : false
     var isRolling = false
@@ -44,6 +45,7 @@
             rollCard = "../../lib/assets/gacha/roll3star.png"
         }
     }
+    
 </script>
 
 {#if isRolling}
@@ -80,6 +82,7 @@
     {/if}
 
     <img class="bannerBg" style="z-index: -2;" src={bannerBG} alt="banners background">
+    <img id="bannerStars" src={stars} alt="stars">
 
     <div id="pullButtonDiv">
         <button class="pullButtons" on:click={() => ShowPull(1)}>Pull 1</button><br>
@@ -98,12 +101,12 @@
 
     #rollScreen{
         z-index: 2;
-        width: 100%;
+        width: 100vw;
         height: 100vh;
         background-color: rgba(44, 44, 63, 0.826);
         position: absolute;
         text-align: center;
-        padding-top: 9vh;
+        padding-top: 14vh;
         
     }
     #rollContainer{
@@ -113,7 +116,7 @@
         margin-inline: 0;
         display: flex;
         margin: auto;
-        width: 80%;
+        width: 80vw;
     }
     #rollsDiv{
         position: absolute;
@@ -124,7 +127,7 @@
         top: 30vh;
     }
     .rollCard{
-        height: 76vh;
+        width: 6vw;
         z-index: 3;
         margin: auto;
         padding: 0;
@@ -177,7 +180,7 @@
     }
     .pullButtons:hover{
         transform: scale(1.06);
-        animation: hueChange 3s linear infinite;
+        animation: hueChange 1s linear infinite;
     }
 
     @keyframes hueChange {
@@ -187,7 +190,15 @@
     100% {
         filter: hue-rotate(360deg);
     }
-}
+    }
+
+    #bannerStars{
+        position: absolute;
+        left: 17vw;
+        top: 0;
+        width: 66vw;
+        animation: hueChange 1s linear infinite;
+    }
 
 
     #buttons {
