@@ -18,3 +18,5 @@
 <button on:click={f}>Get</button>
 <button on:click={g}>Post</button>
 {x}
+
+<a href="/gachaScreen">sepd ur money here</a>
