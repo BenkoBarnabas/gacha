@@ -9,21 +9,40 @@
 
     var whichBanner //if SN banner active true : false
     var isRolling = false
-    var pullNum =10
+    var pullNum
+    var YourPulls = [3,3,3,3,3,3,3,3,3,3]
 
     function ActivateBanner(param){
         whichBanner = param
         whichBanner = whichBanner
     }
 
-    function Pull(num){
+    function ShowPull(num){
         isRolling = true
         pullNum = num
+
+        for (let i = 0; i < 9; i++) {
+            if (Math.floor(Math.random() * 10) >= 9){
+                YourPulls[i] = 5
+                console.log("5 star");
+            }
+            else if (Math.floor(Math.random() * 10) >= 8){
+                YourPulls[i] = 4
+                console.log("4 star");
+            }
+        }
     }
 
     function ClosePull(){
         isRolling = false
         isRolling = isRolling
+    }
+
+    function CalculatePulls(index) {
+        console.log(YourPulls[index]);
+        if(YourPulls[index] == 3){
+            rollCard = "../../lib/assets/gacha/roll3star.png"
+        }
     }
 </script>
 
@@ -31,14 +50,12 @@
     <div id="rollScreen">
         <div id="rollsDiv"></div>
 
-
-
-	
         <div id="rollContainer">
-        {#each Array(pullNum) as _}
-        <img class="rollCard" src={rollCard} alt="rollCard">
+        {#each Array(pullNum) as _, index}
+        <img on:click={() => CalculatePulls(index)} class="rollCard" src={rollCard} alt="rollCard">
         {/each}
         </div>
+        
     </div>
     <button style="position: absolute; margin:0; z-index:4; left:90vw;" on:click={ClosePull}>X</button>
 {/if}
@@ -65,8 +82,8 @@
     <img class="bannerBg" style="z-index: -2;" src={bannerBG} alt="banners background">
 
     <div id="pullButtonDiv">
-        <button class="pullButtons" on:click={() => Pull(1)}>Pull 1</button><br>
-        <button class="pullButtons" on:click={() => Pull(10)}>Pull 10</button>
+        <button class="pullButtons" on:click={() => ShowPull(1)}>Pull 1</button><br>
+        <button class="pullButtons" on:click={() => ShowPull(10)}>Pull 10</button>
     </div>
 </div>
 
@@ -91,13 +108,12 @@
     }
     #rollContainer{
         z-index: 2;
-        padding: 5%;
         padding-top: 0;
         padding-inline: 0;
         margin-inline: 0;
         display: flex;
         margin: auto;
-        width: 76%;
+        width: 80%;
     }
     #rollsDiv{
         position: absolute;
