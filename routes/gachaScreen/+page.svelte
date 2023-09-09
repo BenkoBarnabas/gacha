@@ -1,22 +1,50 @@
 <script>
-    import SN from "../../lib/assets/gacha/SeniorWisdom.png"
-    import YC from "../../lib/assets/gacha/YouthfulCuriosity.png"
-    import SNCover from "../../lib/assets/gacha/SWCover.png"
-    import YCCover from "../../lib/assets/gacha/YCCover.png"
-    import bannerBG from "../../lib/assets/gacha/bannerBg.png"
+    /*DOCUMENTATION:
+    09.10 v(1.0)
+
+    BANNER SECTION
+    -2 banners to select from
+    -working styles (css) for both
+    -final design will be slightly changed
+
+    ROLL SCREEN SECTION
+    -beta animations (single pull animation is slighly glichy)
+    -20%/2% for 4/5 star rates (can be changed) no UR added yet
+    -no difference between items in the same rarity yet (every 3/4/5* is concidered the same)
+    -very much just placehoarder designs
+
+    */
+
+
+    //IMPORT ALL THE NECCESARY ASSETS HERE
+
+    //banner assets
+    import SN from "../../lib/assets/gacha/SeniorWisdom.png" //senior wisdom banner cover, Farki (can be cahnged)
+    import YC from "../../lib/assets/gacha/YouthfulCuriosity.png" //yuouthful curiosity banner cover, zénó (can be changed)
+    import SNCover from "../../lib/assets/gacha/SWCover.png" //cover for the buttons for switching banners
+    import YCCover from "../../lib/assets/gacha/YCCover.png" //^^^
+    import bannerBG from "../../lib/assets/gacha/bannerBg.png" //the banner picture is 3 layers, background, cover image, text
     import bannerText from "../../lib/assets/gacha/bannerText.png"
-    import rollCard from "../../lib/assets/gacha/rollBg.png"
     import stars from "../../lib/assets/gacha/stars.png"
 
-    import roll5star from "../../lib/assets/gacha/roll5star.png"
-    import roll4star from "../../lib/assets/gacha/roll4star.png"
-    import roll3star from "../../lib/assets/gacha/roll3star.png"
+    //pull assets
+    import rollCard from "../../lib/assets/gacha/rollBg.png" //the base card before revealing the pull content
+    import roll5star from "../../lib/assets/gacha/roll5star.png" //5
+    import roll4star from "../../lib/assets/gacha/roll4star.png" //4
+    import roll3star from "../../lib/assets/gacha/roll3star.png" //3 star content cover (beta)
 
+
+    //VARIABLE DECLARATION
+    //
     var whichBanner = true //if SN banner active true : false
-    var isRolling = false
-    var pullNum
-    var yourPulls= Array(10).fill(roll3star);
-    var yourPullsVisibilityClass = [
+    var isRolling = false //the rolls screen will be visible if true
+
+    //
+    var pullNum //number of pulls 1/10
+    var yourPulls= Array(10).fill(roll3star); //the standard pulls are always 3star, only changed if you get 4/5 stars,
+    //                                          contains the name of the asset for the 3star pull
+    
+    var yourPullsVisibilityClass = [ //used in #each cycle for all the varibales that will be relevant for the individual pulls, id, classname (for animation), src image
     {id: 0, name: 'rollCard', src: rollCard},
     {id: 1, name: 'rollCard', src: rollCard},
     {id: 2, name: 'rollCard', src: rollCard},
@@ -30,25 +58,25 @@
     ];
 
 
-    function wait(milliseconds) {
+    function wait(milliseconds) { //wait funcation, can be used in a for loop with async
     return new Promise((resolve) => setTimeout(resolve, milliseconds));
     }
 
-    function ActivateBanner(param){
+    function ActivateBanner(param){ //param is true/false
         whichBanner = param
-        whichBanner = whichBanner
+        whichBanner = whichBanner //svelte only updates and #if statement that uses a variable when its declared again, weirdge
     }
 
-    function ShowPull(num){
+    function CalculatePulls(num){ //loads the ull cards and already calculates thier content
         isRolling = true
         pullNum = num
 
         for (let i = 0; i < 10; i++) {
-            if (Math.floor(Math.random() * 10) >= 9){
+            if (Math.floor(Math.random() * 100) >= 95){ //returns a number between 0-100, 1% esély hogy 5*
                 yourPulls[i] = roll5star
                 console.log("5 star");
             }
-            else if (Math.floor(Math.random() * 10) >= 8){
+            else if (Math.floor(Math.random() * 100) >= 80){ //returns a number between 0-100, 20% esély hogy 4*
                 yourPulls[i] = roll4star
                 console.log("4 star");
             }
@@ -58,18 +86,18 @@
     }
 
     function DoPullAnimation(i) {
-        //setTimeout(() => {
-                //yourPullsVisibilityClass[i].name = "rollCardVisible"
-            //}, 1000);
         (async () => {
         await wait((i+1)*100);
         yourPullsVisibilityClass[i].name = "rollCardVisible"
         })();
+        //az #each cycleben minden card class-a eredetiled rollCard, egy 0 opacity <img>
+        //az async function 100ms késéssel mindegyik #each img-et (pullt) "rollCardVisible" classra állítja
+        //ennek az opcaity-je már 1 így meg fognak jelenni a kártyák egymás után, +egy animáció is elindul mikor ebbe a class-ba lépnek
     }
 
-    function ClosePull(){
+    function ClosePull(){ //sets everything to thier base value so the animation and the pull reavel could play again
         isRolling = false
-        isRolling = isRolling
+        isRolling = isRolling //closes the pull window
         for(let i = 0; i<10; i++){
             yourPullsVisibilityClass[i].name = "rollCard"
             yourPullsVisibilityClass[i].src = rollCard
@@ -78,36 +106,48 @@
 
     }
 
-    function CalculatePulls(i) {
-        yourPullsVisibilityClass[i].src = yourPulls[i]
+    function ShowPulls(i) {
+        yourPullsVisibilityClass[i].src = yourPulls[i] //when clicked it switched the src of the #each image to roll3/4/5star that we caluclated in CalulatePulls()
     }
 
 </script>
+
+<!-- roll screen az #if-ben -->
 {#if isRolling}
     <div id="rollScreen">
         <div id="rollsDiv"></div>
 
         <div id="rollContainer">
         {#each Array(pullNum) as _,index (yourPullsVisibilityClass[index].id)}
-        <img on:click={() => CalculatePulls(index)} class={yourPullsVisibilityClass[index].name} src={yourPullsVisibilityClass[index].src} alt="rollCard">
+        <!-- a roll cardook (a híres #each cycle) -->
+        <img on:click={() => ShowPulls(index)} class={yourPullsVisibilityClass[index].name} src={yourPullsVisibilityClass[index].src} alt="rollCard">
         {/each}
         </div>
         
     </div>
+    <!-- close pull button -->
     <button style="position: absolute; margin:0; z-index:4; left:90vw;" on:click={ClosePull}>X</button>
 {/if}
 
 <h1 style="margin-left:6vw; font-size:5vmin;">Gacha gacha gacha</h1>
 
-<div id="buttons">
+<div id="bannerChoosers">
+    <!-- buttons to choose the active banner -->
     <button style="background: URL({SNCover});" class="bannerIcon" on:click={() => ActivateBanner(true)}></button>
     <button style="background: URL({YCCover});" class="bannerIcon" on:click={() => ActivateBanner(false)}></button>
 </div>
 
+
+<!-- the banner covers -->
 <div id="banner">  
 
+    <!-- the first layer of the bannerPPic, background -->
+    <!-- conditional class: ha whichBanner true (senior wisdom) akkor átálítja a classt banner2-re és a banner background barnás lesz -->
     <img class="bannerBg" class:banner2={whichBanner} src={bannerText} alt="banners text assets">
     
+    
+    <!-- the seconf layer of the bannerPic, featured banner character -->
+    <!-- a banner cover zénó/farkas + a hozzáillő banner name (senior wisdom/youthful curiosity) (tanár/diák banner) -->
     {#if whichBanner}
         <h1 class ="bannerName"><span style="color: brown">Senior</span><br> Wisdom</h1>
         <img class="chracterPic" src={SN} alt="Senior Wisdom"/>
@@ -116,12 +156,16 @@
         <img class="chracterPic" src={YC} alt="Youthful Curiosity"/>
     {/if}
 
+    <!-- the third layer of the bannerPic, the white background -->
     <img class="bannerBg" style="z-index: -2;" src={bannerBG} alt="banners background">
+
+    <!-- rainboow stars on top for visuals -->
     <img id="bannerStars" src={stars} alt="stars">
 
+    <!-- single and multi buttons -->
     <div id="pullButtonDiv">
-        <button class="pullButtons" on:click={() => ShowPull(1)}>Pull 1</button><br>
-        <button class="pullButtons" on:click={() => ShowPull(10)}>Pull 10</button>
+        <button class="pullButtons" on:click={() => CalculatePulls(1)}>Pull 1</button><br>
+        <button class="pullButtons" on:click={() => CalculatePulls(10)}>Pull 10</button>
     </div>
 </div>
 
@@ -129,12 +173,17 @@
 
 <style>
 
-    :global(body){
+    :global(body){  /*body styling format of svelte */ 
         background-color: rgb(216, 205, 190);
-        font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+        font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;  /*font can be changed, it stays impact (for now) cos its defo not a genshin impact copy */ 
     }
 
-    #rollScreen{
+    /*TWO MAJOR SCREENS, THE BANNER PICTURE AND THE ROLL SCREEN ITSELF */ 
+
+
+    /*ROLL SCREEN SECTION */ 
+    /* */ 
+    #rollScreen{    /*the grey-ish background of the roll screen */ 
         z-index: 2;
         width: 100vw;
         height: 100vh;
@@ -144,16 +193,7 @@
         padding-top: 14vh;
         
     }
-    #rollContainer{
-        z-index: 2;
-        padding-top: 0;
-        padding-inline: 0;
-        margin-inline: 0;
-        display: flex;
-        margin: auto;
-        width: 80vw;
-    }
-    #rollsDiv{
+    #rollsDiv{  /*the grey line, for visual purposes only kinda */ 
         background-color: rgba(44, 46, 67, 0.852);
         margin-top: 14vh;
         margin-left: 10vw;
@@ -161,7 +201,7 @@
         position:absolute;
         z-index: 0;
     }
-    @keyframes rollsDivAnimation {
+    @keyframes rollsDivAnimation {  /*animation for the rollsDiv */ 
     0% {
         height: 0vw;
         width: 2vw;
@@ -181,14 +221,23 @@
         margin-left: 10vw;
     }
     }
+    #rollContainer{   /*a flexbox containing all the cards */ 
+        z-index: 2;
+        padding-top: 0;
+        padding-inline: 0;
+        margin-inline: 0;
+        display: flex;  /* its styled for any number of pulls*/ 
+        margin: auto;
+        width: 80vw;
+    }
 
-    .rollCard{
+    .rollCard{  /*the pull card itself, blank version */ 
         width: 6vw;
         margin: auto;
         padding: 0;
         opacity: 0;
     }
-    .rollCardVisible {
+    .rollCardVisible {  /*the pull card itself, visible version */ 
         width: 6vw;
         margin: auto;
         padding: 0;
@@ -198,7 +247,7 @@
         z-index: 2; 
     }
 
-    @keyframes pullAnimation {
+    @keyframes pullAnimation {  /*the animation for the pull cards */ 
     0% {
         height: 0vw;
         opacity: 0;
@@ -218,41 +267,42 @@
     }
 
 
-
-    #banner {
+    /*BANNER SECTION */ 
+    /* (kinda scuffed with the absolute postition but it works im 90% sure with all screen sizes... i think)*/ 
+    #banner {   /*container for the whole banner composition */ 
         margin: auto;
         position: relative;
         height: 100vh;
     }
-    .chracterPic {
+    .chracterPic {  /*banner featured cover pic */ 
         position: absolute;
         left: 35%;
         top: 5%;
         z-index: -1;
         width: 22vw;
     }
-    .bannerName {
+    .bannerName {   /*banner name */ 
         position: absolute;
         left: 22%;
         top: 6%;
         font-size: 5vmin;
     }
-    .bannerBg {
+    .bannerBg {   /* banner background*/ 
         position: absolute;
         left: 17vw;
         top: 0;
         width: 66vw;
     }
-    .banner2{
+    .banner2{   /*the brownish background of seniour wisdom */ 
         content: url(../../lib/assets/gacha/bannerText2.png);
     }
-    #pullButtonDiv{
+    #pullButtonDiv{    /*a container for the two buttons (so i dont have to position them separatly + easier mass production for future buttons) */ 
         position: absolute;
         left:72%;
         top: 43.5%;
         
     }
-    .pullButtons{
+    .pullButtons{   /*the 1/10 pull buttons itselves */ 
         background: url(../../lib/assets/gacha/pullButton.png) ;
         background-size: 100%;
         border:none;
@@ -268,7 +318,7 @@
         animation: hueChange 1s linear infinite;
     }
 
-    @keyframes hueChange {
+    @keyframes hueChange {  /*weeeeeeeeeeeeeeeeee */ 
     0% {
         filter: hue-rotate(0deg);
     }
@@ -277,7 +327,7 @@
     }
     }
 
-    #bannerStars{
+    #bannerStars{   /*weeeeeeeeeeeeeeeeee pt2 */ 
         position: absolute;
         left: 17vw;
         top: 0;
@@ -286,11 +336,11 @@
     }
 
 
-    #buttons {
+    #bannerChoosers {   /*container foor the banner selector buttons */
         text-align: center;
     }
 
-    .bannerIcon {
+    .bannerIcon {   /*the selectors itself */
         height: 70px;
         width: 110.21px;
         background: no-repeat;
