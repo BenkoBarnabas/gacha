@@ -1,6 +1,12 @@
 <script>
     /*DOCUMENTATION:
-    09.10 | beta gacha (v1.0)
+
+    //version numbering guide
+    vx.y
+    major system change: v(x+1).y
+    visuals/design change: vx.(y+1)
+
+    09.09 | beta gacha (v1.0)
 
     BANNER SECTION
     -2 banners to select from
@@ -12,6 +18,12 @@
     -20%/5% for 4/5 star rates (can be changed) no UR added yet
     -no difference between items in the same rarity yet (every 3/4/5* is concidered the same)
     -very much just placehoarder designs
+
+    09.10 | beta gacha (v1.05)
+
+    -added few visuals
+    -background (animation turned off currently)
+    -fixing up the proprotions for all window ratios (just use vw everywhere basically)
     */
 
 
@@ -37,10 +49,12 @@
     //
     var whichBanner = true //if SN banner active true : false
     var isRolling = false //the rolls screen will be visible if true
+    var rollIsSkippable = false //cant skip (close the roll window) without the animations fully loaded in, can cause bugs
 
     var pullNum //number of pulls 1/10
     var yourPulls= Array(10).fill(roll3star); //the standard pulls are always 3star, only changed if you get 4/5 stars,
     //                                          contains the name of the asset for the 3star pull
+
     
     var yourPullsVisibilityClass = [ //used in #each cycle for all the varibales that will be relevant for the individual pulls, id, classname (for animation), src image
     {id: 0, name: 'rollCard', src: rollCard},
@@ -69,6 +83,8 @@
 
     function CalculatePulls(num){ //loads the pull cards and already calculates their content
         isRolling = true
+        setTimeout(() => {rollIsSkippable = true}, num*100+700); //deleyed close button pops up
+
         pullNum = num
 
         for (let i = 0; i < 10; i++) {
@@ -98,6 +114,8 @@
     function ClosePull(){ //sets everything to their base value so the animation and the pull reveal could play again next time
         isRolling = false
         isRolling = isRolling //closes the pull window
+        rollIsSkippable = false
+
         for(let i = 0; i<10; i++){
             yourPullsVisibilityClass[i].name = "rollCard"
             yourPullsVisibilityClass[i].src = rollCard
@@ -126,15 +144,17 @@
         
     </div>
     <!-- close pull button -->
-    <button style="position: absolute; margin:0; z-index:4; left:90vw;" on:click={ClosePull}>X</button>
+    {#if rollIsSkippable}
+    <button style="position: absolute; margin:0; z-index:4; left:91vw; top:10vh; border:none; background:none; font-size: 5vmin; color: rgb(133, 132, 131);" on:click={ClosePull}>X</button>
+    {/if}
 {/if}
 
-<h1 style="margin-left:6vw; font-size:5vmin;">Gacha gacha gacha</h1>
+<h1 style="margin-top:0; font-size:5vmin; text-align:center;">Gacha gacha gacha</h1>
 
 <div id="bannerChoosers">
     <!-- buttons to choose the active banner -->
-    <button style="background: URL({SNCover});" class="bannerIcon" on:click={() => ActivateBanner(true)}></button>
-    <button style="background: URL({YCCover});" class="bannerIcon" on:click={() => ActivateBanner(false)}></button>
+    <button style="background: URL({SNCover}), no-repeat; " class="bannerIcon" on:click={() => ActivateBanner(true)}></button>
+    <button style="background: URL({YCCover}), no-repeat;" class="bannerIcon" on:click={() => ActivateBanner(false)}></button>
 </div>
 
 
@@ -164,8 +184,13 @@
 
     <!-- single and multi buttons -->
     <div id="pullButtonDiv">
-        <button class="pullButtons" on:click={() => CalculatePulls(1)}>Pull 1</button><br>
-        <button class="pullButtons" on:click={() => CalculatePulls(10)}>Pull 10</button>
+        <button class="buttonStandardStyle" on:click={() => CalculatePulls(1)}>Pull 1</button><br>
+        <button class="buttonStandardStyle" on:click={() => CalculatePulls(10)}>Pull 10</button>
+    </div>
+
+    <div id="infoButtonDiv">
+        <button class="buttonStandardStyle" >Information</button><br>
+        <button class="buttonStandardStyle" >History</button>
     </div>
 </div>
 
@@ -174,9 +199,27 @@
 <style>
 
     :global(body){  /*body styling format of svelte */ 
-        background-color: rgb(216, 205, 190);
-        font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;  /*font can be changed, it stays impact (for now) cos its defo not a genshin impact copy */ 
+        background: url(../../lib/assets/gacha/bacgkroundPanorama.png) no-repeat;
+        font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;  /*font can be changed, it stays impact (for now) cos its defo not a genshin impact copy */
+        /*animation: backgroundLoop 120s linear infinite;*/
+        background-size: auto 100vh;
+        margin: 0;
     }
+
+    @keyframes backgroundLoop {  
+    0% {
+        background-position-x: left;
+    }
+    100% {
+        background-position-x: right;
+    }
+    }
+    :global(html){
+        margin: 0;
+        padding: 0;
+        size: 0 0;
+    }
+
 
     /*TWO MAJOR SCREENS, THE BANNER PICTURE AND THE ROLL SCREEN ITSELF */ 
 
@@ -187,15 +230,14 @@
         z-index: 2;
         width: 100vw;
         height: 100vh;
-        background-color: rgba(44, 44, 63, 0.826);
+        background-color: rgba(44, 44, 63, 0.884);
         position: absolute;
         text-align: center;
-        padding-top: 14vh;
         
     }
     #rollsDiv{  /*the grey line, for visual purposes only kinda */ 
         background-color: rgba(44, 46, 67, 0.852);
-        margin-top: 14vh;
+        margin-top: 35vh;
         margin-left: 10vw;
         animation: rollsDivAnimation .4s linear forwards;
         position:absolute;
@@ -209,15 +251,15 @@
         margin-left: 49vw;
     }
     50% {
-        height: 36vh;
+        height: 30vh;
         width: 2vw;
-        margin-top: 14vh;
+        margin-top: 35vh;
         margin-left: 49vw;
     }
     100% {
-        height: 36vh;
+        height: 30vh;
         width: 80vw;
-        margin-top: 14vh;
+        margin-top: 35vh;
         margin-left: 10vw;
     }
     }
@@ -229,6 +271,7 @@
         display: flex;  /* its styled for any number of pulls*/ 
         margin: auto;
         width: 80vw;
+        margin-top: 23.137223vh;
     }
 
     .rollCard{  /*the pull card itself, blank version */ 
@@ -272,19 +315,20 @@
     #banner {   /*container for the whole banner composition */ 
         margin: auto;
         position: relative;
-        height: 100vh;
+        width: 100vw;
+        margin-top: 4.5vh;
     }
     .chracterPic {  /*banner featured cover pic */ 
         position: absolute;
-        left: 35%;
-        top: 5%;
+        left: 35vw;
+        top: 5vh;
         z-index: -1;
         width: 22vw;
     }
     .bannerName {   /*banner name */ 
         position: absolute;
-        left: 22%;
-        top: 6%;
+        left: 22vw;
+        top: 3vh;
         font-size: 5vmin;
     }
     .bannerBg {   /* banner background*/ 
@@ -298,11 +342,17 @@
     }
     #pullButtonDiv{    /*a container for the two buttons (so i dont have to position them separatly + easier mass production for future buttons) */ 
         position: absolute;
-        left:72%;
-        top: 43.5%;
+        left:70vw;
+        top: 35vh;
         
     }
-    .pullButtons{   /*the 1/10 pull buttons itselves */ 
+    #infoButtonDiv{
+        position: absolute;
+        left:15vw;
+        top: 27.5vw;
+        scale: 1.1;
+    }
+    .buttonStandardStyle{   /*the 1/10 pull buttons itselves */ 
         background: url(../../lib/assets/gacha/pullButton.png) ;
         background-size: 100%;
         border:none;
@@ -313,10 +363,12 @@
         font-size: 2vmin;
         color: rgb(103, 102, 91);
     }
-    .pullButtons:hover{
+    .buttonStandardStyle:hover{
         transform: scale(1.06);
         animation: hueChange 1s linear infinite;
+        cursor: pointer;
     }
+
 
     @keyframes hueChange {  /*weeeeeeeeeeeeeeeeee */ 
     0% {
@@ -341,13 +393,13 @@
     }
 
     .bannerIcon {   /*the selectors itself */
-        height: 70px;
-        width: 110.21px;
-        background: no-repeat;
-        background-size: 100%;
+        height: 8vh;
+        width: 12.6vh;
+        background-size: 12.6vh 8vh;
         margin: 10px;
     }
     .bannerIcon:hover {
         transform: scale(1.06);
+        cursor: pointer;
     }
 </style>
