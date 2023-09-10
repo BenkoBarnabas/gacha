@@ -1,6 +1,6 @@
 <script>
     /*DOCUMENTATION:
-    09.10 v(1.0)
+    09.10 | beta gacha (v1.0)
 
     BANNER SECTION
     -2 banners to select from
@@ -9,10 +9,9 @@
 
     ROLL SCREEN SECTION
     -beta animations (single pull animation is slighly glichy)
-    -20%/2% for 4/5 star rates (can be changed) no UR added yet
+    -20%/5% for 4/5 star rates (can be changed) no UR added yet
     -no difference between items in the same rarity yet (every 3/4/5* is concidered the same)
     -very much just placehoarder designs
-
     */
 
 
@@ -39,7 +38,6 @@
     var whichBanner = true //if SN banner active true : false
     var isRolling = false //the rolls screen will be visible if true
 
-    //
     var pullNum //number of pulls 1/10
     var yourPulls= Array(10).fill(roll3star); //the standard pulls are always 3star, only changed if you get 4/5 stars,
     //                                          contains the name of the asset for the 3star pull
@@ -58,6 +56,8 @@
     ];
 
 
+    //FUNCTIONS AND LOGIC
+    //
     function wait(milliseconds) { //wait funcation, can be used in a for loop with async
     return new Promise((resolve) => setTimeout(resolve, milliseconds));
     }
@@ -67,12 +67,12 @@
         whichBanner = whichBanner //svelte only updates and #if statement that uses a variable when its declared again, weirdge
     }
 
-    function CalculatePulls(num){ //loads the ull cards and already calculates thier content
+    function CalculatePulls(num){ //loads the pull cards and already calculates their content
         isRolling = true
         pullNum = num
 
         for (let i = 0; i < 10; i++) {
-            if (Math.floor(Math.random() * 100) >= 95){ //returns a number between 0-100, 1% esély hogy 5*
+            if (Math.floor(Math.random() * 100) >= 95){ //returns a number between 0-100, 5% esély hogy 5*
                 yourPulls[i] = roll5star
                 console.log("5 star");
             }
@@ -90,12 +90,12 @@
         await wait((i+1)*100);
         yourPullsVisibilityClass[i].name = "rollCardVisible"
         })();
-        //az #each cycleben minden card class-a eredetiled rollCard, egy 0 opacity <img>
+        //az #each cycleben minden card class-a eredetiled rollCard, egy 0 opacity de stylized <img>
         //az async function 100ms késéssel mindegyik #each img-et (pullt) "rollCardVisible" classra állítja
         //ennek az opcaity-je már 1 így meg fognak jelenni a kártyák egymás után, +egy animáció is elindul mikor ebbe a class-ba lépnek
     }
 
-    function ClosePull(){ //sets everything to thier base value so the animation and the pull reavel could play again
+    function ClosePull(){ //sets everything to their base value so the animation and the pull reveal could play again next time
         isRolling = false
         isRolling = isRolling //closes the pull window
         for(let i = 0; i<10; i++){
@@ -119,7 +119,7 @@
 
         <div id="rollContainer">
         {#each Array(pullNum) as _,index (yourPullsVisibilityClass[index].id)}
-        <!-- a roll cardook (a híres #each cycle) -->
+        <!-- a pul cardok (a híres #each cycle) -->
         <img on:click={() => ShowPulls(index)} class={yourPullsVisibilityClass[index].name} src={yourPullsVisibilityClass[index].src} alt="rollCard">
         {/each}
         </div>
@@ -141,12 +141,12 @@
 <!-- the banner covers -->
 <div id="banner">  
 
-    <!-- the first layer of the bannerPPic, background -->
+    <!-- the first layer of the bannerPic, background -->
     <!-- conditional class: ha whichBanner true (senior wisdom) akkor átálítja a classt banner2-re és a banner background barnás lesz -->
     <img class="bannerBg" class:banner2={whichBanner} src={bannerText} alt="banners text assets">
     
     
-    <!-- the seconf layer of the bannerPic, featured banner character -->
+    <!-- the second layer of the bannerPic, featured banner character -->
     <!-- a banner cover zénó/farkas + a hozzáillő banner name (senior wisdom/youthful curiosity) (tanár/diák banner) -->
     {#if whichBanner}
         <h1 class ="bannerName"><span style="color: brown">Senior</span><br> Wisdom</h1>
@@ -159,7 +159,7 @@
     <!-- the third layer of the bannerPic, the white background -->
     <img class="bannerBg" style="z-index: -2;" src={bannerBG} alt="banners background">
 
-    <!-- rainboow stars on top for visuals -->
+    <!-- rainbow stars on top for visuals -->
     <img id="bannerStars" src={stars} alt="stars">
 
     <!-- single and multi buttons -->
