@@ -84,10 +84,9 @@
     function CalculatePulls(num){ //loads the pull cards and already calculates their content
         isRolling = true
         setTimeout(() => {rollIsSkippable = true}, num*100+700); //deleyed close button pops up
-
         pullNum = num
 
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < num; i++) {
             if (Math.floor(Math.random() * 100) >= 95){ //returns a number between 0-100, 5% esély hogy 5*
                 yourPulls[i] = roll5star
                 console.log("5 star");
@@ -160,7 +159,6 @@
 
 <!-- the banner covers -->
 <div id="banner">  
-
     <!-- the first layer of the bannerPic, background -->
     <!-- conditional class: ha whichBanner true (senior wisdom) akkor átálítja a classt banner2-re és a banner background barnás lesz -->
     <img class="bannerBg" class:banner2={whichBanner} src={bannerText} alt="banners text assets">
@@ -201,7 +199,7 @@
     :global(body){  /*body styling format of svelte */ 
         background: url(../../lib/assets/gacha/bacgkroundPanorama.png) no-repeat;
         font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;  /*font can be changed, it stays impact (for now) cos its defo not a genshin impact copy */
-        /*animation: backgroundLoop 120s linear infinite;*/
+        animation: backgroundLoop 120s linear infinite;
         background-size: auto 100vh;
         margin: 0;
     }
