@@ -1,0 +1,44 @@
+    /*DOCUMENTATION:
+
+
+    ----GACHA----
+
+    //version numbering guide
+    vx.y
+    major system change: v(x+1).y
+    visuals/design change: vx.(y+1)
+
+    09.09 | beta gacha (v1.0)
+
+    BANNER SECTION
+    -2 banners to select from
+    -working styles (css) for both
+    -final design will be slightly changed
+
+    ROLL SCREEN SECTION
+    -beta animations (single pull animation is slighly glichy)
+    -20%/5% for 4/5 star rates (can be changed) no UR added yet
+    -no difference between items in the same rarity yet (every 3/4/5* is concidered the same)
+    -very much just placehoarder designs
+
+    09.10 | beta gacha (v1.05)
+
+    -added few visuals
+    -background (animation turned off currently)
+    -fixing up the proprotions for all window ratios (just use vw everywhere basically)
+
+
+    ----SERVER----
+    
+    09.12
+    
+    -db added (sqlite3)
+
+    -sends data to server via input fields, data,column,id => it changes the corresponding data in the database
+    -get button added, returns the whole db 
+    -delte button added, delets all rows
+    -add empty button added, adds and empty row to the db*
+    *(the rows are filled with "a" and "b" values cos im not sure if it lets to add a truly empty row)
+    *2(the rows' id is messed up, cos if u delte the rows the id continues from the last for eg: u have a 4 row db u delete it and add a new row the id is 5 not 1 for some reason)
+
+    */

@@ -1,9 +1,11 @@
-
 <script>
-  import {sendData, getData } from "../server.js"
+  import {sendData, getData, DeleteAll, AddEmptyRow} from "../client.js" //we import all the functions
 
-  let dataToSend = "";
+  let dataToSend = "cica"
+  let selectedColumn = "col1"
+  let id = ""
   var respons = ""
+
   function getData2() {
     respons = getData()
   }
@@ -12,8 +14,12 @@
 <main>
 <h1>Svelte App with Node.js and Express.js</h1>
 <input type="text" bind:value={dataToSend} placeholder="Enter data">
-<button on:click={() => sendData(dataToSend)}>Send Data to Server</button>
+<input type="text" bind:value={selectedColumn} placeholder="Enter column name">
+<input type="text" bind:value={id} placeholder="Enter id">
+<button on:click={() => sendData(selectedColumn,dataToSend,id)}>Send Data to Server</button>
 <button on:click={() => getData2()}>Get Data from Server</button>
+<button on:click={DeleteAll}>DeleteAll</button>
+<button on:click={AddEmptyRow}>Add empty row</button>
 <p>{respons}</p>
 </main>
 

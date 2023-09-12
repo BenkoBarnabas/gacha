@@ -1,31 +1,4 @@
 <script>
-    /*DOCUMENTATION:
-
-    //version numbering guide
-    vx.y
-    major system change: v(x+1).y
-    visuals/design change: vx.(y+1)
-
-    09.09 | beta gacha (v1.0)
-
-    BANNER SECTION
-    -2 banners to select from
-    -working styles (css) for both
-    -final design will be slightly changed
-
-    ROLL SCREEN SECTION
-    -beta animations (single pull animation is slighly glichy)
-    -20%/5% for 4/5 star rates (can be changed) no UR added yet
-    -no difference between items in the same rarity yet (every 3/4/5* is concidered the same)
-    -very much just placehoarder designs
-
-    09.10 | beta gacha (v1.05)
-
-    -added few visuals
-    -background (animation turned off currently)
-    -fixing up the proprotions for all window ratios (just use vw everywhere basically)
-    */
-
 
     //IMPORT ALL THE NECCESARY ASSETS HERE
 
