@@ -2,7 +2,7 @@ let responseData = '';
 
 export function sendData(selectedColumn,dataToSend,id,tableName) { //export == public, we import it in the main.svelte
 
-    fetch('http://localhost:3000/sendData', { //the "function" id i talked about in server ("sendData" here)
+    fetch('http://10.7.147.201:3000/sendData', { //the "function" id i talked about in server ("sendData" here)
     method: 'POST',
     headers: {
         'Content-Type': 'application/json',
@@ -22,7 +22,7 @@ export function sendData(selectedColumn,dataToSend,id,tableName) { //export == p
 }
 
 export function getData() { //i dont really understand this, but it works
-    fetch('http://localhost:3000/getData')
+    fetch('http://10.7.147.201:3000/getData')
     .then(response => {
       if (response.ok) {
         return response.json();
@@ -40,7 +40,7 @@ export function getData() { //i dont really understand this, but it works
 }
 
 export function DeleteAll(){
-    fetch('http://localhost:3000/api/delete-all-rows', {
+    fetch('http://10.7.147.201:3000/api/delete-all-rows', {
         method: 'DELETE',
       })
     .then(response => response.json())
@@ -48,7 +48,7 @@ export function DeleteAll(){
 }
 
 export function AddEmptyRow(tableName){
-  fetch('http://localhost:3000/api/add-row', {
+  fetch('http://10.7.147.201:3000/api/add-row', {
   method: 'POST',
   headers: {
       'Content-Type': 'application/json',
