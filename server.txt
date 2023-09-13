@@ -4,14 +4,17 @@ const app = express();
 const bodyParser = require('body-parser');
 const sqlite3 = require('sqlite3').verbose();
 const cors = require('cors');
+const { LIMIT_FUNCTION_ARG } = require('sqlite3');
 app.use(cors());
 app.use(bodyParser.json());
 
 // create the db, accounts is the beta test, gacha is for the rolls history
 let db = new sqlite3.Database('accounts.db');
+let table =""
 
 // Initialize the database with a table if it doesn't exist
 db.run('CREATE TABLE IF NOT EXISTS accounts (id INTEGER PRIMARY KEY, col1 TEXT, col2 TEXT)');
+db.run('CREATE TABLE IF NOT EXISTS rolls (id INTEGER PRIMARY KEY, col1 TEXT, col2 TEXT)');
 
 //DIFFERENT ANSWERS TO CLIENT
 //
@@ -28,7 +31,7 @@ let dataFromClient = null;
 // Handle POST request to change data in db
 app.post('/sendData', (req, res) => { //the '/xy' ('/sendData' here) is esentially the id of the "function", via that can the client connect to it (if that means sense)
   dataFromClient = req.body; //req.body is the shit we sent (an object usually)
-  const query = `UPDATE accounts SET (${dataFromClient.column}) = (?) WHERE id = (?)`; //basic sql, format is db.run(sql,data (in place of the ?), function(err)...)
+  const query = `UPDATE ${dataFromClient.table} SET (${dataFromClient.column}) = (?) WHERE id = (?)`; //basic sql, format is db.run(sql,data (in place of the ?), function(err)...)
   db.run(query,[dataFromClient.data,dataFromClient.id], function (err) {
     if (err) {
       console.error(err.message);
@@ -41,19 +44,20 @@ app.post('/sendData', (req, res) => { //the '/xy' ('/sendData' here) is esential
 
 
 // Handle GET request to retrieve data (the db, currently)
-app.get('/getData', (req, res) => {
-  db.all('SELECT * FROM accounts', (err, rows) => {
+app.post('/getData', (req, res) => {
+  table = req.body.table
+  console.log("table name: " + table);
+  db.all(`SELECT * FROM ${table}`, (err, rows) => {
     if (err) {
       console.error(err.message);
       res.status(500).send('Error fetching data from the database');
     } else {
-      res.json({ data: rows }); //res.json is always what the client gets back
+      res.json({ data: rows });
       console.log(rows);
     }
   });
 });
 
-let table =""
 //add empty row
 app.post('/api/add-row',(req,res) => {
   table = req.body.table;
@@ -70,8 +74,9 @@ app.post('/api/add-row',(req,res) => {
 
 
 //delte all
-app.delete('/api/delete-all-rows', (req, res) => {
-  db.run('DROP TABLE accounts', function (err) {
+app.post('/delTable', (req, res) => {
+  table = req.body.table
+  db.run(`DROP TABLE ${table}`, function (err) {
     if (err) {
       console.error(err);
       return res.status(500).json({ error: 'Database error' });
@@ -79,7 +84,7 @@ app.delete('/api/delete-all-rows', (req, res) => {
 
     // Reset auto-incremented ID to 1 using VACUUM
     //db.run('ALTER TABLE accounts AUTOINCREMENT = 1');
-    db.run('CREATE TABLE IF NOT EXISTS accounts (id INTEGER PRIMARY KEY, col1 TEXT, col2 TEXT)');
+    db.run(`CREATE TABLE IF NOT EXISTS ${table} (id INTEGER PRIMARY KEY, col1 TEXT, col2 TEXT)`);
 
     res.json({ message: 'All rows deleted successfully' });
   });
