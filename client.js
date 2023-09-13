@@ -22,30 +22,39 @@ export function sendData(selectedColumn,dataToSend,id,tableName) { //export == p
     });
 }
 
-export function getData() { //i dont really understand this, but it works
-    fetch(`http://${ip}:3000/getData`)
-    .then(response => {
-      if (response.ok) {
-        return response.json();
-      }
-      throw new Error('Failed to fetch data');
-    })
-    .then(data => {
-      responseData = data
-      console.log(data);
-    })
-    .catch(error => {
-      console.error(error);
-    });
-    return responseData; //all i know is that this lines writes it to the screen :skull:
+export function getData(tableName) { //i dont really understand this, but it works
+  fetch(`http://${ip}:3000/getData`, { //the "function" id i talked about in server ("sendData" here)
+  method: 'POST',
+  headers: {
+      'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({table: tableName}), //body is the shit we send, the rest is costums, here its an object
+  })
+  .then(response => {
+    if (response.ok) {
+      return response.json();
+    } else {
+      throw new Error('Failed to send data');
+    }
+  })
+  .then(data => {
+    // Handle the data received from the server
+    console.log("data got from " + tableName);
+    console.log(data); // Access the message sent by the server
+  })
+  .catch(error => {
+    console.error(error);
+  });
 }
 
-export function DeleteAll(){
-    fetch(`http://${ip}:3000/api/delete-all-rows`, {
-        method: 'DELETE',
-      })
-    .then(response => response.json())
-    console.log("deleted All");
+export function DeleteAll(tableName){
+  fetch(`http://${ip}:3000/delTable`, { //the "function" id i talked about in server ("sendData" here)
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({table:tableName}), //body is the shit we send, the rest is costums, here its an object
+    })
 }
 
 export function AddEmptyRow(tableName){

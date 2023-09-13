@@ -7,8 +7,8 @@
   var respons = ""
   let tableName = "accounts"
 
-  function getData2() {
-    respons = getData()
+  function getData2(tableName) {
+    respons = getData(tableName)
   }
 </script>
 
@@ -19,8 +19,8 @@
 <input type="text" bind:value={id} placeholder="Enter id">
 <input type="text" bind:value={tableName} placeholder="Enter table name">
 <button on:click={() => sendData(selectedColumn,dataToSend,id,tableName)}>Send Data to Server</button>
-<button on:click={() => getData2()}>Get Data from Server</button>
-<button on:click={DeleteAll}>DeleteAll</button>
+<button on:click={() => getData2(tableName)}>Get Data from Server</button>
+<button on:click={() => DeleteAll(tableName)}>DeleteAll</button>
 <button on:click={() => AddEmptyRow(tableName)}>Add empty row</button>
 <p>{respons}</p>
 </main>
