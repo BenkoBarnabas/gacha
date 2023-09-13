@@ -1,0 +1,30 @@
+<script>
+    import Arho from "../../lib/assets/collection/diak/Arho.png"
+    import Barni from "../../lib/assets/collection/diak/Barni.png"
+    import Eszter from "../../lib/assets/collection/diak/Eszter.png"
+    import Olivia from "../../lib/assets/collection/diak/Olivia.png"
+    import Zalan from "../../lib/assets/collection/diak/Zalan.png"
+    import Zeno from "../../lib/assets/collection/diak/Zeno.png"
+
+    import Farkas from "../../lib/assets/collection/tanar/Farkas.png"
+    import Moni from "../../lib/assets/collection/tanar/Moni.png"
+    import Nagyora from "../../lib/assets/collection/tanar/Nagyora.png"
+    import Rozgonyi from "../../lib/assets/collection/tanar/Rozgonyi.png"
+    import Tabi from "../../lib/assets/collection/tanar/Tabi.png"
+
+    import Filozofia from "../../lib/assets/collection/spell/filozofia.png"
+    import Gomboc from "../../lib/assets/collection/spell/gomboc.png"
+    import Tz from "../../lib/assets/collection/spell/tz.png"
+
+    import SNCover from "../../lib/assets/gacha/SWCover.png" //cover for the buttons for switching banners
+    import YCCover from "../../lib/assets/gacha/YCCover.png" //^^^
+    import SpellCover from "../../lib/assets/gacha/SpellCover.png"
+</script>
+
+<h1 style="margin-top:0; font-size:5vmin; text-align:center;">Collection</h1>
+<div id="typeChoosers">
+    <!-- buttons to choose the active banner -->
+    <button style="background: URL({SNCover}), no-repeat; " class="bannerIcon" on:click={() => console.log("sn")}></button>
+    <button style="background: URL({YCCover}), no-repeat;" class="bannerIcon" on:click={() => console.log("yc")}></button>
+    <button style="background: URL({SpellCover}), no-repeat;" class="bannerIcon" on:click={() => console.log("spell")}></button>
+</div>
