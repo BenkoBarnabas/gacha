@@ -5,6 +5,7 @@
   let selectedColumn = "col1"
   let id = ""
   var respons = ""
+  let tableName = "accounts"
 
   function getData2() {
     respons = getData()
@@ -16,10 +17,11 @@
 <input type="text" bind:value={dataToSend} placeholder="Enter data">
 <input type="text" bind:value={selectedColumn} placeholder="Enter column name">
 <input type="text" bind:value={id} placeholder="Enter id">
-<button on:click={() => sendData(selectedColumn,dataToSend,id)}>Send Data to Server</button>
+<input type="text" bind:value={tableName} placeholder="Enter table name">
+<button on:click={() => sendData(selectedColumn,dataToSend,id,tableName)}>Send Data to Server</button>
 <button on:click={() => getData2()}>Get Data from Server</button>
 <button on:click={DeleteAll}>DeleteAll</button>
-<button on:click={AddEmptyRow}>Add empty row</button>
+<button on:click={() => AddEmptyRow(tableName)}>Add empty row</button>
 <p>{respons}</p>
 </main>
 

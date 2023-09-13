@@ -41,4 +41,7 @@
     *(the rows are filled with "a" and "b" values cos im not sure if it lets to add a truly empty row)
     *2(the rows' id is messed up, cos if u delte the rows the id continues from the last for eg: u have a 4 row db u delete it and add a new row the id is 5 not 1 for some reason)
 
+    09.13
+
+    -fixed the bug with id autoincrement id
     */
