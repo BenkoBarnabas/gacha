@@ -8,13 +8,13 @@ const { LIMIT_FUNCTION_ARG } = require('sqlite3');
 app.use(cors());
 app.use(bodyParser.json());
 
-// create the db, accounts is the beta test, gacha is for the rolls history
-let db = new sqlite3.Database('accounts.db');
+// create the db, accounts is the beta test
+let db = new sqlite3.Database('Sagvari.db');
 let table =""
 
 // Initialize the database with a table if it doesn't exist
 db.run('CREATE TABLE IF NOT EXISTS accounts (id INTEGER PRIMARY KEY, col1 TEXT, col2 TEXT)');
-db.run('CREATE TABLE IF NOT EXISTS rolls (id INTEGER PRIMARY KEY, col1 TEXT, col2 TEXT)');
+db.run('CREATE TABLE IF NOT EXISTS rolls (id INTEGER PRIMARY KEY, history TEXT)');
 
 //DIFFERENT ANSWERS TO CLIENT
 //
@@ -45,24 +45,38 @@ app.post('/sendData', (req, res) => { //the '/xy' ('/sendData' here) is esential
 
 // Handle GET request to retrieve data (the db, currently)
 app.post('/getData', (req, res) => {
-  table = req.body.table
-  console.log("table name: " + table);
-  db.all(`SELECT * FROM ${table}`, (err, rows) => {
-    if (err) {
-      console.error(err.message);
-      res.status(500).send('Error fetching data from the database');
-    } else {
-      res.json({ data: rows });
-      console.log(rows);
-    }
-  });
+  dataFromClient = req.body
+  console.log("table name: " + dataFromClient.table);
+  if(dataFromClient.id != 0){ //if id = 0 we send the whole table over : just a specific item, (also if column is * we send all colums over obv)
+    db.all(`SELECT ${dataFromClient.column} FROM ${dataFromClient.table} WHERE id = (?)`,dataFromClient.id, (err, rows) => {
+      if (err) {
+        console.error(err.message);
+        res.status(500).send('Error fetching data from the database');
+      } else {
+        res.json({ data: rows });
+        console.log(rows);
+      }
+    });
+  }
+  else {
+    db.all(`SELECT ${dataFromClient.column} FROM ${dataFromClient.table}`, (err, rows) => {
+      if (err) {
+        console.error(err.message);
+        res.status(500).send('Error fetching data from the database');
+      } else {
+        res.json({ data: rows });
+        console.log(rows);
+      }
+    });
+  }
+  
 });
 
 //add empty row
 app.post('/api/add-row',(req,res) => {
   table = req.body.table;
   console.log("table:"+table + "req.body: " + req.body);
-  db.run(`INSERT INTO ${table} (col1, col2) VALUES (?, ?)`, ["a", "b"], function (err) {
+  db.run(`INSERT INTO ${table} DEFAULT VALUES`, function (err) {
     if (err) {
       console.error(err.message);
       res.status(500).send('Error');
@@ -77,16 +91,20 @@ app.post('/api/add-row',(req,res) => {
 app.post('/delTable', (req, res) => {
   table = req.body.table
   db.run(`DROP TABLE ${table}`, function (err) {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ error: 'Database error' });
-    }
+  if (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'Database error' });
+  }
 
-    // Reset auto-incremented ID to 1 using VACUUM
-    //db.run('ALTER TABLE accounts AUTOINCREMENT = 1');
+  //REALLY HIGHLY UGLY
+  if (table == "rolls"){
+    db.run(`CREATE TABLE IF NOT EXISTS ${table} (id INTEGER PRIMARY KEY, history TEXT)`);
+  }
+  else if (table == "accounts"){
     db.run(`CREATE TABLE IF NOT EXISTS ${table} (id INTEGER PRIMARY KEY, col1 TEXT, col2 TEXT)`);
+  }
 
-    res.json({ message: 'All rows deleted successfully' });
+  res.json({ message: 'All rows deleted successfully' });
   });
 });
 

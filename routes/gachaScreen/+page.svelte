@@ -17,6 +17,18 @@
     import roll4star from "../../lib/assets/gacha/roll4star.png" //4
     import roll3star from "../../lib/assets/gacha/roll3star.png" //3 star content cover (beta)
 
+    //server functions, db control
+    import {sendData, getData, responsData} from "../../client"
+
+    let userId = "1" //ph obvs
+
+    getData("history",userId,"rolls") //the one can be adjusted later depending on the ip of the PC (the user who playing)
+    let pullHistory = ""
+    setTimeout(() => {
+        pullHistory = responsData.split(',');
+    }, 1000);
+    //^^^when u inicialize(? im tired) the gacha screen ull ave the history immidiately kinda
+
 
     //VARIABLE DECLARATION
     //
@@ -27,8 +39,8 @@
     var pullNum //number of pulls 1/10
     var yourPulls= Array(10).fill(roll3star); //the standard pulls are always 3star, only changed if you get 4/5 stars,
     //                                          contains the name of the asset for the 3star pull
+    var lastPulls = []
 
-    
     var yourPullsVisibilityClass = [ //used in #each cycle for all the varibales that will be relevant for the individual pulls, id, classname (for animation), src image
     {id: 0, name: 'rollCard', src: rollCard},
     {id: 1, name: 'rollCard', src: rollCard},
@@ -62,15 +74,27 @@
         for (let i = 0; i < num; i++) {
             if (Math.floor(Math.random() * 100) >= 95){ //returns a number between 0-100, 5% esély hogy 5*
                 yourPulls[i] = roll5star
+                lastPulls[i] = "5s"
                 console.log("5 star");
             }
             else if (Math.floor(Math.random() * 100) >= 80){ //returns a number between 0-100, 20% esély hogy 4*
                 yourPulls[i] = roll4star
                 console.log("4 star");
+                lastPulls[i] = "4s"
             }
+            else {
+                lastPulls[i] = "3s"
+            }
+            console.log("+1");
             DoPullAnimation(i)
+            
         }
-        console.log(yourPulls);
+        sendData("history",pullHistory+","+String(lastPulls),userId,"rolls")
+        getData("history",userId,"rolls") //this updates the responsData
+        setTimeout(() => {
+        pullHistory = responsData.split(',');
+        }, 1000);
+        console.log("cal pull history: "+pullHistory);
     }
 
     function DoPullAnimation(i) {
@@ -98,6 +122,11 @@
 
     function ShowPulls(i) {
         yourPullsVisibilityClass[i].src = yourPulls[i] //when clicked it switched the src of the #each image to roll3/4/5star that we caluclated in CalulatePulls()
+    }
+
+    function LoadHistory(){
+        pullHistory = responsData.split(','); //updates res data
+        console.log(pullHistory);
     }
 
 </script>
@@ -161,7 +190,7 @@
 
     <div id="infoButtonDiv">
         <button class="buttonStandardStyle" >Information</button><br>
-        <button class="buttonStandardStyle" >History</button>
+        <button class="buttonStandardStyle" on:click={LoadHistory}>History</button>
     </div>
 </div>
 

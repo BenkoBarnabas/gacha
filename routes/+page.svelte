@@ -1,15 +1,12 @@
 <script>
-  import {sendData, getData, DeleteAll, AddEmptyRow} from "../client.js" //we import all the functions
+  import {sendData, getData, DeleteAll, AddEmptyRow, responsData} from "../client.js" //we import all the functions
 
-  let dataToSend = "cica"
-  let selectedColumn = "col1"
-  let id = ""
-  var respons = ""
-  let tableName = "accounts"
+  let dataToSend = ["alma","cica"]
+  let selectedColumn = "history"
+  let id = "1"
+  let tableName = "rolls"
 
-  function getData2(tableName) {
-    respons = getData(tableName)
-  }
+  //console.log("log: " + getData("history","1","rolls"));
 </script>
 
 <main>
@@ -19,16 +16,13 @@
 <input type="text" bind:value={id} placeholder="Enter id">
 <input type="text" bind:value={tableName} placeholder="Enter table name">
 <button on:click={() => sendData(selectedColumn,dataToSend,id,tableName)}>Send Data to Server</button>
-<button on:click={() => getData2(tableName)}>Get Data from Server</button>
+<button on:click={() => getData(selectedColumn,id,tableName)}>Get Data from Server</button>
 <button on:click={() => DeleteAll(tableName)}>DeleteAll</button>
 <button on:click={() => AddEmptyRow(tableName)}>Add empty row</button>
-<p>{respons}</p>
 </main>
-
 
 <a href="/gachaScreen">sepd ur money here</a><br>
 <a href="/collectionScreen">view your cards here</a>
-
 
 <style>
 main {

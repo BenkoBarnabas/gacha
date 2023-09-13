@@ -27,6 +27,10 @@
     -background (animation turned off currently)
     -fixing up the proprotions for all window ratios (just use vw everywhere basically)
 
+    09.13 | beta gacha (v2.0)
+
+    -working history saving system (displays it only to console), saves it to table: rolls, col: history to an array
+
 
     ----SERVER----
     
@@ -44,4 +48,7 @@
     09.13
 
     -fixed the bug with id autoincrement id
+    -every command works for every table
+    -get is highly costuized for rolls table,but im 99% it works for everything else 
+    -also so much more but im really just tired, so tired
     */

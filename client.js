@@ -1,14 +1,20 @@
-let responseData = '';
-let ip = "10.7.147.201"
+//let ip = "10.7.147.201";
+let ip = "localhost";
 
-export function sendData(selectedColumn,dataToSend,id,tableName) { //export == public, we import it in the main.svelte
+let userId = "1" //ph obvs
+
+export let responsData = ""
+getData("history",userId,"rolls");
+
+
+export function sendData(columnName,dataToSend,id,tableName) { //export == public, we import it in the main.svelte
 
     fetch(`http://${ip}:3000/sendData`, { //the "function" id i talked about in server ("sendData" here)
     method: 'POST',
     headers: {
         'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ column: selectedColumn, data: dataToSend, id: id, table:tableName}), //body is the shit we send, the rest is costums, here its an object
+    body: JSON.stringify({ column: columnName, data: String(dataToSend), id: id, table:tableName}), //body is the shit we send, the rest is costums, here its an object
     })
     .then(response => { //this .then(respons...) is again just syntax and costums, doesnt really matter that much in POST
         if (response.ok) {
@@ -22,13 +28,13 @@ export function sendData(selectedColumn,dataToSend,id,tableName) { //export == p
     });
 }
 
-export function getData(tableName) { //i dont really understand this, but it works
+export function getData(columnName,id,tableName) { //i dont really understand this, but it works
   fetch(`http://${ip}:3000/getData`, { //the "function" id i talked about in server ("sendData" here)
   method: 'POST',
   headers: {
       'Content-Type': 'application/json',
   },
-  body: JSON.stringify({table: tableName}), //body is the shit we send, the rest is costums, here its an object
+  body: JSON.stringify({column: columnName, id: id,table: tableName}), //body is the shit we send, the rest is costums, here its an object
   })
   .then(response => {
     if (response.ok) {
@@ -38,14 +44,29 @@ export function getData(tableName) { //i dont really understand this, but it wor
     }
   })
   .then(data => {
+    console.log(data.data);
     // Handle the data received from the server
-    console.log("data got from " + tableName);
-    console.log(data); // Access the message sent by the server
+    if (id == "0"){
+      responsData = data.data
+      console.log(responsData);
+    }
+    else if (columnName == "*"){
+      responsData = data.data[0];
+      console.log(responsData);
+    }
+    else {
+      responsData = data.data[0][columnName];
+      console.log(responsData);
+    }
+    // Access the message sent by the server
+    //return responsData;
   })
   .catch(error => {
     console.error(error);
   });
+  //console.log("res data: " + responsData);
 }
+
 
 export function DeleteAll(tableName){
   fetch(`http://${ip}:3000/delTable`, { //the "function" id i talked about in server ("sendData" here)
