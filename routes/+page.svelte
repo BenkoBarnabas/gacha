@@ -26,7 +26,9 @@
 </main>
 
 
-<a href="/gachaScreen">sepd ur money here</a>
+<a href="/gachaScreen">sepd ur money here</a><br>
+<a href="/collectionScreen">view your cards here</a>
+
 
 <style>
 main {
