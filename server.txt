@@ -1,0 +1,92 @@
+//connect to modules express and sqlite3, enable cors (data sending thingy of node.js)
+const express = require('express');
+const app = express();
+const bodyParser = require('body-parser');
+const sqlite3 = require('sqlite3').verbose();
+const cors = require('cors');
+app.use(cors());
+app.use(bodyParser.json());
+
+// create the db, accounts is the beta test, gacha is for the rolls history
+let db = new sqlite3.Database('accounts.db');
+
+// Initialize the database with a table if it doesn't exist
+db.run('CREATE TABLE IF NOT EXISTS accounts (id INTEGER PRIMARY KEY, col1 TEXT, col2 TEXT)');
+
+//DIFFERENT ANSWERS TO CLIENT
+//
+//(the function(err)... is a syntax thingy, as far as i know it doesnt work without it, its the same for every function dm them)
+
+
+// connect to us client
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + 'C:/Users/Eszti/Svelte/src/routes/+page.svelte');
+});
+
+let dataFromClient = null;
+
+// Handle POST request to change data in db
+app.post('/sendData', (req, res) => { //the '/xy' ('/sendData' here) is esentially the id of the "function", via that can the client connect to it (if that means sense)
+  dataFromClient = req.body; //req.body is the shit we sent (an object usually)
+  const query = `UPDATE accounts SET (${dataFromClient.column}) = (?) WHERE id = (?)`; //basic sql, format is db.run(sql,data (in place of the ?), function(err)...)
+  db.run(query,[dataFromClient.data,dataFromClient.id], function (err) {
+    if (err) {
+      console.error(err.message);
+      res.status(500).send(`Error storing data in ${dataFromClient.column}`);
+    } else {
+      res.sendStatus(200);
+    }
+  });
+});
+
+
+// Handle GET request to retrieve data (the db, currently)
+app.get('/getData', (req, res) => {
+  db.all('SELECT * FROM accounts', (err, rows) => {
+    if (err) {
+      console.error(err.message);
+      res.status(500).send('Error fetching data from the database');
+    } else {
+      res.json({ data: rows }); //res.json is always what the client gets back
+      console.log(rows);
+    }
+  });
+});
+
+let table =""
+//add empty row
+app.post('/api/add-row',(req,res) => {
+  table = req.body.table;
+  console.log("table:"+table + "req.body: " + req.body);
+  db.run(`INSERT INTO ${table} (col1, col2) VALUES (?, ?)`, ["a", "b"], function (err) {
+    if (err) {
+      console.error(err.message);
+      res.status(500).send('Error');
+    } else {
+      res.sendStatus(200);
+    }
+  });
+});
+
+
+//delte all
+app.delete('/api/delete-all-rows', (req, res) => {
+  db.run('DROP TABLE accounts', function (err) {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Database error' });
+    }
+
+    // Reset auto-incremented ID to 1 using VACUUM
+    //db.run('ALTER TABLE accounts AUTOINCREMENT = 1');
+    db.run('CREATE TABLE IF NOT EXISTS accounts (id INTEGER PRIMARY KEY, col1 TEXT, col2 TEXT)');
+
+    res.json({ message: 'All rows deleted successfully' });
+  });
+});
+
+//run specs
+const port = 3000;
+app.listen(port, () => {
+  console.log(`Server is listening on port ${port}`);
+});
