@@ -1,17 +1,16 @@
 <script>
-    import Arho from "../../lib/assets/collection/diak/Arho.png"
-    import Barni from "../../lib/assets/collection/diak/Barni.png"
-    import Eszter from "../../lib/assets/collection/diak/Eszter.png"
-    import Olivia from "../../lib/assets/collection/diak/Olivia.png"
-    import Zalan from "../../lib/assets/collection/diak/Zalan.png"
-    import Zeno from "../../lib/assets/collection/diak/Zeno.png"
-
     import Farkas from "../../lib/assets/collection/tanar/Farkas.png"
     import Moni from "../../lib/assets/collection/tanar/Moni.png"
     import Nagyora from "../../lib/assets/collection/tanar/Nagyora.png"
     import Rozgonyi from "../../lib/assets/collection/tanar/Rozgonyi.png"
     import Tabi from "../../lib/assets/collection/tanar/Tabi.png"
 
+    import Arho from "../../lib/assets/collection/diak/Arho.png"
+    import Barni from "../../lib/assets/collection/diak/Barni.png"
+    import Eszter from "../../lib/assets/collection/diak/Eszter.png"
+    import Olivia from "../../lib/assets/collection/diak/Olivia.png"
+    import Zalan from "../../lib/assets/collection/diak/Zalan.png"
+    import Zeno from "../../lib/assets/collection/diak/Zeno.png"
     import Filozofia from "../../lib/assets/collection/spell/filozofia.png"
     import Gomboc from "../../lib/assets/collection/spell/gomboc.png"
     import Tz from "../../lib/assets/collection/spell/tz.png"
@@ -21,6 +20,14 @@
     import SpellCover from "../../lib/assets/gacha/SpellCover.png"
 
     let selectedCollection = 1
+
+    let tanarCards = [Farkas, Moni, Nagyora, Rozgonyi, Tabi]
+    let diakCards = [Arho, Barni, Eszter, Olivia, Zalan, Zeno]
+    let spellCards = [Filozofia, Gomboc, Tz]
+
+    function handleClick(index) {
+        alert(`Button ${index + 1} clicked!`);
+    }
 </script>
 
 <h1 style="margin-top:0; font-size:5vmin; text-align:center;">Collection</h1>
@@ -33,17 +40,25 @@
 
 {#if selectedCollection == 1}
     <div class = "cardcollection" id = "tanarcollection">
-        <p>tanarok</p>
+        {#each tanarCards as label, index}
+            <button on:click={() => handleClick(index)}><img src = {label} alt = "cardImage"></button>
+        {/each}
     </div>
 {:else if selectedCollection == 2}
     <div class = "cardcollection" id = "diakcollection">
-        <p>diakok</p>
+        {#each diakCards as label, index}
+            <button on:click={() => handleClick(index)}><img src = {label} alt = "cardImage"></button>
+        {/each}
     </div>
 {:else}
-    <div class = "cardcollection" id = "spellcollection">
-        <p>spellek</p>
-    </div>
+<div class = "cardcollection" id = "spellcollection">
+    {#each spellCards as label, index}
+        <button on:click={() => handleClick(index)}><img src = {label} alt = "cardImage"></button>
+    {/each}
+</div>
 {/if}
+
+
 
 <a href="/gachaScreen">sepd ur money here</a><br>
 <a href="./">main menu here</a>
