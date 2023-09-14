@@ -41,24 +41,34 @@
 {#if selectedCollection == 1}
     <div class = "cardcollection" id = "tanarcollection">
         {#each tanarCards as label, index}
-            <button on:click={() => handleClick(index)}><img src = {label} alt = "cardImage"></button>
+            <button class = "cardButton" style="background-image: url({label})" on:click={() => handleClick(index)}></button>
         {/each}
     </div>
 {:else if selectedCollection == 2}
     <div class = "cardcollection" id = "diakcollection">
         {#each diakCards as label, index}
-            <button on:click={() => handleClick(index)}><img src = {label} alt = "cardImage"></button>
+            <button class = "cardButton" style="background-image: url({label})" on:click={() => handleClick(index)}></button>
         {/each}
     </div>
 {:else}
 <div class = "cardcollection" id = "spellcollection">
     {#each spellCards as label, index}
-        <button on:click={() => handleClick(index)}><img src = {label} alt = "cardImage"></button>
+        <button class = "cardButton" style="background-image: url({label})" on:click={() => handleClick(index)}></button>
     {/each}
 </div>
 {/if}
 
-
-
 <a href="/gachaScreen">sepd ur money here</a><br>
 <a href="./">main menu here</a>
+
+<style>
+    .cardButton{
+        height:30vh;
+        width:10vw;
+        border: 0.5vmin solid goldenrod;
+        border-radius: 5px; /* Add border radius for rounded corners */
+        padding: 10px 10px; /* Add padding to the buttons */
+        margin: 5px;
+        background-size:cover;
+    }
+</style>
