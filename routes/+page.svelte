@@ -39,4 +39,19 @@ button {
   margin: 1rem;
   padding: 0.5rem;
 }
+
+:global(#bannerChoosers) {   /*container foor the banner selector buttons */
+        text-align: center;
+    }
+
+    :global(.bannerIcon) {   /*the selectors itself */
+        height: 8vh;
+        width: 12.6vh;
+        background-size: 12.6vh 8vh;
+        margin: 10px;
+    }
+    :global(.bannerIcon:hover) {
+        transform: scale(1.06);
+        cursor: pointer;
+    }
 </style>

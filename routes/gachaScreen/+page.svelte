@@ -130,7 +130,7 @@
     }
 
 </script>
-
+<div class="movingbg"></div>
 <!-- roll screen az #if-ben -->
 {#if isRolling}
     <div id="rollScreen">
@@ -154,8 +154,8 @@
 
 <div id="bannerChoosers">
     <!-- buttons to choose the active banner -->
-    <button style="background: URL({SNCover}), no-repeat; " class="bannerIcon" on:click={() => ActivateBanner(true)}></button>
-    <button style="background: URL({YCCover}), no-repeat;" class="bannerIcon" on:click={() => ActivateBanner(false)}></button>
+    <button style="background: URL({SNCover}), no-repeat; background-size:cover" class="bannerIcon" on:click={() => ActivateBanner(true)}></button>
+    <button style="background: URL({YCCover}), no-repeat; background-size:cover" class="bannerIcon" on:click={() => ActivateBanner(false)}></button>
 </div>
 
 
@@ -192,18 +192,35 @@
         <button class="buttonStandardStyle" >Information</button><br>
         <button class="buttonStandardStyle" on:click={LoadHistory}>History</button>
     </div>
-</div>
 
+    <a href="./">main menu here</a><br>
+    <a href="/collectionScreen">view your cards here</a>
+</div>
 
 
 <style>
 
-    :global(body){  /*body styling format of svelte */ 
-        background: url(../../lib/assets/gacha/bacgkroundPanorama.png) no-repeat;
+    :global(body){
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    .movingbg {  /*body styling format of svelte */ 
+        background: url(../../lib/assets/gacha/bacgkroundPanorama.png);
         font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;  /*font can be changed, it stays impact (for now) cos its defo not a genshin impact copy */
         animation: backgroundLoop 120s linear infinite;
-        background-size: auto 100vh;
-        margin: 0;
+        overflow: hidden;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-size: cover; /* Adjust as needed: cover, contain, etc. */
+        background-repeat: no-repeat;
+        background-position: center center;
+        z-index: -3;
     }
 
     @keyframes backgroundLoop {  
@@ -213,11 +230,6 @@
     100% {
         background-position-x: right;
     }
-    }
-    :global(html){
-        margin: 0;
-        padding: 0;
-        size: 0 0;
     }
 
 
@@ -385,21 +397,5 @@
         top: 0;
         width: 66vw;
         animation: hueChange 1s linear infinite;
-    }
-
-
-    #bannerChoosers {   /*container foor the banner selector buttons */
-        text-align: center;
-    }
-
-    .bannerIcon {   /*the selectors itself */
-        height: 8vh;
-        width: 12.6vh;
-        background-size: 12.6vh 8vh;
-        margin: 10px;
-    }
-    .bannerIcon:hover {
-        transform: scale(1.06);
-        cursor: pointer;
     }
 </style>

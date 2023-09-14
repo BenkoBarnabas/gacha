@@ -19,12 +19,31 @@
     import SNCover from "../../lib/assets/gacha/SWCover.png" //cover for the buttons for switching banners
     import YCCover from "../../lib/assets/gacha/YCCover.png" //^^^
     import SpellCover from "../../lib/assets/gacha/SpellCover.png"
+
+    let selectedCollection = 1
 </script>
 
 <h1 style="margin-top:0; font-size:5vmin; text-align:center;">Collection</h1>
 <div id="typeChoosers">
     <!-- buttons to choose the active banner -->
-    <button style="background: URL({SNCover}), no-repeat; " class="bannerIcon" on:click={() => console.log("sn")}></button>
-    <button style="background: URL({YCCover}), no-repeat;" class="bannerIcon" on:click={() => console.log("yc")}></button>
-    <button style="background: URL({SpellCover}), no-repeat;" class="bannerIcon" on:click={() => console.log("spell")}></button>
+    <button style="background: URL({SNCover}), no-repeat; background-size:cover" class="bannerIcon" on:click={() => selectedCollection = 1}></button>
+    <button style="background: URL({YCCover}), no-repeat; background-size:cover" class="bannerIcon" on:click={() => selectedCollection = 2}></button>
+    <button style="background: URL({SpellCover}), no-repeat; background-size:cover" class="bannerIcon" on:click={() => selectedCollection = 3}></button>
 </div>
+
+{#if selectedCollection == 1}
+    <div class = "cardcollection" id = "diakcollection">
+        <p>diakok</p>
+    </div>
+{:else if selectedCollection == 2}
+    <div class = "cardcollection" id = "tanarcollection">
+        <p>tanarok</p>
+    </div>
+{:else}
+    <div class = "cardcollection" id = "spellcollection">
+        <p>spellek</p>
+    </div>
+{/if}
+
+<a href="/gachaScreen">sepd ur money here</a><br>
+<a href="./">main menu here</a>
