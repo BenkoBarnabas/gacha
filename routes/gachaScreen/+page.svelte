@@ -129,6 +129,13 @@
         console.log(pullHistory);
     }
 
+    function handleKeyDown(event, index) {
+    if (event.key === 'Enter' || event.key === ' ') {
+      // Trigger the same action as handleClick when Enter or Spacebar is pressed
+      ShowPulls(index);
+    }
+  }
+
 </script>
 <div class="movingbg"></div>
 <!-- roll screen az #if-ben -->
@@ -139,7 +146,7 @@
         <div id="rollContainer">
         {#each Array(pullNum) as _,index (yourPullsVisibilityClass[index].id)}
         <!-- a pul cardok (a híres #each cycle) -->
-        <img on:click={() => ShowPulls(index)} class={yourPullsVisibilityClass[index].name} src={yourPullsVisibilityClass[index].src} alt="rollCard">
+        <button class="invisibleButton" on:click={() => ShowPulls(index)}><img class={yourPullsVisibilityClass[index].name} src={yourPullsVisibilityClass[index].src} alt="rollCard"></button>
         {/each}
         </div>
         
@@ -281,6 +288,8 @@
         padding-inline: 0;
         margin-inline: 0;
         display: flex;  /* its styled for any number of pulls*/ 
+        align-items: center;
+        gap: 1.55vw;
         margin: auto;
         width: 80vw;
         margin-top: 23.137223vh;
@@ -321,6 +330,10 @@
         cursor: pointer;
     }
 
+    .invisibleButton{
+        background-color:rgba(0, 0, 0, 0);
+        border:none;
+    }
 
     /*BANNER SECTION */ 
     /* (kinda scuffed with the absolute postition but it works im 90% sure with all screen sizes... i think)*/ 

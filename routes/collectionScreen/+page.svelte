@@ -32,12 +32,12 @@
 </div>
 
 {#if selectedCollection == 1}
-    <div class = "cardcollection" id = "diakcollection">
-        <p>diakok</p>
-    </div>
-{:else if selectedCollection == 2}
     <div class = "cardcollection" id = "tanarcollection">
         <p>tanarok</p>
+    </div>
+{:else if selectedCollection == 2}
+    <div class = "cardcollection" id = "diakcollection">
+        <p>diakok</p>
     </div>
 {:else}
     <div class = "cardcollection" id = "spellcollection">
