@@ -140,7 +140,7 @@
 <div class="movingbg"></div>
 <!-- roll screen az #if-ben -->
 {#if isRolling}
-    <div id="rollScreen">
+    <div class="rollScreen">
         <div id="rollsDiv"></div>
 
         <div id="rollContainer">
@@ -245,15 +245,7 @@
 
     /*ROLL SCREEN SECTION */ 
     /* */ 
-    #rollScreen{    /*the grey-ish background of the roll screen */ 
-        z-index: 2;
-        width: 100vw;
-        height: 100vh;
-        background-color: rgba(44, 44, 63, 0.884);
-        position: absolute;
-        text-align: center;
-        
-    }
+    
     #rollsDiv{  /*the grey line, for visual purposes only kinda */ 
         background-color: rgba(44, 46, 67, 0.852);
         margin-top: 35vh;
