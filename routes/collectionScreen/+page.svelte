@@ -70,10 +70,6 @@
 
     let descriptionPage = false
 
-    while(true){
-        console.log(descriptionPage);
-    }
-
     function handleClick(name, description, health, attack, source, stars) {
         cardName = name
         cardDescription = description
@@ -107,13 +103,11 @@
 {/if}
 
 {#if descriptionPage}
-    <div class = "rollScreen">
-        <p>{cardName}</p>
-        <p>{cardDescription}</p>
-        <p>{cardHealth}</p>
-        <p>{cardAttack}</p>
-        <p>{cardStars}</p>
-    </div>
+    <p>{cardName}</p>
+    <p>{cardDescription}</p>
+    <p>{cardHealth}</p>
+    <p>{cardAttack}</p>
+    <p>{cardStars}</p>
 {/if}
 
 <a href="/gachaScreen">sepd ur money here</a><br>
