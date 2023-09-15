@@ -39,4 +39,28 @@ button {
   margin: 1rem;
   padding: 0.5rem;
 }
+
+:global(.rollScreen){    /*the grey-ish background of the roll screen */ 
+    z-index: 2;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(44, 44, 63, 0.884);
+    position: absolute;
+    text-align: center;
+}
+
+:global(#bannerChoosers) {   /*container foor the banner selector buttons */
+    text-align: center;
+}
+
+:global(.bannerIcon) {   /*the selectors itself */
+    height: 8vh;
+    width: 12.6vh;
+    background-size: 12.6vh 8vh;
+    margin: 10px;
+}
+:global(.bannerIcon:hover) {
+    transform: scale(1.06);
+    cursor: pointer;
+}
 </style>
