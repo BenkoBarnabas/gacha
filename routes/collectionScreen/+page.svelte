@@ -69,6 +69,9 @@
     let cardStars
 
     let descriptionPage = false
+    if(descriptionPage){
+        console.log(descriptionPage);
+    }
 
     function handleClick(name, description, health, attack, source, stars) {
         cardName = name
@@ -77,6 +80,7 @@
         cardAttack = attack
         cardSource = source
         cardStars = stars
+        descriptionPage = true
     }
 </script>
 
@@ -103,11 +107,13 @@
 {/if}
 
 {#if descriptionPage}
-    <p>{cardName}</p>
-    <p>{cardDescription}</p>
-    <p>{cardHealth}</p>
-    <p>{cardAttack}</p>
-    <p>{cardStars}</p>
+    <div></div>
+        <h2>{cardName}</h2>
+        <h3>{cardDescription}</h3>
+        <p>Health: {cardHealth}</p>
+        <p>Attack: {cardAttack}</p>
+        <p>{cardStars} stars</p>
+    </div>
 {/if}
 
 <a href="/gachaScreen">sepd ur money here</a><br>
