@@ -10,6 +10,7 @@
     import bannerBG from "../../lib/assets/gacha/bannerBg.png" //the banner picture is 3 layers, background, cover image, text
     import bannerText from "../../lib/assets/gacha/bannerText.png"
     import stars from "../../lib/assets/gacha/stars.png"
+    //import rainbowBG from "../../lib/assets/gacha/pullButton.png"
 
     //pull assets
     import rollCard from "../../lib/assets/gacha/rollBg.png" //the base card before revealing the pull content
@@ -35,6 +36,8 @@
     var whichBanner = true //if SN banner active true : false
     var isRolling = false //the rolls screen will be visible if true
     var rollIsSkippable = false //cant skip (close the roll window) without the animations fully loaded in, can cause bugs
+    var isHistory = false
+    var isBannerUp = true
 
     var pullNum //number of pulls 1/10
     var yourPulls= Array(10).fill(roll3star); //the standard pulls are always 3star, only changed if you get 4/5 stars,
@@ -53,6 +56,17 @@
     {id: 8, name: 'rollCard', src: rollCard},
     {id: 9, name: 'rollCard', src: rollCard}
     ];
+
+    var screenRatio = window.innerWidth/window.innerHeight;
+    var rollsCardSize = (100-(33.725554*screenRatio))/2
+
+    console.log("sRatio: "+screenRatio);
+    window.addEventListener('resize', ()=> {
+        screenRatio = window.innerWidth/window.innerHeight;
+        rollsCardSize = (100-(33.725554*screenRatio))/2
+        console.log("sRatio: "+screenRatio);
+    });
+
 
 
     //FUNCTIONS AND LOGIC
@@ -74,16 +88,16 @@
         for (let i = 0; i < num; i++) {
             if (Math.floor(Math.random() * 100) >= 95){ //returns a number between 0-100, 5% esély hogy 5*
                 yourPulls[i] = roll5star
-                lastPulls[i] = "5s"
+                lastPulls[i] = "Dr. Farkas Zoltán (5*)"
                 console.log("5 star");
             }
             else if (Math.floor(Math.random() * 100) >= 80){ //returns a number between 0-100, 20% esély hogy 4*
                 yourPulls[i] = roll4star
                 console.log("4 star");
-                lastPulls[i] = "4s"
+                lastPulls[i] = "Egy 4*-os karakter (4*)"
             }
             else {
-                lastPulls[i] = "3s"
+                lastPulls[i] = "Egy tábor (3*)"
             }
             console.log("+1");
             DoPullAnimation(i)
@@ -127,26 +141,29 @@
     function LoadHistory(){
         pullHistory = responsData.split(','); //updates res data
         console.log(pullHistory);
+        isHistory= true
+        isHistory = isHistory
+        isBannerUp = false
+        isBannerUp = isBannerUp
     }
-
-    function handleKeyDown(event, index) {
-    if (event.key === 'Enter' || event.key === ' ') {
-      // Trigger the same action as handleClick when Enter or Spacebar is pressed
-      ShowPulls(index);
+    function CloseHistoryScreen(){
+        isHistory = false
+        isHistory = isHistory
+        isBannerUp = true
+        isBannerUp = isBannerUp
     }
-  }
 
 </script>
-<div class="movingbg"></div>
+
 <!-- roll screen az #if-ben -->
 {#if isRolling}
-    <div class="rollScreen">
+    <div id="rollScreen">
         <div id="rollsDiv"></div>
 
-        <div id="rollContainer">
+        <div id="rollContainer" style='--cardSize:{rollsCardSize};'>
         {#each Array(pullNum) as _,index (yourPullsVisibilityClass[index].id)}
         <!-- a pul cardok (a híres #each cycle) -->
-        <button class="invisibleButton" on:click={() => ShowPulls(index)}><img class={yourPullsVisibilityClass[index].name} src={yourPullsVisibilityClass[index].src} alt="rollCard"></button>
+        <img on:click={() => ShowPulls(index)} class={yourPullsVisibilityClass[index].name} src={yourPullsVisibilityClass[index].src} alt="rollCard">
         {/each}
         </div>
         
@@ -157,14 +174,29 @@
     {/if}
 {/if}
 
+{#if isHistory}
+<div id="historyScreen">
+    <h1 id="historyText">Your pull history</h1>
+    <div id="historyScreenBG"></div>
+    <div id="historyContainer">
+    {#each pullHistory.reverse() as item}
+    <p>{item}</p>
+    {/each}
+    </div>
+
+    <button style="position: absolute; margin:0; z-index:4; left:91vw; top:10vh; border:none; background:none; font-size: 5vmin; color: black;" on:click={CloseHistoryScreen}>X</button>
+</div>
+{/if}
+
+
+{#if isBannerUp}
 <h1 style="margin-top:0; font-size:5vmin; text-align:center;">Gacha gacha gacha</h1>
 
 <div id="bannerChoosers">
     <!-- buttons to choose the active banner -->
-    <button style="background: URL({SNCover}), no-repeat; background-size:cover" class="bannerIcon" on:click={() => ActivateBanner(true)}></button>
-    <button style="background: URL({YCCover}), no-repeat; background-size:cover" class="bannerIcon" on:click={() => ActivateBanner(false)}></button>
+    <button style="background: URL({SNCover}), no-repeat; " class="bannerIcon" on:click={() => ActivateBanner(true)}></button>
+    <button style="background: URL({YCCover}), no-repeat;" class="bannerIcon" on:click={() => ActivateBanner(false)}></button>
 </div>
-
 
 <!-- the banner covers -->
 <div id="banner">  
@@ -199,35 +231,17 @@
         <button class="buttonStandardStyle" >Information</button><br>
         <button class="buttonStandardStyle" on:click={LoadHistory}>History</button>
     </div>
-
-    <a href="./">main menu here</a><br>
-    <a href="/collectionScreen">view your cards here</a>
 </div>
-
+{/if}
 
 <style>
 
-    :global(body){
-        width: 100%;
-        height: 100%;
-        margin: 0;
-        padding: 0;
-    }
-
-    .movingbg {  /*body styling format of svelte */ 
-        background: url(../../lib/assets/gacha/bacgkroundPanorama.png);
+    :global(body){  /*body styling format of svelte */ 
+        background: url(../../lib/assets/gacha/bacgkroundPanorama.png) no-repeat;
         font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;  /*font can be changed, it stays impact (for now) cos its defo not a genshin impact copy */
         animation: backgroundLoop 120s linear infinite;
-        overflow: hidden;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-size: cover; /* Adjust as needed: cover, contain, etc. */
-        background-repeat: no-repeat;
-        background-position: center center;
-        z-index: -3;
+        background-size: auto 100vh;
+        margin: 0;
     }
 
     @keyframes backgroundLoop {  
@@ -238,14 +252,88 @@
         background-position-x: right;
     }
     }
+    :global(html){
+        margin: 0;
+        padding: 0;
+        size: 0 0;
+    }
 
 
-    /*TWO MAJOR SCREENS, THE BANNER PICTURE AND THE ROLL SCREEN ITSELF */ 
+    /*HISTORY SCREEN SECTION*/
+    #historyScreen{    /*the grey-ish background of the roll screen */ 
+        z-index: 2;
+        width: 100vw;
+        height: 100vh;
+        text-align: center;
+        position: absolute;
+        padding: 0;
+    }
+    #historyScreenBG{
+        width: 60vw; /* Set the desired width of your container */
+        height: 80vh; /* Set the desired height of your container */
+        background-color: rgba(44, 46, 67, 0.852);
+        margin-top: 10vh;
+        margin-left: 20vw;
+        position:absolute;
+        z-index: 0;
+    }
+    #historyContainer{   /*a flexbox containing all the cards */ 
+        z-index: 2;
+        width: 50vw; /* Set the desired width of your container */
+        height: 57vh; /* Set the desired height of your container */
+
+        border: 1.2vw solid transparent; /* Set the border width and make it transparent */
+        border-image-source: url('../../lib/assets/gacha/rainBorder.png');
+        border-image-slice: 10; /* Adjust the value as needed */
+        border-image-repeat: round; /* Repeat the border image */
+        border-radius: 10px;
+
+        overflow: auto;
+        margin-top: 24vh;
+        margin-left: auto;
+        margin-right:auto;
+
+        background: url(../../lib/assets/gacha/CrystalTexture.png) no-repeat;
+        background-size: cover;
+
+        animation: hueChange 5s linear infinite;
+
+        scrollbar-color: #dc1515 #fc8989;
+    }
+    #historyText{
+        position:absolute;
+        top: 10vh;
+    }
+
+        /* width */
+    ::-webkit-scrollbar {
+    width: 20px;
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+    border-radius: 10px;
+    }
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+    background: rgb(241, 99, 186);
+    border-radius: 10px;
+    border:1px solid black
+    }
+
 
 
     /*ROLL SCREEN SECTION */ 
     /* */ 
-    
+    #rollScreen{    /*the grey-ish background of the roll screen */ 
+        z-index: 2;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(44, 44, 63, 0.884);
+        position: absolute;
+        text-align: center;
+    }
     #rollsDiv{  /*the grey line, for visual purposes only kinda */ 
         background-color: rgba(44, 46, 67, 0.852);
         margin-top: 35vh;
@@ -280,11 +368,9 @@
         padding-inline: 0;
         margin-inline: 0;
         display: flex;  /* its styled for any number of pulls*/ 
-        align-items: center;
-        gap: 1.55vw;
         margin: auto;
         width: 80vw;
-        margin-top: 23.137223vh;
+        margin-top: calc(var(--cardSize)*1vh);
     }
 
     .rollCard{  /*the pull card itself, blank version */ 
@@ -322,10 +408,6 @@
         cursor: pointer;
     }
 
-    .invisibleButton{
-        background-color:rgba(0, 0, 0, 0);
-        border:none;
-    }
 
     /*BANNER SECTION */ 
     /* (kinda scuffed with the absolute postition but it works im 90% sure with all screen sizes... i think)*/ 
@@ -402,5 +484,21 @@
         top: 0;
         width: 66vw;
         animation: hueChange 1s linear infinite;
+    }
+
+
+    #bannerChoosers {   /*container foor the banner selector buttons */
+        text-align: center;
+    }
+
+    .bannerIcon {   /*the selectors itself */
+        height: 8vh;
+        width: 12.6vh;
+        background-size: 12.6vh 8vh;
+        margin: 10px;
+    }
+    .bannerIcon:hover {
+        transform: scale(1.06);
+        cursor: pointer;
     }
 </style>
