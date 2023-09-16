@@ -247,6 +247,11 @@
 </div>
 {/if}
 
+<div class="links">
+    <a href="/collectionScreen">view your cards here</a>
+    <a href="./">main menu here</a>
+</div>
+
 <style>
 
     :global(body){  /*body styling format of svelte */ 
