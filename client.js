@@ -18,7 +18,6 @@ export function sendData(columnName,dataToSend,id,tableName) { //export == publi
     })
     .then(response => { //this .then(respons...) is again just syntax and costums, doesnt really matter that much in POST
         if (response.ok) {
-        console.log("data sent: "+ dataToSend);
         } else {
         throw new Error('Failed to send data to server');
         }
@@ -44,19 +43,15 @@ export function getData(columnName,id,tableName) { //i dont really understand th
     }
   })
   .then(data => {
-    console.log(data.data);
     // Handle the data received from the server
     if (id == "0"){
       responsData = data.data
-      console.log(responsData);
     }
     else if (columnName == "*"){
       responsData = data.data[0];
-      console.log(responsData);
     }
     else {
       responsData = data.data[0][columnName];
-      console.log(responsData);
     }
     // Access the message sent by the server
     //return responsData;

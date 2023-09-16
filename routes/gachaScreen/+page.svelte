@@ -1,7 +1,10 @@
 <script>
 
     //IMPORT ALL THE NECCESARY ASSETS HERE
+    import * as Cards from "../../card"
 
+    console.log(Cards.tanarCardsArr);
+   
     //banner assets
     import SN from "../../lib/assets/gacha/SeniorWisdom.png" //senior wisdom banner cover, Farki (can be cahnged)
     import YC from "../../lib/assets/gacha/YouthfulCuriosity.png" //yuouthful curiosity banner cover, zénó (can be changed)
@@ -247,10 +250,6 @@
 </div>
 {/if}
 
-<div class="links">
-    <a href="/collectionScreen">view your cards here</a>
-    <a href="./">main menu here</a>
-</div>
 
 <style>
 

@@ -1,5 +1,5 @@
 <script>
-  import {sendData, getData, DeleteAll, AddEmptyRow, responsData} from "../client.js" //we import all the functions
+  import {sendData, getData, DeleteAll, AddEmptyRow} from "../client.js" //we import all the functions
 
   let dataToSend = ["alma","cica"]
   let selectedColumn = "history"
