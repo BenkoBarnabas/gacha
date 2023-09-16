@@ -67,7 +67,12 @@
         console.log("sRatio: "+screenRatio);
     });
 
+    var screenPixels = window.innerWidth
+    var bgWidth = screenPixels + 7498
 
+    function GoToPage(filePath) {
+        window.location.href = filePath; // Navigate to the parent directory
+    }
 
     //FUNCTIONS AND LOGIC
     //
@@ -154,6 +159,7 @@
     }
 
 </script>
+<div style='--bgWidth:{bgWidth};'></div>
 
 <!-- roll screen az #if-ben -->
 {#if isRolling}
@@ -192,11 +198,18 @@
 {#if isBannerUp}
 <h1 style="margin-top:0; font-size:5vmin; text-align:center;">Gacha gacha gacha</h1>
 
-<div id="bannerChoosers">
-    <!-- buttons to choose the active banner -->
-    <button style="background: URL({SNCover}), no-repeat; " class="bannerIcon" on:click={() => ActivateBanner(true)}></button>
-    <button style="background: URL({YCCover}), no-repeat;" class="bannerIcon" on:click={() => ActivateBanner(false)}></button>
+<div id="header">
+    <div id="backArrowCont">
+        <button class="buttonArrowStyle" id="backArrow" on:click={() => GoToPage("../")}>Back</button>
+    </div>
+    
+    <div id="bannerChoosers">
+        <!-- buttons to choose the active banner -->
+        <button style="background: URL({SNCover}), no-repeat; " class="bannerIcon" on:click={() => ActivateBanner(true)}></button>
+        <button style="background: URL({YCCover}), no-repeat;" class="bannerIcon" on:click={() => ActivateBanner(false)}></button>
+    </div>
 </div>
+
 
 <!-- the banner covers -->
 <div id="banner">  
@@ -240,7 +253,7 @@
         background: url(../../lib/assets/gacha/bacgkroundPanorama.png) no-repeat;
         font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;  /*font can be changed, it stays impact (for now) cos its defo not a genshin impact copy */
         animation: backgroundLoop 120s linear infinite;
-        background-size: auto 100vh;
+        background-size: var(--bgWidth);
         margin: 0;
     }
 
@@ -468,6 +481,25 @@
         cursor: pointer;
     }
 
+    .buttonArrowStyle{ 
+        background: url(../../lib/assets/gacha/rainArrow.png) no-repeat;
+        background-size: 100%;
+        border:none;
+        width: 10vw;
+        height: 3vw;
+        text-align: center;
+        font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+        font-size: 2vmin;
+        color: rgb(103, 102, 91);
+    }
+
+    .buttonArrowStyle:hover{
+        transform: scale(1.06);
+        animation: hueChange 1s linear infinite;
+        cursor: pointer;
+    }
+
+
 
     @keyframes hueChange {  /*weeeeeeeeeeeeeeeeee */ 
     0% {
@@ -489,6 +521,12 @@
 
     #bannerChoosers {   /*container foor the banner selector buttons */
         text-align: center;
+        width: 40vw;
+        margin: auto;
+    }
+    #backArrowCont {
+        width: 10vw;
+        float: left;
     }
 
     .bannerIcon {   /*the selectors itself */
@@ -500,5 +538,10 @@
     .bannerIcon:hover {
         transform: scale(1.06);
         cursor: pointer;
+    }
+
+    #backArrow {
+        margin-left: 3vw;
+        margin-top: 1vw;
     }
 </style>
