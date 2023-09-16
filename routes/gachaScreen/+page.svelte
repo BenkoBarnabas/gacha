@@ -233,6 +233,8 @@
     </div>
 </div>
 {/if}
+<a href="/collectionScreen">view your cards here</a>
+<a href="./">main menu</a>
 
 <style>
 
