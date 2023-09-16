@@ -69,16 +69,18 @@
     let cardAttack
     let cardSource
     let cardStars = ""
+    let cardCost
 
     let descriptionPage = false
 
-    function handleClick(name, description, health, attack, source, stars) {
+    function handleClick(name, description, health, attack, source, stars, cost) {
         cardName = name
         cardDescription = description
         cardHealth = health
         cardAttack = attack
         cardSource = source
         cardStars = ""
+        cardCost = cost
         
         for(let i = 0; i < stars; i++){
             cardStars = cardStars + "*"
@@ -97,30 +99,34 @@
 </div>
 
 {#if selectedCollection == 1}
+    <h2>Tanárok</h2>
     <div class = "cardcollection" id = "tanarcollection">
         {#each tanarCardsArr as card}
-            <button class = "cardButton" style="background-image: url({card.source})" on:click={() => handleClick(card.name, card.description, card.health, card.attack, card.source, card.stars)}></button>
+            <button class = "cardButton" style="background-image: url({card.source})" on:click={() => handleClick(card.name, card.description, card.health, card.attack, card.source, card.stars, card.cost)}></button>
         {/each}
     </div>
 {:else if selectedCollection == 2}
+    <h2>Diákok</h2>
     <div class = "cardcollection" id = "diakcollection">
         {#each diakCardsArr as card}
-            <button class = "cardButton" style="background-image: url({card.source})" on:click={() => handleClick(card.name, card.description, card.health, card.attack, card.source, card.stars)}></button>
+            <button class = "cardButton" style="background-image: url({card.source})" on:click={() => handleClick(card.name, card.description, card.health, card.attack, card.source, card.stars, card.cost)}></button>
         {/each}
     </div>
 {/if}
 
 {#if descriptionPage}
     <div class = "bg">
-        <h2>{cardName} {cardStars}</h2>
-        <h3>{cardDescription}</h3>
+        <h3>{"(" + cardCost + ")"} {cardName} {cardStars}</h3>
+        <h4>{cardDescription}</h4>
         <p>Health: {cardHealth}</p>
         <p>Attack: {cardAttack}</p>
     </div>
 {/if}
 
-<a href="/gachaScreen">sepd ur money here</a><br>
-<a href="./">main menu here</a>
+<div class = "links">
+    <a href="/gachaScreen">sepd ur money here</a><br>
+    <a href="./">main menu here</a>
+</div>
 
 <style>
     .cardButton{
@@ -154,7 +160,15 @@
 
     .bg{
         background-color: rgba(224, 123, 157, 0.5);
-        padding:10px;
-        margin:10px;
+        padding-inline:20px;
+        padding-block: 10px;
+        margin:50px;
+    }
+
+    h2{
+        margin-block: 1vh;
+        padding-inline:20px;
+        text-align: center;
+        background-color:rgba(255, 255, 255, 0.2)
     }
 </style>

@@ -21,8 +21,10 @@
 <button on:click={() => AddEmptyRow(tableName)}>Add empty row</button>
 </main>
 
-<a href="/gachaScreen">sepd ur money here</a><br>
-<a href="/collectionScreen">view your cards here</a>
+<div class = "links">
+  <a href="/gachaScreen">sepd ur money here</a><br>
+  <a href="/collectionScreen">view your cards here</a>
+</div>
 
 <style>
 main {
@@ -38,6 +40,12 @@ input,
 button {
   margin: 1rem;
   padding: 0.5rem;
+}
+
+:global(.links){
+    position:absolute;
+    top:5vh;
+    left:88vw;
 }
 
 :global(.rollScreen){    /*the grey-ish background of the roll screen */ 
