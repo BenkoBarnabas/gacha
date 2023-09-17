@@ -1,15 +1,15 @@
 <script>
-
     //IMPORT ALL THE NECCESARY ASSETS HERE
     import * as Cards from "../../card"
-
-    console.log(Cards.tanarCardsArr);
    
     //banner assets
     import SN from "../../lib/assets/gacha/SeniorWisdom.png" //senior wisdom banner cover, Farki (can be cahnged)
     import YC from "../../lib/assets/gacha/YouthfulCuriosity.png" //yuouthful curiosity banner cover, zénó (can be changed)
     import SNCover from "../../lib/assets/gacha/SWCover.png" //cover for the buttons for switching banners
     import YCCover from "../../lib/assets/gacha/YCCover.png" //^^^
+    import featured4S from "../../lib/assets/collection/tanar/Farkas.png"
+    
+
     import bannerBG from "../../lib/assets/gacha/bannerBg.png" //the banner picture is 3 layers, background, cover image, text
     import bannerText from "../../lib/assets/gacha/bannerText.png"
     import stars from "../../lib/assets/gacha/stars.png"
@@ -59,7 +59,7 @@
 
     //VARIABLE DECLARATION
     //
-    var whichBanner = true //if SW banner active true : false
+    var whichBanner = false //if SW banner active true : false
     var isRolling = false //the rolls screen will be visible if true
     var rollIsSkippable = false //cant skip (close the roll window) without the animations fully loaded in, can cause bugs
     var isHistory = false
@@ -106,10 +106,36 @@
     return new Promise((resolve) => setTimeout(resolve, milliseconds));
     }
 
+    var URnameText = ""
+    var i = 0;
     function ActivateBanner(param){ //param is true/false
+        
+        featuredAnimationClass.fill("featuredCards")
         whichBanner = param
         whichBanner = whichBanner //svelte only updates and #if statement that uses a variable when its declared again, weirdge
+
+        for (let i =0; i<6; i++){ //animatie the featured characters on the side when banner changes
+            (async () => {
+        await wait((i+1)*100);
+            FeaturedAnimation(i)
+        })();
+        }
+
     }
+
+    var featuredAnimationClass = Array(5).fill("featuredCards")
+    function FeaturedAnimation(i){
+        (async () => {
+        await wait((i+1)*100);
+        featuredAnimationClass[i] = "featuredCharsAnimClass"
+        })();
+    }
+    ActivateBanner(false)
+
+    function RandomFeatured(rarity){
+        return rarity[Math.floor(Math.random() * rarity.length)].source
+    }
+
 
     function CalculatePulls(num){ //loads the pull cards and already calculates their content
         isRolling = true
@@ -192,6 +218,7 @@
             pity5S += 1
             console.log("4pity: "+pity4S+" 5pity: "+pity5S+" URpity: "+pityUR);
             DoPullAnimation(i)
+            DoShineAnimation(i,yourCard.stars)
             
         }
         sendData("history",pullHistory+","+String(lastPulls),userId,"rolls")
@@ -210,11 +237,18 @@
     function DoPullAnimation(i) {
         (async () => {
         await wait((i+1)*100);
-        lastPullBatchVisibilityClass[i].name = "rollCardVisible"
+        lastPullBatchVisibilityClass[i].name = "rollCardVisible shine-effect-on"
         })();
         //az #each cycleben minden card class-a eredetiled rollCard, egy 0 opacity de stylized <img>
         //az async function 100ms késéssel mindegyik #each img-et (pullt) "rollCardVisible" classra állítja
         //ennek az opcaity-je már 1 így meg fognak jelenni a kártyák egymás után, +egy animáció is elindul mikor ebbe a class-ba lépnek
+    }
+    function DoShineAnimation(i,rarity) {
+        (async () => {
+        await wait((i+1)*100);
+        lastPullBatchVisibilityClass[i].name = "rollCardVisible rollAnim" + rarity
+        console.log("class set");
+        })();
     }
 
     function ClosePull(){ //sets everything to their base value so the animation and the pull reveal could play again next time
@@ -267,7 +301,7 @@
         <div id="rollContainer" style='--cardSize:{rollsCardSize};'>
         {#each Array(pullNum) as _,index (lastPullBatchVisibilityClass[index].id)}
         <!-- a pul cardok -->
-        <img on:click={() => ShowPulls(index)} class={lastPullBatchVisibilityClass[index].name} src={lastPullBatchVisibilityClass[index].src} alt="rollCard">
+        <div on:click={() => ShowPulls(index)} class="{lastPullBatchVisibilityClass[index].name} shine-effect" style='--rollsrc: url({lastPullBatchVisibilityClass[index].src});'></div>
         {/each}
         </div>
 
@@ -332,11 +366,44 @@
     <!-- the second layer of the bannerPic, featured banner character -->
     <!-- a banner cover zénó/farkas + a hozzáillő banner name (senior wisdom/youthful curiosity) (tanár/diák banner) -->
     {#if whichBanner}
+
         <h1 class ="bannerName"><span style="color: brown">Senior</span><br> Wisdom</h1>
-        <img class="chracterPic" src={SN} alt="Senior Wisdom"/>
+        <img class="characterPic" src={SN} alt="Senior Wisdom"/>
+        <h2 class="featuredName">Dobby (UR)</h2>
+
+        <div class="featuredCards">
+            {#each Array(3) as char,index}
+                <div style="width: 6vw; position:absolute; left:{((2**index)*4)-5}vw; top:{9-(index+1)*3}vw; transform: rotate({-20+(index*20)}deg);">
+                    <img style="width: 6vw;" class="{featuredAnimationClass[index]}" src={RandomFeatured(Cards.FiveStarTanars)} alt="featured4S">
+                </div> 
+            {/each}
+            <br>
+            {#each Array(2) as char,index}
+                <div style="width: 5vw; position:absolute; left:{10+index*4}vw; top:{3+9-(index+1)*3}vw; transform: rotate({-20+(index*30)}deg);">
+                    <img style="width: 5vw;" class={featuredAnimationClass[index]} src={RandomFeatured(Cards.FourStarTanars)} alt="featured4S">
+                </div> 
+            {/each}
+        </div>
+
     {:else}
+
         <h1 class ="bannerName"><span style="color: blue">Youthful</span><br> Curiosity</h1>
-        <img class="chracterPic" src={YC} alt="Youthful Curiosity"/>
+        <img class="characterPic" src={YC} alt="Youthful Curiosity"/>
+        <h2 class="featuredName">Zénó (UR)</h2>
+
+        <div class="featuredCards">
+            {#each Array(3) as char,index}
+                <div style="width: 6vw; position:absolute; left:{((2**index)*4)-5}vw; top:{9-(index+1)*3}vw; transform: rotate({-20+(index*20)}deg);">
+                    <img style="width: 6vw;" class={featuredAnimationClass[index]} src={RandomFeatured(Cards.FiveStarDiaks)} alt="featured4S">
+                </div> 
+            {/each}
+            <br>
+            {#each Array(2) as char,index}
+                <div style="width: 5vw; position:absolute; left:{10+index*4}vw; top:{3+9-(index+1)*3}vw; transform: rotate({-20+(index*30)}deg);">
+                    <img style="width: 5vw;" class={featuredAnimationClass[index]} src={RandomFeatured(Cards.FourStarDiaks)} alt="featured4S">
+                </div> 
+            {/each}
+        </div>
     {/if}
 
     <!-- the third layer of the bannerPic, the white background -->
@@ -358,8 +425,17 @@
 </div>
 {/if}
 
-
 <style>
+
+:root {
+    --blueAnim: url('../../lib/assets/gacha/blueAnimation.png');
+  }
+    .shine-effect {
+    padding: 10px 20px;
+    position: relative;
+    overflow: hidden;
+    transition: background-color 0.3s ease-in-out;
+}
 
     :global(body){  /*body styling format of svelte */ 
         background: url(../../lib/assets/gacha/bacgkroundPanorama.png) no-repeat;
@@ -460,7 +536,7 @@
     100% {
         background-position: 100% 50%;
     }
-}
+    }
 
 
 
@@ -534,37 +610,162 @@
 
     .rollCard{  /*the pull card itself, blank version */ 
         width: 6vw;
+        background-size: 6vw 0vw;
         margin: auto;
         padding: 0;
         opacity: 0;
+        background-image: var(--rollsrc);
     }
     .rollCardVisible {  /*the pull card itself, visible version */ 
         width: 6vw;
         margin: auto;
         padding: 0;
         opacity: 0;
-        animation: pullAnimation .25s linear forwards;
-        animation-delay: .3s;
         z-index: 2; 
+        transition: filter 0.3s ease;
+        background-image: var(--rollsrc);
+    }
+    .rollAnim3{
+        animation-name: pullAnimation, blueAnim;
+        animation-duration: .25s, 1s; /* Adjust timing as needed */
+        animation-delay: .3s, .5s;
+        animation-fill-mode: forwards, forwards;
+    }
+    .rollAnim4{
+        animation-name: pullAnimation, purpleAnim;
+        animation-duration: .25s, 1s; /* Adjust timing as needed */
+        animation-delay: .3s, .5s;
+        animation-fill-mode: forwards, forwards;
+    }
+    .rollAnim5{
+        animation-name: pullAnimation, orangeAnim;
+        animation-duration: .25s, 1s; /* Adjust timing as needed */
+        animation-delay: .3s, .5s;
+        animation-fill-mode: forwards, forwards;
+    }
+    .rollAnim6{
+        animation-name: pullAnimation, rainbowAnim;
+        animation-duration: .25s, 1s; /* Adjust timing as needed */
+        animation-delay: .3s, .5s;
+        animation-fill-mode: forwards, forwards;
     }
 
     @keyframes pullAnimation {  /*the animation for the pull cards */ 
     0% {
         height: 0vw;
         opacity: 0;
+        background-size: 6vw 0vw;
     }
     30% {
         height: 16.8627777vw;
+        background-size: 6vw 16.8627777vw;
     }
     100% {
         height: 33.7255554vw;
+        background-size: 6vw 33.7255554vw;
         opacity: 1;
     }
     }
+    @keyframes blueAnim {
+        0% {
+            background: url("../../lib/assets/gacha/rollBg.png");
+            height: 33.7255554vw;
+            background-size: 6vw 33.7255554vw;
+            opacity: 1;
+        }
+        50% {
+            background: url("../../lib/assets/gacha/blueAnimation.png");
+            height: 33.7255554vw;
+            background-size: 6vw 33.7255554vw;
+            opacity: 1;
+        }
+        100% {
+            height: 33.7255554vw;
+            background-size: 6vw 33.7255554vw;
+            opacity: 1;
+        }
+    }
+    @keyframes purpleAnim {
+        0% {
+            background: url("../../lib/assets/gacha/rollBg.png");
+            height: 33.7255554vw;
+            background-size: 6vw 33.7255554vw;
+            opacity: 1;
+        }
+        50% {
+            background: url("../../lib/assets/gacha/purpleAnimation.png");
+            height: 33.7255554vw;
+            background-size: 6vw 33.7255554vw;
+            opacity: 1;
+        }
+        100% {
+            height: 33.7255554vw;
+            background-size: 6vw 33.7255554vw;
+            opacity: 1;
+        }
+    }
+    @keyframes orangeAnim {
+        0% {
+            background: url("../../lib/assets/gacha/rollBg.png");
+            height: 33.7255554vw;
+            background-size: 6vw 33.7255554vw;
+            opacity: 1;
+        }
+        50% {
+            background: url("../../lib/assets/gacha/orangeAnimation.png");
+            height: 33.7255554vw;
+            background-size: 6vw 33.7255554vw;
+            opacity: 1;
+        }
+        100% {
+            height: 33.7255554vw;
+            background-size: 6vw 33.7255554vw;
+            opacity: 1;
+        }
+    }
+    @keyframes rainbowAnim {
+        0% {
+            background: url("../../lib/assets/gacha/rollBg.png");
+            height: 33.7255554vw;
+            background-size: 6vw 33.7255554vw;
+            opacity: 1;
+        }
+        50% {
+            background: url("../../lib/assets/gacha/rainbowAnimation.png");
+            height: 33.7255554vw;
+            background-size: 6vw 33.7255554vw;
+            opacity: 1;
+        }
+        100% {
+            height: 33.7255554vw;
+            background-size: 6vw 33.7255554vw;
+            opacity: 1;
+        }
+    }
+
     .rollCardVisible:hover{
         transform: scale(1.1);
-        filter: hue-rotate(-10deg);
+        filter: brightness(120%);
         cursor: pointer;
+    }
+    /* the shine animation, very cool */
+    .shine-effect::before {
+    content: "";
+    position: absolute;
+    top: -100%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, transparent, rgb(255, 255, 255), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    pointer-events: none;
+    }
+
+    .shine-effect-on::before {
+        top: 100%;
+        opacity: 1;
+        transition: top 0.6s ease-in-out, opacity 0.6s ease-in-out; /* Slower animation for top-down shine */
     }
 
 
@@ -577,18 +778,62 @@
         width: 100vw;
         margin-top: 4.5vh;
     }
-    .chracterPic {  /*banner featured cover pic */ 
+    .characterPic {  /*banner featured cover pic */ 
         position: absolute;
-        left: 35vw;
+        animation: characterPicAnim 1s ease-out forwards;
         top: 5vh;
         z-index: -1;
         width: 22vw;
     }
+
+    @keyframes characterPicAnim {
+        0% {
+            left: 32vw;
+            opacity: 0;
+        }
+        100% {
+            opacity: 1;
+            left: 36vw;
+        }
+    }
+    .featuredCards{
+        position: absolute;
+        top: 5vh;
+        width: 22vw;
+        left: 60vw;
+        opacity: 1;
+    }
+    .featuredCharsAnimClass{
+        animation: FadeIn 1s forwards;
+    }
+    @keyframes FadeIn {
+        0% {
+            margin-bottom: 5vw;
+            opacity: 0;
+        }
+        100% {
+            margin-bottom: 0;
+            opacity: 1;
+        }
+    }
     .bannerName {   /*banner name */ 
         position: absolute;
         left: 22vw;
-        top: 3vh;
+        top: 1.5vw;
         font-size: 5vmin;
+    }
+    .featuredName {   /*banner name */ 
+        position: absolute;
+        left: 48.9vw;
+        top: 21.2vw;
+        font-size: 3.5vmin;
+        background-image: linear-gradient(90deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        animation: hueChange 5s linear infinite;
+        font-weight: 100;
+        letter-spacing: .1vw;
     }
     .bannerBg {   /* banner background*/ 
         position: absolute;
@@ -602,7 +847,7 @@
     #pullButtonDiv{    /*a container for the two buttons (so i dont have to position them separatly + easier mass production for future buttons) */ 
         position: absolute;
         left:70vw;
-        top: 35vh;
+        top: 22vw;
         
     }
     #infoButtonDiv{

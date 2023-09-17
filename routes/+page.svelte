@@ -1,12 +1,12 @@
 <script>
   import {sendData, getData, DeleteAll, AddEmptyRow} from "../client.js" //we import all the functions
+  import pullCard from "../lib/assets/gacha/rollBg.png"
 
   let dataToSend = ""
   let selectedColumn = "history"
   let id = "1"
   let tableName = "rolls"
 
-  //console.log("log: " + getData("history","1","rolls"));
 </script>
 
 <main>
@@ -21,12 +21,15 @@
 <button on:click={() => AddEmptyRow(tableName)}>Add empty row</button>
 </main>
 
+
 <div class = "links">
   <a href="/gachaScreen">sepd ur money here</a><br>
   <a href="/collectionScreen">view your cards here</a>
 </div>
 
+
 <style>
+
 main {
   text-align: center;
   padding: 2rem;

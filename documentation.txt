@@ -8,6 +8,14 @@
     major system change: v(x+1).y
     visuals/design change: vx.(y+1)
 
+
+    9.17 | beta gacha (v3.2)
+
+    -changes w gacha page
+
+    -bunch of visuals added
+    -no system change 
+
     
     9.16 | beta gacha (v3.1)
 
