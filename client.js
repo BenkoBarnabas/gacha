@@ -4,6 +4,10 @@ let ip = "localhost";
 let userId = "1" //ph obvs
 
 export let responsData = ""
+export var Cpity4S = 0 // C = client
+export var Cpity5S = 0
+export var CpityUR = 0
+
 getData("history",userId,"rolls");
 
 
@@ -51,7 +55,18 @@ export function getData(columnName,id,tableName) { //i dont really understand th
       responsData = data.data[0];
     }
     else {
-      responsData = data.data[0][columnName];
+      if(columnName == "pity4S"){
+        Cpity4S = data.data[0][columnName];
+      }
+      else if(columnName == "pity5S"){
+        Cpity5S = data.data[0][columnName];
+      }
+      else if(columnName == "pityUR"){
+        CpityUR = data.data[0][columnName];
+      }
+      else { //nagyon csúnya but thats literally the best i can do w the unconsistent respons time of the server :(
+        responsData = data.data[0][columnName];
+      }
     }
     // Access the message sent by the server
     //return responsData;

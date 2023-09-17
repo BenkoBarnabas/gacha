@@ -17,37 +17,60 @@
 
     //pull assets
     import rollCard from "../../lib/assets/gacha/rollBg.png" //the base card before revealing the pull content
-    import roll5star from "../../lib/assets/gacha/roll5star.png" //5
-    import roll4star from "../../lib/assets/gacha/roll4star.png" //4
-    import roll3star from "../../lib/assets/gacha/roll3star.png" //3 star content cover (beta)
 
     //server functions, db control
-    import {sendData, getData, responsData} from "../../client"
+    import {sendData, getData, responsData, Cpity4S, Cpity5S, CpityUR} from "../../client"
+
+
+    //get the shit u need fomr the database 
 
     let userId = "1" //ph obvs
 
-    getData("history",userId,"rolls") //the one can be adjusted later depending on the ip of the PC (the user who playing)
+    var pity4S = 0
+    var pity5S = 0
+    var pityUR = 0
     let pullHistory = ""
+
+
+    getData("history",userId,"rolls") //the one can be adjusted later depending on the ip of the PC (the user who playing)
+    console.log("1. get data");
     setTimeout(() => {
         pullHistory = responsData.split(',');
     }, 1000);
     //^^^when u inicialize(? im tired) the gacha screen ull ave the history immidiately kinda
+    getData("pity4S",userId,"rolls") 
+    setTimeout(() => {
+        pity4S = Cpity4S
+        console.log(pity4S);
+        
+    }, 1000);
+    getData("pity5S",userId,"rolls") 
+    setTimeout(() => {
+        pity5S = Cpity5S
+        console.log(pity5S);
+        
+    }, 1000);
+    getData("pityUR",userId,"rolls") 
+    setTimeout(() => {
+        pityUR = CpityUR
+        console.log(pityUR);
+    }, 1000);
 
 
     //VARIABLE DECLARATION
     //
-    var whichBanner = true //if SN banner active true : false
+    var whichBanner = true //if SW banner active true : false
     var isRolling = false //the rolls screen will be visible if true
     var rollIsSkippable = false //cant skip (close the roll window) without the animations fully loaded in, can cause bugs
     var isHistory = false
     var isBannerUp = true
 
     var pullNum //number of pulls 1/10
-    var yourPulls= Array(10).fill(roll3star); //the standard pulls are always 3star, only changed if you get 4/5 stars,
+    var lastPullBatch= Array(10).fill("a"); //the standard pulls are always 3star, only changed if you get 4/5 stars,
     //                                          contains the name of the asset for the 3star pull
     var lastPulls = []
 
-    var yourPullsVisibilityClass = [ //used in #each cycle for all the varibales that will be relevant for the individual pulls, id, classname (for animation), src image
+    var lastPullBatchVisibilityClass = [ //used in #each cycle for all the varibales that will be relevant for the individual pulls, id, classname (for animation), src image
     {id: 0, name: 'rollCard', src: rollCard},
     {id: 1, name: 'rollCard', src: rollCard},
     {id: 2, name: 'rollCard', src: rollCard},
@@ -92,37 +115,102 @@
         isRolling = true
         setTimeout(() => {rollIsSkippable = true}, num*100+700); //deleyed close button pops up
         pullNum = num
+        if(whichBanner){
+            var bannerName = "Senior Wisdom"
+        }
+        else {
+            var bannerName = "Youthful Curiosity"
+        }
 
         for (let i = 0; i < num; i++) {
-            if (Math.floor(Math.random() * 100) >= 95){ //returns a number between 0-100, 5% esély hogy 5*
-                yourPulls[i] = roll5star
-                lastPulls[i] = "Dr. Farkas Zoltán (5*)"
-                console.log("5 star");
+            if (Math.floor(Math.random() * 100) >= 98 || pity5S == 50){ //returns a number between 0-100, 2% esély hogy 5*
+
+                if (Math.floor(Math.random() * 100) >= 80 || pityUR == 3){ //ha 5*-t kapsz 20% esély hogy UR lesz belőle
+
+                    if (whichBanner){  //tanar banner active
+                        var yourCard = Cards.URTanars[Math.floor(Math.random() * Cards.URTanars.length)] //gives back the object of yoour card
+                    }
+                    else{
+                        var yourCard = Cards.URDiaks[Math.floor(Math.random() * Cards.URDiaks.length)]
+                    }
+
+                    lastPullBatch[i] = yourCard.gachaSRC
+
+                    lastPulls[i] = yourCard.name + " (UR)"+":"+yourCard.type+":"+bannerName
+                    console.log("u got:"+lastPulls[i]);
+                    console.log("UR woooooooooooo");
+                    pityUR = 0
+                    pity5S = 0
+                }
+                else{
+                    if (whichBanner){  //tanar banner active
+                    var yourCard = Cards.FiveStarTanars[Math.floor(Math.random() * Cards.FiveStarTanars.length)] //gives back the object of yoour card
+                    }
+                    else{
+                        var yourCard = Cards.FiveStarDiaks[Math.floor(Math.random() * Cards.FiveStarDiaks.length)]
+                    }
+
+                    lastPullBatch[i] = yourCard.gachaSRC
+
+                    lastPulls[i] = yourCard.name + " (" + yourCard.stars + "*)"+":"+yourCard.type+":"+bannerName
+                    console.log("u got:"+lastPulls[i]);
+                    console.log("5 star");
+                    pityUR += 1
+                    pity5S = 0
+                }
             }
-            else if (Math.floor(Math.random() * 100) >= 80){ //returns a number between 0-100, 20% esély hogy 4*
-                yourPulls[i] = roll4star
+            else if (Math.floor(Math.random() * 100) >= 85 || pity4S == 10){ //returns a number between 0-100, 15% esély hogy 4*
+                if (whichBanner){  //tanar banner active
+                    var yourCard = Cards.FourStarTanars[Math.floor(Math.random() * Cards.FourStarTanars.length)] //gives back the object of yoour card
+                }
+                else{
+                    var yourCard = Cards.FourStarDiaks[Math.floor(Math.random() * Cards.FourStarDiaks.length)]
+                }
+
+                lastPullBatch[i] = yourCard.gachaSRC
+                
+                lastPulls[i] = yourCard.name + " (" + yourCard.stars + "*)"+":"+yourCard.type+":"+bannerName
+                console.log("u got:"+lastPulls[i]);
                 console.log("4 star");
-                lastPulls[i] = "Egy 4*-os karakter (4*)"
+                pity4S = 0
             }
-            else {
-                lastPulls[i] = "Egy tábor (3*)"
+            else { //3*
+                if (whichBanner){  //tanar banner active
+                    var yourCard = Cards.ThreeStarTanars[Math.floor(Math.random() * Cards.ThreeStarTanars.length)] //gives back the object of yoour card
+                }
+                else{
+                    var yourCard = Cards.ThreeStarDiaks[Math.floor(Math.random() * Cards.ThreeStarDiaks.length)]
+                }
+                
+                lastPulls[i] = yourCard.name + " (" + yourCard.stars + "*)"+":"+yourCard.type+":"+bannerName
+
+                lastPullBatch[i] = yourCard.gachaSRC
+                console.log("u got:"+lastPulls[i]);
             }
-            console.log("+1");
+
+            pity4S += 1
+            pity5S += 1
+            console.log("4pity: "+pity4S+" 5pity: "+pity5S+" URpity: "+pityUR);
             DoPullAnimation(i)
             
         }
         sendData("history",pullHistory+","+String(lastPulls),userId,"rolls")
+
+        //send back the pity
+        sendData("pity4S",pity4S,userId,"rolls")
+        sendData("pity5S",pity5S,userId,"rolls")
+        sendData("pityUR",pityUR,userId,"rolls")
+
         getData("history",userId,"rolls") //this updates the responsData
         setTimeout(() => {
         pullHistory = responsData.split(',');
         }, 1000);
-        console.log("cal pull history: "+pullHistory);
     }
 
     function DoPullAnimation(i) {
         (async () => {
         await wait((i+1)*100);
-        yourPullsVisibilityClass[i].name = "rollCardVisible"
+        lastPullBatchVisibilityClass[i].name = "rollCardVisible"
         })();
         //az #each cycleben minden card class-a eredetiled rollCard, egy 0 opacity de stylized <img>
         //az async function 100ms késéssel mindegyik #each img-et (pullt) "rollCardVisible" classra állítja
@@ -135,20 +223,27 @@
         rollIsSkippable = false
 
         for(let i = 0; i<10; i++){
-            yourPullsVisibilityClass[i].name = "rollCard"
-            yourPullsVisibilityClass[i].src = rollCard
+            lastPullBatchVisibilityClass[i].name = "rollCard"
+            lastPullBatchVisibilityClass[i].src = rollCard
         }
-        yourPulls.fill(roll3star)
+        lastPullBatch.fill("a")
 
     }
 
     function ShowPulls(i) {
-        yourPullsVisibilityClass[i].src = yourPulls[i] //when clicked it switched the src of the #each image to roll3/4/5star that we caluclated in CalulatePulls()
+        lastPullBatchVisibilityClass[i].src = lastPullBatch[i] //when clicked it switched the src of the #each image to roll3/4/5star that we caluclated in CalulatePulls()
     }
+    
+    var pullHistoryTableForm = []
 
     function LoadHistory(){
         pullHistory = responsData.split(','); //updates res data
         console.log(pullHistory);
+        for (let i = 0; i < pullHistory.length; i++){
+            pullHistoryTableForm[i] = pullHistory[i].split(':')
+        }
+        console.log(pullHistoryTableForm);
+
         isHistory= true
         isHistory = isHistory
         isBannerUp = false
@@ -170,12 +265,12 @@
         <div id="rollsDiv"></div>
 
         <div id="rollContainer" style='--cardSize:{rollsCardSize};'>
-        {#each Array(pullNum) as _,index (yourPullsVisibilityClass[index].id)}
-        <!-- a pul cardok (a híres #each cycle) -->
-        <img on:click={() => ShowPulls(index)} class={yourPullsVisibilityClass[index].name} src={yourPullsVisibilityClass[index].src} alt="rollCard">
+        {#each Array(pullNum) as _,index (lastPullBatchVisibilityClass[index].id)}
+        <!-- a pul cardok -->
+        <img on:click={() => ShowPulls(index)} class={lastPullBatchVisibilityClass[index].name} src={lastPullBatchVisibilityClass[index].src} alt="rollCard">
         {/each}
         </div>
-        
+
     </div>
     <!-- close pull button -->
     {#if rollIsSkippable}
@@ -185,12 +280,25 @@
 
 {#if isHistory}
 <div id="historyScreen">
-    <h1 id="historyText">Your pull history</h1>
+    <h1 id="historyTitle">Your pull history</h1>
     <div id="historyScreenBG"></div>
     <div id="historyContainer">
-    {#each pullHistory.reverse() as item}
-    <p>{item}</p>
-    {/each}
+        <table id="historyTable">
+            <tr>
+                <th>Card</th>
+                <th>Type</th>
+                <th>Banner Name</th>
+            </tr>
+            {#each pullHistoryTableForm.reverse() as item, index}
+            <tr>
+                {#each pullHistoryTableForm[index] as cell}
+                <td>
+                    <p class="historyText" class:historyText4S={cell.includes("4")} class:historyText5S={cell.includes("5")} class:historyTextUR={cell.includes("UR")}>{cell}</p>
+                </td>
+                {/each}
+            </tr>
+            {/each}
+        </table>
     </div>
 
     <button style="position: absolute; margin:0; z-index:4; left:91vw; top:10vh; border:none; background:none; font-size: 5vmin; color: black;" on:click={CloseHistoryScreen}>X</button>
@@ -287,12 +395,7 @@
     }
     #historyScreenBG{
         width: 60vw; /* Set the desired width of your container */
-        height: 80vh; /* Set the desired height of your container */
-        background-color: rgba(44, 46, 67, 0.852);
-        margin-top: 10vh;
-        margin-left: 20vw;
-        position:absolute;
-        z-index: 0;
+
     }
     #historyContainer{   /*a flexbox containing all the cards */ 
         z-index: 2;
@@ -313,16 +416,55 @@
         background: url(../../lib/assets/gacha/CrystalTexture.png) no-repeat;
         background-size: cover;
 
-        animation: hueChange 5s linear infinite;
-
         scrollbar-color: #dc1515 #fc8989;
     }
-    #historyText{
-        position:absolute;
-        top: 10vh;
+    #historyTable{
+        margin: auto;
+    }
+    td {
+        padding-left: 1vw;
+        padding-right: 1vw;
+    }
+    th {
+        font-size: 3vmin;
+        font-family: 'Lucida Sans';
     }
 
-        /* width */
+    #historyTitle{
+        position:absolute;
+        top: 10vh;
+        left: 40vw;
+    }
+    .historyText{
+        font-family: 'Lucida Sans';
+    }
+    .historyText4S{
+        color: rgb(131, 12, 201);
+    }
+    .historyText5S{
+        color: #cc6f18;
+    }
+    .historyTextUR{
+        font-weight: bold;
+        background-image: linear-gradient(90deg, rgb(236, 97, 97), orange, yellow, rgb(0, 219, 0), rgb(79, 186, 248), rgb(160, 63, 230), violet);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        animation: hueChange 5s linear infinite;
+    }
+
+    @keyframes rainbow {
+    0% {
+        background-position: 0% 50%;
+    }
+    100% {
+        background-position: 100% 50%;
+    }
+}
+
+
+
+    /* width */
     ::-webkit-scrollbar {
     width: 20px;
     }
@@ -424,6 +566,7 @@
         filter: hue-rotate(-10deg);
         cursor: pointer;
     }
+
 
 
     /*BANNER SECTION */ 

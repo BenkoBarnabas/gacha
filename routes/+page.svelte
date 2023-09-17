@@ -1,7 +1,7 @@
 <script>
   import {sendData, getData, DeleteAll, AddEmptyRow} from "../client.js" //we import all the functions
 
-  let dataToSend = ["alma","cica"]
+  let dataToSend = ""
   let selectedColumn = "history"
   let id = "1"
   let tableName = "rolls"
