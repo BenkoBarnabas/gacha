@@ -11,6 +11,8 @@
     
     9.16 | beta gacha (v3.1)
 
+    -changes w gacha page, collection page, client.js, server.js
+
     -Pity added for 5* 4* and UR 
         base chance 15%     minden 10. garantált 4*
         base change 2%      minden 50. garantált 5* (will change to a better one)
