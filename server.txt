@@ -14,7 +14,7 @@ let table =""
 
 // Initialize the database with a table if it doesn't exist
 db.run('CREATE TABLE IF NOT EXISTS accounts (id INTEGER PRIMARY KEY, col1 TEXT, col2 TEXT)');
-db.run('CREATE TABLE IF NOT EXISTS rolls (id INTEGER PRIMARY KEY, history TEXT)');
+db.run('CREATE TABLE IF NOT EXISTS rolls (id INTEGER PRIMARY KEY, history TEXT, pity4S INTEGER, pity5S INTEGER, pityUR INTEGER)');
 
 //DIFFERENT ANSWERS TO CLIENT
 //
@@ -23,7 +23,7 @@ db.run('CREATE TABLE IF NOT EXISTS rolls (id INTEGER PRIMARY KEY, history TEXT)'
 
 // connect to us client
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + 'C:/Users/Eszti/Svelte/src/routes/+page.svelte');
+  res.sendFile(__dirname + 'C:/Users/Család/svelte/src/routes/+page.svelte');
 });
 
 let dataFromClient = null;
@@ -98,7 +98,7 @@ app.post('/delTable', (req, res) => {
 
   //REALLY HIGHLY UGLY
   if (table == "rolls"){
-    db.run(`CREATE TABLE IF NOT EXISTS ${table} (id INTEGER PRIMARY KEY, history TEXT)`);
+    db.run(`CREATE TABLE IF NOT EXISTS ${table} (id INTEGER PRIMARY KEY, history TEXT, pity4S INTEGER, pity5S INTEGER, pityUR INTEGER)`);
   }
   else if (table == "accounts"){
     db.run(`CREATE TABLE IF NOT EXISTS ${table} (id INTEGER PRIMARY KEY, col1 TEXT, col2 TEXT)`);
