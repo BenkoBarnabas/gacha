@@ -27,6 +27,8 @@
         color: ""
     }
 
+    var starSizeArray = [] //for some reason it didnt work with a normal return so i had to put them into an array ,im throwing up
+    var starSizeTop = 0
 
     function handleClick(source,name,atk,hp,cost,rarity,desc) {
         curCardInView.source = source
@@ -37,17 +39,41 @@
         curCardInView.rarity = rarity
         if (rarity == 3){
             curCardInView.color = "#2672ed"
+            starSizeTop = "1vw"
         }
         else if (rarity == 4){
             curCardInView.color = "#8626ed"
+            starSizeTop = "1vw"
         }
         else if (rarity == 5){
             curCardInView.color = "#ed7c26"
+            starSizeTop = "0.52vw"
         }
         else{
             curCardInView.color = "linear-gradient(180deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235))"
+            starSizeTop = "0.52vw"
         }
+        starSizeTop = starSizeTop
         curCardInView.desc = desc
+
+        starSizeArray = []
+        for (let i = 0; i < curCardInView.rarity; i++){
+            CalcStarSize(i)
+        }
+        
+    }
+    
+    function CalcStarSize(i){
+        var starSize = 0
+        if ((i+1) <= Math.ceil((curCardInView.rarity)/2)){
+            starSize = (i+1)
+            starSizeArray.push(starSize)
+
+        }
+        else {
+            starSize = (curCardInView.rarity+1)-(i+1)
+            starSizeArray.push(starSize)
+        }
     }
 </script>
 
@@ -69,7 +95,7 @@
 {:else if selectedCollection == 2}
     <div class = "cardcollection" id = "diakcollection">
         {#each Cards.diakCardsArr as card}
-            <button class = "cardButton" style="background-image: url({card.source})" on:click={() => handleClick(card.source)}></button>
+            <button class = "cardButton" style="background-image: url({card.source})" on:click={() => handleClick(card.source,card.name,card.attack,card.health,card.cost,card.stars,card.description)}></button>
         {/each}
     </div>
 {/if}
@@ -84,6 +110,13 @@
     <div class="curCardStats" style="left: 78.1vw;">{curCardInView.hp}</div>
     <div id="curCardCost">{curCardInView.cost}</div>
     <div id="curCardName">{curCardInView.name}</div>
+    
+    <div id="curCardRarity" style="color: {curCardInView.color}; top: {starSizeTop};">
+        {#each Array(Number(curCardInView.rarity)) as card,index}
+            <span style="font-size: {starSizeArray[index]+2}vmin;">★</span>
+        {/each}
+    </div>
+    
 </div>
 
 <div class = "links">
@@ -157,7 +190,7 @@
         position: absolute;
         top: 19.2vw;
         left: 62vw;
-        
+
         text-align: center;
         width: 20vw;
     }
@@ -174,6 +207,14 @@
         width: 16.5vw;
         text-align: center;
     }
+    #curCardRarity{
+        position: absolute;
+        left: 65vw;
+        width: 13.8vw;
+        text-align: center;
+        mix-blend-mode: screen;
+    }
+
 
     .cardcollection {
         width: 57%;
