@@ -1,4 +1,7 @@
 <script>
+    import cardBackground from "../../lib/assets/collection/cardV1BG.png"
+    import cardForeground from "../../lib/assets/collection/cardV1Top.png"
+
     import Filozofia from "../../lib/assets/collection/spell/filozofia.png"
     import Gomboc from "../../lib/assets/collection/spell/gomboc.png"
     import Tz from "../../lib/assets/collection/spell/tz.png"
@@ -64,11 +67,14 @@
 {/if}
 
 {#if descriptionPage}
-    <div class = "bg">
-        <h3>{"(" + cardCost + ")"} {cardName} {cardStars}</h3>
+    <div class = "cardPreview">
+        <img src={cardBackground} alt="cardback" class="cardAssets">
+        <p>{cardCost}</p>
+        <p>{cardStars}</p>
+        <h3>{cardName}</h3>
         <h4>{cardDescription}</h4>
-        <p>Health: {cardHealth}</p>
-        <p>Attack: {cardAttack}</p>
+        <p>{cardHealth}</p>
+        <p>{cardAttack}</p>
     </div>
 {/if}
 
@@ -79,11 +85,11 @@
 
 <style>
     .cardcollection {
-        background-color: aliceblue;
+        width: 57%;
+        height: 65vh;
         overflow: auto;
-        width: 90vw;
-        margin: auto;
     }
+
     .cardButton{
         height:30vh;
         width:10vw;
@@ -113,17 +119,11 @@
         z-index: -3;
     }
 
-    .bg{
-        background-color: rgba(224, 123, 157, 0.5);
-        padding-inline:20px;
-        padding-block: 10px;
-        margin:50px;
-    }
-
     h2{
+        width:52.5%;
         margin-block: 1vh;
         padding-inline:20px;
         text-align: center;
-        background-color:rgba(255, 255, 255, 0.2)
+        background-color:rgba(255, 255, 255, 0.8)
     }
 </style>
