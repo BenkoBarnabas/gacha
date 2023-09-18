@@ -1,6 +1,5 @@
 <script>
   import {sendData, getData, DeleteAll, AddEmptyRow} from "../client.js" //we import all the functions
-  import pullCard from "../lib/assets/gacha/rollBg.png"
 
   let dataToSend = ""
   let selectedColumn = "history"
@@ -27,9 +26,7 @@
   <a href="/collectionScreen">view your cards here</a>
 </div>
 
-
 <style>
-
 main {
   text-align: center;
   padding: 2rem;
