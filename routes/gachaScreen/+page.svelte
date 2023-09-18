@@ -439,7 +439,7 @@
 
     :global(body){  /*body styling format of svelte */ 
         background: url(../../lib/assets/gacha/bacgkroundPanorama.png) no-repeat;
-        font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;  /*font can be changed, it stays impact (for now) cos its defo not a genshin impact copy */
+        /*font now in routes*/
         animation: backgroundLoop 120s linear infinite;
         background-size: var(--bgWidth);
         margin: 0;

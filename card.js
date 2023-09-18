@@ -47,7 +47,6 @@
     import ZalanGacha from "./lib/assets/collection/diak/ZalanGacha.png"
     import ZenoGacha from "./lib/assets/collection/diak/ZenoGacha.png"
 
-
     export class diakCards {
         constructor(name, description, health, attack, source, stars, cost, type, gachaSRC) {
             this.name = name;
@@ -85,16 +84,16 @@
     export const TabiCard = new tanarCards("Tábi", "Tesitanár és röplabdaedző. Epic gamer szabadidejében. Sose hagyja ki az alkalmat, hogy politizáljon.", 6, 7, Tabi, 3, 2, "character", TabiGacha);
 
     //not yet detailed
-    export const BencusCard = new tanarCards("Bencus", "Másodállásban professzionális diáktanya dolgozó.", -1, -1, Bencus, 5, -1, "character", BencusGacha);
-    export const DobiCard = new tanarCards("Dobby", "Dob", -1, -1, Dobi, 6, -1, "character", DobiGacha);
-    export const IvanEvaCard = new tanarCards("Iván Éva", "Average Edward Allen Poe fan, nem egy szakbarbár. Irigylésre méltó!", -1, -1, IvanEva, 3, -1, "character", IvanEvaGacha);
-    export const KocsiAndiCard = new tanarCards("KocsiAndi", "Lorem Ipsum", -1, -1, KocsiAndi, 3, -1, "character", KocsiAndiGacha);
-    export const KoPaszCard = new tanarCards("KoPasz", "Lorem Ipsum", -1, -1, KoPasz, 5, -1, "character", KoPaszGacha);
-    export const KutiCard = new tanarCards("Kuti", "Lorem Ipsum", -1, -1, Kuti, 5, -1, "character", KutiGacha);
-    export const MatosCard = new tanarCards("Matos", "Lorem Ipsum", -1, -1, Matos, 4, -1, "character", MatosGacha);
-    export const MartiCard = new tanarCards("Marti", "Az ing, nem azing. Hetest kér.", -1, -1, Marti, 4, -1, "character", MartiGacha);
-    export const MeszarosCard = new tanarCards("Mészaros", "Lorem Ipsum", -1, -1, Meszaros, 3, -1, "character", MeszarosGacha);
-    export const JeffCard = new tanarCards("Jeff", "Plays golf with you on the weekends. Loves his wife, kids and family dog.", -1, -1, Jeff, 6, -1, "character", JeffGacha);
+    export const BencusCard = new tanarCards("Bencus", "Másodállásban professzionális diáktanya dolgozó.", 7, 4, Bencus, 5, 1, "character", BencusGacha);
+    export const DobiCard = new tanarCards("Dobby", "Dob", 8, 7, Dobi, 6, 2, "character", DobiGacha);
+    export const IvanEvaCard = new tanarCards("Iván Éva", "Average Edward Allen Poe fan, nem egy szakbarbár. Irigylésre méltó!", 11, 4, IvanEva, 3, 2, "character", IvanEvaGacha);
+    export const KocsiAndiCard = new tanarCards("KocsiAndi", "Senki se tudja, hogy pontosan mit csinál. A sárga könyvvel kapcsolatban őt keresd!", 12, 9, KocsiAndi, 3, 4, "character", KocsiAndiGacha);
+    export const KoPaszCard = new tanarCards("Kopaszka", "Gyakran látom a ligetben sétálni. Az edaq ott is a zsebében van.", 10, 6, KoPasz, 5, 3, "character", KoPaszGacha);
+    export const KutiCard = new tanarCards("Kuti", "Jó napot kíván és ad egy irodalom 5-öst.", 12, 5, Kuti, 5, 3, "character", KutiGacha);
+    export const MatosCard = new tanarCards("Matos", "Társasjátékfüggő. Néha egyedül is játszik. A 2020I még mindig sír, hogy nem őt kapta Miki bá után.", 14, 4, Matos, 4, 3, "character", MatosGacha);
+    export const MartiCard = new tanarCards("Marti", "Az ing, nem azing. Hetest kér.", 3, 6, Marti, 4, 1, "character", MartiGacha);
+    export const MeszarosCard = new tanarCards("Mészaros", "Médiatanár. A diákok jobban tudják az anyagot.", 21, 2, Meszaros, 3, 3, "character", MeszarosGacha);
+    export const JeffCard = new tanarCards("Jeff", "Plays golf with you on the weekends. Loves his wife, kids and family dog.", 16, 5, Jeff, 6, 3, "character", JeffGacha);
 
     //DIAKOK
     export const ArhoCard = new diakCards("Arhó", "7 évesen megfejtette a tudományt. Hisz a szabad akaratban.", 12, 6, Arho, 4, 3, "character", ArhoGacha); 
@@ -106,7 +105,6 @@
 
     export let tanarCardsArr = [BizsoCard, FarkasCard, MoniCard, NagyoraCard, RozgonyiCard, TabiCard,BencusCard,DobiCard,IvanEvaCard,KocsiAndiCard,KoPaszCard,KutiCard,MatosCard,MeszarosCard,JeffCard]
     export let diakCardsArr = [ArhoCard, BarniCard, EszterCard, OliviaCard, ZalanCard, ZenoCard]
-
 
     export let URTanars = []
     export let FiveStarTanars = []

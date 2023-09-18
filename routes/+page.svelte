@@ -10,7 +10,7 @@
 </script>
 
 <main>
-<h1>Svelte App with Node.js and Express.js</h1>
+<h1>Svelte App with Node.js and Express.js<br>Nyomd le az F11 gombot a teljes élményhez!</h1>
 <input type="text" bind:value={dataToSend} placeholder="Enter data">
 <input type="text" bind:value={selectedColumn} placeholder="Enter column name">
 <input type="text" bind:value={id} placeholder="Enter id">
@@ -43,6 +43,10 @@ input,
 button {
   margin: 1rem;
   padding: 0.5rem;
+}
+
+:global(body){
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
 }
 
 :global(.links){
