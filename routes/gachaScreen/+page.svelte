@@ -7,8 +7,6 @@
     import YC from "../../lib/assets/gacha/YouthfulCuriosity.png" //yuouthful curiosity banner cover, zénó (can be changed)
     import SNCover from "../../lib/assets/gacha/SWCover.png" //cover for the buttons for switching banners
     import YCCover from "../../lib/assets/gacha/YCCover.png" //^^^
-    import featured4S from "../../lib/assets/collection/tanar/Farkas.png"
-    
 
     import bannerBG from "../../lib/assets/gacha/bannerBg.png" //the banner picture is 3 layers, background, cover image, text
     import bannerText from "../../lib/assets/gacha/bannerText.png"
@@ -17,6 +15,8 @@
 
     //pull assets
     import rollCard from "../../lib/assets/gacha/rollBg.png" //the base card before revealing the pull content
+
+    import infoBox from "../../lib/assets/gacha/infoBox.png"
 
     //server functions, db control
     import {sendData, getData, responsData, Cpity4S, Cpity5S, CpityUR} from "../../client"
@@ -317,6 +317,7 @@
     <h1 id="historyTitle">Your pull history</h1>
     <div id="historyScreenBG"></div>
     <div id="historyContainer">
+        <div id="historyScroll">
         <table id="historyTable">
             <tr>
                 <th>Card</th>
@@ -333,6 +334,7 @@
             </tr>
             {/each}
         </table>
+        </div>
     </div>
 
     <button style="position: absolute; margin:0; z-index:4; left:91vw; top:10vh; border:none; background:none; font-size: 5vmin; color: black;" on:click={CloseHistoryScreen}>X</button>
@@ -473,26 +475,28 @@
         width: 60vw; /* Set the desired width of your container */
 
     }
-    #historyContainer{   /*a flexbox containing all the cards */ 
-        z-index: 2;
-        width: 50vw; /* Set the desired width of your container */
-        height: 57vh; /* Set the desired height of your container */
+    #historyContainer{
+        width: 70vw;
+        height: 36.1347vw;
 
-        border: 1.2vw solid transparent; /* Set the border width and make it transparent */
-        border-image-source: url('../../lib/assets/gacha/rainBorder.png');
-        border-image-slice: 10; /* Adjust the value as needed */
-        border-image-repeat: round; /* Repeat the border image */
-        border-radius: 10px;
-
-        overflow: auto;
-        margin-top: 24vh;
-        margin-left: auto;
-        margin-right:auto;
-
-        background: url(../../lib/assets/gacha/CrystalTexture.png) no-repeat;
+        background: url(../../lib/assets/gacha/infoBox.png) no-repeat;
         background-size: cover;
 
+        position: absolute;
+        left: 15vw;
+        top: 13vw;
+    }
+    #historyScroll{   /*a flexbox containing all the cards */ 
+        z-index: 2;
+        width: 53vw;
+        height: 31vw;
+
+        overflow: auto;
         scrollbar-color: #dc1515 #fc8989;
+
+        position: absolute;
+        left: 7.5vw;
+        top: 3.5vw;
     }
     #historyTable{
         margin: auto;
