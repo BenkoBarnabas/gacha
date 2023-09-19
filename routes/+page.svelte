@@ -23,7 +23,8 @@
 
 <div class = "links">
   <a href="/gachaScreen">sepd ur money here</a><br>
-  <a href="/collectionScreen">view your cards here</a>
+  <a href="/collectionScreen">view your cards here</a><br>
+  <a href="/selectionScreen">your deck here</a>
 </div>
 
 <style>
