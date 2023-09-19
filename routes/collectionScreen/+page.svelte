@@ -1,6 +1,8 @@
 <script>
-    import cardBackground from "../../lib/assets/collection/cardV1BG.png"
-    import cardForeground from "../../lib/assets/collection/cardV1Top.png"
+    import cardBackground from "../../lib/assets/global/cardV1BG.png"
+    import cardForeground from "../../lib/assets/global/cardV1Top.png"
+    import cardV2Background from "../../lib/assets/global/cardV2BG.png"
+
     import ph from "../../lib/assets/collection/tanar/Bizso.png"
 
     import Filozofia from "../../lib/assets/collection/spell/filozofia.png"
@@ -17,18 +19,20 @@
     let selectedCollection = 1
 
     let curCardInView = {
-        source: ph,
-        name: "Dr. Farkas",
-        atk: "6",
-        hp: "7",
-        cost: "4",
-        rarity: "5",
-        desc: "loremIpsum loremIpsum loremIpsum loremIpsum loremIpsum loremIpsum loremIpsum",
+        source: "",
+        name: "",
+        atk: "",
+        hp: "",
+        cost: "",
+        rarity: "",
+        desc: "",
         color: ""
     }
 
     var starSizeArray = [] //for some reason it didnt work with a normal return so i had to put them into an array ,im throwing up
-    var starSizeTop = 0
+    var starSizeTop = [1,1,0,0]
+    var backgroundColorByCost = ["#2672ed","#8626ed","#ed7c26","linear-gradient(180deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235))"]
+    var starsColorByCost = ["color: #2672ed;","color: #8626ed;","color: #ed7c26;","background-image: linear-gradient(90deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235));-webkit-background-clip: text;background-clip: text;color: transparent;"]
 
     function handleClick(source,name,atk,hp,cost,rarity,desc) {
         curCardInView.source = source
@@ -37,22 +41,6 @@
         curCardInView.hp = hp
         curCardInView.cost = cost
         curCardInView.rarity = rarity
-        if (rarity == 3){
-            curCardInView.color = "#2672ed"
-            starSizeTop = "1vw"
-        }
-        else if (rarity == 4){
-            curCardInView.color = "#8626ed"
-            starSizeTop = "1vw"
-        }
-        else if (rarity == 5){
-            curCardInView.color = "#ed7c26"
-            starSizeTop = "0.52vw"
-        }
-        else{
-            curCardInView.color = "linear-gradient(180deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235))"
-            starSizeTop = "0.52vw"
-        }
         starSizeTop = starSizeTop
         curCardInView.desc = desc
 
@@ -78,7 +66,7 @@
 </script>
 
 <div id = "background"></div>
-<h1 style="margin-top:2vh; font-size:5vmin; text-align:center; color:white">Collection</h1>
+<h1 style="margin-top:2vh; font-size:2.5vw; text-align:center; color:white">Collection</h1>
 <div id="typeChoosers">
     <!-- buttons to choose the active banner -->
     <button style="background: URL({SNCover}), no-repeat; background-size:cover" class="bannerIcon" on:click={() => selectedCollection = 1}></button>
@@ -89,31 +77,61 @@
 {#if selectedCollection == 1}
     <div class = "cardcollection" id = "tanarcollection">
         {#each Cards.tanarCardsArr as card}
-            <button class = "cardButton" style="background-image: url({card.source})" on:click={() => handleClick(card.source,card.name,card.attack,card.health,card.cost,card.stars,card.description)}></button>
+        <div id="cardPreviewListCont">
+            <img style="width: 12.5vw; position:absolute" src={cardV2Background} alt="cardBg">
+            <div id="rarityBGList" style="background: {backgroundColorByCost[(card.stars)-3]}; "></div>
+            <img class = "cardButton" src={card.source} alt="preview"/>
+            <button class="cardListFrame" alt="cardBg" on:click={() => handleClick(card.source,card.name,card.attack,card.health,card.cost,card.stars,card.description)}></button>
+            <div class="curCardStatsList" style="left: 2.68vw;">{card.attack}</div>
+            <div class="curCardStatsList" style="left: 9.65vw;">{card.health}</div>
+            <div class="curCardCostList">{card.cost}</div>
+            <div class="curCardNameList">{card.name}</div>
+
+            <div class="curCardRarityList" style="{starsColorByCost[(card.stars)-3]}">
+                {#each Array(Number(card.stars)) as card,index}
+                    <span style="font-size: 1vw;">★</span>
+                {/each}
+            </div>
+        </div>
         {/each}
     </div>
 {:else if selectedCollection == 2}
     <div class = "cardcollection" id = "diakcollection">
         {#each Cards.diakCardsArr as card}
-            <button class = "cardButton" style="background-image: url({card.source})" on:click={() => handleClick(card.source,card.name,card.attack,card.health,card.cost,card.stars,card.description)}></button>
+        <div id="cardPreviewListCont">
+            <img style="width: 12.5vw; position:absolute" src={cardV2Background} alt="cardBg">
+            <div id="rarityBGList" style="background: {backgroundColorByCost[(card.stars)-3]}; "></div>
+            <img class = "cardButton" src={card.source} alt="preview"/>
+            <button class="cardListFrame" alt="cardBg" on:click={() => handleClick(card.source,card.name,card.attack,card.health,card.cost,card.stars,card.description)}></button>
+            <div class="curCardStatsList" style="left: 2.68vw;">{card.attack}</div>
+            <div class="curCardStatsList" style="left: 9.65vw;">{card.health}</div>
+            <div class="curCardCostList">{card.cost}</div>
+            <div class="curCardNameList">{card.name}</div>
+
+            <div class="curCardRarityList" style="{starsColorByCost[(card.stars)-3]}">
+                {#each Array(Number(card.stars)) as card,index}
+                    <span style="font-size: 1vw;">★</span>
+                {/each}
+            </div>
+        </div>
         {/each}
     </div>
 {/if}
 
 <div id="cardPreview">
     <img class="cardTemplate" src={cardBackground} alt="cardBg">
-    <div id="rarityBG" style="background: {curCardInView.color}; "></div>
+    <div id="rarityBG" style="background: {backgroundColorByCost[(curCardInView.rarity)-3]}; "></div>
     <img id="curCardInView" src={curCardInView.source} alt="">
     <img class="cardTemplate" src={cardForeground} alt="cardBg">
     <div id="curCardDesc">{curCardInView.desc}</div>
-    <div class="curCardStats" style="left: 64vw;">{curCardInView.atk}</div>
-    <div class="curCardStats" style="left: 78.1vw;">{curCardInView.hp}</div>
-    <div id="curCardCost">{curCardInView.cost}</div>
-    <div id="curCardName">{curCardInView.name}</div>
+    <div class="curCardStats" style="left: 7.4vw;">{curCardInView.atk}</div>
+    <div class="curCardStats" style="left: 21.5vw;">{curCardInView.hp}</div>
+    <div class="curCardCost">{curCardInView.cost}</div>
+    <div class="curCardName">{curCardInView.name}</div>
     
-    <div id="curCardRarity" style="color: {curCardInView.color}; top: {starSizeTop};">
+    <div id="curCardRarity" style="{starsColorByCost[(curCardInView.rarity)-3]}; top: {starSizeTop[(curCardInView.rarity)-3]}vw;">
         {#each Array(Number(curCardInView.rarity)) as card,index}
-            <span style="font-size: {starSizeArray[index]+2}vmin;">★</span>
+            <span style="font-size: {starSizeArray[index]}vw;">★</span>
         {/each}
     </div>
     
@@ -134,19 +152,150 @@
         src: url('../../lib/assets/fonts/ShadowsIntoLight-Regular.ttf');
     }
 
-    #cardPreview{
-        background-color: rgba(154, 137, 124, 0.42);
+
+    #cardPreviewListCont{
         position: relative;
+        width:14.3vw;
+        height: 17vw;
+        display:inline-block;
+    }
+    .cardcollection {
+        width: 60vw;
+        height: 65vh;
+        overflow: auto;
+        float: left;
+        padding-top: 4vh;
+    }
+     /* width */
+     ::-webkit-scrollbar {
+        width:2vw;
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+        background-image: url("../../lib/assets/global/scrollbarTrack.png");
+        background-size: 100% 100%;
+    }
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+        background: url("../../lib/assets/global/scrollbar.png");
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+    }
+    ::-webkit-scrollbar-button{
+        width: 30px;
+        height: 5vh;
+    }
+    ::-webkit-scrollbar-button:start {
+        background-image: url("../../lib/assets/global/scrollbarUpArrow.png");
+        background-size: 100% 100%;
+    }
+    ::-webkit-scrollbar-button:end {
+        background-image: url("../../lib/assets/global/scrollbarDownArrow.png");
+        background-size: 100% 100%;
+    }
+
+
+
+    .cardListFrame{
+        width: 12.5vw;
+        height: 15.8754vw;
+        position:absolute;
+        background-image: url("../../lib/assets/global/cardV2Top.png");
+        background-size: cover;
+        background-position: center;
+        background-color: transparent;
+        border: none;
+    }
+    #rarityBGList{
+        position: absolute;
+        width: 10vw;
+        height: 13vw;
+        left: 1vw;
+        top: 1vw;
+
+        opacity: 0.35;
+        background-blend-mode:saturation;
+    }
+    .cardButton{
+        width:7.5vw;
+
+        border: none;
+
+        background-size:cover;
+        box-shadow: 0 0 1.3vw rgba(0, 0, 0, 0.735);
+
+        position: absolute;
+
+        left: 2.97vw;
+        top: 2.5vw;
+    }
+    .curCardStatsList{
+        font-size: 1.7vw;
+        font-family: 'SevenSwords';
+        color: white;
+        text-shadow:
+                -0.08vw -0.08vw 0 #000, /* Top-left shadow */
+                0.08vw -0.08vw 0 #000, /* Top-right shadow */
+                -0.08vw 0.08vw 0 #000, /* Bottom-left shadow */
+                0.08vw 0.08vw 0 #000; /* Bottom-right shadow */
+
+        position: absolute;
+        top: 13.3vw;
+    }
+    .curCardCostList{
+        font-size: 3vw;
+        font-weight: bold;
+        font: italic;
+        font-family: 'ShadowLight';
+        color: rgb(184, 11, 11);
+
+        position: absolute;
+        top: 1vw;
+        left: 2.5vw;
+    }
+    .curCardNameList{
+        font-size: 1vw;
+        font-family: Impact;
+        color: rgba(247, 240, 221, 0.778);
+        text-shadow: 0 0 1vw rgba(0, 0, 0, 0.536);
+
+        position: absolute;
+        top: 13.2vw;
+        left: 2vw;
+
+        text-align: center;
+        width: 9.5vw;
+    }
+    .curCardRarityList{
+        width: 6vw;
+        text-align: center;
+        mix-blend-mode: screen;
+
+        position: absolute;
+        left: 3.7vw;
+        top: 0.4vw;
+    }
+
+
+    #cardPreview{
+        width: 32vw;
+        height: 40vw;
+        position: relative;
+        margin-left:60vw;
+        margin-top: 2vh;
     }
     .cardTemplate{
         width: 30vw;
         position: absolute;
+        left: 0;
     }
     #rarityBG{
         position: absolute;
         width: 20vw;
         height: 20vw;
-        left: 62vw;
+        left: 6vw;
         top: 2.5vw;
 
         opacity: 0.35;
@@ -155,11 +304,13 @@
     #curCardInView{
         position: absolute;
         width: 14vw;
-        left: 64.93vw;
+        left: 8.5vw;
         top: 5vw;
+
+        box-shadow: 0 0 1.3vw rgba(0, 0, 0, 0.735);
     }
     .curCardStats{
-        font-size: 6vmin;
+        font-size: 3vw;
         font-family: 'SevenSwords';
         color: white;
         text-shadow:
@@ -171,8 +322,8 @@
         position: absolute;
         top: 26.7vw;
     }
-    #curCardCost{
-        font-size: 10vmin;
+    .curCardCost{
+        font-size: 5vw;
         font-weight: bold;
         font: italic;
         font-family: 'ShadowLight';
@@ -180,61 +331,46 @@
 
         position: absolute;
         top: 2.5vw;
-        left: 63.6vw;
+        left: 7vw;
     }
-    #curCardName{
-        font-size: 4vmin;
+    .curCardName{
+        font-size: 2vw;
         font-family: Impact;
         color: rgba(247, 240, 221, 0.778);
+        text-shadow: 0 0 1vw rgba(0, 0, 0, 0.536);
 
         position: absolute;
         top: 19.2vw;
-        left: 62vw;
+        left: 5.5vw;
 
         text-align: center;
         width: 20vw;
     }
     #curCardDesc{
-        font-size: 2vmin;
+        font-size: 1vw;
         font-family: cursive;
         color: rgba(0, 0, 0, 0.778);
         font: bold;
 
         position: absolute;
         top: 23vw;
-        left: 63.7vw;
+        left: 7.19vw;
 
         width: 16.5vw;
         text-align: center;
     }
     #curCardRarity{
         position: absolute;
-        left: 65vw;
+        left: 8.5vw;
         width: 13.8vw;
         text-align: center;
         mix-blend-mode: screen;
     }
 
 
-    .cardcollection {
-        width: 57%;
-        height: 65vh;
-        overflow: auto;
-        float: left;
-    }
-
-    .cardButton{
-        height:30vh;
-        width:10vw;
-        border: 0.5vmin solid goldenrod;
-        border-radius: 0.3vw; /* Add border radius for rounded corners */
-        margin: 0.2vw;
-        background-size:cover;
-    }
-
-    .cardButton:hover{
+    #cardPreviewListCont:hover{
         cursor:pointer;
-        scale:1.02;
+        transform: scale(1.1);
     }
 
     #background {
