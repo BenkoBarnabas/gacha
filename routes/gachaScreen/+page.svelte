@@ -313,12 +313,11 @@
 {/if}
 
 {#if isHistory}
-<div id="historyScreen">
-    <h1 id="historyTitle">Your pull history</h1>
-    <div id="historyScreenBG"></div>
-    <div id="historyContainer">
-        <div id="historyScroll">
-        <table id="historyTable">
+<div class="historyScreen"><!-- the white background -->
+    <div class="historyBody"> <!-- the container for the entire history book image thingy -->
+        <div class="historyContainer"> <!-- the template for the history box -->
+        <div class="historyScroll"> <!-- the scorralbe part inside  -->
+        <table class="historyTable"><!-- the table for the data -->
             <tr>
                 <th>Card</th>
                 <th>Type</th>
@@ -335,6 +334,9 @@
             {/each}
         </table>
         </div>
+        </div>
+        <div class="historyTitle">Your pull history</div>
+        <div class="pityCounter">{50-pity5S}</div>
     </div>
 
     <button style="position: absolute; margin:0; z-index:4; left:91vw; top:10vh; border:none; background:none; font-size: 5vmin; color: black;" on:click={CloseHistoryScreen}>X</button>
@@ -428,21 +430,26 @@
 {/if}
 
 <style>
+    @font-face {
+            font-family: 'ShadowLight';
+            src: url('../../lib/assets/fonts/ShadowsIntoLight-Regular.ttf');
+        }
 
-:root {
-    --blueAnim: url('../../lib/assets/gacha/blueAnimation.png');
-  }
-    .shine-effect {
-    padding: 10px 20px;
-    position: relative;
-    overflow: hidden;
-    transition: background-color 0.3s ease-in-out;
-}
+    :root {
+        --blueAnim: url('../../lib/assets/gacha/blueAnimation.png');
+    }
+        .shine-effect {
+        padding: 10px 20px;
+        position: relative;
+        overflow: hidden;
+        transition: background-color 0.3s ease-in-out;
+    }
 
     :global(body){  /*body styling format of svelte */ 
-        background: url(../../lib/assets/gacha/bacgkroundPanorama.png) no-repeat;
+        background: url(../../lib/assets/collection/bg.png);
+        background-size: 100% 100%;
         /*font now in routes*/
-        animation: backgroundLoop 120s linear infinite;
+        /*animation: backgroundLoop 120s linear infinite;*/
         background-size: var(--bgWidth);
         margin: 0;
     }
@@ -463,19 +470,22 @@
 
 
     /*HISTORY SCREEN SECTION*/
-    #historyScreen{    /*the grey-ish background of the roll screen */ 
+    .historyScreen{    /*the grey-ish background of the roll screen */ 
         z-index: 2;
         width: 100vw;
         height: 100vh;
         text-align: center;
-        position: absolute;
         padding: 0;
+        background-color: rgba(250, 235, 215, 0.604);
     }
-    #historyScreenBG{
-        width: 60vw; /* Set the desired width of your container */
+    .historyBody{
+        width: 75vw;
 
+        position: relative;
+        margin: auto;
+        top: 7vw;
     }
-    #historyContainer{
+    .historyContainer{
         width: 70vw;
         height: 36.1347vw;
 
@@ -483,22 +493,21 @@
         background-size: cover;
 
         position: absolute;
-        left: 15vw;
-        top: 13vw;
+        left: 2.5vw;
+        top: 2vw;
+
     }
-    #historyScroll{   /*a flexbox containing all the cards */ 
+    .historyScroll{   /*a flexbox containing all the cards */ 
         z-index: 2;
         width: 53vw;
-        height: 31vw;
+        height: 28vw;
 
         overflow: auto;
-        scrollbar-color: #dc1515 #fc8989;
+        margin: auto;
+        margin-top: 5vw;
 
-        position: absolute;
-        left: 7.5vw;
-        top: 3.5vw;
     }
-    #historyTable{
+    .historyTable{
         margin: auto;
     }
     td {
@@ -510,13 +519,45 @@
         font-family: 'Lucida Sans';
     }
 
-    #historyTitle{
+    .historyTitle{
+        background-color: blueviolet;
+        height: 2.7vw;
+        width: 13.2vw;
+
+        padding-left: 0.5vw;
+        padding-right: 0.5vw;
+        border-radius: 3vw;
+
         position:absolute;
-        top: 10vh;
-        left: 40vw;
+        top: 1vw;
+        left: 3vw;
+
+        text-align: center;
+        font-size: 1.3vw;
+        padding-top:0.7vw;
     }
+    .pityCounter{
+
+        padding-left: 0.5vw;
+        padding-right: 0.5vw;
+        border-radius: 3vw;
+
+        text-align: center;
+
+        position:absolute;
+        top: 27vw;
+        left: 53vw;
+
+        font-size: 2vw;
+        text-align: center;
+        font-family: 'ShadowLight';
+        font-weight: bold;
+    }
+
     .historyText{
-        font-family: 'Lucida Sans';
+        font-family: 'ShadowLight';
+        font-weight: bold;
+        font-size: 1.3vw;
     }
     .historyText4S{
         color: rgb(131, 12, 201);
@@ -541,26 +582,6 @@
         background-position: 100% 50%;
     }
     }
-
-
-
-    /* width */
-    ::-webkit-scrollbar {
-    width: 20px;
-    }
-
-    /* Track */
-    ::-webkit-scrollbar-track {
-    border-radius: 10px;
-    }
-
-    /* Handle */
-    ::-webkit-scrollbar-thumb {
-    background: rgb(241, 99, 186);
-    border-radius: 10px;
-    border:1px solid black
-    }
-
 
 
     /*ROLL SCREEN SECTION */ 
