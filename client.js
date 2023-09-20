@@ -8,9 +8,6 @@ export var Cpity4S = 0 // C = client
 export var Cpity5S = 0
 export var CpityUR = 0
 
-getData("history",userId,"rolls");
-
-
 export function sendData(columnName,dataToSend,id,tableName) { //export == public, we import it in the main.svelte
 
     fetch(`http://${ip}:3000/sendData`, { //the "function" id i talked about in server ("sendData" here)
@@ -68,8 +65,7 @@ export function getData(columnName,id,tableName) { //i dont really understand th
         responsData = data.data[0][columnName];
       }
     }
-    // Access the message sent by the server
-    //return responsData;
+    console.log(responsData);
   })
   .catch(error => {
     console.error(error);

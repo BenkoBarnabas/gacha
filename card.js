@@ -14,6 +14,7 @@
     import Meszaros from "./lib/assets/collection/tanar/Meszaros.png"
     import Marti from "./lib/assets/collection/tanar/Marti.png"
     import Jeff from "./lib/assets/collection/tanar/Jeff.png"
+    import Tomi from "./lib/assets/collection/tanar/Tomi.png"
 
     import Arho from "./lib/assets/collection/diak/Arho.png"
     import Barni from "./lib/assets/collection/diak/Barni.png"
@@ -21,6 +22,7 @@
     import Olivia from "./lib/assets/collection/diak/Olivia.png"
     import Zalan from "./lib/assets/collection/diak/Zalan.png"
     import Zeno from "./lib/assets/collection/diak/Zeno.png"
+    import AproNo from "./lib/assets/collection/diak/AproNo.png"
 
     //gacha SRC
     import BizsoGacha from "./lib/assets/collection/tanar/BizsoGacha.png"
@@ -39,6 +41,7 @@
     import MeszarosGacha from "./lib/assets/collection/tanar/MeszarosGacha.png"
     import MartiGacha from "./lib/assets/collection/tanar/MartiGacha.png"
     import JeffGacha from "./lib/assets/collection/tanar/JeffGacha.png"
+    import TomiGacha from "./lib/assets/collection/tanar/TomiGacha.png"
 
     import ArhoGacha from "./lib/assets/collection/diak/ArhoGacha.png"
     import BarniGacha from "./lib/assets/collection/diak/BarniGacha.png"
@@ -46,6 +49,7 @@
     import OliviaGacha from "./lib/assets/collection/diak/OliviaGacha.png"
     import ZalanGacha from "./lib/assets/collection/diak/ZalanGacha.png"
     import ZenoGacha from "./lib/assets/collection/diak/ZenoGacha.png"
+    import AproNoGacha from "./lib/assets/collection/diak/AproNoGacha.png"
 
     export class diakCards {
         constructor(name, description, health, attack, source, stars, cost, type, gachaSRC) {
@@ -94,17 +98,19 @@
     export const MartiCard = new tanarCards("Marti", "Az ing, nem azing. Hetest kér.", 3, 6, Marti, 4, 1, "character", MartiGacha);
     export const MeszarosCard = new tanarCards("Mészaros", "Médiatanár. A diákok jobban tudják az anyagot.", 21, 2, Meszaros, 3, 3, "character", MeszarosGacha);
     export const JeffCard = new tanarCards("Jeff", "Plays golf with you on the weekends. Loves his wife, kids and family dog.", 16, 5, Jeff, 6, 3, "character", JeffGacha);
+    export const TomiCard = new tanarCards("Dr. Tamás", "Fogorvos. Táncvilágbajnok és zsidókat használ ki pénzért, ennek ellenére utál dolgozni.", 20, 20, Tomi, 5, 6, "character", TomiGacha);
 
     //DIAKOK
-    export const ArhoCard = new diakCards("Arhó", "7 évesen megfejtette a tudományt. Hisz a szabad akaratban.", 12, 6, Arho, 4, 3, "character", ArhoGacha); 
+    export const ArhoCard = new diakCards("Arho", "7 évesen megfejtette a tudományt. Hisz a szabad akaratban.", 12, 6, Arho, 4, 3, "character", ArhoGacha); 
     export const BarniCard = new diakCards("Barni", "Szeretik a lányok, szeretik a fiúk, ő pedig a krumplis tésztát szereti.", 18, 7, Barni, 3, 4, "character", BarniGacha);
     export const EszterCard = new diakCards("Eszter", "Nem tart otthon tyúkokat, de nagyon szeretne. Este 9-kor kizavarják a kollégium gépterméből.", 5, 5, Eszter, 3, 1, "character", EszterGacha);
-    export const OliviaCard = new diakCards("Olívia", "Lehelt már számtalanszon visszautasította. Oliver ikertestvére. Lehel ezt még nem tudja.", 12, 4, Olivia, 4, 2, "character", OliviaGacha);
+    export const OliviaCard = new diakCards("Olívia", "Lehelt már számtalanszon visszautasította. Oliver ikertestvére. Lehel ezt még nem tudja.", 12, 4, Olivia, 4, 3, "character", OliviaGacha);
     export const ZalanCard = new diakCards("Zalán", "Mindenki kedvenc DÖK elnöke. Volt. Fasza bőrdzseki!", 10, 5, Zalan, 5, 3, "character", ZalanGacha);
     export const ZenoCard = new diakCards("Zénó", "SG DÖK elnök. Ha a terem hátsó sarkában valaki fulladozik a nevetéstől, ő az.", 10, 6, Zeno, 6, 7, "character", ZenoGacha);
+    export const AproNoCard = new diakCards("Apró Fehér Nő", "Egy apró fehér nő. Gyenge, a férfiak alatt áll, nincsennek jogai.", 2, 2, AproNo, 4, 2, "character", AproNoGacha);
 
-    export let tanarCardsArr = [BizsoCard, FarkasCard, MoniCard, NagyoraCard, RozgonyiCard, TabiCard,BencusCard,DobiCard,IvanEvaCard,KocsiAndiCard,KoPaszCard,KutiCard,MatosCard,MeszarosCard,JeffCard]
-    export let diakCardsArr = [ArhoCard, BarniCard, EszterCard, OliviaCard, ZalanCard, ZenoCard]
+    export let tanarCardsArr = [BizsoCard, FarkasCard, MoniCard, NagyoraCard, RozgonyiCard, TabiCard,BencusCard,DobiCard,IvanEvaCard,TomiCard,KocsiAndiCard,KoPaszCard,KutiCard,MatosCard,MeszarosCard,JeffCard]
+    export let diakCardsArr = [ArhoCard, BarniCard, EszterCard, OliviaCard, ZalanCard, ZenoCard,AproNoCard]
 
     export let URTanars = []
     export let FiveStarTanars = []

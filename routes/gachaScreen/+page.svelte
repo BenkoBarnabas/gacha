@@ -1,7 +1,9 @@
 <script>
     //IMPORT ALL THE NECCESARY ASSETS HERE
     import * as Cards from "../../card"
-   
+    
+    import ticketIcon from "../../lib/assets/global/ticketIcon.png"
+    import gachaCurrencyIcon from "../../lib/assets/global/currencyIcon.png"
     //banner assets
     import SN from "../../lib/assets/gacha/SeniorWisdom.png" //senior wisdom banner cover, Farki (can be cahnged)
     import YC from "../../lib/assets/gacha/YouthfulCuriosity.png" //yuouthful curiosity banner cover, zénó (can be changed)
@@ -31,6 +33,8 @@
     var pityUR = 0
     let pullHistory = ""
 
+    let tickets = 100
+    let gachaCurrency = 10000
 
     getData("history",userId,"rolls") //the one can be adjusted later depending on the ip of the PC (the user who playing)
     console.log("1. get data");
@@ -56,13 +60,19 @@
         console.log(pityUR);
     }, 1000);
 
+    //var tickets = getData("tickets",userId,"account")
+
+    //console.log(tickets);
+
 
     //VARIABLE DECLARATION
     //
     var whichBanner = false //if SW banner active true : false
+    let bannerName = "Youthful Curiosity"
     var isRolling = false //the rolls screen will be visible if true
     var rollIsSkippable = false //cant skip (close the roll window) without the animations fully loaded in, can cause bugs
     var isHistory = false
+    var isInfo = false
     var isBannerUp = true
 
     var pullNum //number of pulls 1/10
@@ -113,6 +123,12 @@
         featuredAnimationClass.fill("featuredCards")
         whichBanner = param
         whichBanner = whichBanner //svelte only updates and #if statement that uses a variable when its declared again, weirdge
+        if(whichBanner){
+            bannerName = "Senior Wisdom"
+        }
+        else {
+            bannerName = "Youthful Curiosity"
+        }
 
         for (let i =0; i<6; i++){ //animatie the featured characters on the side when banner changes
             (async () => {
@@ -138,15 +154,17 @@
 
 
     function CalculatePulls(num){ //loads the pull cards and already calculates their content
+        if (tickets > num){
+            tickets -= num
+        }
+        else {
+            gachaCurrency -= num*200
+        }
+        isBannerUp = false
+        isBannerUp = isBannerUp
         isRolling = true
         setTimeout(() => {rollIsSkippable = true}, num*100+700); //deleyed close button pops up
         pullNum = num
-        if(whichBanner){
-            var bannerName = "Senior Wisdom"
-        }
-        else {
-            var bannerName = "Youthful Curiosity"
-        }
 
         for (let i = 0; i < num; i++) {
             if (Math.floor(Math.random() * 100) >= 98 || pity5S == 50){ //returns a number between 0-100, 2% esély hogy 5*
@@ -254,6 +272,8 @@
     function ClosePull(){ //sets everything to their base value so the animation and the pull reveal could play again next time
         isRolling = false
         isRolling = isRolling //closes the pull window
+        isBannerUp = true
+        isBannerUp = isBannerUp
         rollIsSkippable = false
 
         for(let i = 0; i<10; i++){
@@ -289,6 +309,28 @@
         isBannerUp = true
         isBannerUp = isBannerUp
     }
+    var cardPoolTab = true;
+    function ChangeInfoTab(param){
+        cardPoolTab = param
+        cardPoolTab = cardPoolTab
+    }
+    function LoadInfo(){
+        isInfo= true
+        isInfo = isInfo
+        isBannerUp = false
+        isBannerUp = isBannerUp
+
+        const button = document.getElementById("focusedOnLoad");
+        if (button) {
+            button.click();
+        }
+    }
+    function CloseInfoScreen(){
+        isInfo= false
+        isInfo = isInfo
+        isBannerUp = true
+        isBannerUp = isBannerUp
+    }
 
 </script>
 <div style='--bgWidth:{bgWidth};'></div>
@@ -308,7 +350,7 @@
     </div>
     <!-- close pull button -->
     {#if rollIsSkippable}
-    <button style="position: absolute; margin:0; z-index:4; left:91vw; top:10vh; border:none; background:none; font-size: 5vmin; color: rgb(133, 132, 131);" on:click={ClosePull}>X</button>
+    <button class="closeButton" on:click={ClosePull}></button>
     {/if}
 {/if}
 
@@ -339,24 +381,64 @@
         <div class="pityCounter">{50-pity5S}</div>
     </div>
 
-    <button style="position: absolute; margin:0; z-index:4; left:91vw; top:10vh; border:none; background:none; font-size: 5vmin; color: black;" on:click={CloseHistoryScreen}>X</button>
+    <button class="closeButton" on:click={CloseHistoryScreen}></button>
+</div>
+{/if}
+
+{#if isInfo}
+<div class="historyScreen"><!-- the white background -->
+    <div class="historyBody"> <!-- the container for the entire history book image thingy -->
+        <div class="historyContainer"> <!-- the template for the history box -->
+        <div class="historyScroll" style="background-color: aqua;"> <!-- the scorralbe part inside  -->
+            <div id="infoScreenHeader">
+                <button class="infoTabButton" id="focusedOnLoad" on:click={() => ChangeInfoTab(true)} >Item Pool</button>
+                <button class="infoTabButton" on:click={() => ChangeInfoTab(false)}>Details</button>
+            </div>
+            
+            {#if cardPoolTab}
+            alma
+            {:else}
+            körte
+            {/if}
+        </div>
+        </div>
+        <div class="historyTitle">{bannerName}</div>
+        <div class="pityCounter">{50-pity5S}</div>
+    </div>
+
+    <button class="closeButton" on:click={CloseInfoScreen}></button>
 </div>
 {/if}
 
 
 {#if isBannerUp}
-<h1 style="margin-top:0; font-size:5vmin; text-align:center;">Gacha gacha gacha</h1>
 
 <div id="header">
-    <div id="backArrowCont">
-        <button class="buttonArrowStyle" id="backArrow" on:click={() => GoToPage("../")}>Back</button>
-    </div>
-    
-    <div id="bannerChoosers">
-        <!-- buttons to choose the active banner -->
-        <button style="background: URL({SNCover}), no-repeat; " class="bannerIcon" on:click={() => ActivateBanner(true)}></button>
-        <button style="background: URL({YCCover}), no-repeat;" class="bannerIcon" on:click={() => ActivateBanner(false)}></button>
-    </div>
+    <table style="width:100vw;">
+        <tr>
+            <td style="width: 30vw; padding-left:1.5vw;text-align:center">
+                <div class="pageTitle">«( Character gacha )»</div>
+            </td>
+            <td style="width: 40vw; text-align:center;">
+                    <!-- buttons to choose the active banner -->
+                    <button style="background: URL({SNCover}), no-repeat; " class="bannerIcon" on:click={() => ActivateBanner(true)}></button>
+                    <button style="background: URL({YCCover}), no-repeat;" class="bannerIcon" on:click={() => ActivateBanner(false)}></button>
+            </td>
+            <td style="width: 30vw; padding-right:1.5vw;text-align:center">
+                <div class="accountInfoHeader">
+                    <td>
+                        <div class="accountInfoBubbles"><img src={gachaCurrencyIcon} alt="gCurrency" style="width:1vw; height:1vw;"> {gachaCurrency}</div>
+                    </td>
+                    <td>
+                        <div class="accountInfoBubbles"><img src={ticketIcon} alt="tickets" style="width:1vw; height:1vw;"> {tickets}</div>
+                    </td>
+                    <td>
+                        <button class="closeButton" on:click={() => GoToPage("../")}></button>
+                    </td>
+                </div>
+            </td>
+        </tr>
+    </table>
 </div>
 
 
@@ -423,7 +505,7 @@
     </div>
 
     <div id="infoButtonDiv">
-        <button class="buttonStandardStyle" >Information</button><br>
+        <button class="buttonStandardStyle" on:click={LoadInfo}>Information</button><br>
         <button class="buttonStandardStyle" on:click={LoadHistory}>History</button>
     </div>
 </div>
@@ -433,12 +515,17 @@
     @font-face {
             font-family: 'ShadowLight';
             src: url('../../lib/assets/fonts/ShadowsIntoLight-Regular.ttf');
-        }
+    }
+    @font-face {
+            font-family: 'TitleFont';
+            src: url('../../lib/assets/fonts/Raleway-VariableFont_wght.ttf');
+    }
 
     :root {
         --blueAnim: url('../../lib/assets/gacha/blueAnimation.png');
     }
-        .shine-effect {
+
+    .shine-effect { /*dont move it, if u move it, it doesnt work i have no idea, just dont ask me i-*/
         padding: 10px 20px;
         position: relative;
         overflow: hidden;
@@ -467,6 +554,89 @@
         padding: 0;
         size: 0 0;
     }
+
+    #infoScreenHeader{
+        padding: 1vw;
+        text-align: left;
+    }
+    .infoTabButton{
+        font-family: 'ShadowLight';
+        margin-right: 1vw;
+        font-size: 2.5vw;
+
+        background: none;
+        border:none;
+
+        opacity: 0.3;
+    }
+    .infoTabButton:focus{
+        border-bottom: 3px solid black;
+        opacity: 1;
+    }
+
+
+    #header {
+        margin-top: 2vw;
+    }
+    :global(.accountInfoHeader){
+        font-size: 1.3vw;
+        color: antiquewhite;
+
+        font-family: 'TitleFont';
+        font-weight: 500;
+        font: italic;
+        text-align: center;
+    }
+    :global(.pageTitle){
+        font-size: 1.3vw;
+        color: antiquewhite;
+
+        font-family: 'TitleFont';
+        font-weight: 500;
+        font: italic;
+        text-align: center;
+
+        width: 17vw;
+        float: left;
+    }
+    .bannerIcon {   /*the selectors itself */
+        height: 8vh;
+        width: 12.6vh;
+        background-size: 12.6vh 8vh;
+        margin: 10px;
+    }
+    .bannerIcon:hover {
+        transform: scale(1.06);
+        cursor: pointer;
+    }
+    .buttonArrowStyle{ 
+        background: url(../../lib/assets/gacha/rainArrow.png) no-repeat;
+        background-size: 100%;
+        border:none;
+        width: 10vw;
+        height: 3vw;
+        text-align: center;
+        font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+        font-size: 2vmin;
+        color: rgb(103, 102, 91);
+    }
+    .buttonArrowStyle:hover{
+        transform: scale(1.06);
+        animation: hueChange 1s linear infinite;
+        cursor: pointer;
+    }
+    :global(.accountInfoBubbles){
+        background-image: url(../../lib/assets/global/accountInfoIcon.png);
+        background-size: 100% 100%;
+        color: black;
+        font-family: impact;
+
+        padding: 0.2vw;
+        padding-left: 1vw;
+
+        width:6.2vw;
+    }
+
 
 
     /*HISTORY SCREEN SECTION*/
@@ -516,7 +686,6 @@
     }
     th {
         font-size: 3vmin;
-        font-family: 'Lucida Sans';
     }
 
     .historyTitle{
@@ -881,40 +1050,6 @@
         top: 27.5vw;
         scale: 1.1;
     }
-    .buttonStandardStyle{   /*the 1/10 pull buttons itselves */ 
-        background: url(../../lib/assets/gacha/pullButton.png) ;
-        background-size: 100%;
-        border:none;
-        width: 10vw;
-        height: 3vw;
-        text-align: center;
-        font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-        font-size: 2vmin;
-        color: rgb(103, 102, 91);
-    }
-    .buttonStandardStyle:hover{
-        transform: scale(1.06);
-        animation: hueChange 1s linear infinite;
-        cursor: pointer;
-    }
-
-    .buttonArrowStyle{ 
-        background: url(../../lib/assets/gacha/rainArrow.png) no-repeat;
-        background-size: 100%;
-        border:none;
-        width: 10vw;
-        height: 3vw;
-        text-align: center;
-        font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-        font-size: 2vmin;
-        color: rgb(103, 102, 91);
-    }
-
-    .buttonArrowStyle:hover{
-        transform: scale(1.06);
-        animation: hueChange 1s linear infinite;
-        cursor: pointer;
-    }
 
 
 
@@ -935,30 +1070,38 @@
         animation: hueChange 1s linear infinite;
     }
 
-
-    #bannerChoosers {   /*container foor the banner selector buttons */
-        text-align: center;
-        width: 40vw;
-        margin: auto;
-    }
-    #backArrowCont {
+    .buttonStandardStyle{   /*the 1/10 pull buttons itselves */ 
+        background: url(../../lib/assets/gacha/pullButton.png) ;
+        background-size: 100%;
+        border:none;
         width: 10vw;
-        float: left;
+        height: 3vw;
+        text-align: center;
+        font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+        font-size: 2vmin;
+        color: rgb(103, 102, 91);
     }
-
-    .bannerIcon {   /*the selectors itself */
-        height: 8vh;
-        width: 12.6vh;
-        background-size: 12.6vh 8vh;
-        margin: 10px;
-    }
-    .bannerIcon:hover {
+    .buttonStandardStyle:hover{
         transform: scale(1.06);
+        animation: hueChange 1s linear infinite;
         cursor: pointer;
     }
 
-    #backArrow {
-        margin-left: 3vw;
-        margin-top: 1vw;
+    .closeButton{
+        background-image: url("../../lib/assets/global/closeIcon.png");
+        background-size: 100% 100%;
+        width: 3.5vw;
+        height: 3vw;
+        background-color: transparent;
+        border: none;
+        position: absolute;
+        top: 3vw;
+        left: 90vw;
+        z-index: 2;
     }
+    .closeButton:hover{
+        transform: scale(1.1);
+        cursor: pointer;
+    }
+
 </style>
