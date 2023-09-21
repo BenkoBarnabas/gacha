@@ -88,7 +88,7 @@
     export const TabiCard = new tanarCards("Tábi", "Tesitanár és röplabdaedző. Epic gamer szabadidejében. Sose hagyja ki az alkalmat, hogy politizáljon.", 6, 7, Tabi, 3, 2, "character", TabiGacha);
 
     //not yet detailed
-    export const BencusCard = new tanarCards("Bencus", "Másodállásban professzionális diáktanya dolgozó.", 7, 4, Bencus, 5, 1, "character", BencusGacha);
+    export const BencusCard = new tanarCards("Bencus", "Másodállásban professzionális diáktanya dolgozó.", 7, 4, Bencus, 4, 1, "character", BencusGacha);
     export const DobiCard = new tanarCards("Dobby", "Dob", 8, 7, Dobi, 6, 2, "character", DobiGacha);
     export const IvanEvaCard = new tanarCards("Iván Éva", "Average Edward Allen Poe fan, nem egy szakbarbár. Irigylésre méltó!", 11, 4, IvanEva, 3, 2, "character", IvanEvaGacha);
     export const KocsiAndiCard = new tanarCards("KocsiAndi", "Senki se tudja, hogy pontosan mit csinál. A sárga könyvvel kapcsolatban őt keresd!", 12, 9, KocsiAndi, 3, 4, "character", KocsiAndiGacha);

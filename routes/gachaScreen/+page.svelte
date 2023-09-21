@@ -392,7 +392,7 @@
 <div class="historyScreen"><!-- the white background -->
     <div class="historyBody"> <!-- the container for the entire history book image thingy -->
         <div class="historyContainer"> <!-- the template for the history box -->
-        <div class="historyScroll" style="padding-left: 4vw; text-align:left;"> <!-- the scorralbe part inside  -->
+        <div class="historyScroll" style="padding-left: 4vw; text-align:left;" id="infoScroll"> <!-- the scorralbe part inside  -->
             <div id="infoScreenHeader">
                 <button class="infoTabButton hover-underline-animation" id="focusedOnLoad" style="border-right: 0.2vw solid black; border-radius: 0.2vw;" on:click={() => ChangeInfoTab(true)} >Item Pool</button>
                 <button class="infoTabButton hover-underline-animation" on:click={() => ChangeInfoTab(false)}>Details</button>
@@ -411,7 +411,7 @@
                     CARDS:
                 </div>
                 
-                <div style="width: 30vw; background:#a39074; margin-bottom:5vw;">
+                <div style="width: 30vw; margin-bottom:5vw;">
                     {#each rarity as char, i}
                     {#if i%4 == 0}
                     <br>
@@ -649,6 +649,9 @@
         transform: scaleX(1);
         transform-origin: bottom left;
     }
+    #infoScroll::-webkit-scrollbar{
+        width: 0;
+    }
 
 
 
@@ -791,13 +794,14 @@
         text-align: center;
 
         position:absolute;
-        top: 33vw;
-        left: 60vw;
+        top: 31vw;
+        left: 59vw;
 
-        font-size: 2vw;
+        font-size: 5vw;
         text-align: center;
         font-family: 'ShadowLight';
-        font-weight: bold;
+        font-weight: 100;
+        font:italic;
     }
 
     .historyText{
