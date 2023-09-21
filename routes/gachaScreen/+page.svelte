@@ -649,9 +649,6 @@
         transform: scaleX(1);
         transform-origin: bottom left;
     }
-    #infoScroll::-webkit-scrollbar{
-        width: 0;
-    }
 
 
 
