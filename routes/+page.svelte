@@ -76,4 +76,35 @@ button {
     transform: scale(1.06);
     cursor: pointer;
 }
+
+
+    /* width */
+  :global(::-webkit-scrollbar) {
+      width:2vw;
+  }
+
+  /* Track */
+  :global(::-webkit-scrollbar-track) {
+      background-image: url("../lib/assets/global/scrollbarTrack.png");
+      background-size: 100% 100%;
+  }
+
+  /* Handle */
+  :global(::-webkit-scrollbar-thumb) {
+      background: url("../lib/assets/global/scrollbar.png");
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+  }
+  :global(::-webkit-scrollbar-button){
+      width: 30px;
+      height: 5vh;
+  }
+  :global(::-webkit-scrollbar-button:start) {
+      background-image: url("../lib/assets/global/scrollbarUpArrow.png");
+      background-size: 100% 100%;
+  }
+  :global(::-webkit-scrollbar-button:end) {
+      background-image: url("../lib/assets/global/scrollbarDownArrow.png");
+      background-size: 100% 100%;
+  }
 </style>
