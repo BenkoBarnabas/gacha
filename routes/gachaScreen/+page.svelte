@@ -1,4 +1,5 @@
 <script>
+
     //IMPORT ALL THE NECCESARY ASSETS HERE
     import * as Cards from "../../card"
     
@@ -67,8 +68,8 @@
 
     //VARIABLE DECLARATION
     //
-    var whichBanner = false //if SW banner active true : false
-    let bannerName = "Youthful Curiosity"
+    var whichBanner = true //if SW banner active true : false
+    let bannerName = "Senior Wisdom"
     var isRolling = false //the rolls screen will be visible if true
     var rollIsSkippable = false //cant skip (close the roll window) without the animations fully loaded in, can cause bugs
     var isHistory = false
@@ -309,7 +310,9 @@
         isBannerUp = true
         isBannerUp = isBannerUp
     }
+
     var cardPoolTab = true;
+    var starsColorByCost = [["UR","linear-gradient(90deg, #ff7474, #ffb56a, #ffff6e, #78ff78, #7979ff, #c379ff, #ff80ff)"],["SSR","#ed7c26"],["SR","#8626ed"],["R","#2672ed"]]
     function ChangeInfoTab(param){
         cardPoolTab = param
         cardPoolTab = cardPoolTab
@@ -389,14 +392,43 @@
 <div class="historyScreen"><!-- the white background -->
     <div class="historyBody"> <!-- the container for the entire history book image thingy -->
         <div class="historyContainer"> <!-- the template for the history box -->
-        <div class="historyScroll" style="background-color: aqua;"> <!-- the scorralbe part inside  -->
+        <div class="historyScroll" style="padding-left: 4vw; text-align:left;"> <!-- the scorralbe part inside  -->
             <div id="infoScreenHeader">
-                <button class="infoTabButton" id="focusedOnLoad" on:click={() => ChangeInfoTab(true)} >Item Pool</button>
-                <button class="infoTabButton" on:click={() => ChangeInfoTab(false)}>Details</button>
+                <button class="infoTabButton hover-underline-animation" id="focusedOnLoad" style="border-right: 0.2vw solid black; border-radius: 0.2vw;" on:click={() => ChangeInfoTab(true)} >Item Pool</button>
+                <button class="infoTabButton hover-underline-animation" on:click={() => ChangeInfoTab(false)}>Details</button>
             </div>
             
             {#if cardPoolTab}
-            alma
+            <span style="font-size:1.9vw;">Increased rate character Cards:</span>
+
+            {#each [Cards.URTanars, Cards.FiveStarTanars, Cards.FourStarTanars, Cards.ThreeStarTanars] as rarity, i}
+                
+                <div class="rarityLine" style="color: white; background:{starsColorByCost[i][1]}">
+                    {starsColorByCost[i][0]}
+                    {#each Array(rarity[0].stars) as star}
+                         * 
+                    {/each}
+                    CARDS:
+                </div>
+                
+                <div style="width: 30vw; background:#a39074; margin-bottom:5vw;">
+                    {#each rarity as char, i}
+                    {#if i%4 == 0}
+                    <br>
+                    <td>
+                        <img src={char.source} alt="kártyi" style="width: 7vw; height: 7vw; background-size:contain"><br>
+                        {char.name}
+                    </td>
+                    {:else}
+                        <td>
+                            <img src={char.source} alt="kártyi" style="width: 7vw; height: 7vw; background-size:contain"><br>
+                            {char.name}
+                        </td>
+                    {/if}
+                {/each}
+                </div>
+                
+            {/each}
             {:else}
             körte
             {/if}
@@ -559,9 +591,30 @@
         padding: 1vw;
         text-align: left;
     }
+    .rarityLine{
+        width: 30vw;
+        height: 1.7vw;
+
+        margin-top:1vw;
+        margin-bottom: 1vw;
+
+        font-family: monospace;
+        font-size: 1.2vw;
+        font:bold;
+
+        padding-left:3vw;
+        padding-top: 0.25vw;
+        
+        text-shadow:
+                -0.08vw -0.08vw 0 #000, /* Top-left shadow */
+                0.08vw -0.08vw 0 #000, /* Top-right shadow */
+                -0.08vw 0.08vw 0 #000, /* Bottom-left shadow */
+                0.08vw 0.08vw 0 #000; /* Bottom-right shadow */;
+    }
     .infoTabButton{
         font-family: 'ShadowLight';
-        margin-right: 1vw;
+        padding-right: 1vw;
+        margin-right: 1.5vw;
         font-size: 2.5vw;
 
         background: none;
@@ -570,9 +623,33 @@
         opacity: 0.3;
     }
     .infoTabButton:focus{
-        border-bottom: 3px solid black;
         opacity: 1;
     }
+    .infoTabButton:hover{
+        cursor: pointer;
+    }
+    .hover-underline-animation {
+        display: inline-block;
+        position: relative;
+    }
+    .hover-underline-animation:after {
+        content: '';
+        position: absolute;
+        width: 90%;
+        transform: scaleX(0);
+        height: 0.5vh;
+        border-radius: 10vw;
+        bottom: 0;
+        left: 0;
+        background-image: linear-gradient(90deg, #ff7474, #ffb56a, #ffff6e, #78ff78, #7979ff, #c379ff, #ff80ff);
+        transform-origin: bottom right;
+        transition: transform 0.25s ease-out;
+    }
+    .hover-underline-animation:hover:after {
+        transform: scaleX(1);
+        transform-origin: bottom left;
+    }
+
 
 
     #header {
@@ -649,33 +726,33 @@
         background-color: rgba(250, 235, 215, 0.604);
     }
     .historyBody{
-        width: 75vw;
+        width: 85vw;
 
         position: relative;
         margin: auto;
-        top: 7vw;
+        top: 4vw;
     }
     .historyContainer{
-        width: 70vw;
-        height: 36.1347vw;
+        width: 80vw;
+        height: 41.297vw;
 
         background: url(../../lib/assets/gacha/infoBox.png) no-repeat;
         background-size: cover;
 
         position: absolute;
         left: 2.5vw;
-        top: 2vw;
+        top: 4vw;
 
     }
     .historyScroll{   /*a flexbox containing all the cards */ 
         z-index: 2;
         width: 53vw;
-        height: 28vw;
+        height: 30vw;
 
         overflow: auto;
         margin: auto;
-        margin-top: 5vw;
-
+        margin-top: 7vw;
+        font-family: 'ShadowLight';
     }
     .historyTable{
         margin: auto;
@@ -698,7 +775,7 @@
         border-radius: 3vw;
 
         position:absolute;
-        top: 1vw;
+        top: 2vw;
         left: 3vw;
 
         text-align: center;
@@ -714,8 +791,8 @@
         text-align: center;
 
         position:absolute;
-        top: 27vw;
-        left: 53vw;
+        top: 33vw;
+        left: 60vw;
 
         font-size: 2vw;
         text-align: center;
