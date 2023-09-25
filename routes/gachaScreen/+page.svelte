@@ -563,15 +563,6 @@
         transition: background-color 0.3s ease-in-out;
     }
 
-    :global(body){  /*body styling format of svelte */ 
-        background: url(../../lib/assets/collection/bg.png);
-        background-size: 100% 100%;
-        /*font now in routes*/
-        /*animation: backgroundLoop 120s linear infinite;*/
-        background-size: var(--bgWidth);
-        margin: 0;
-    }
-
     @keyframes backgroundLoop {  
     0% {
         background-position-x: left;

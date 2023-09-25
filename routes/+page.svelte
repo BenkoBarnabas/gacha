@@ -78,33 +78,40 @@ button {
 }
 
 
-    /* width */
-  :global(::-webkit-scrollbar) {
-      width:2vw;
-  }
+  /* width */
+:global(::-webkit-scrollbar) {
+    width:2vw;
+}
 
-  /* Track */
-  :global(::-webkit-scrollbar-track) {
-      background-image: url("../lib/assets/global/scrollbarTrack.png");
-      background-size: 100% 100%;
-  }
+/* Track */
+:global(::-webkit-scrollbar-track) {
+    background-image: url("../lib/assets/global/scrollbarTrack.png");
+    background-size: 100% 100%;
+}
 
-  /* Handle */
-  :global(::-webkit-scrollbar-thumb) {
-      background: url("../lib/assets/global/scrollbar.png");
-      background-repeat: no-repeat;
+/* Handle */
+:global(::-webkit-scrollbar-thumb) {
+    background: url("../lib/assets/global/scrollbar.png");
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
+:global(::-webkit-scrollbar-button){
+    width: 30px;
+    height: 5vh;
+}
+:global(::-webkit-scrollbar-button:start) {
+    background-image: url("../lib/assets/global/scrollbarUpArrow.png");
+    background-size: 100% 100%;
+}
+:global(::-webkit-scrollbar-button:end) {
+    background-image: url("../lib/assets/global/scrollbarDownArrow.png");
+    background-size: 100% 100%;
+}
+:global(body){  /*body styling format of svelte */ 
+      background: url(../lib/assets/collection/bg.png);
       background-size: 100% 100%;
-  }
-  :global(::-webkit-scrollbar-button){
-      width: 30px;
-      height: 5vh;
-  }
-  :global(::-webkit-scrollbar-button:start) {
-      background-image: url("../lib/assets/global/scrollbarUpArrow.png");
-      background-size: 100% 100%;
-  }
-  :global(::-webkit-scrollbar-button:end) {
-      background-image: url("../lib/assets/global/scrollbarDownArrow.png");
-      background-size: 100% 100%;
-  }
+      /*animation: backgroundLoop 120s linear infinite;*/
+      background-size: var(--bgWidth);
+      margin: 0;
+}
 </style>

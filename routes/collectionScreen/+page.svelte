@@ -317,7 +317,7 @@
         width: 20vw;
     }
     #curCardDesc{
-        font-size: 1vw;
+        font-size: 1.3vmin;
         font-family: cursive;
         color: rgba(0, 0, 0, 0.778);
         font: bold;
