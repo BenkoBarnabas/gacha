@@ -128,19 +128,20 @@
     export const TomiCard = new tanarCards("Dr. Tamás", "Fogorvos és táncvilágbajnok. Unatkozott, ezért elment tanárnak.", 20, 20, Tomi, 5, 6, "character", TomiGacha);
 
     //not yet detailed
-    export const FiloRekaCard = new tanarCards("Filó Réka", "Sajnos családi életét az érettségiben nem kérdezik.", 7, 4, FiloReka, 4, 1, "character", FiloRekaGacha);
-    export const IzigCard = new tanarCards("Ízig Máté", "Szeret utazni. Báló Dávidot is szereti.", 8, 7, Izig, 6, 2, "character", IzigGacha);
-    export const KinyoCard = new tanarCards("Kinyó", "Megrendeli a ságváris merch-öt(?)", 11, 4, Kinyo, 3, 2, "character", KinyoGacha);
-    export const LaciNeniCard = new tanarCards("Laci néni", "Qu'est-ce que les schtroumpfs", 12, 9, LaciNeni, 3, 4, "character", LaciNeniGacha);
-    export const MsFarkasCard = new tanarCards("Mrs Farkas", "Csak 2 embernek hinném el, hogy zöld az ég és kék a fű. Anyám és Farkas Judit.", 10, 6, MsFarkas, 5, 3, "character", MsFarkasGacha);
-    export const NagyTCard = new tanarCards("Nagy T", "", 12, 5, NagyT, 5, 3, "character", NagyTGacha);
-    export const ParagiCard = new tanarCards("Paragi", "", 14, 4, Paragi, 4, 3, "character", ParagiGacha);
-    export const RixerCard = new tanarCards("Rixer Márta", "", 3, 6, Rixer, 4, 1, "character", RixerGacha);
-    export const SisakCard = new tanarCards("Sisák", "", 21, 2, Sisak, 3, 3, "character", SisakGacha);
-    export const SzaszakCard = new tanarCards("Szaszi", "", 16, 5, Szaszak, 6, 3, "character", SzaszakGacha);
-    export const TothKareszCard = new tanarCards("Karesz", "", 20, 20, TothKaresz, 5, 6, "character", TothKareszGacha);
-    export const VeronikaCard = new tanarCards("Németh Veronika", "", 7, 4, Veronika, 4, 1, "character", VeronikaGacha);
-    export const WeiszCard = new tanarCards("Weisz", "", 8, 7, Weisz, 6, 2, "character", WeiszGacha);
+    export const FiloRekaCard = new tanarCards("Filó Réka", "Sajnos családi életét az érettségiben nem kérdezik.", 7, 4, FiloReka, 4, 1, "character", GachaPH);
+    export const IzigCard = new tanarCards("Ízig Máté", "Szeret utazni. Báló Dávidot is szereti.", 8, 7, Izig, 6, 2, "character", GachaPH);
+    export const KinyoCard = new tanarCards("Kinyó", "Megrendeli a ságváris merch-öt(?)", 11, 4, Kinyo, 3, 2, "character", GachaPH);
+    export const LaciNeniCard = new tanarCards("Laci néni", "Qu'est-ce que les schtroumpfs", 12, 9, LaciNeni, 3, 4, "character", GachaPH);
+    export const MsFarkasCard = new tanarCards("Mrs Farkas", "Csak 2 embernek hinném el, hogy zöld az ég és kék a fű. Anyám és Farkas Judit.", 10, 6, MsFarkas, 5, 3, "character", GachaPH);
+    export const NagyTCard = new tanarCards("Nagy T", "", 12, 5, NagyT, 5, 3, "character", GachaPH);
+    export const ParagiCard = new tanarCards("Paragi", "", 14, 4, Paragi, 4, 3, "character", GachaPH);
+    export const RixerCard = new tanarCards("Rixer Márta", "", 3, 6, Rixer, 4, 1, "character", GachaPH);
+    export const SisakCard = new tanarCards("Sisák", "", 21, 2, Sisak, 3, 3, "character", GachaPH);
+    export const SzaszakCard = new tanarCards("Szaszi", "", 16, 5, Szaszak, 6, 3, "character", GachaPH);
+    export const TothKareszCard = new tanarCards("Karesz", "", 20, 20, TothKaresz, 5, 6, "character", GachaPH);
+    export const VeronikaCard = new tanarCards("Németh Veronika", "", 7, 4, Veronika, 4, 1, "character", GachaPH);
+    export const WeiszCard = new tanarCards("Weisz", "", 8, 7, Weisz, 6, 2, "character", GachaPH);
+    export const TritzCard = new tanarCards("Tritzy", "", -1, -1, Tritz, 3, -1, "character", GachaPH);
 
     //DIAKOK
     export const ArhoCard = new diakCards("Arho", "7 évesen megfejtette a tudományt. Hisz a szabad akaratban.", 12, 6, Arho, 4, 3, "character", ArhoGacha); 
