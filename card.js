@@ -15,6 +15,7 @@
     import Marti from "./lib/assets/collection/tanar/Marti.png"
     import Jeff from "./lib/assets/collection/tanar/Jeff.png"
     import Tomi from "./lib/assets/collection/tanar/Tomi.png"
+    import Tritz from "./lib/assets/collection/tanar/Tritz.gif"
 
     import Arho from "./lib/assets/collection/diak/Arho.png"
     import Barni from "./lib/assets/collection/diak/Barni.png"
@@ -25,6 +26,8 @@
     import AproNo from "./lib/assets/collection/diak/AproNo.png"
 
     //gacha SRC
+    import GachaPH from "./lib/assets/collection/tanar/GachaPH.png"
+
     import BizsoGacha from "./lib/assets/collection/tanar/BizsoGacha.png"
     import FarkasGacha from "./lib/assets/collection/tanar/FarkasGacha.png"
     import MoniGacha from "./lib/assets/collection/tanar/MoniGacha.png"
@@ -86,8 +89,6 @@
     export const NagyoraCard = new tanarCards("Big D", "Average tank build. Not much to say.", 30, 4, Nagyora, 3, 5, "character", NagyoraGacha);
     export const RozgonyiCard = new tanarCards("Rozgonyi", "Szeret sütni. Szeret még legózni és gombócot enni is. A fiát láthatólag annyira nem.", 17, 3, Rozgonyi, 3, 3, "character", RozgonyiGacha);
     export const TabiCard = new tanarCards("Tábi", "Tesitanár és röplabdaedző. Epic gamer szabadidejében. Sose hagyja ki az alkalmat, hogy politizáljon.", 6, 7, Tabi, 3, 2, "character", TabiGacha);
-
-    //not yet detailed
     export const BencusCard = new tanarCards("Bencus", "Másodállásban professzionális diáktanya dolgozó.", 7, 4, Bencus, 4, 1, "character", BencusGacha);
     export const DobiCard = new tanarCards("Dobby", "Dob", 8, 7, Dobi, 6, 2, "character", DobiGacha);
     export const IvanEvaCard = new tanarCards("Iván Éva", "Average Edward Allen Poe fan, nem egy szakbarbár. Irigylésre méltó!", 11, 4, IvanEva, 3, 2, "character", IvanEvaGacha);
@@ -100,6 +101,9 @@
     export const JeffCard = new tanarCards("Jeff", "Plays golf with you on the weekends. Loves his wife, kids and family dog.", 16, 5, Jeff, 6, 3, "character", JeffGacha);
     export const TomiCard = new tanarCards("Dr. Tamás", "Fogorvos. Táncvilágbajnok és zsidókat használ ki pénzért, ennek ellenére utál dolgozni.", 20, 20, Tomi, 5, 6, "character", TomiGacha);
 
+    //not yet detailed
+    export const TritzCard = new tanarCards("Tritzy", "Lorem ipsum", -1, -1, Tritz, 3, -1, "character", GachaPH);
+
     //DIAKOK
     export const ArhoCard = new diakCards("Arho", "7 évesen megfejtette a tudományt. Hisz a szabad akaratban.", 12, 6, Arho, 4, 3, "character", ArhoGacha); 
     export const BarniCard = new diakCards("Barni", "Szeretik a lányok, szeretik a fiúk, ő pedig a krumplis tésztát szereti.", 18, 7, Barni, 3, 4, "character", BarniGacha);
@@ -109,7 +113,7 @@
     export const ZenoCard = new diakCards("Zénó", "SG DÖK elnök. Ha a terem hátsó sarkában valaki fulladozik a nevetéstől, ő az.", 10, 6, Zeno, 6, 7, "character", ZenoGacha);
     export const AproNoCard = new diakCards("Apró Fehér Nő", "Egy apró fehér nő. Gyenge, a férfiak alatt áll, nincsennek jogai.", 2, 2, AproNo, 4, 2, "character", AproNoGacha);
 
-    export let tanarCardsArr = [BizsoCard, FarkasCard,MartiCard, MoniCard, NagyoraCard, RozgonyiCard, TabiCard,BencusCard,DobiCard,IvanEvaCard,TomiCard,KocsiAndiCard,KoPaszCard,KutiCard,MatosCard,MeszarosCard,JeffCard]
+    export let tanarCardsArr = [BizsoCard, FarkasCard,MartiCard, MoniCard, NagyoraCard, RozgonyiCard, TabiCard,BencusCard,DobiCard,IvanEvaCard,TomiCard,KocsiAndiCard,KoPaszCard,KutiCard,MatosCard,MeszarosCard,JeffCard,TritzCard]
     export let diakCardsArr = [ArhoCard, BarniCard, EszterCard, OliviaCard, ZalanCard, ZenoCard,AproNoCard]
 
     export let URTanars = []

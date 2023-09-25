@@ -117,8 +117,6 @@
     return new Promise((resolve) => setTimeout(resolve, milliseconds));
     }
 
-    var URnameText = ""
-    var i = 0;
     function ActivateBanner(param){ //param is true/false
         
         featuredAnimationClass.fill("featuredCards")
@@ -346,7 +344,8 @@
         <div id="rollContainer" style='--cardSize:{rollsCardSize};'>
         {#each Array(pullNum) as _,index (lastPullBatchVisibilityClass[index].id)}
         <!-- a pul cardok -->
-        <div on:click={() => ShowPulls(index)} class="{lastPullBatchVisibilityClass[index].name} shine-effect" style='--rollsrc: url({lastPullBatchVisibilityClass[index].src});'></div>
+        <button on:click={() => ShowPulls(index)} class="{lastPullBatchVisibilityClass[index].name} shine-effect" style='--rollsrc: url({lastPullBatchVisibilityClass[index].src});'></button>
+        
         {/each}
         </div>
 
@@ -887,6 +886,8 @@
         padding: 0;
         opacity: 0;
         background-image: var(--rollsrc);
+        border: none;
+        background-color: transparent;
     }
     .rollCardVisible {  /*the pull card itself, visible version */ 
         width: 6vw;
@@ -896,6 +897,8 @@
         z-index: 2; 
         transition: filter 0.3s ease;
         background-image: var(--rollsrc);
+        border: none;
+        background-color: transparent;
     }
     .rollAnim3{
         animation-name: pullAnimation, blueAnim;
