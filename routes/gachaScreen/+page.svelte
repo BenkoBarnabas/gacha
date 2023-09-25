@@ -379,7 +379,7 @@
         </table>
         </div>
         </div>
-        <div class="historyTitle">Your pull history</div>
+        <div class="historyTitle">Gacha Történelmed</div>
         <div class="pityCounter">{50-pity5S}</div>
     </div>
 
@@ -398,7 +398,7 @@
             </div>
             
             {#if cardPoolTab}
-            <span style="font-size:1.9vw;">Increased rate character Cards:</span>
+            <span style="font-size:1.9vw;">Extra esély az alábbi kártyákra:</span>
 
             {#each [Cards.URTanars, Cards.FiveStarTanars, Cards.FourStarTanars, Cards.ThreeStarTanars] as rarity, i}
                 
@@ -448,7 +448,7 @@
     <table style="width:100vw;">
         <tr>
             <td style="width: 30vw; padding-left:1.5vw;text-align:center">
-                <div class="pageTitle">«( Character gacha )»</div>
+                <div class="pageTitle">«( Karakter Gacha )»</div>
             </td>
             <td style="width: 40vw; text-align:center;">
                     <!-- buttons to choose the active banner -->
@@ -484,7 +484,7 @@
     <!-- a banner cover zénó/farkas + a hozzáillő banner name (senior wisdom/youthful curiosity) (tanár/diák banner) -->
     {#if whichBanner}
 
-        <h1 class ="bannerName"><span style="color: brown">Senior</span><br> Wisdom</h1>
+        <h1 class ="bannerName"><span style="color: brown">Senior</span><br>Bölcsesség</h1>
         <img class="characterPic" src={SN} alt="Senior Wisdom"/>
         <h2 class="featuredName">Dobby (UR)</h2>
 
@@ -504,7 +504,7 @@
 
     {:else}
 
-        <h1 class ="bannerName"><span style="color: blue">Youthful</span><br> Curiosity</h1>
+        <h1 class ="bannerName"><span style="color: blue">Fiatal</span><br>Kíváncsiság</h1>
         <img class="characterPic" src={YC} alt="Youthful Curiosity"/>
         <h2 class="featuredName">Zénó (UR)</h2>
 
@@ -531,13 +531,13 @@
 
     <!-- single and multi buttons -->
     <div id="pullButtonDiv">
-        <button class="buttonStandardStyle" on:click={() => CalculatePulls(1)}>Pull 1</button><br>
-        <button class="buttonStandardStyle" on:click={() => CalculatePulls(10)}>Pull 10</button>
+        <button class="buttonStandardStyle" on:click={() => CalculatePulls(1)}>1 Nyitása</button><br>
+        <button class="buttonStandardStyle" on:click={() => CalculatePulls(10)}>10 Nyitása</button>
     </div>
 
     <div id="infoButtonDiv">
-        <button class="buttonStandardStyle" on:click={LoadInfo}>Information</button><br>
-        <button class="buttonStandardStyle" on:click={LoadHistory}>History</button>
+        <button class="buttonStandardStyle" on:click={LoadInfo}>Info</button><br>
+        <button class="buttonStandardStyle" on:click={LoadHistory}>Gacha Történelmed</button>
     </div>
 </div>
 {/if}

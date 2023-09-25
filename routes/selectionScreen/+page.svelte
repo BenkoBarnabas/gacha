@@ -1,60 +1,71 @@
 <script>
-    import Bizso from "../../lib/assets/collection/tanar/Bizso.png"
-    import Farkas from "../../lib/assets/collection/tanar/Farkas.png"
-    import Moni from "../../lib/assets/collection/tanar/Moni.png"
-    import Nagyora from "../../lib/assets/collection/tanar/Nagyora.png"
-    import Rozgonyi from "../../lib/assets/collection/tanar/Rozgonyi.png"
-    import Tabi from "../../lib/assets/collection/tanar/Tabi.png"
-    import Bencus from "../../lib/assets/collection/tanar/Bencus.png"
-    import Dobi from "../../lib/assets/collection/tanar/Dobi.png"
-    import IvanEva from "../../lib/assets/collection/tanar/IvanEva.png"
-    import KocsiAndi from "../../lib/assets/collection/tanar/KocsiAndi.png"
-    import KoPasz from "../../lib/assets/collection/tanar/KoPasz.png"
-    import Kuti from "../../lib/assets/collection/tanar/Kuti.png"
-    import Matos from "../../lib/assets/collection/tanar/Matos.png"
-    import Meszaros from "../../lib/assets/collection/tanar/Meszaros.png"
-    import Marti from "../../lib/assets/collection/tanar/Marti.png"
-    import Jeff from "../../lib/assets/collection/tanar/Jeff.png"
+    import * as Cards from "../../card"
+    import cardV2Background from "../../lib/assets/global/cardV2BG.png"
 
-    import Arho from "../../lib/assets/collection/diak/Arho.png"
-    import Barni from "../../lib/assets/collection/diak/Barni.png"
-    import Eszter from "../../lib/assets/collection/diak/Eszter.png"
-    import Olivia from "../../lib/assets/collection/diak/Olivia.png"
-    import Zalan from "../../lib/assets/collection/diak/Zalan.png"
-    import Zeno from "../../lib/assets/collection/diak/Zeno.png"
+    let curCardInView = {
+        source: "",
+        name: "",
+        atk: "",
+        hp: "",
+        cost: "",
+        rarity: "",
+        desc: "",
+        color: ""
+    }
+
+    var starSizeArray = [] //for some reason it didnt work with a normal return so i had to put them into an array ,im throwing up
+    var starSizeTop = [1,1,0,0]
+    var backgroundColorByCost = ["#2672ed","#8626ed","#ed7c26","linear-gradient(180deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235))"]
+    var starsColorByCost = ["color: #2672ed;","color: #8626ed;","color: #ed7c26;","background-image: linear-gradient(90deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235));-webkit-background-clip: text;background-clip: text;color: transparent;"]
 </script>
-<h1>Your Deck</h1>
+<h1>Paklid</h1>
 <div id="deckBox">
 
 </div>
-<div id="restBox">
-    <img src="{Bizso}" alt="card">
-    <img src="{Farkas}" alt="card">
-    <img src="{Moni}" alt="card">
-    <img src="{Nagyora}" alt="card">
-    <img src="{Tabi}" alt="card">
-    <img src="{Rozgonyi}" alt="card">
-    <img src="{Bencus}" alt="card">
-    <img src="{Dobi}" alt="card">
-    <img src="{IvanEva}" alt="card">
-    <img src="{KocsiAndi}" alt="card">
-    <img src="{KoPasz}" alt="card">
-    <img src="{Kuti}" alt="card">
-    <img src="{Matos}" alt="card">
-    <img src="{Meszaros}" alt="card">
-    <img src="{Marti}" alt="card">
-    <img src="{Jeff}" alt="card">
-    <img src="{Arho}" alt="card">
-    <img src="{Barni}" alt="card">
-    <img src="{Eszter}" alt="card">
-    <img src="{Olivia}" alt="card">
-    <img src="{Zalan}" alt="card">
-    <img src="{Zeno}" alt="card">
+<div class = "cardcollection" id = "tanarcollection">
+    {#each Cards.tanarCardsArr as card}
+    <div id="cardPreviewListCont">
+        <img style="width: 12.5vw; position:absolute" src={cardV2Background} alt="cardBg">
+        <div id="rarityBGList" style="background: {backgroundColorByCost[(card.stars)-3]}; "></div>
+        <img class = "cardButton" src={card.source} alt="preview"/>
+        <button class="cardListFrame" alt="cardBg"></button>
+        <div class="curCardStatsList" style="left: 2.68vw;">{card.attack}</div>
+        <div class="curCardStatsList" style="left: 9.65vw;">{card.health}</div>
+        <div class="curCardCostList">{card.cost}</div>
+        <div class="curCardNameList">{card.name}</div>
+
+        <div class="curCardRarityList" style="{starsColorByCost[(card.stars)-3]}">
+            {#each Array(Number(card.stars)) as card}
+                <span style="font-size: 1vw;">★</span>
+            {/each}
+        </div>
+    </div>
+    {/each}
+</div>
+<div class = "cardcollection" id = "diakcollection">
+    {#each Cards.diakCardsArr as card}
+    <div id="cardPreviewListCont">
+        <img style="width: 12.5vw; position:absolute" src={cardV2Background} alt="cardBg">
+        <div id="rarityBGList" style="background: {backgroundColorByCost[(card.stars)-3]}; "></div>
+        <img class = "cardButton" src={card.source} alt="preview"/>
+        <button class="cardListFrame" alt="cardBg"></button>
+        <div class="curCardStatsList" style="left: 2.68vw;">{card.attack}</div>
+        <div class="curCardStatsList" style="left: 9.65vw;">{card.health}</div>
+        <div class="curCardCostList">{card.cost}</div>
+        <div class="curCardNameList">{card.name}</div>
+
+        <div class="curCardRarityList" style="{starsColorByCost[(card.stars)-3]}">
+            {#each Array(Number(card.stars)) as card,index}
+                <span style="font-size: 1vw;">★</span>
+            {/each}
+        </div>
+    </div>
+    {/each}
 </div>
 
 <div class = "links">
-    <a href="/gachaScreen">sepd ur money here</a><br>
-    <a href="/collectionScreen">view your cards here</a><br>
+    <a href="/gachaScreen">pénzt ide nekem</a><br>
+    <a href="/collectionScreen">kártyák</a><br>
     <a href="../">main menu</a>
   </div>
 <style>
@@ -69,17 +80,104 @@
         border:10px solid goldenrod;
     }
 
-    #restBox{
-        height:46vh;
-        width:90vw;
-        margin:auto;
-        margin-top:4vh;
-        border:10px solid goldenrod;
-        overflow:auto;
+    #cardPreviewListCont{
+        position: relative;
+        width:14.3vw;
+        height: 17vw;
+        display:inline-block;
+    }
+    .cardcollection {
+        width: 90vw;
+        height: 65vh;
+        overflow: auto;
+        float: left;
+        padding-top: 4vh;
+        margin-left:5vw;
     }
 
-    #restBox > *{
-        margin:12px;
-        border: 4px solid goldenrod;
+
+    .cardListFrame{
+        width: 12.5vw;
+        height: 15.8754vw;
+        position:absolute;
+        background-image: url("../../lib/assets/global/cardV2Top.png");
+        background-size: cover;
+        background-position: center;
+        background-color: transparent;
+        border: none;
+    }
+    #rarityBGList{
+        position: absolute;
+        width: 10vw;
+        height: 13vw;
+        left: 1vw;
+        top: 1vw;
+
+        opacity: 0.35;
+        background-blend-mode:saturation;
+    }
+    .cardButton{
+        width:7.5vw;
+
+        border: none;
+
+        background-size:cover;
+        box-shadow: 0 0 1.3vw rgba(0, 0, 0, 0.735);
+
+        position: absolute;
+
+        left: 2.97vw;
+        top: 2.5vw;
+    }
+    .curCardStatsList{
+        font-size: 1.7vw;
+        font-family: 'SevenSwords';
+        color: white;
+        text-shadow:
+                -0.08vw -0.08vw 0 #000, /* Top-left shadow */
+                0.08vw -0.08vw 0 #000, /* Top-right shadow */
+                -0.08vw 0.08vw 0 #000, /* Bottom-left shadow */
+                0.08vw 0.08vw 0 #000; /* Bottom-right shadow */
+
+        position: absolute;
+        top: 13.3vw;
+    }
+    .curCardCostList{
+        font-size: 3vw;
+        font-weight: bold;
+        font: italic;
+        font-family: 'ShadowLight';
+        color: rgb(184, 11, 11);
+
+        position: absolute;
+        top: 1vw;
+        left: 2.5vw;
+    }
+    .curCardNameList{
+        font-size: 1vw;
+        font-family: Impact;
+        color: rgba(247, 240, 221, 0.778);
+        text-shadow: 0 0 1vw rgba(0, 0, 0, 0.536);
+
+        position: absolute;
+        top: 13.2vw;
+        left: 2vw;
+
+        text-align: center;
+        width: 9.5vw;
+    }
+    .curCardRarityList{
+        width: 6vw;
+        text-align: center;
+        mix-blend-mode: screen;
+
+        position: absolute;
+        left: 3.7vw;
+        top: 0.4vw;
+    }
+
+    #cardPreviewListCont:hover{
+        cursor:pointer;
+        transform: scale(1.1);
     }
 </style>

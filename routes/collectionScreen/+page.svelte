@@ -109,7 +109,7 @@
             <div class="curCardNameList">{card.name}</div>
 
             <div class="curCardRarityList" style="{starsColorByCost[(card.stars)-3]}">
-                {#each Array(Number(card.stars)) as card,index}
+                {#each Array(Number(card.stars)) as card}
                     <span style="font-size: 1vw;">★</span>
                 {/each}
             </div>
@@ -134,7 +134,6 @@
             <span style="font-size: {starSizeArray[index]}vw;">★</span>
         {/each}
     </div>
-    
 </div>
 
 <div class = "links">

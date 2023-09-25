@@ -9,22 +9,22 @@
 </script>
 
 <main>
-<h1>Svelte App with Node.js and Express.js<br>Nyomd le az F11 gombot a teljes élményhez!</h1>
-<input type="text" bind:value={dataToSend} placeholder="Enter data">
-<input type="text" bind:value={selectedColumn} placeholder="Enter column name">
-<input type="text" bind:value={id} placeholder="Enter id">
-<input type="text" bind:value={tableName} placeholder="Enter table name">
-<button on:click={() => sendData(selectedColumn,dataToSend,id,tableName)}>Send Data to Server</button>
-<button on:click={() => getData(selectedColumn,id,tableName)}>Get Data from Server</button>
-<button on:click={() => DeleteAll(tableName)}>DeleteAll</button>
-<button on:click={() => AddEmptyRow(tableName)}>Add empty row</button>
+<h1>Svelte Webes Applikáció Node.js és Express.js használatával<br>Nyomd le az F11 gombot a teljes élményhez!</h1>
+<input type="text" bind:value={dataToSend} placeholder="Írd be az adatokat">
+<input type="text" bind:value={selectedColumn} placeholder="Add meg az oszlop nevét">
+<input type="text" bind:value={id} placeholder="Add meg az id-t">
+<input type="text" bind:value={tableName} placeholder="Add meg a táblázat nevét">
+<button on:click={() => sendData(selectedColumn,dataToSend,id,tableName)}>Küldés a Szervernek</button>
+<button on:click={() => getData(selectedColumn,id,tableName)}>Adatok Lekérdezése a Szervertől</button>
+<button on:click={() => DeleteAll(tableName)}>Összes törlése</button>
+<button on:click={() => AddEmptyRow(tableName)}>Üres Rekord hozzáadása</button>
 </main>
 
 
 <div class = "links">
-  <a href="/gachaScreen">sepd ur money here</a><br>
-  <a href="/collectionScreen">view your cards here</a><br>
-  <a href="/selectionScreen">your deck here</a>
+  <a href="/gachaScreen">itt fizess</a><br>
+  <a href="/collectionScreen">kártyáid</a><br>
+  <a href="/selectionScreen">paklid</a>
 </div>
 
 <style>
