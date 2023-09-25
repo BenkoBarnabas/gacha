@@ -15,6 +15,19 @@
     import Marti from "./lib/assets/collection/tanar/Marti.png"
     import Jeff from "./lib/assets/collection/tanar/Jeff.png"
     import Tomi from "./lib/assets/collection/tanar/Tomi.png"
+    import FiloReka from "./lib/assets/collection/tanar/FiloReka.png"
+    import Izig from "./lib/assets/collection/tanar/Izig.png"
+    import Kinyo from "./lib/assets/collection/tanar/Kinyo.png"
+    import LaciNeni from "./lib/assets/collection/tanar/LaciNeni.png"
+    import MsFarkas from "./lib/assets/collection/tanar/MsFarkas.png"
+    import NagyT from "./lib/assets/collection/tanar/NagyT.png"
+    import Paragi from "./lib/assets/collection/tanar/Paragi.png"
+    import Sisak from "./lib/assets/collection/tanar/Sisak.png"
+    import Rixer from "./lib/assets/collection/tanar/Rixer.png"
+    import Szaszak from "./lib/assets/collection/tanar/Szaszak.png"
+    import TothKaresz from "./lib/assets/collection/tanar/TothKaresz.png"
+    import Veronika from "./lib/assets/collection/tanar/Veronika.png"
+    import Weisz from "./lib/assets/collection/tanar/Weisz.png"
 
     import Arho from "./lib/assets/collection/diak/Arho.png"
     import Barni from "./lib/assets/collection/diak/Barni.png"
@@ -42,6 +55,19 @@
     import MartiGacha from "./lib/assets/collection/tanar/MartiGacha.png"
     import JeffGacha from "./lib/assets/collection/tanar/JeffGacha.png"
     import TomiGacha from "./lib/assets/collection/tanar/TomiGacha.png"
+    import FiloRekaGacha from "./lib/assets/collection/tanar/FiloRekaGacha.png"
+    import IzigGacha from "./lib/assets/collection/tanar/IzigGacha.png"
+    import KinyoGacha from "./lib/assets/collection/tanar/KinyoGacha.png"
+    import LaciNeniGacha from "./lib/assets/collection/tanar/LaciNeniGacha.png"
+    import MsFarkasGacha from "./lib/assets/collection/tanar/MsFarkasGacha.png"
+    import NagyTGacha from "./lib/assets/collection/tanar/NagyTGacha.png"
+    import ParagiGacha from "./lib/assets/collection/tanar/ParagiGacha.png"
+    import SisakGacha from "./lib/assets/collection/tanar/SisakGacha.png"
+    import RixerGacha from "./lib/assets/collection/tanar/RixerGacha.png"
+    import SzaszakGacha from "./lib/assets/collection/tanar/SzaszakGacha.png"
+    import TothKareszGacha from "./lib/assets/collection/tanar/TothKareszGacha.png"
+    import VeronikaGacha from "./lib/assets/collection/tanar/VeronikaGacha.png"
+    import WeiszGacha from "./lib/assets/collection/tanar/WeiszGacha.png"
 
     import ArhoGacha from "./lib/assets/collection/diak/ArhoGacha.png"
     import BarniGacha from "./lib/assets/collection/diak/BarniGacha.png"
@@ -86,19 +112,32 @@
     export const NagyoraCard = new tanarCards("Big D", "Average tank build. Not much to say.", 30, 4, Nagyora, 3, 5, "character", NagyoraGacha);
     export const RozgonyiCard = new tanarCards("Rozgonyi", "Szeret sütni. Szeret még legózni és gombócot enni is. A fiát láthatólag annyira nem.", 17, 3, Rozgonyi, 3, 3, "character", RozgonyiGacha);
     export const TabiCard = new tanarCards("Tábi", "Tesitanár és röplabdaedző. Epic gamer szabadidejében. Sose hagyja ki az alkalmat, hogy politizáljon.", 6, 7, Tabi, 3, 2, "character", TabiGacha);
-
-    //not yet detailed
     export const BencusCard = new tanarCards("Bencus", "Másodállásban professzionális diáktanya dolgozó.", 7, 4, Bencus, 4, 1, "character", BencusGacha);
     export const DobiCard = new tanarCards("Dobby", "Dob", 8, 7, Dobi, 6, 2, "character", DobiGacha);
     export const IvanEvaCard = new tanarCards("Iván Éva", "Average Edward Allen Poe fan, nem egy szakbarbár. Irigylésre méltó!", 11, 4, IvanEva, 3, 2, "character", IvanEvaGacha);
     export const KocsiAndiCard = new tanarCards("KocsiAndi", "Senki se tudja, hogy pontosan mit csinál. A sárga könyvvel kapcsolatban őt keresd!", 12, 9, KocsiAndi, 3, 4, "character", KocsiAndiGacha);
     export const KoPaszCard = new tanarCards("Kopaszka", "Gyakran látom a ligetben sétálni. Az edaq ott is a zsebében van.", 10, 6, KoPasz, 5, 3, "character", KoPaszGacha);
-    export const KutiCard = new tanarCards("Kuti", "Irodalom, nyelvtan, matematika, tesi szakos, síoktató, asztronauta és agysebész.", 12, 5, Kuti, 5, 3, "character", KutiGacha);
+    export const KutiCard = new tanarCards("Kúti", "Irodalom, nyelvtan, matematika, tesi szakos, síoktató, asztronauta és agysebész.", 12, 5, Kuti, 5, 3, "character", KutiGacha);
     export const MatosCard = new tanarCards("Matos", "Társasjátékfüggő. Néha egyedül is játszik. A 2020I még mindig sír, hogy nem őt kapta faktos tanárnak.", 14, 4, Matos, 4, 3, "character", MatosGacha);
-    export const MartiCard = new tanarCards("Marti", "Az ing, nem azing. Hetest kér.", 3, 6, Marti, 4, 1, "character", MartiGacha);
+    export const MartiCard = new tanarCards("Márti", "Az ing, nem azing. Hetest kér.", 3, 6, Marti, 4, 1, "character", MartiGacha);
     export const MeszarosCard = new tanarCards("Mészaros", "Médiatanár. A diákok jobban tudják az anyagot.", 21, 2, Meszaros, 3, 3, "character", MeszarosGacha);
     export const JeffCard = new tanarCards("Jeff", "Plays golf with you on the weekends. Loves his wife, kids and family dog.", 16, 5, Jeff, 6, 3, "character", JeffGacha);
-    export const TomiCard = new tanarCards("Dr. Tamás", "Fogorvos. Táncvilágbajnok és zsidókat használ ki pénzért, ennek ellenére utál dolgozni.", 20, 20, Tomi, 5, 6, "character", TomiGacha);
+    export const TomiCard = new tanarCards("Dr. Tamás", "Fogorvos és táncvilágbajnok. Unatkozott, ezért elment tanárnak.", 20, 20, Tomi, 5, 6, "character", TomiGacha);
+
+    //not yet detailed
+    export const FiloRekaCard = new tanarCards("Filó Réka", "Sajnos családi életét az érettségiben nem kérdezik.", 7, 4, FiloReka, 4, 1, "character", FiloRekaGacha);
+    export const IzigCard = new tanarCards("Ízig Máté", "Szeret utazni. Báló Dávidot is szereti.", 8, 7, Izig, 6, 2, "character", IzigGacha);
+    export const KinyoCard = new tanarCards("Kinyó", "Megrendeli a ságváris merch-öt(?)", 11, 4, Kinyo, 3, 2, "character", KinyoGacha);
+    export const LaciNeniCard = new tanarCards("Laci néni", "Qu'est-ce que les schtroumpfs", 12, 9, LaciNeni, 3, 4, "character", LaciNeniGacha);
+    export const MsFarkasCard = new tanarCards("Mrs Farkas", "", 10, 6, MsFarkas, 5, 3, "character", MsFarkasGacha);
+    export const NagyTCard = new tanarCards("Nagy T", "", 12, 5, NagyT, 5, 3, "character", NagyTGacha);
+    export const ParagiCard = new tanarCards("Paragi", "", 14, 4, Paragi, 4, 3, "character", ParagiGacha);
+    export const RixerCard = new tanarCards("Rixer Márta", "", 3, 6, Rixer, 4, 1, "character", RixerGacha);
+    export const SisakCard = new tanarCards("Sisák", "", 21, 2, Sisak, 3, 3, "character", SisakGacha);
+    export const SzaszakCard = new tanarCards("Szaszi", "", 16, 5, Szaszak, 6, 3, "character", SzaszakGacha);
+    export const TothKareszCard = new tanarCards("Karesz", "", 20, 20, TothKaresz, 5, 6, "character", TothKareszGacha);
+    export const VeronikaCard = new tanarCards("Németh Veronika", "", 7, 4, Veronika, 4, 1, "character", VeronikaGacha);
+    export const WeiszCard = new tanarCards("Weisz", "", 8, 7, Weisz, 6, 2, "character", WeiszGacha);
 
     //DIAKOK
     export const ArhoCard = new diakCards("Arho", "7 évesen megfejtette a tudományt. Hisz a szabad akaratban.", 12, 6, Arho, 4, 3, "character", ArhoGacha); 
