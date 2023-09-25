@@ -129,7 +129,7 @@
     export const IzigCard = new tanarCards("Ízig Máté", "Szeret utazni. Báló Dávidot is szereti.", 8, 7, Izig, 6, 2, "character", IzigGacha);
     export const KinyoCard = new tanarCards("Kinyó", "Megrendeli a ságváris merch-öt(?)", 11, 4, Kinyo, 3, 2, "character", KinyoGacha);
     export const LaciNeniCard = new tanarCards("Laci néni", "Qu'est-ce que les schtroumpfs", 12, 9, LaciNeni, 3, 4, "character", LaciNeniGacha);
-    export const MsFarkasCard = new tanarCards("Mrs Farkas", "", 10, 6, MsFarkas, 5, 3, "character", MsFarkasGacha);
+    export const MsFarkasCard = new tanarCards("Mrs Farkas", "Csak 2 embernek hinném el, hogy zöld az ég és kék a fű. Anyám és Farkas Judit.", 10, 6, MsFarkas, 5, 3, "character", MsFarkasGacha);
     export const NagyTCard = new tanarCards("Nagy T", "", 12, 5, NagyT, 5, 3, "character", NagyTGacha);
     export const ParagiCard = new tanarCards("Paragi", "", 14, 4, Paragi, 4, 3, "character", ParagiGacha);
     export const RixerCard = new tanarCards("Rixer Márta", "", 3, 6, Rixer, 4, 1, "character", RixerGacha);
