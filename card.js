@@ -62,7 +62,7 @@
     import IzigGacha from "./lib/assets/collection/tanar/IzigGacha.png"
     import KinyoGacha from "./lib/assets/collection/tanar/KinyoGacha.png"
     import LaciNeniGacha from "./lib/assets/collection/tanar/LaciNeniGacha.png"
-    import MsFarkasGacha from "./lib/assets/collection/tanar/MsFarkasGacha.png"
+    import MsFarkasGacha from "./lib/assets/collection/tanar/MsFarkaGacha.png"
     import NagyTGacha from "./lib/assets/collection/tanar/NagyTGacha.png"
     import ParagiGacha from "./lib/assets/collection/tanar/ParagiGacha.png"
     import SisakGacha from "./lib/assets/collection/tanar/SisakGacha.png"
@@ -152,7 +152,7 @@
     export const ZenoCard = new diakCards("Zénó", "SG DÖK elnök. Ha a terem hátsó sarkában valaki fulladozik a nevetéstől, ő az.", 10, 6, Zeno, 6, 7, "character", ZenoGacha);
     export const AproNoCard = new diakCards("Apró Fehér Nő", "Egy apró fehér nő. Gyenge, a férfiak alatt áll, nincsennek jogai.", 2, 2, AproNo, 4, 2, "character", AproNoGacha);
 
-    export let tanarCardsArr = [BizsoCard, FarkasCard,MartiCard, MoniCard, NagyoraCard, RozgonyiCard, TabiCard,BencusCard,DobiCard,IvanEvaCard,TomiCard,KocsiAndiCard,KoPaszCard,KutiCard,MatosCard,MeszarosCard,JeffCard,FiloRekaCard,IzigCard,KinyoCard, LaciNeniCard, MsFarkasCard,NagyTCard,ParagiCard,RixerCard,SisakCard,SzaszakCard,TothKareszCard,VeronikaCard,WeiszCard]
+    export let tanarCardsArr = [BizsoCard, FarkasCard,MartiCard, MoniCard, NagyoraCard, RozgonyiCard, TabiCard,BencusCard,DobiCard,IvanEvaCard,TomiCard,KocsiAndiCard,KoPaszCard,KutiCard,MatosCard,MeszarosCard,JeffCard,FiloRekaCard,IzigCard,KinyoCard, LaciNeniCard, MsFarkasCard,NagyTCard,ParagiCard,RixerCard,SisakCard,SzaszakCard,TothKareszCard,VeronikaCard,WeiszCard,TritzCard]
     export let diakCardsArr = [ArhoCard, BarniCard, EszterCard, OliviaCard, ZalanCard, ZenoCard,AproNoCard]
 
     export let URTanars = []
