@@ -148,7 +148,7 @@
     export const ZenoCard = new diakCards("Zénó", "SG DÖK elnök. Ha a terem hátsó sarkában valaki fulladozik a nevetéstől, ő az.", 10, 6, Zeno, 6, 7, "character", ZenoGacha);
     export const AproNoCard = new diakCards("Apró Fehér Nő", "Egy apró fehér nő. Gyenge, a férfiak alatt áll, nincsennek jogai.", 2, 2, AproNo, 4, 2, "character", AproNoGacha);
 
-    export let tanarCardsArr = [BizsoCard, FarkasCard,MartiCard, MoniCard, NagyoraCard, RozgonyiCard, TabiCard,BencusCard,DobiCard,IvanEvaCard,TomiCard,KocsiAndiCard,KoPaszCard,KutiCard,MatosCard,MeszarosCard,JeffCard]
+    export let tanarCardsArr = [BizsoCard, FarkasCard,MartiCard, MoniCard, NagyoraCard, RozgonyiCard, TabiCard,BencusCard,DobiCard,IvanEvaCard,TomiCard,KocsiAndiCard,KoPaszCard,KutiCard,MatosCard,MeszarosCard,JeffCard,FiloRekaCard,IzigCard,KinyoCard, LaciNeniCard, MsFarkasCard,NagyTCard,ParagiCard,RixerCard,SisakCard,SzaszakCard,TothKareszCard,VeronikaCard,WeiszCard]
     export let diakCardsArr = [ArhoCard, BarniCard, EszterCard, OliviaCard, ZalanCard, ZenoCard,AproNoCard]
 
     export let URTanars = []
