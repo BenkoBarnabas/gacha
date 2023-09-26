@@ -17,7 +17,8 @@
     //made a separate file just for all the cards, they can be used in every file with this import 
     
     let selectedCollection = 1
-
+    let refTanarDeck = Array.from(Cards.tanarCardsArr)
+    let originalTanarDeck = Array.from(Cards.tanarCardsArr)
     let curCardInView = {
         source: "",
         name: "",
@@ -63,6 +64,44 @@
             starSizeArray.push(starSize)
         }
     }
+
+    function Sort(arr,property) {
+    const len = arr.length;
+    let swapped;
+
+    do {
+        swapped = false;
+
+        for (let i = 0; i < len - 1; i++) {
+            if (arr[i][property] > arr[i + 1][property]) {
+                // Swap the elements
+                [arr[i], arr[i + 1]] = [arr[i + 1], arr[i]];
+                swapped = true;
+            }
+        }
+    } while (swapped);
+
+    refTanarDeck = refTanarDeck
+    return arr;
+}
+
+    let activeFilters = [["AZ", false],["CostAsc",false],Array(10).fill(true)]
+    $: if (activeFilters[0][1]){
+            Sort(refTanarDeck,"name")
+            console.log(activeFilters);
+        }
+        else if(activeFilters[1][1]){
+            Sort(refTanarDeck,"cost")
+        }
+        else {
+            refTanarDeck = Array.from(Cards.tanarCardsArr)
+            refTanarDeck = refTanarDeck
+
+        }
+
+    function SetCostFilterValues(param){
+        for(let i = 0; i < 10; i++){activeFilters[2][i] = param}
+    }
 </script>
 
 <div id = "background"></div>
@@ -72,11 +111,38 @@
     <button style="background: URL({SNCover}), no-repeat; background-size:cover" class="bannerIcon" on:click={() => selectedCollection = 1}></button>
     <button style="background: URL({YCCover}), no-repeat; background-size:cover" class="bannerIcon" on:click={() => selectedCollection = 2}></button>
     <button style="background: URL({SpellCover}), no-repeat; background-size:cover" class="bannerIcon" on:click={() => selectedCollection = 3}></button>
+    <div id="filtersCont">
+        <tr>
+        <td style="height:2vw;">
+            <input type="text" id="searchBar">
+        </td>
+        <td style="height:2vw;">
+            <div id="filterChooser">
+                <div class="menu-trigger"></div>
+                <div class="menu hidden noScrollers">
+                    <label><input type="checkbox" bind:checked={activeFilters[0][1]}> A-Z</label><br>
+                    <label><input type="checkbox" bind:checked={activeFilters[1][1]}> Cost Asc</label><br>
+                    <label><input type="checkbox"> Megszerzett</label><br>
+                    <label><input type="checkbox"> Nem megszerzett</label><br>
+                    <br>
+                    <label>Rarity: <br>
+                        UR<input type="checkbox"> 5*<input type="checkbox"> 4*<input type="checkbox"> 3*<input type="checkbox"></label><br>
+                    <br>
+                    <label>Cost: <button on:click={() => SetCostFilterValues(false)}>Clear</button> <button on:click={() => SetCostFilterValues(true)}>All</button><br>
+                        {#each Array(10) as checks,i}
+                            {i}<input type="checkbox" bind:checked={activeFilters[2][i]}> 
+                        {/each}
+                    </label>
+                </div>
+            </div>
+        </td>
+        </tr>
+    </div>
 </div>
 
 {#if selectedCollection == 1}
     <div class = "cardcollection" id = "tanarcollection">
-        {#each Cards.tanarCardsArr as card}
+        {#each refTanarDeck as card}
         <div id="cardPreviewListCont">
             <img style="width: 12.5vw; position:absolute" src={cardV2Background} alt="cardBg">
             <div id="rarityBGList" style="background: {backgroundColorByCost[(card.stars)-3]}; "></div>
@@ -123,7 +189,7 @@
     <div id="rarityBG" style="background: {backgroundColorByCost[(curCardInView.rarity)-3]}; "></div>
     <img id="curCardInView" src={curCardInView.source} alt="">
     <img class="cardTemplate" src={cardForeground} alt="cardBg">
-    <div id="curCardDesc">{curCardInView.desc}</div>
+    <div id="curCardDesc" class="noScrollers">{curCardInView.desc}</div>
     <div class="curCardStats" style="left: 7.4vw;">{curCardInView.atk}</div>
     <div class="curCardStats" style="left: 21.5vw;">{curCardInView.hp}</div>
     <div class="curCardCost">{curCardInView.cost}</div>
@@ -149,6 +215,71 @@
     @font-face {
         font-family: 'ShadowLight';
         src: url('../../lib/assets/fonts/ShadowsIntoLight-Regular.ttf');
+    }
+
+    #filtersCont{
+        width: 30vw;
+        height: 5vw;
+        float: right;
+        margin-right:4vw;
+    }
+    #searchBar{
+        width: 23vw;
+        height: 2vw;
+        margin: 0;
+        padding: 0;
+        background: rgba(119, 77, 59, 0.434);
+
+        margin-top: 1.5vw;
+    }
+    #filterChooser{
+        width: 2vw;
+        height: 2vw;
+    }
+    #typeChoosers{
+        width: 60vw;
+        height: 5vw;
+    }
+
+    #filterChooser {
+    position: relative;
+    display: inline-block;
+    }
+
+    .menu-trigger {
+        width: 3vw;
+        height: 2vw;
+        background: url("../../lib/assets/global/filterIcon.png");
+        background-size: 100% 100%;
+        cursor: pointer;
+
+        margin-top: 0.7vw;
+    }
+
+    .menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        display: none;
+
+        height: 10vw;
+        width: 10vw;
+        overflow: auto;
+        padding-bottom: 1vw;
+        z-index: 3;
+
+        font-family: "ShadowLight";
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    /* Show the menu when hovering over .menu-container */
+    #filterChooser:hover .menu {
+        display: block;
     }
 
 
@@ -316,17 +447,23 @@
         width: 20vw;
     }
     #curCardDesc{
-        font-size: 1.3vmin;
         font-family: cursive;
         color: rgba(0, 0, 0, 0.778);
         font: bold;
+        font-size: 1vw;
 
         position: absolute;
         top: 23vw;
-        left: 7.19vw;
+        left: 8.3vw;
 
-        width: 16.5vw;
+        width: 14vw;
         text-align: center;
+        overflow: auto;
+        height: 6vw;
+    }
+    .noScrollers::-webkit-scrollbar {
+        width: 0;
+        background: none;
     }
     #curCardRarity{
         position: absolute;
@@ -349,7 +486,7 @@
         top: 0;
         left: 0;
         width: 100%;
-        height: 100%;
+        height: 100vh;
         background-size: cover; /* Adjust as needed: cover, contain, etc. */
         background-repeat: no-repeat;
         background-position: center center;

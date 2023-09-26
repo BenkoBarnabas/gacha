@@ -67,9 +67,9 @@ button {
 }
 
 :global(.bannerIcon) {   /*the selectors itself */
-    height: 8vh;
-    width: 12.6vh;
-    background-size: 12.6vh 8vh;
+    height: 4vw;
+    width: 6vw;
+    background-size: 100% 100%;
     margin: 10px;
 }
 :global(.bannerIcon:hover) {

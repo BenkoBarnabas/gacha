@@ -684,7 +684,7 @@
         height: 3vw;
         text-align: center;
         font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-        font-size: 2vmin;
+        font-size: 2vw;
         color: rgb(103, 102, 91);
     }
     .buttonArrowStyle:hover{
@@ -752,7 +752,7 @@
         padding-right: 1vw;
     }
     th {
-        font-size: 3vmin;
+        font-size: 1.7vw;
     }
 
     .historyTitle{
@@ -1085,14 +1085,14 @@
     .bannerName {   /*banner name */ 
         position: absolute;
         left: 22vw;
-        top: 1.5vw;
-        font-size: 5vmin;
+        top: 2.6vw;
+        font-size: 2.35vw;
     }
     .featuredName {   /*banner name */ 
         position: absolute;
         left: 48.9vw;
         top: 21.2vw;
-        font-size: 3.5vmin;
+        font-size: 2vw;
         background-image: linear-gradient(90deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235));
         -webkit-background-clip: text;
         background-clip: text;
@@ -1150,7 +1150,7 @@
         height: 3vw;
         text-align: center;
         font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-        font-size: 2vmin;
+        font-size: 1vw;
         color: rgb(103, 102, 91);
     }
     .buttonStandardStyle:hover{
