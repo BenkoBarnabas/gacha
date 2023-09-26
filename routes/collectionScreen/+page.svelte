@@ -85,22 +85,75 @@
     return arr;
 }
 
-    let activeFilters = [["AZ", false],["CostAsc",false],Array(10).fill(true)]
-    $: if (activeFilters[0][1]){
+    let activeFilters = [["AZ", true],["CostAsc",false],Array(10).fill(true),Array(7).fill(true),["RarityAsc",false],refTanarDeck]
+    $: {ReduceList()
+        if (!activeFilters[0][1] && !activeFilters[1][1] && !activeFilters[4][1]){
+            activeFilters[0][1] = true
+        }
+        if (activeFilters[0][1]){
             Sort(refTanarDeck,"name")
             console.log(activeFilters);
         }
         else if(activeFilters[1][1]){
             Sort(refTanarDeck,"cost")
         }
+        else if(activeFilters[4][1]){
+            Sort(refTanarDeck,"stars")
+        }
         else {
             refTanarDeck = Array.from(Cards.tanarCardsArr)
             refTanarDeck = refTanarDeck
-
+        }
+        console.log("updated");
+    }
+    function ReduceList(){
+        var toDeleteEntries = []
+        var property = "cost"
+        var indexOfProperty = 2
+        for (let i = 0; i < Cards.tanarCardsArr.length; i++){
+            if(activeFilters[indexOfProperty][Cards.tanarCardsArr[i][property]] == false){
+                toDeleteEntries.push(i)
+            }
+        }
+        property = "stars"
+        indexOfProperty = 3
+        for (let i = 0; i < Cards.tanarCardsArr.length; i++){
+            if(activeFilters[indexOfProperty][Cards.tanarCardsArr[i][property]] == false){
+                toDeleteEntries.push(i)
+            }
         }
 
-    function SetCostFilterValues(param){
-        for(let i = 0; i < 10; i++){activeFilters[2][i] = param}
+        //delete all that isnt in the filtered domain
+        refTanarDeck = Array.from(Cards.tanarCardsArr)
+
+        toDeleteEntries = DeleteDoobsFromArray(toDeleteEntries)
+        toDeleteEntries.sort(function(a, b){return a-b})
+        console.log(toDeleteEntries);
+        
+        for (let i = toDeleteEntries.length - 1; i >= 0; i--) {
+            const index = toDeleteEntries[i];
+            // Use splice to remove the element at the specified index
+            refTanarDeck.splice(index, 1);
+        }
+    }
+    function SetCostFilterValues(param,indexOfProperty){
+        for(let i = 0; i < activeFilters[indexOfProperty].length; i++){activeFilters[indexOfProperty][i] = param}
+    }
+
+    function DeleteDoobsFromArray(arr){
+    const uniqueSet = new Set();
+    return arr.filter((item) => {
+        if (!uniqueSet.has(item)) {
+        uniqueSet.add(item);
+        return true;
+        }
+        return false;
+    });
+    }
+
+    function ReverseListingOrder(arr){
+        
+        console.log("kill me");
     }
 </script>
 
@@ -120,15 +173,17 @@
             <div id="filterChooser">
                 <div class="menu-trigger"></div>
                 <div class="menu hidden noScrollers">
-                    <label><input type="checkbox" bind:checked={activeFilters[0][1]}> A-Z</label><br>
-                    <label><input type="checkbox" bind:checked={activeFilters[1][1]}> Cost Asc</label><br>
+                    <label><input type="checkbox" bind:checked={activeFilters[0][1]}> A-Z</label> <button on:click={() => ReverseListingOrder(refTanarDeck)}>Desc</button><br>
+                    <label><input type="checkbox" bind:checked={activeFilters[1][1]}> Cost Asc</label> <button on:click={() => ReverseListingOrder(refTanarDeck)}>Desc</button><br>
+                    <label><input type="checkbox" bind:checked={activeFilters[4][1]}> Rarity Asc</label> <button on:click={() => ReverseListingOrder(refTanarDeck)}>Desc</button><br>
+                    <br>
                     <label><input type="checkbox"> Megszerzett</label><br>
                     <label><input type="checkbox"> Nem megszerzett</label><br>
                     <br>
-                    <label>Rarity: <br>
-                        UR<input type="checkbox"> 5*<input type="checkbox"> 4*<input type="checkbox"> 3*<input type="checkbox"></label><br>
+                    <label>Rarity: <button on:click={() => SetCostFilterValues(false,3)}>Clear</button> <button on:click={() => SetCostFilterValues(true,3)}>All</button><br>
+                        UR<input type="checkbox" bind:checked={activeFilters[3][6]}> 5*<input type="checkbox" bind:checked={activeFilters[3][5]}> 4*<input type="checkbox" bind:checked={activeFilters[3][4]}> 3*<input type="checkbox" bind:checked={activeFilters[3][3]}></label><br>
                     <br>
-                    <label>Cost: <button on:click={() => SetCostFilterValues(false)}>Clear</button> <button on:click={() => SetCostFilterValues(true)}>All</button><br>
+                    <label>Cost: <button on:click={() => SetCostFilterValues(false,2)}>Clear</button> <button on:click={() => SetCostFilterValues(true,2)}>All</button><br>
                         {#each Array(10) as checks,i}
                             {i}<input type="checkbox" bind:checked={activeFilters[2][i]}> 
                         {/each}
