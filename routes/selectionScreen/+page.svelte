@@ -2,15 +2,21 @@
     import * as Cards from "../../card"
     import cardV2Background from "../../lib/assets/global/cardV2BG.png"
 
-    let curCardInView = {
-        source: "",
-        name: "",
-        atk: "",
-        hp: "",
-        cost: "",
-        rarity: "",
-        desc: "",
-        color: ""
+    let selectedCard = ""
+
+    function selectByClick(cardName){
+        console.log(selectedCard)
+        console.log(cardName)
+
+        if(selectedCard != ""){
+            document.getElementById(selectedCard).classList.remove("selected")
+            console.log(document.getElementById(selectedCard).classList);
+        }
+
+        selectedCard = cardName
+        selectedCard = selectedCard
+        document.getElementById(cardName).classList.add("selected")
+        console.log(document.getElementById(cardName).classList);
     }
 
     var starSizeArray = [] //for some reason it didnt work with a normal return so i had to put them into an array ,im throwing up
@@ -22,47 +28,26 @@
 <div id="deckBox">
 
 </div>
-<div class = "cardcollection" id = "tanarcollection">
-    {#each Cards.tanarCardsArr as card}
-    <div id="cardPreviewListCont">
-        <img style="width: 12.5vw; position:absolute" src={cardV2Background} alt="cardBg">
-        <div id="rarityBGList" style="background: {backgroundColorByCost[(card.stars)-3]}; "></div>
-        <img class = "cardButton" src={card.source} alt="preview"/>
-        <button class="cardListFrame" alt="cardBg"></button>
-        <div class="curCardStatsList" style="left: 2.68vw;">{card.attack}</div>
-        <div class="curCardStatsList" style="left: 9.65vw;">{card.health}</div>
-        <div class="curCardCostList">{card.cost}</div>
-        <div class="curCardNameList">{card.name}</div>
+<div id = "cardcollection">
+    {#each Cards.allCardsArr as card}
+        <div class="cardPreviewListCont">
+            <img style="width: 12.5vw; position:absolute" src={cardV2Background} alt="cardBg">
+            <div class="rarityBGList" style="background: {backgroundColorByCost[(card.stars)-3]}; "></div>
+            <img class="cardButton" src={card.source} alt="preview"/>
+            <button id={card.cardSRCText} class="cardListFrame" alt="cardBg" on:click={() => selectByClick(card.cardSRCText)}></button>
+            <div class="curCardStatsList" style="left: 2.68vw;">{card.attack}</div>
+            <div class="curCardStatsList" style="left: 9.65vw;">{card.health}</div>
+            <div class="curCardCostList">{card.cost}</div>
+            <div class="curCardNameList">{card.name}</div>
 
-        <div class="curCardRarityList" style="{starsColorByCost[(card.stars)-3]}">
-            {#each Array(Number(card.stars)) as card}
-                <span style="font-size: 1vw;">★</span>
-            {/each}
+            <div class="curCardRarityList" style="{starsColorByCost[(card.stars)-3]}">
+                {#each Array(Number(card.stars)) as card}
+                    <span style="font-size: 1vw;">★</span>
+                {/each}
+            </div>
         </div>
-    </div>
     {/each}
 </div>
-<div class = "cardcollection" id = "diakcollection">
-    {#each Cards.diakCardsArr as card}
-    <div id="cardPreviewListCont">
-        <img style="width: 12.5vw; position:absolute" src={cardV2Background} alt="cardBg">
-        <div id="rarityBGList" style="background: {backgroundColorByCost[(card.stars)-3]}; "></div>
-        <img class = "cardButton" src={card.source} alt="preview"/>
-        <button class="cardListFrame" alt="cardBg"></button>
-        <div class="curCardStatsList" style="left: 2.68vw;">{card.attack}</div>
-        <div class="curCardStatsList" style="left: 9.65vw;">{card.health}</div>
-        <div class="curCardCostList">{card.cost}</div>
-        <div class="curCardNameList">{card.name}</div>
-
-        <div class="curCardRarityList" style="{starsColorByCost[(card.stars)-3]}">
-            {#each Array(Number(card.stars)) as card,index}
-                <span style="font-size: 1vw;">★</span>
-            {/each}
-        </div>
-    </div>
-    {/each}
-</div>
-
 <div class = "links">
     <a href="/gachaScreen">pénzt ide nekem</a><br>
     <a href="/collectionScreen">kártyák</a><br>
@@ -74,24 +59,27 @@
     }
 
     #deckBox{
-        height:30vh;
-        width:90vw;
+        height:20vh;
+        width:80vw;
         margin:auto;
-        border:10px solid goldenrod;
+        border:2px solid goldenrod;
     }
 
-    #cardPreviewListCont{
+    .cardPreviewListCont{
         position: relative;
         width:14.3vw;
         height: 17vw;
         display:inline-block;
+        opacity:0.85;
     }
-    .cardcollection {
+
+    #cardcollection {
         width: 90vw;
-        height: 65vh;
+        height: 60vh;
         overflow: auto;
         float: left;
-        padding-top: 4vh;
+        margin-top: 4vh;
+        padding-top: 1vh;
         margin-left:5vw;
     }
 
@@ -105,14 +93,14 @@
         background-position: center;
         background-color: transparent;
         border: none;
+        cursor: pointer;
     }
-    #rarityBGList{
+    .rarityBGList{
         position: absolute;
         width: 10vw;
         height: 13vw;
         left: 1vw;
         top: 1vw;
-
         opacity: 0.35;
         background-blend-mode:saturation;
     }
@@ -176,8 +164,13 @@
         top: 0.4vw;
     }
 
-    #cardPreviewListCont:hover{
-        cursor:pointer;
-        transform: scale(1.1);
+    .cardPreviewListCont:hover{
+        transform: scale(1.05);
+        opacity:1;
+    }
+
+    .selected{
+        transform: scale(1.05);
+        opacity:1;
     }
 </style>
