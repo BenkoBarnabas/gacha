@@ -28,6 +28,12 @@
 <div style="display:flex; margin-inline:5vw; margin-block:4vh;">
 <div id="deckBox">
     <h1>Paklid</h1>
+    {#each selectedList as card}
+        <div></div>
+    {/each}
+    {#if selectedList != []}
+        <div id="plussign"></div>
+    {/if}
 </div>
 <div id = "cardcollection">
     {#each Cards.allCardsArr as card}
@@ -60,6 +66,15 @@
         text-align: center;
         color:white;
 
+    }
+
+    #plussign{
+        margin:auto;
+        width:100%;
+        height:5vh;
+        background-image: url("../../lib/assets/global/plus.png");
+        background-size:contain;
+        background-position: center center;
     }
 
     #deckBox{
