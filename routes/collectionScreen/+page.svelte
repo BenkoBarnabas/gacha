@@ -18,7 +18,6 @@
     
     let selectedCollection = 1
     let refTanarDeck = Array.from(Cards.tanarCardsArr)
-    let originalTanarDeck = Array.from(Cards.tanarCardsArr)
     let curCardInView = {
         source: "",
         name: "",
