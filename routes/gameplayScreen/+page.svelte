@@ -157,7 +157,16 @@
         position: relative;
     }
     .previewInHand:hover{
-        transform: scale(1.1);
+        animation: scaleUp 0.5s forwards;
+        z-index: 10;
+    }
+    @keyframes scaleUp{
+        0%{
+            transform: scale(1);
+        }
+        100%{
+            transform: scale(2);
+        }
     }
     .cardTemplate{
         width: calc(var(--cardsScale)*1vw*30);
