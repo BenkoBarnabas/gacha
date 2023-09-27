@@ -114,4 +114,25 @@ button {
       background-size: var(--bgWidth);
       margin: 0;
 }
+:global(.accountInfoHeader){
+    font-size: 1.3vw;
+    color: antiquewhite;
+
+    font-family: 'TitleFont';
+    font-weight: 500;
+    font: italic;
+    text-align: center;
+}
+:global(.pageTitle){
+    font-size: 1.3vw;
+    color: antiquewhite;
+
+    font-family: 'TitleFont';
+    font-weight: 500;
+    font: italic;
+    text-align: center;
+
+    width: 17vw;
+    float: left;
+}
 </style>

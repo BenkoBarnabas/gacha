@@ -645,27 +645,7 @@
     #header {
         margin-top: 2vw;
     }
-    :global(.accountInfoHeader){
-        font-size: 1.3vw;
-        color: antiquewhite;
-
-        font-family: 'TitleFont';
-        font-weight: 500;
-        font: italic;
-        text-align: center;
-    }
-    :global(.pageTitle){
-        font-size: 1.3vw;
-        color: antiquewhite;
-
-        font-family: 'TitleFont';
-        font-weight: 500;
-        font: italic;
-        text-align: center;
-
-        width: 17vw;
-        float: left;
-    }
+    
     .bannerIcon {   /*the selectors itself */
         height: 8vh;
         width: 12.6vh;

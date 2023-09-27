@@ -2,21 +2,22 @@
     import * as Cards from "../../card"
     import cardV2Background from "../../lib/assets/global/cardV2BG.png"
 
-    let selectedCard = ""
+    let selectedList = []
 
-    function selectByClick(cardName){
-        console.log(selectedCard)
-        console.log(cardName)
-
-        if(selectedCard != ""){
-            document.getElementById(selectedCard).classList.remove("selected")
-            console.log(document.getElementById(selectedCard).classList);
+    function selectByClick(cardSRCText){
+        if(!selectedList.includes(cardSRCText)){
+            selectedList.push(cardSRCText)
+            console.log(selectedList)
+            document.getElementById(cardSRCText).classList.remove("filtergrayscale")
+            document.getElementById(cardSRCText).classList.add("selected")
+            console.log(document.getElementById(cardSRCText).classList);
+        }else{
+            selectedList.pop(cardSRCText)
+            console.log(selectedList);
+            document.getElementById(cardSRCText).classList.remove("selected")
+            document.getElementById(cardSRCText).classList.add("filtergrayscale")
+            console.log(document.getElementById(cardSRCText).classList);
         }
-
-        selectedCard = cardName
-        selectedCard = selectedCard
-        document.getElementById(cardName).classList.add("selected")
-        console.log(document.getElementById(cardName).classList);
     }
 
     var starSizeArray = [] //for some reason it didnt work with a normal return so i had to put them into an array ,im throwing up
@@ -24,17 +25,17 @@
     var backgroundColorByCost = ["#2672ed","#8626ed","#ed7c26","linear-gradient(180deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235))"]
     var starsColorByCost = ["color: #2672ed;","color: #8626ed;","color: #ed7c26;","background-image: linear-gradient(90deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235));-webkit-background-clip: text;background-clip: text;color: transparent;"]
 </script>
-<h1>Paklid</h1>
+<div style="display:flex; margin-inline:5vw; margin-block:4vh;">
 <div id="deckBox">
-
+    <h1>Paklid</h1>
 </div>
 <div id = "cardcollection">
     {#each Cards.allCardsArr as card}
-        <div class="cardPreviewListCont">
+        <div id={card.cardSRCText} class="cardPreviewListCont filtergrayscale">
             <img style="width: 12.5vw; position:absolute" src={cardV2Background} alt="cardBg">
             <div class="rarityBGList" style="background: {backgroundColorByCost[(card.stars)-3]}; "></div>
             <img class="cardButton" src={card.source} alt="preview"/>
-            <button id={card.cardSRCText} class="cardListFrame" alt="cardBg" on:click={() => selectByClick(card.cardSRCText)}></button>
+            <button class="cardListFrame" alt="cardBg" on:click={() => selectByClick(card.cardSRCText)}></button>
             <div class="curCardStatsList" style="left: 2.68vw;">{card.attack}</div>
             <div class="curCardStatsList" style="left: 9.65vw;">{card.health}</div>
             <div class="curCardCostList">{card.cost}</div>
@@ -48,6 +49,7 @@
         </div>
     {/each}
 </div>
+</div>
 <div class = "links">
     <a href="/gachaScreen">pénzt ide nekem</a><br>
     <a href="/collectionScreen">kártyák</a><br>
@@ -56,11 +58,13 @@
 <style>
     h1{
         text-align: center;
+        color:white;
+
     }
 
     #deckBox{
-        height:20vh;
-        width:80vw;
+        height:90vh;
+        width:20vw;
         margin:auto;
         border:2px solid goldenrod;
     }
@@ -70,19 +74,18 @@
         width:14.3vw;
         height: 17vw;
         display:inline-block;
-        opacity:0.85;
+    }
+
+    .filtergrayscale{
+        filter:grayscale();
     }
 
     #cardcollection {
-        width: 90vw;
-        height: 60vh;
+        width: 60vw;
+        height: 90vh;
         overflow: auto;
-        float: left;
-        margin-top: 4vh;
-        padding-top: 1vh;
-        margin-left:5vw;
+        margin-right:10vw
     }
-
 
     .cardListFrame{
         width: 12.5vw;
@@ -166,11 +169,11 @@
 
     .cardPreviewListCont:hover{
         transform: scale(1.05);
-        opacity:1;
+        filter:none;
     }
 
     .selected{
         transform: scale(1.05);
-        opacity:1;
+        filter:none;
     }
 </style>
