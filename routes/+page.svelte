@@ -27,6 +27,8 @@
   <a href="/selectionScreen">paklid</a>
 </div>
 
+<a href="/gameplayScreen">JÁTTSZ JÁTTSZ JÁTTSZ!!! JÁTSZ TE ITT MOST</a>
+
 <style>
 main {
   text-align: center;
