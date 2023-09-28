@@ -7,7 +7,7 @@
     var starSizeArray = [] //for some reason it didnt work with a normal return so i had to put them into an array ,im throwing up
     var starSizeTop = [1,1,0,0]
     var backgroundColorByCost = ["#2672ed","#8626ed","#ed7c26","linear-gradient(180deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235))"]
-    var starsColorByCost = ["color: #2672ed;","color: #8626ed;","color: #ed7c26;","background-image: linear-gradient(90deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235));-webkit-background-clip: text;background-clip: text;color: transparent;"]
+    var starsColorByCost = ["color: #2672ed;","color: #8626ed;","#ed7c26","background-image: linear-gradient(90deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235));-webkit-background-clip: text;background-clip: text;color: transparent;"]
 
 
     let yourHand = [Cards.BizsoCard,Cards.BencusCard,Cards.MsFarkasCard,Cards.FarkasCard,Cards.BarniCard]
@@ -22,6 +22,7 @@
     let draggables;
     let dragged = undefined
 
+
     onMount(() => {
         targetArea = document.getElementsByClassName("target")
 
@@ -34,6 +35,7 @@
             targetArea[i].addEventListener("dragover", dragOver)
             targetArea[i].addEventListener("dragleave", dragLeave)
         }
+        
     });
 
     function drop(event) {
@@ -50,6 +52,7 @@
         event.target.removeEventListener("drop", drop)
         event.target.removeEventListener("dragover", dragOver)
         event.target.removeEventListener("dragleave", dragLeave)
+        console.log(event.target);
     }
     function dragStart(event) {
         dragged = event.target
@@ -71,7 +74,18 @@
         yourBoardPhs = yourBoardPhs
     }
 
-    function PlacingMode(card){
+    
+    function PlacingMode(card, domId){
+        var parent = document.getElementById(domId)
+        var child = parent.querySelector('#cardBackground')
+
+        for (let i=0;i<(yourHand.length);i++){
+            var parent2 = document.getElementById(i)
+            var child2 = parent2.querySelector('#cardBackground')
+            //child2.id = "cardBackground"
+            yourHand = yourHand;
+        }
+
         if(!isCardInYourHandInPlacingMode || !yourBoardPhs.includes(card)){
             yourBoardPhs.fill("")
 
@@ -80,15 +94,42 @@
                     yourBoardPhs[i] = card
                 }
             }
+
+            //child.id = "cardBackgroundHighlight"
+            //console.log("--colorr:"+ backgroundColorByCost[(card.stars)-3]+"; --colorr2: #"+(parseInt((backgroundColorByCost[(card.stars)-3].replace('#','')), 16)+663552).toString(16)+"; animation: cardInHandHighlighted 2s infinite;");
+            //style="--colorr: {backgroundColorByCost[(card.stars)-3]}; --colorr2: #{(parseInt((backgroundColorByCost[(card.stars)-3].replace("#","")), 16)+663552).toString(16)};"
             yourBoardPhs = yourBoardPhs
+
             isCardInYourHandInPlacingMode = true
         }
         else{
             isCardInYourHandInPlacingMode = false
             yourBoardPhs.fill("")
+
+            //child.id = "cardBackground"
             yourBoardPhs = yourBoardPhs
         }
+
+        yourHand = yourHand;
     }
+    function PlaceByClick(card,i){
+        yourBoard[i] = card;
+        
+        yourBoardPhs.fill("")
+        yourHand.splice(yourHand.indexOf(card), 1);
+
+        yourBoard = yourBoard
+        yourBoardPhs = yourBoardPhs
+        yourHand = yourHand
+
+        console.log(document.getElementById("td"+i));
+        document.getElementById("td"+i).removeEventListener("drop", drop)
+        document.getElementById("td"+i).removeEventListener("dragover", dragOver)
+        document.getElementById("td"+i).removeEventListener("dragleave", dragLeave)
+
+        
+    }
+
 </script>
 
 <div id="background"></div>
@@ -100,7 +141,7 @@
                 {#each Array((yourBoard.length)/2) as cell,i}
                     <td class="target boardsCells" id="td{i}">
                     {#if yourBoardPhs[i] != ""}
-                    <div id="cardPreviewListCont" style="filter: grayscale(0.5);opacity: 0.7;">
+                    <div on:click={() => PlaceByClick(yourBoardPhs[i],i)} id="cardPreviewListCont" class:isPlacingModePh={isCardInYourHandInPlacingMode} style="filter: grayscale(0.5) contrast(50%);opacity: 0.7;" on:keydown role="button" tabindex="">
                         <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute" src={cardV2Background} alt="cardBg">
                         <div id="rarityBGList" style="background: {backgroundColorByCost[( yourBoardPhs[i].stars)-3]}; "></div>
                         <img draggable="false" class = "cardButton" src={ yourBoardPhs[i].source} alt="preview"/>
@@ -141,7 +182,7 @@
                 {#each Array((yourBoard.length)/2) as cell,i}
                     <td class="target boardsCells" id="td{i+(yourBoard.length)/2}">
                     {#if yourBoardPhs[i+(yourBoardPhs.length)/2] != ""}
-                    <div id="cardPreviewListCont" style="filter: grayscale(0.5);opacity: 0.7;">
+                    <div on:click={() => PlaceByClick(yourBoardPhs[i],i+(yourBoard.length)/2)} id="cardPreviewListCont" class:isPlacingModePh={isCardInYourHandInPlacingMode} style="filter: grayscale(0.5) contrast(50%);opacity: 0.7;" on:keydown role="button" tabindex="">
                         <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute" src={cardV2Background} alt="cardBg">
                         <div id="rarityBGList" style="background: {backgroundColorByCost[yourBoardPhs[i+(yourBoardPhs.length)/2]]}; "></div>
                         <img draggable="false" class = "cardButton" src={yourBoardPhs[i+(yourBoardPhs.length)/2].source} alt="preview"/>
@@ -196,8 +237,8 @@
     </div>
     <div class="handCont" id="yourHand">
         {#each yourHand as card,i}
-        <div on:click={() => PlacingMode(card)} id={i} draggable="true" class="previewInHand move" style="--cardNum: {yourHand.length};transform: rotate({-22.5+(45/yourHand.length)*(i+1)}deg);top:{(yourHand.length-(i))/3}vw;" on:keydown role="button" tabindex="">
-            <img draggable="false" class="cardTemplate" src={cardBackground} alt="cardBg">
+        <div id={i} on:click={() => PlacingMode(card,i)} draggable="true" class="previewInHand move" style="--cardNum: {yourHand.length};transform: rotate({-22.5+(45/yourHand.length)*(i+1)}deg);top:{(yourHand.length-(i))/3}vw;" on:keydown role="button" tabindex="">
+            <img draggable="false" class="cardTemplate" id="cardBackground" src={cardBackground} style="--colorr: {backgroundColorByCost[(card.stars)-3]}; --colorr2: #{(parseInt((backgroundColorByCost[(card.stars)-3].replace("#","")), 16)+663552).toString(16)};" alt="cardBg">
             <div id="rarityBG" style="background: {backgroundColorByCost[(card.stars)-3]}; "></div>
             <img draggable="false" id="curCardInView" src={card.source} alt="">
             <img draggable="false" class="cardTemplate" src={cardForeground} alt="cardBg">
@@ -317,6 +358,9 @@
         z-index: 10;
         cursor: pointer;
     }
+    .isPlacingModePh:hover{
+        transform: scale(1.2);
+    }
 
     @keyframes scaleUp{
         0%{
@@ -331,6 +375,20 @@
         position: absolute;
         left: 0;
     }
+    #cardBackgroundHighlight{
+        animation:cardInHandHighlighted 2s infinite;
+    }
+    @keyframes cardInHandHighlighted{
+        0%{
+            filter:brightness(150%) drop-shadow(calc(var(--cardsScale)*1vw*1.5) calc(var(--cardsScale)*1vw*1.5) 5px var(--colorr)) drop-shadow(calc(var(--cardsScale)*1vw*-1.5) calc(var(--cardsScale)*1vw*-1.5) 5px var(--colorr));
+        }
+        50%{
+            filter:brightness(170%) drop-shadow(calc(var(--cardsScale)*1vw*1.5) calc(var(--cardsScale)*1vw*1.5) 5px var(--colorr2)) drop-shadow(calc(var(--cardsScale)*1vw*-1.5) calc(var(--cardsScale)*1vw*-1.5) 5px var(--colorr2));
+        }
+        100%{
+            filter:brightness(150%) drop-shadow(calc(var(--cardsScale)*1vw*1.5) calc(var(--cardsScale)*1vw*1.5) 5px var(--colorr)) drop-shadow(calc(var(--cardsScale)*1vw*-1.5) calc(var(--cardsScale)*1vw*-1.5) 5px var(--colorr));
+        }
+    }
     #rarityBG{
         position: absolute;
         width: calc(var(--cardsScale)*1vw*20);
@@ -339,7 +397,6 @@
         top: calc(var(--cardsScale)*1vw*2.5);
 
         opacity: 0.35;
-        background-blend-mode:saturation;
     }
     #curCardInView{
         position: absolute;
