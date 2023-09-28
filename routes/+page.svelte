@@ -25,6 +25,7 @@
   <a href="/gachaScreen">itt fizess</a><br>
   <a href="/collectionScreen">kártyáid</a><br>
   <a href="/selectionScreen">paklid</a>
+  <a href="/test">testGround</a>
 </div>
 
 <a href="/gameplayScreen">JÁTTSZ JÁTTSZ JÁTTSZ!!! JÁTSZ TE ITT MOST</a>
