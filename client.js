@@ -28,52 +28,6 @@ export function sendData(columnName,dataToSend,id,tableName) { //export == publi
     });
 }
 
-export function getData(columnName,id,tableName) { //i dont really understand this, but it works
-  fetch(`http://${ip}:3000/getData`, { //the "function" id i talked about in server ("sendData" here)
-  method: 'POST',
-  headers: {
-      'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({column: columnName, id: id,table: tableName}), //body is the shit we send, the rest is costums, here its an object
-  })
-  .then(response => {
-    if (response.ok) {
-      return response.json();
-    } else {
-      throw new Error('Failed to send data');
-    }
-  })
-  .then(data => {
-    // Handle the data received from the server
-    if (id == "0"){
-      responsData = data.data
-    }
-    else if (columnName == "*"){
-      responsData = data.data[0];
-    }
-    else {
-      if(columnName == "pity4S"){
-        Cpity4S = data.data[0][columnName];
-      }
-      else if(columnName == "pity5S"){
-        Cpity5S = data.data[0][columnName];
-      }
-      else if(columnName == "pityUR"){
-        CpityUR = data.data[0][columnName];
-      }
-      else { //nagyon csúnya but thats literally the best i can do w the unconsistent respons time of the server :(
-        responsData = data.data[0][columnName];
-      }
-    }
-    console.log(responsData);
-  })
-  .catch(error => {
-    console.error(error);
-  });
-  //console.log("res data: " + responsData);
-}
-
-
 export function DeleteAll(tableName){
   fetch(`http://${ip}:3000/delTable`, { //the "function" id i talked about in server ("sendData" here)
     method: 'POST',
