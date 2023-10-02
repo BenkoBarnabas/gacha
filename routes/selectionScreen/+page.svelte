@@ -1,15 +1,12 @@
 <script>
     import * as Cards from "../../card"
     import cardV2Background from "../../lib/assets/global/cardV2BG.png"
+    import {sendData, getData} from "../../client"
+
+    let userId = "1" //ph obvs
+
 
     let selectedList = []
-    export let selectedListText = ""
-
-    function stringifyArray(array, string){
-        array.forEach(element => {
-            string += element
-        });
-    }
 
     function selectByClick(card){
         if(!selectedList.includes(card)){
@@ -18,7 +15,7 @@
             document.getElementById(card.cardSRCText).classList.remove("filtergrayscale")
             document.getElementById(card.cardSRCText).classList.add("selected")
 
-            sendData(columnName,dataToSend,id,tableName)
+            sendData("deckarray",String(selectedList),userId,"deck")
         }else{
             selectedList.splice(selectedList.indexOf(card), 1)
             selectedList = selectedList
