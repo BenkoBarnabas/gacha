@@ -15,7 +15,7 @@
 <input type="text" bind:value={id} placeholder="Add meg az id-t">
 <input type="text" bind:value={tableName} placeholder="Add meg a táblázat nevét">
 <button on:click={() => sendData(selectedColumn,dataToSend,id,tableName)}>Küldés a Szervernek</button>
-<button on:click={() => getData(selectedColumn,id,tableName)}>Adatok Lekérdezése a Szervertől</button>
+<button on:click={() => getData(selectedColumn,id,tableName, "gacha")}>Adatok Lekérdezése a Szervertől</button>
 <button on:click={() => DeleteAll(tableName)}>Összes törlése</button>
 <button on:click={() => AddEmptyRow(tableName)}>Üres Rekord hozzáadása</button>
 </main>

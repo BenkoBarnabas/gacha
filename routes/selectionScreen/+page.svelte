@@ -4,6 +4,7 @@
     import {sendData, getData} from "../../client"
 
     let userId = "1" //ph obvs
+    getData("*", userId, "deck", "deck")
 
 
     let selectedList = []
@@ -15,7 +16,7 @@
             document.getElementById(card.cardSRCText).classList.remove("filtergrayscale")
             document.getElementById(card.cardSRCText).classList.add("selected")
 
-            sendData("deckarray",String(selectedList),userId,"deck")
+            sendData("deckarray",String(selectedList),userId, "deck")
         }else{
             selectedList.splice(selectedList.indexOf(card), 1)
             selectedList = selectedList
