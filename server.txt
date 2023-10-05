@@ -29,17 +29,20 @@ app.get('/', (req, res) => {
 let db = new sqlite3.Database('Sagvari.db');
 let table =""
 
-let rollsStructure = "(id INTEGER PRIMARY KEY, history TEXT, pity4S INTEGER, pity5S INTEGER, pityUR INTEGER)"
-let accountStructure = "(id INTEGER PRIMARY KEY, username TEXT, email TEXT, level INTEGER, xp INTEGER, gachaCurrency INTEGER, tickets INTEGER)"
-let lobbyStructure = "(id INTEGER PRIMARY KEY, username TEXT, level INTEGER)"
-let deckStructure = "(id  INTEGER PRIMARY KEY, deckarray TEXT)"
+let tableStructures = {
+  rolls : "(id INTEGER PRIMARY KEY, history TEXT, pity4S INTEGER, pity5S INTEGER, pityUR INTEGER)",
+  account : "(id INTEGER PRIMARY KEY, username TEXT, email TEXT, level INTEGER, xp INTEGER, gachaCurrency INTEGER, tickets INTEGER)",
+  lobby : "(id INTEGER PRIMARY KEY, username TEXT, level INTEGER)",
+  deck : "(id  INTEGER PRIMARY KEY, deckarray TEXT)"
+
+}
 
 
 // Initialize the database with a table if it doesn't exist
-db.run(`CREATE TABLE IF NOT EXISTS account ${accountStructure}`);
-db.run(`CREATE TABLE IF NOT EXISTS rolls ${rollsStructure}`);
-db.run(`CREATE TABLE IF NOT EXISTS lobby ${lobbyStructure}`);
-db.run(`CREATE TABLE IF NOT EXISTS deck ${deckStructure}`);
+db.run(`CREATE TABLE IF NOT EXISTS account ${tableStructures.account}`);
+db.run(`CREATE TABLE IF NOT EXISTS rolls ${tableStructures.rolls}`);
+db.run(`CREATE TABLE IF NOT EXISTS lobby ${tableStructures.lobby}`);
+db.run(`CREATE TABLE IF NOT EXISTS deck ${tableStructures.deck}`);
 
 
 
@@ -194,16 +197,10 @@ app.post('/delTable', (req, res) => {
     return res.status(500).json({ error: 'Database error' });
   }
 
-  //REALLY HIGHLY UGLY
-  if (table == "rolls"){
-    db.run(`CREATE TABLE IF NOT EXISTS rolls ${rollsStructure}`);
-  }
-  else if (table == "account"){
-    db.run(`CREATE TABLE IF NOT EXISTS account ${accountStructure}`);
-  }
-  else if (table == "lobby"){
-    db.run(`CREATE TABLE IF NOT EXISTS lobby ${lobbyStructure}`);
-  }
+
+  db.run(`CREATE TABLE IF NOT EXISTS rolls ${tableStructures[table]}`);
+
+  
 
   res.json({ message: 'All rows deleted successfully' });
   });
