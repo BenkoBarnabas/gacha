@@ -1,5 +1,5 @@
 <script>
-    import {sendData, getData, responsData, Cpity4S, Cpity5S, CpityUR, sendSocketValue} from "../../client"
+    import {sendData, getData, responsData, Cpity4S, Cpity5S, CpityUR, sendSocketValue, AddEmptyRow} from "../../client"
 
     var loginScreen = true
     let userId = "1"
@@ -17,31 +17,44 @@
         loginScreen = false
         loginScreen = loginScreen
         usersInLobby = usersInLobby
+        f()
         
     }
+    function f(){
+        setTimeout(() => {
+            usersInLobby = usersInLobby
+            console.log(usersInLobby);
+            f()
+        }, 100);
+    }
 
-    let almak = ["alam","körte","banán"]
-    let csiga = 0
-    $: {csiga = almak
-    almak = almak
-console.log("$: ",almak);}
 
 </script>
-<a href="../gameplayScreen">testGround</a>
+<div id="background"></div>
+<a href="../gameplayScreen">gameplay</a>
 
 {#if loginScreen}
     <input type="text" placeholder="give a id" bind:value={userId}>
     <input type="text" placeholder="give a username" bind:value={username}>
     <button on:click={LoadCurrentLobby}>log in</button>
 {:else}
-    {#each almak as alma}
-        {alma} <br>
+    {#each usersInLobby.lobby as lobbyMembers}
+        id: {lobbyMembers.id}  username: {lobbyMembers.username} {usersInLobby.lobby.length}<br>
     {/each}
 {/if}
-<button on:click={() => almak.push("fuga")}>psuh</button>
-<button on:click={() => console.log(csiga)}>csiag</button>
+
+<button on:click={() => AddEmptyRow("lobby")}>add r</button>
+
+
 
 
 <style>
-
+#background{
+        width: 100vw;
+        height: 100vh;
+        position: fixed;
+        z-index: -1;
+        background-image: url("../../lib/assets/gameplay/PHBG.jpg");
+        background-size: 100% 100%;
+    }
 </style>

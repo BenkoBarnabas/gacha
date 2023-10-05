@@ -72,6 +72,7 @@
     setTimeout(() => {
         gachaCurrencyObject = gachaCurrencyObject
     }, 500);
+
     
 
 
