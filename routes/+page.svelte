@@ -1,12 +1,25 @@
 <script>
-  import {sendData, getData, DeleteAll, AddEmptyRow} from "../client.js" //we import all the functions
+  import {sendData, getData, DeleteAll, AddEmptyRow, sendSocketValue, getSocketValue} from "../client.js" //we import all the functions
 
   let dataToSend = ""
-  let selectedColumn = "history"
+  let selectedColumn = "username"
   let id = "1"
-  let tableName = "rolls"
+  let tableName = "account"
+
+  var query = {
+    column: "tickets",
+    id: 1,
+    table: "account"
+  }
+
+  var fel = {
+    value: ""
+  }
+
+
 
 </script>
+
 
 <main>
 <h1>Svelte Webes Applikáció Node.js és Express.js használatával<br>Nyomd le az F11 gombot a teljes élményhez!</h1>
@@ -28,7 +41,7 @@
   <a href="/test">testGround</a>
 </div>
 
-<a href="/gameplayScreen">JÁTTSZ JÁTTSZ JÁTTSZ!!! JÁTSZ TE ITT MOST</a>
+<a href="/lobbyScreen" style="color: white; text-align:center;font-size:larger; ">JÁTTSZ JÁTTSZ JÁTTSZ!!! JÁTSZ TE ITT MOST</a>
 
 <style>
 main {

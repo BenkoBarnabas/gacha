@@ -22,7 +22,7 @@
     import infoBox from "../../lib/assets/gacha/infoBox.png"
 
     //server functions, db control
-    import {sendData, getData, responsData, Cpity4S, Cpity5S, CpityUR} from "../../client"
+    import {sendData, getData, responsData, Cpity4S, Cpity5S, CpityUR, sendSocketValue} from "../../client"
 
 
     //get the shit u need fomr the database 
@@ -34,9 +34,6 @@
     var pityUR = 0
     let pullHistory = ""
 
-    let tickets = 100
-    let gachaCurrency = 10000
-
     getData("history",userId,"rolls") //the one can be adjusted later depending on the ip of the PC (the user who playing)
     console.log("1. get data");
     setTimeout(() => {
@@ -46,24 +43,36 @@
     getData("pity4S",userId,"rolls") 
     setTimeout(() => {
         pity4S = Cpity4S
-        console.log(pity4S);
+        //console.log(pity4S);
         
     }, 1000);
     getData("pity5S",userId,"rolls") 
     setTimeout(() => {
         pity5S = Cpity5S
-        console.log(pity5S);
+        //console.log(pity5S);
         
     }, 1000);
     getData("pityUR",userId,"rolls") 
     setTimeout(() => {
         pityUR = CpityUR
-        console.log(pityUR);
+        //console.log(pityUR);
     }, 1000);
 
     //var tickets = getData("tickets",userId,"account")
 
     //console.log(tickets);
+
+
+    let gachaCurrencyObject = {
+        gachaCurrency: "",
+        tickets: "",
+    }
+    sendSocketValue("tickets",userId,"account",gachaCurrencyObject)
+    sendSocketValue("gachaCurrency",userId,"account",gachaCurrencyObject)
+    setTimeout(() => {
+        gachaCurrencyObject = gachaCurrencyObject
+    }, 500);
+    
 
 
     //VARIABLE DECLARATION
@@ -153,11 +162,13 @@
 
 
     function CalculatePulls(num){ //loads the pull cards and already calculates their content
-        if (tickets > num){
-            tickets -= num
+        if (gachaCurrencyObject.tickets > num){
+            gachaCurrencyObject.tickets -= num
+            sendData("tickets",gachaCurrencyObject.tickets,userId,"account")
         }
         else {
-            gachaCurrency -= num*200
+            gachaCurrencyObject.gachaCurrency -= num*200
+            sendData("gachaCurrency",gachaCurrencyObject.gachaCurrency,userId,"account")
         }
         isBannerUp = false
         isBannerUp = isBannerUp
@@ -441,7 +452,6 @@
 </div>
 {/if}
 
-
 {#if isBannerUp}
 
 <div id="header">
@@ -458,10 +468,10 @@
             <td style="width: 30vw; padding-right:1.5vw;text-align:center">
                 <div class="accountInfoHeader">
                     <td>
-                        <div class="accountInfoBubbles"><img src={gachaCurrencyIcon} alt="gCurrency" style="width:1vw; height:1vw;"> {gachaCurrency}</div>
+                        <div class="accountInfoBubbles"><img src={gachaCurrencyIcon} alt="gCurrency" style="width:1vw; height:1vw;"> {gachaCurrencyObject.gachaCurrency}</div>
                     </td>
                     <td>
-                        <div class="accountInfoBubbles"><img src={ticketIcon} alt="tickets" style="width:1vw; height:1vw;"> {tickets}</div>
+                        <div class="accountInfoBubbles"><img src={ticketIcon} alt="tickets" style="width:1vw; height:1vw;"> {gachaCurrencyObject.tickets}</div>
                     </td>
                     <td>
                         <button class="closeButton" on:click={() => GoToPage("../")}></button>

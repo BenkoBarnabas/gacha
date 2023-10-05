@@ -3,6 +3,63 @@ let ip = "localhost";
 
 let userId = "1" //ph obvs
 
+// ES modules
+import io from "socket.io-client";
+
+const socket = io(`http://${ip}:3000` , { transports : ['websocket'] }); // Replace with your server's URL
+
+socket.on('connect', () => {
+  console.log('Connected to server');
+});
+
+socket.on('disconnect', () => {
+  console.log('Disconnected from server');
+});
+
+
+let dataFromServer
+
+export function sendSocketValue(columnName,id,tableName,storage){
+  const query = {
+    column: columnName,
+    id: id,
+    table: tableName,
+  }
+  console.log("client send: ",query);
+  socket.emit(columnName, query)
+
+  if(columnName != "*"){
+    socket.on(columnName, msg => {
+      //console.log("client got: ",msg);
+      console.log("megjött: "+columnName,msg);
+      storage[columnName] = msg
+      //console.log("stroage: ",storage.value);
+    })
+  }
+  
+  socket.on("*",msg => {
+    console.log("jött a lobby: ",msg);
+    storage.lobby = msg
+    //console.log("a storage: ",storage.lobby[0].username);
+  })
+  
+}
+
+
+export function getSocketValue(storage){
+  console.log(storage);
+  storage.value = dataFromServer
+  //return dataFromServer
+}
+
+
+
+
+
+
+
+
+
 export let responsData = ""
 export var Cpity4S = 0 // C = client
 export var Cpity5S = 0

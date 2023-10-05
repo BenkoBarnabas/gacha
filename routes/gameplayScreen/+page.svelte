@@ -5,12 +5,39 @@
     import cardForeground from "../../lib/assets/global/cardV1Top.png"
     import cardV2Background from "../../lib/assets/global/cardV2BG.png"
     var starSizeArray = [] //for some reason it didnt work with a normal return so i had to put them into an array ,im throwing up
-    var starSizeTop = [1,1,0,0]
+    var starSizeTop = [0,0,0,0]
     var backgroundColorByCost = ["#2672ed","#8626ed","#ed7c26","linear-gradient(180deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235))"]
-    var starsColorByCost = ["color: #2672ed;","color: #8626ed;","#ed7c26","background-image: linear-gradient(90deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235));-webkit-background-clip: text;background-clip: text;color: transparent;"]
+    var starsColorByCost = ["color: #2672ed;","color: #8626ed;","color: #ed7c26;","background-image: linear-gradient(90deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235));-webkit-background-clip: text;background-clip: text;color: transparent;"]
 
+    let startingHandNum = 5
+    let yourHand = []
+    let cardsInYourHandClass = Array(yourHand.length).fill("cardTemplate")
+    let newCard
+    let cardsInHandDoms
+    function DrawStartingHand(n){
+        for (let i = 0; i<n;i++){
+            
+            yourHand.push(Cards.allCardsArr[Math.floor(Math.random() * Cards.allCardsArr.length)])
+            cardsInYourHandClass.push("cardTemplate")
+        }
+        //console.log(newCard);
+        yourHand = yourHand
+        //newCard.addEventListener("dragstart", dragStart)
+    }
+    function DrawOne(){
+        yourHand.push(Cards.allCardsArr[Math.floor(Math.random() * Cards.allCardsArr.length)])
+        cardsInYourHandClass.push("cardTemplate")
+        yourHand = yourHand
 
-    let yourHand = [Cards.BizsoCard,Cards.BencusCard,Cards.MsFarkasCard,Cards.FarkasCard,Cards.BarniCard]
+    }
+    DrawStartingHand(startingHandNum)
+
+    $:  if (newCard) {
+            newCard.addEventListener("dragstart", dragStart)
+            console.log("added event listenr");
+        } 
+    
+    
     let yourBoard = Array(12).fill("")
     let yourBoardPhs = Array(12).fill("")
 
@@ -28,7 +55,6 @@
 
         for(draggables of document.getElementsByClassName("move")){
             draggables.addEventListener("dragstart", dragStart)
-            draggables.addEventListener("touchstart", dragStart)
         }
         for(let i = 0;i<(yourBoard.length)+1;i++){
             targetArea[i].addEventListener("drop", drop)
@@ -43,16 +69,21 @@
 
         yourBoardPhs[Number(event.target.id.replace("td",""))] = ""
         yourBoard[Number(event.target.id.replace("td",""))] = yourHand[dragged.id]
-        yourBoard = yourBoard
 
         yourHand.splice(dragged.id, 1);
-        yourHand = yourHand
+        
 
-        console.log(yourBoard);
+        console.log("your board: ",yourBoard);
         event.target.removeEventListener("drop", drop)
         event.target.removeEventListener("dragover", dragOver)
         event.target.removeEventListener("dragleave", dragLeave)
-        console.log(event.target);
+        console.log("dropped to this cell: ",event.target);
+        console.log("the thing u dropped: ",dragged);
+
+        cardsInYourHandClass = Array(yourHand.length).fill("cardTemplate")
+
+        yourHand = yourHand
+        yourBoard = yourBoard
     }
     function dragStart(event) {
         dragged = event.target
@@ -74,15 +105,12 @@
         yourBoardPhs = yourBoardPhs
     }
 
-    
-    function PlacingMode(card, domId){
-        var parent = document.getElementById(domId)
-        var child = parent.querySelector('#cardBackground')
 
+    function PlacingMode(card, domId){
+
+        Array(yourHand.length).fill("cardTemplate")
         for (let i=0;i<(yourHand.length);i++){
-            var parent2 = document.getElementById(i)
-            var child2 = parent2.querySelector('#cardBackground')
-            //child2.id = "cardBackground"
+            cardsInYourHandClass[i] = "cardTemplate"
             yourHand = yourHand;
         }
 
@@ -95,9 +123,12 @@
                 }
             }
 
-            //child.id = "cardBackgroundHighlight"
-            //console.log("--colorr:"+ backgroundColorByCost[(card.stars)-3]+"; --colorr2: #"+(parseInt((backgroundColorByCost[(card.stars)-3].replace('#','')), 16)+663552).toString(16)+"; animation: cardInHandHighlighted 2s infinite;");
-            //style="--colorr: {backgroundColorByCost[(card.stars)-3]}; --colorr2: #{(parseInt((backgroundColorByCost[(card.stars)-3].replace("#","")), 16)+663552).toString(16)};"
+            if (card.stars < 6){
+                cardsInYourHandClass[domId] = "cardTemplate cardInHandHighlighted"
+            }
+            else {
+                cardsInYourHandClass[domId] = "cardTemplate cardInHandRainbowHighlighted"
+            }
             yourBoardPhs = yourBoardPhs
 
             isCardInYourHandInPlacingMode = true
@@ -105,8 +136,7 @@
         else{
             isCardInYourHandInPlacingMode = false
             yourBoardPhs.fill("")
-
-            //child.id = "cardBackground"
+            cardsInYourHandClass[domId] = "cardTemplate"
             yourBoardPhs = yourBoardPhs
         }
 
@@ -118,11 +148,14 @@
         yourBoardPhs.fill("")
         yourHand.splice(yourHand.indexOf(card), 1);
 
+        cardsInYourHandClass = Array(yourHand.length).fill("cardTemplate")
+
         yourBoard = yourBoard
         yourBoardPhs = yourBoardPhs
         yourHand = yourHand
 
-        console.log(document.getElementById("td"+i));
+        console.log("dropped to this cell by click: ",yourBoard[i]);
+        console.log("the thing u dropped by click: ",card);
         document.getElementById("td"+i).removeEventListener("drop", drop)
         document.getElementById("td"+i).removeEventListener("dragover", dragOver)
         document.getElementById("td"+i).removeEventListener("dragleave", dragLeave)
@@ -182,7 +215,7 @@
                 {#each Array((yourBoard.length)/2) as cell,i}
                     <td class="target boardsCells" id="td{i+(yourBoard.length)/2}">
                     {#if yourBoardPhs[i+(yourBoardPhs.length)/2] != ""}
-                    <div on:click={() => PlaceByClick(yourBoardPhs[i],i+(yourBoard.length)/2)} id="cardPreviewListCont" class:isPlacingModePh={isCardInYourHandInPlacingMode} style="filter: grayscale(0.5) contrast(50%);opacity: 0.7;" on:keydown role="button" tabindex="">
+                    <div on:click={() => PlaceByClick(yourBoardPhs[i+(yourBoard.length)/2],i+(yourBoard.length)/2)} id="cardPreviewListCont" class:isPlacingModePh={isCardInYourHandInPlacingMode} style="filter: grayscale(0.5) contrast(50%);opacity: 0.7;" on:keydown role="button" tabindex="">
                         <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute" src={cardV2Background} alt="cardBg">
                         <div id="rarityBGList" style="background: {backgroundColorByCost[yourBoardPhs[i+(yourBoardPhs.length)/2]]}; "></div>
                         <img draggable="false" class = "cardButton" src={yourBoardPhs[i+(yourBoardPhs.length)/2].source} alt="preview"/>
@@ -235,10 +268,10 @@
             </tr>
         </table>
     </div>
-    <div class="handCont" id="yourHand">
+    <div bind:this={cardsInHandDoms} class="handCont" id="yourHand">
         {#each yourHand as card,i}
-        <div id={i} on:click={() => PlacingMode(card,i)} draggable="true" class="previewInHand move" style="--cardNum: {yourHand.length};transform: rotate({-22.5+(45/yourHand.length)*(i+1)}deg);top:{(yourHand.length-(i))/3}vw;" on:keydown role="button" tabindex="">
-            <img draggable="false" class="cardTemplate" id="cardBackground" src={cardBackground} style="--colorr: {backgroundColorByCost[(card.stars)-3]}; --colorr2: #{(parseInt((backgroundColorByCost[(card.stars)-3].replace("#","")), 16)+663552).toString(16)};" alt="cardBg">
+        <div bind:this={newCard} id={i} on:click={() => PlacingMode(card,i)} draggable="true" class="previewInHand move" style="--cardNum: {yourHand.length};transform: rotate({-22.5+(45/yourHand.length)*(i+1)}deg);top:{(yourHand.length-(i))/3}vw;" on:keydown role="button" tabindex="">
+            <img draggable="false" class={cardsInYourHandClass[i]} id="cardBackground" src={cardBackground} style="--colorr: {backgroundColorByCost[(card.stars)-3]}; --colorr2: #{(parseInt((backgroundColorByCost[(card.stars)-3].replace("#","")), 16)+663552).toString(16)};" alt="cardBg">
             <div id="rarityBG" style="background: {backgroundColorByCost[(card.stars)-3]}; "></div>
             <img draggable="false" id="curCardInView" src={card.source} alt="">
             <img draggable="false" class="cardTemplate" src={cardForeground} alt="cardBg">
@@ -258,6 +291,7 @@
         
     </div>
 </div>
+<button on:click={() => DrawOne()}>KÁRTYÁT IDE A KEZEMBEEE</button>
 
 <style>
     @font-face {
@@ -375,7 +409,7 @@
         position: absolute;
         left: 0;
     }
-    #cardBackgroundHighlight{
+    .cardInHandHighlighted{
         animation:cardInHandHighlighted 2s infinite;
     }
     @keyframes cardInHandHighlighted{
@@ -389,6 +423,36 @@
             filter:brightness(150%) drop-shadow(calc(var(--cardsScale)*1vw*1.5) calc(var(--cardsScale)*1vw*1.5) 5px var(--colorr)) drop-shadow(calc(var(--cardsScale)*1vw*-1.5) calc(var(--cardsScale)*1vw*-1.5) 5px var(--colorr));
         }
     }
+
+    .cardInHandRainbowHighlighted{
+        animation:cardInHandRainbowHighlighted 7s infinite;
+    }
+    
+    @keyframes cardInHandRainbowHighlighted{
+        0%{
+            filter:brightness(150%) drop-shadow(calc(var(--cardsScale)*1vw*1.5) calc(var(--cardsScale)*1vw*1.5) 5px rgb(242, 121, 121)) drop-shadow(calc(var(--cardsScale)*1vw*-1.5) calc(var(--cardsScale)*1vw*-1.5) 5px rgb(242, 121, 121));
+        }
+        15%{
+            filter:brightness(170%) drop-shadow(calc(var(--cardsScale)*1vw*1.5) calc(var(--cardsScale)*1vw*1.5) 5px rgb(235, 197, 127)) drop-shadow(calc(var(--cardsScale)*1vw*-1.5) calc(var(--cardsScale)*1vw*-1.5) 5px rgb(235, 197, 127));
+        }
+        30%{
+            filter:brightness(150%) drop-shadow(calc(var(--cardsScale)*1vw*1.5) calc(var(--cardsScale)*1vw*1.5) 5px rgb(235, 235, 124)) drop-shadow(calc(var(--cardsScale)*1vw*-1.5) calc(var(--cardsScale)*1vw*-1.5) 5px rgb(235, 235, 124));
+        }
+        45%{
+            filter:brightness(150%) drop-shadow(calc(var(--cardsScale)*1vw*1.5) calc(var(--cardsScale)*1vw*1.5) 5px rgb(131, 237, 237)) drop-shadow(calc(var(--cardsScale)*1vw*-1.5) calc(var(--cardsScale)*1vw*-1.5) 5px rgb(131, 237, 237));
+        }
+        60%{
+            filter:brightness(170%) drop-shadow(calc(var(--cardsScale)*1vw*1.5) calc(var(--cardsScale)*1vw*1.5) 5px rgb(127, 127, 234)) drop-shadow(calc(var(--cardsScale)*1vw*-1.5) calc(var(--cardsScale)*1vw*-1.5) 5px rgb(127, 127, 234));
+        }
+        75%{
+            filter:brightness(150%) drop-shadow(calc(var(--cardsScale)*1vw*1.5) calc(var(--cardsScale)*1vw*1.5) 5px rgb(208, 140, 239)) drop-shadow(calc(var(--cardsScale)*1vw*-1.5) calc(var(--cardsScale)*1vw*-1.5) 5px rgb(208, 140, 239));
+        }
+        100%{
+            filter:brightness(150%) drop-shadow(calc(var(--cardsScale)*1vw*1.5) calc(var(--cardsScale)*1vw*1.5) 5px rgb(241, 139, 210)) drop-shadow(calc(var(--cardsScale)*1vw*-1.5) calc(var(--cardsScale)*1vw*-1.5) 5px rgb(241, 139, 210));
+        }
+    }
+    
+
     #rarityBG{
         position: absolute;
         width: calc(var(--cardsScale)*1vw*20);
@@ -554,7 +618,7 @@
 
         position: absolute;
         left: calc(var(--cardOnBoardScale)*1vw*3.7);
-        top: calc(var(--cardOnBoardScale)*1vw*0.4);
+        top: 0;
     }
 
 
