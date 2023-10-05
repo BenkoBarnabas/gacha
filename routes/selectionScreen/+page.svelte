@@ -1,23 +1,35 @@
 <script>
     import * as Cards from "../../card"
     import cardV2Background from "../../lib/assets/global/cardV2BG.png"
+    import {sendData, getData} from "../../client"
+
+    let userId = "1" //ph obvs
+    getData("*", userId, "deck", "deck")
+
 
     let selectedList = []
 
-    function selectByClick(cardSRCText){
-        if(!selectedList.includes(cardSRCText)){
-            selectedList.push(cardSRCText)
-            console.log(selectedList)
-            document.getElementById(cardSRCText).classList.remove("filtergrayscale")
-            document.getElementById(cardSRCText).classList.add("selected")
-            console.log(document.getElementById(cardSRCText).classList);
+    function selectByClick(card){
+        if(!selectedList.includes(card)){
+            selectedList.push(card)
+            selectedList = selectedList
+            document.getElementById(card.cardSRCText).classList.remove("filtergrayscale")
+            document.getElementById(card.cardSRCText).classList.add("selected")
+
+            sendData("deckarray",String(selectedList),userId, "deck")
         }else{
-            selectedList.pop(cardSRCText)
-            console.log(selectedList);
-            document.getElementById(cardSRCText).classList.remove("selected")
-            document.getElementById(cardSRCText).classList.add("filtergrayscale")
-            console.log(document.getElementById(cardSRCText).classList);
+            selectedList.splice(selectedList.indexOf(card), 1)
+            selectedList = selectedList
+            document.getElementById(card.cardSRCText).classList.remove("selected")
+            document.getElementById(card.cardSRCText).classList.add("filtergrayscale")
         }
+    }
+
+    function deleteCard(card){
+        selectedList.splice(selectedList.indexOf(card), 1)
+        selectedList = selectedList
+        document.getElementById(card.cardSRCText).classList.remove("selected")
+        document.getElementById(card.cardSRCText).classList.add("filtergrayscale")
     }
 
     var starSizeArray = [] //for some reason it didnt work with a normal return so i had to put them into an array ,im throwing up
@@ -28,6 +40,9 @@
 <div style="display:flex; margin-inline:5vw; margin-block:4vh;">
 <div id="deckBox">
     <h1>Paklid</h1>
+    {#each selectedList as card}
+        <button style="display:block;" on:click={deleteCard(card)}>{card.name}</button>
+    {/each}
 </div>
 <div id = "cardcollection">
     {#each Cards.allCardsArr as card}
@@ -35,7 +50,7 @@
             <img style="width: 12.5vw; position:absolute" src={cardV2Background} alt="cardBg">
             <div class="rarityBGList" style="background: {backgroundColorByCost[(card.stars)-3]}; "></div>
             <img class="cardButton" src={card.source} alt="preview"/>
-            <button class="cardListFrame" alt="cardBg" on:click={() => selectByClick(card.cardSRCText)}></button>
+            <button class="cardListFrame" alt="cardBg" on:click={() => selectByClick(card)}></button>
             <div class="curCardStatsList" style="left: 2.68vw;">{card.attack}</div>
             <div class="curCardStatsList" style="left: 9.65vw;">{card.health}</div>
             <div class="curCardCostList">{card.cost}</div>
@@ -60,6 +75,15 @@
         text-align: center;
         color:white;
 
+    }
+
+    #plussign{
+        margin:auto;
+        width:100%;
+        height:5vh;
+        background-image: url("../../lib/assets/global/plus.png");
+        background-size:contain;
+        background-position: center center;
     }
 
     #deckBox{
@@ -169,7 +193,6 @@
 
     .cardPreviewListCont:hover{
         transform: scale(1.05);
-        filter:none;
     }
 
     .selected{

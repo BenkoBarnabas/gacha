@@ -1,44 +1,115 @@
 //connect to modules express and sqlite3, enable cors (data sending thingy of node.js)
 const express = require('express');
-const app = express();
+const socketIo = require('socket.io');
 const bodyParser = require('body-parser');
 const sqlite3 = require('sqlite3').verbose();
+
+
+const app = express();
+const http = require('http');
+const server = http.createServer(app);
+const io = socketIo(server);
+
+
+
 const cors = require('cors');
 const { LIMIT_FUNCTION_ARG } = require('sqlite3');
 app.use(cors());
 app.use(bodyParser.json());
 
+// connect to us client
+// connect to us client
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + 'C:/Users/Eszti/Svelte/src/client.js');
+});
 
 
-
-
-
-
-
-
-
-
+//DB------------------------------------
 // create the db, accounts is the beta test
 let db = new sqlite3.Database('Sagvari.db');
 let table =""
 
 let rollsStructure = "(id INTEGER PRIMARY KEY, history TEXT, pity4S INTEGER, pity5S INTEGER, pityUR INTEGER)"
 let accountStructure = "(id INTEGER PRIMARY KEY, username TEXT, email TEXT, level INTEGER, xp INTEGER, gachaCurrency INTEGER, tickets INTEGER)"
+let lobbyStructure = "(id INTEGER PRIMARY KEY, username TEXT, level INTEGER)"
 
 
 // Initialize the database with a table if it doesn't exist
 db.run(`CREATE TABLE IF NOT EXISTS account ${accountStructure}`);
 db.run(`CREATE TABLE IF NOT EXISTS rolls ${rollsStructure}`);
+db.run(`CREATE TABLE IF NOT EXISTS lobby ${lobbyStructure}`);
 
+
+
+
+//SOCKET-----------------------------
+
+//io.emit('update', n); 
+function getValueFromDB(columnName,id,tableName){
+  db.get(`SELECT ${columnName} FROM ${tableName}`,(err, row) => {
+    //console.log("rows: ",row);
+    if(columnName == "*"){
+      console.log("sent: "+columnName,row);
+      io.emit(columnName, row)
+      
+    }
+    else if(columnName != ""){
+      console.log("sent: "+columnName,row[columnName]);
+      io.emit(columnName, row[columnName])
+      
+    }
+    //console.log("result: ",result);
+  });
+}
+function getLobbyParties(columnName,id,tableName){
+  db.all(`SELECT * FROM lobby`,(err, row) => {
+    console.log("emited: ",row);
+    io.emit("*", row)
+  });
+}
+
+// Socket.io connection event
+io.on('connection', (socket) => {
+  console.log('A user connected');
+
+  //socket.on('tickets', msg => {
+    //console.log("server got: ",msg);
+    //getValueFromDB(msg.column,msg.id,msg.table)
+  //})
+  
+  var columnNames
+  db.all(`PRAGMA table_info(account)`, [], (err, rows) => {
+    // Extract and print the column names
+    //console.log("rows: ",rows);
+    columnNames = rows.map(row => row.name);
+    for (let i = 0; i<columnNames.length;i++){
+      socket.on(columnNames[i], msg => {
+        console.log("server got: ",msg);
+        getValueFromDB(msg.column,msg.id,msg.table)
+      })
+    }
+  });
+
+  socket.on("*", msg => {
+    console.log("server got: ",msg);
+    getLobbyParties(msg.column,msg.id,msg.table)
+  })
+
+  // Handle disconnection
+  socket.on('disconnect', () => {
+    console.log('A user disconnected');
+  });
+
+});
+
+
+
+
+
+//NODE.JS---------------------------------------
 //DIFFERENT ANSWERS TO CLIENT
 //
 //(the function(err)... is a syntax thingy, as far as i know it doesnt work without it, its the same for every function dm them)
-
-
-// connect to us client
-app.get('/', (req, res) => {
-  res.sendFile(__dirname + 'C:/Users/Eszti/Svelte/src/routes/+page.svelte');
-});
 
 let dataFromClient = null;
 
@@ -60,7 +131,6 @@ app.post('/sendData', (req, res) => { //the '/xy' ('/sendData' here) is esential
 // Handle GET request to retrieve data (the db, currently)
 app.post('/getData', (req, res) => {
   dataFromClient = req.body
-  console.log("table name: " + dataFromClient.table);
   if(dataFromClient.id != 0){ //if id = 0 we send the whole table over : just a specific item, (also if column is * we send all colums over obv)
     db.all(`SELECT ${dataFromClient.column} FROM ${dataFromClient.table} WHERE id = (?)`,dataFromClient.id, (err, rows) => {
       if (err) {
@@ -68,7 +138,7 @@ app.post('/getData', (req, res) => {
         res.status(500).send('Error fetching data from the database');
       } else {
         res.json({ data: rows });
-        console.log(rows);
+        //console.log(rows);
       }
     });
   }
@@ -79,7 +149,7 @@ app.post('/getData', (req, res) => {
         res.status(500).send('Error fetching data from the database');
       } else {
         res.json({ data: rows });
-        console.log(rows);
+        //console.log(rows);
       }
     });
   }
@@ -117,13 +187,14 @@ app.post('/delTable', (req, res) => {
   else if (table == "account"){
     db.run(`CREATE TABLE IF NOT EXISTS account ${accountStructure}`);
   }
+  else if (table == "lobby"){
+    db.run(`CREATE TABLE IF NOT EXISTS lobby ${lobbyStructure}`);
+  }
 
   res.json({ message: 'All rows deleted successfully' });
   });
 });
 
-//run specs
-const port = 3000;
-app.listen(port, () => {
-  console.log(`Server is listening on port ${port}`);
+server.listen(3000, () => {
+  console.log("Server listening on http://localhost:3000");
 });

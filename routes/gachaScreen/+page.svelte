@@ -40,19 +40,19 @@
         pullHistory = responsData.split(',');
     }, 1000);
     //^^^when u inicialize(? im tired) the gacha screen ull ave the history immidiately kinda
-    getData("pity4S",userId,"rolls") 
+    getData("pity4S",userId,"rolls", "gacha") 
     setTimeout(() => {
         pity4S = Cpity4S
         //console.log(pity4S);
         
     }, 1000);
-    getData("pity5S",userId,"rolls") 
+    getData("pity5S",userId,"rolls", "gacha") 
     setTimeout(() => {
         pity5S = Cpity5S
         //console.log(pity5S);
         
     }, 1000);
-    getData("pityUR",userId,"rolls") 
+    getData("pityUR",userId,"rolls", "gacha") 
     setTimeout(() => {
         pityUR = CpityUR
         //console.log(pityUR);
@@ -256,7 +256,7 @@
         sendData("pity5S",pity5S,userId,"rolls")
         sendData("pityUR",pityUR,userId,"rolls")
 
-        getData("history",userId,"rolls") //this updates the responsData
+        getData("history",userId,"rolls", "gacha") //this updates the responsData
         setTimeout(() => {
         pullHistory = responsData.split(',');
         }, 1000);
