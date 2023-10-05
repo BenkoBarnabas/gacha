@@ -32,12 +32,14 @@ let table =""
 let rollsStructure = "(id INTEGER PRIMARY KEY, history TEXT, pity4S INTEGER, pity5S INTEGER, pityUR INTEGER)"
 let accountStructure = "(id INTEGER PRIMARY KEY, username TEXT, email TEXT, level INTEGER, xp INTEGER, gachaCurrency INTEGER, tickets INTEGER)"
 let lobbyStructure = "(id INTEGER PRIMARY KEY, username TEXT, level INTEGER)"
+let deckStructure = "(id  INTEGER PRIMARY KEY, deckarray TEXT)"
 
 
 // Initialize the database with a table if it doesn't exist
 db.run(`CREATE TABLE IF NOT EXISTS account ${accountStructure}`);
 db.run(`CREATE TABLE IF NOT EXISTS rolls ${rollsStructure}`);
 db.run(`CREATE TABLE IF NOT EXISTS lobby ${lobbyStructure}`);
+db.run(`CREATE TABLE IF NOT EXISTS deck ${deckStructure}`);
 
 
 
@@ -79,6 +81,18 @@ io.on('connection', (socket) => {
   
   var columnNames
   db.all(`PRAGMA table_info(account)`, [], (err, rows) => {
+    // Extract and print the column names
+    //console.log("rows: ",rows);
+    columnNames = rows.map(row => row.name);
+    for (let i = 0; i<columnNames.length;i++){
+      socket.on(columnNames[i], msg => {
+        console.log("server got: ",msg);
+        getValueFromDB(msg.column,msg.id,msg.table)
+      })
+    }
+  });
+
+  db.all(`PRAGMA table_info(deck)`, [], (err, rows) => {
     // Extract and print the column names
     //console.log("rows: ",rows);
     columnNames = rows.map(row => row.name);
