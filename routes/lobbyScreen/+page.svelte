@@ -17,15 +17,21 @@
         loginScreen = false
         loginScreen = loginScreen
         usersInLobby = usersInLobby
-        f()
+        //f()
         
     }
     function f(){
         setTimeout(() => {
+            sendSocketValue("*",userId,"lobby",usersInLobby)
             usersInLobby = usersInLobby
             console.log(usersInLobby);
             f()
         }, 100);
+    }
+    $: {
+        sendSocketValue("*",userId,"lobby",usersInLobby)
+            usersInLobby = usersInLobby
+            console.log(usersInLobby);
     }
 
 

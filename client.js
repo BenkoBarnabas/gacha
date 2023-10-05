@@ -1,5 +1,5 @@
-let ip = "10.7.147.201";
-//let ip = "localhost";
+//let ip = "10.7.147.201";
+let ip = "localhost";
 
 let userId = "1" //ph obvs
 

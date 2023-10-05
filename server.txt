@@ -198,7 +198,7 @@ app.post('/delTable', (req, res) => {
   }
 
 
-  db.run(`CREATE TABLE IF NOT EXISTS rolls ${tableStructures[table]}`);
+  db.run(`CREATE TABLE IF NOT EXISTS ${table} ${tableStructures[table]}`);
 
   
 
