@@ -1,30 +1,36 @@
 <script>
-    import {usersInLobby, LoadLobby, ReloadLobby} from "../../client"
+    import {lobby, LoadLobby, ReloadLobby} from "../../client"
 
-    var loginScreen = true
-    let userId = "1"
+    let loginScreen = true
     let username = "barnix"
+
+
     
-   
+    let usersInLobby= []
     function LoadCurrentLobby(){
-        if (username != "" && userId != ""){
-            LoadLobby({username: username, id: userId})
+        if (username != ""){
+            LoadLobby({username: username, id: ""})
+            usersInLobby= Array.from(lobby)
+
             loginScreen = false
             loginScreen = loginScreen
+
         }
         else{
             window.alert("írj is bele valamit haver")
         }
     }
+    
     function RealodLobbyAndSvelte(){
-        var pre = usersInLobby
-        while(pre != usersInLobby){
-            ReloadLobby()
-            console.log("mmm");
+        ReloadLobby()
+        usersInLobby= Array.from(lobby)
+        while (usersInLobby== lobby){
+            console.log("fasz");
+            usersInLobby= Array.from(lobby)
+            usersInLobby= usersInLobby
         }
-        console.log("okke");
-        usersInLobby = usersInLobby
     }
+    
 
 
 </script>
@@ -32,12 +38,11 @@
 <a href="../gameplayScreen">gameplay</a>
 
 {#if loginScreen}
-    <input type="teusersInLobbyt" placeholder="give a id" bind:value={userId}>
-    <input type="teusersInLobbyt" placeholder="give a username" bind:value={username}>
+    <input type="telobbyt" placeholder="give a username" bind:value={username}>
     <button on:click={LoadCurrentLobby}>log in</button>
 {:else}
     {#each usersInLobby as lobbyMembers}
-        id: {lobbyMembers.id}  username: {lobbyMembers.username}<br>
+        id: {lobbyMembers.id}  username: {lobbyMembers.username} {lobby.length}<br>
     {/each}
 {/if}
 

@@ -20,7 +20,7 @@ app.use(bodyParser.json());
 // connect to us client
 // connect to us client
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + 'C:/Users/Eszti/Svelte/src/client.js');
+  res.sendFile(__dirname + 'C:/Users/Család/svelte/src/routes/+page.svelte');
 });
 
 
@@ -70,13 +70,13 @@ function getValueFromDB(columnName,id,tableName){
 // Socket.io connection event
 
 
-let usersInLobby = [
-  {username: "barnix", level: 69},
-  {username: "esztix", level: 3}
-]
+let usersInLobby = []
+let connectedClients = [];
 
 io.on('connection', (socket) => {
-  console.log('A user connected');
+  console.log(`A user connected with ID: ${socket.id}`);
+  connectedClients.push(socket.id)
+  console.log(connectedClients);
 
   var columnNames
   db.all(`PRAGMA table_info(account)`, [], (err, rows) => {
@@ -98,7 +98,6 @@ io.on('connection', (socket) => {
       })
     }
   });
-  console.log("usersInLobby in server: ",usersInLobby);
   socket.on("loadLobby", msg => {
     usersInLobby.push(msg)
     console.log("sent users: ",usersInLobby);
@@ -111,7 +110,18 @@ io.on('connection', (socket) => {
 
   // Handle disconnection
   socket.on('disconnect', () => {
-    console.log('A user disconnected');
+    console.log(`User with ID ${socket.id} disconnected`);
+
+    for (let i = 0; i < usersInLobby.length; i++){
+      if(usersInLobby[i].id == socket.id){
+        usersInLobby.splice(i,1)
+      }
+    }
+    console.log(usersInLobby);
+
+    // Remove the client from the connectedClients object
+    connectedClients.splice(connectedClients.indexOf(socket.id),1)
+    console.log(connectedClients);
   });
 
 });

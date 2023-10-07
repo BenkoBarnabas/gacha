@@ -7,13 +7,15 @@ let userId = "1" //ph obvs
 import io from "socket.io-client";
 
 const socket = io(`http://${ip}:3000` , { transports : ['websocket'] }); // Replace with your server's URL
+export let clientID
 
 socket.on('connect', () => {
-  console.log('Connected to server');
+  console.log(`Connected with ID: ${socket.id}`);
+  clientID = socket.id
 });
 
 socket.on('disconnect', () => {
-  console.log('Disconnected from server');
+  console.log(`Disonnected with ID: ${socket.id}`);
 });
 
 
@@ -37,35 +39,31 @@ export function sendSocketValue(columnName,id,tableName,storage){
     })
   }
   
-  
 }
 
 
-export let usersInLobby = [
-  {username: "barnix", id: 69},
-  {username: "esztix", id: 3}
+export let lobby = []
 
-]
-
-export function LoadLobby(user){ //user: {username: "", level: ""}
-  console.log("uersIn lobby push: ",user);
+export function LoadLobby(user){ //user: {username: "", id: ""}
+  user.id = clientID
+  console.log("connected user: ",user);
   socket.emit("loadLobby", user)
 
   socket.on("loadLobby", msg => {
-    usersInLobby = msg
-    console.log("users in lobby after got: ", usersInLobby);
+    lobby = msg
+    console.log("users in lobby after got: ", lobby);
   })
-  usersInLobby = usersInLobby
+  lobby = lobby
 }
 
 export function ReloadLobby(){
   socket.emit("reloadLobby","hewo")
 
   socket.on("reloadLobby", msg => {
-    usersInLobby = msg
-    console.log("users in lobby: ", usersInLobby);
+    lobby = msg
+    //console.log("users in lobby: ", lobby);
   })
-  usersInLobby = usersInLobby
+  lobby = lobby
 }
 
 
