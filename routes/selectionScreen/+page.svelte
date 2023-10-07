@@ -1,11 +1,18 @@
 <script>
     import * as Cards from "../../card"
     import cardV2Background from "../../lib/assets/global/cardV2BG.png"
-    import {sendData, getData} from "../../client"
+    import {sendData, getData, responsData, sendSocketValue} from "../../client"
 
     let userId = "1" //ph obvs
     getData("*", userId, "deck", "deck")
 
+    let deckObject = {
+        deckarray: "",
+    }
+    sendSocketValue("deckarray",userId,"deck",deckObject)
+    setTimeout(() => {
+        deckObject = deckObject
+    }, 500);
 
     let selectedList = []
 
@@ -71,6 +78,15 @@
     <a href="../">main menu</a>
   </div>
 <style>
+     @font-face {
+            font-family: 'SevenSwords';
+            src: url('../../lib/assets/fonts/SEVESBRG.ttf');
+        }
+    @font-face {
+        font-family: 'ShadowLight';
+        src: url('../../lib/assets/fonts/ShadowsIntoLight-Regular.ttf');
+    }
+
     h1{
         text-align: center;
         color:white;
