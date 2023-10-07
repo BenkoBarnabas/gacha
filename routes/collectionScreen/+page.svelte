@@ -265,7 +265,7 @@
     @font-face {
             font-family: 'SevenSwords';
             src: url('../../lib/assets/fonts/SEVESBRG.ttf');
-        }
+    }
     @font-face {
         font-family: 'ShadowLight';
         src: url('../../lib/assets/fonts/ShadowsIntoLight-Regular.ttf');

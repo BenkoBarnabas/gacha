@@ -34,7 +34,7 @@
 
 
 </script>
-<div id="background"></div>
+
 <a href="../gameplayScreen">gameplay</a>
 
 {#if loginScreen}
@@ -42,7 +42,7 @@
     <button on:click={LoadCurrentLobby}>log in</button>
 {:else}
     {#each usersInLobby as lobbyMembers}
-        id: {lobbyMembers.id}  username: {lobbyMembers.username} {lobby.length}<br>
+        id: {lobbyMembers.id}  username: {lobbyMembers.username}<br>
     {/each}
 {/if}
 
@@ -51,12 +51,5 @@
 
 
 <style>
-#background{
-        width: 100vw;
-        height: 100vh;
-        position: fixed;
-        z-index: -1;
-        background-image: url("../../lib/assets/gameplay/PHBG.jpg");
-        background-size: 100% 100%;
-    }
+
 </style>

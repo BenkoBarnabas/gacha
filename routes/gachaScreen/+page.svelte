@@ -163,7 +163,7 @@
 
 
     function CalculatePulls(num){ //loads the pull cards and already calculates their content
-        if (gachaCurrencyObject.tickets > num){
+        if (gachaCurrencyObject.tickets >= num){
             gachaCurrencyObject.tickets -= num
             sendData("tickets",gachaCurrencyObject.tickets,userId,"account")
         }

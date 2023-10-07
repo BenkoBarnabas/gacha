@@ -39,7 +39,7 @@
 <div class = "links">
   <a href="/gachaScreen">itt fizess</a><br>
   <a href="/collectionScreen">kártyáid</a><br>
-  <a href="/selectionScreen">paklid</a>
+  <a href="/selectionScreen">paklid</a><br>
   <a href="/test">testGround</a>
 </div>
 
@@ -50,6 +50,12 @@ main {
   text-align: center;
   padding: 2rem;
 }
+
+@font-face {
+    font-family: 'mainFont';
+    src: url('../lib/assets/fonts/zh-cn.ttf');
+}
+
 
 h1 {
   font-size: 1.5rem;
@@ -62,7 +68,15 @@ button {
 }
 
 :global(body){
-  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  font-family: "mainFont";
+  color: rgb(37, 36, 39);
+}
+:global(body){  /*body styling format of svelte */ 
+      background: url("../lib/assets/global/diszterem.png");
+      background-size: 100% 100%;
+      /*animation: backgroundLoop 120s linear infinite;*/
+      background-size: var(--bgWidth);
+      margin: 0;
 }
 
 :global(.links){
@@ -124,13 +138,6 @@ button {
 :global(::-webkit-scrollbar-button:end) {
     background-image: url("../lib/assets/global/scrollbarDownArrow.png");
     background-size: 100% 100%;
-}
-:global(body){  /*body styling format of svelte */ 
-      background: url(../lib/assets/collection/bg.png);
-      background-size: 100% 100%;
-      /*animation: backgroundLoop 120s linear infinite;*/
-      background-size: var(--bgWidth);
-      margin: 0;
 }
 :global(.accountInfoHeader){
     font-size: 1.3vw;
