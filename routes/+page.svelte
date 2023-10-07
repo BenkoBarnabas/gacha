@@ -1,5 +1,5 @@
 <script>
-  import {sendData, getData, DeleteAll, AddEmptyRow, sendSocketValue, getSocketValue} from "../client.js" //we import all the functions
+  import {sendData, getData, DeleteAll, AddEmptyRow, sendSocketValue,  DeleteRow} from "../client.js" //we import all the functions
 
   let dataToSend = ""
   let selectedColumn = "username"
@@ -27,10 +27,12 @@
 <input type="text" bind:value={selectedColumn} placeholder="Add meg az oszlop nevét">
 <input type="text" bind:value={id} placeholder="Add meg az id-t">
 <input type="text" bind:value={tableName} placeholder="Add meg a táblázat nevét">
-<button on:click={() => sendData(selectedColumn,dataToSend,id,tableName)}>Küldés a Szervernek</button>
-<button on:click={() => getData(selectedColumn,id,tableName, "gacha")}>Adatok Lekérdezése a Szervertől</button>
-<button on:click={() => DeleteAll(tableName)}>Összes törlése</button>
-<button on:click={() => AddEmptyRow(tableName)}>Üres Rekord hozzáadása</button>
+<button on:click={() => sendData(selectedColumn,dataToSend,id,tableName)}>Küldés a Szervernek 1,2,3,4</button>
+<button on:click={() => getData(selectedColumn,id,tableName, "gacha")}>Adatok Lekérdezése a Szervertől 2,3,4</button>
+<button on:click={() => DeleteAll(tableName)}>Összes törlése 4</button>
+<button on:click={() => DeleteRow(tableName,id)}>Egy sor törlése 3,4</button>
+<button on:click={() => AddEmptyRow(tableName)}>Üres Rekord hozzáadása 4</button>
+
 </main>
 
 

@@ -28,7 +28,7 @@ export function sendSocketValue(columnName,id,tableName,storage){
   console.log("client send: ",query);
   socket.emit(columnName, query)
 
-  if(columnName != "*"){
+  if(columnName != "*" && tableName == "account" || "deck"){
     socket.on(columnName, msg => {
       //console.log("client got: ",msg);
       console.log("megjött: "+columnName,msg);
@@ -37,21 +37,36 @@ export function sendSocketValue(columnName,id,tableName,storage){
     })
   }
   
-  socket.on("*",msg => {
-    console.log("jött a lobby: ",msg);
-    storage.lobby = msg
-    //console.log("a storage: ",storage.lobby[0].username);
-  })
   
 }
 
 
-export function getSocketValue(storage){
-  console.log(storage);
-  storage.value = dataFromServer
-  //return dataFromServer
+export let usersInLobby = [
+  {username: "barnix", id: 69},
+  {username: "esztix", id: 3}
+
+]
+
+export function LoadLobby(user){ //user: {username: "", level: ""}
+  console.log("uersIn lobby push: ",user);
+  socket.emit("loadLobby", user)
+
+  socket.on("loadLobby", msg => {
+    usersInLobby = msg
+    console.log("users in lobby after got: ", usersInLobby);
+  })
+  usersInLobby = usersInLobby
 }
 
+export function ReloadLobby(){
+  socket.emit("reloadLobby","hewo")
+
+  socket.on("reloadLobby", msg => {
+    usersInLobby = msg
+    console.log("users in lobby: ", usersInLobby);
+  })
+  usersInLobby = usersInLobby
+}
 
 
 
@@ -138,6 +153,16 @@ export function DeleteAll(tableName){
         'Content-Type': 'application/json',
     },
     body: JSON.stringify({table:tableName}), //body is the shit we send, the rest is costums, here its an object
+    })
+}
+
+export function DeleteRow(tableName,id){
+  fetch(`http://${ip}:3000/delRow`, { //the "function" id i talked about in server ("sendData" here)
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({table:tableName, id: id}), //body is the shit we send, the rest is costums, here its an object
     })
 }
 
