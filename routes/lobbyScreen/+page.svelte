@@ -1,5 +1,5 @@
 <script>
-    import {lobby, LoadLobby, ReloadLobby} from "../../client"
+    import {lobby, LoadLobby, ReloadLobby, clientID} from "../../client"
 
     let loginScreen = true
     let username = "barnix"
@@ -35,21 +35,48 @@
 
 </script>
 
-<a href="../gameplayScreen">gameplay</a>
 
 {#if loginScreen}
     <input type="telobbyt" placeholder="give a username" bind:value={username}>
     <button on:click={LoadCurrentLobby}>log in</button>
 {:else}
-    {#each usersInLobby as lobbyMembers}
-        id: {lobbyMembers.id}  username: {lobbyMembers.username}<br>
-    {/each}
+    <div id="yourLobbyInfo">
+        username: {username}<br> id: {clientID}
+    </div>
+    
+    <div id="onlinePlayersCont">
+        {#each usersInLobby as lobbyMembers}
+        {#if lobbyMembers.id != clientID}
+        <div class="onlinePlayer">
+            username: {lobbyMembers.username}<br> id: {lobbyMembers.id}
+        </div>
+        {/if}
+        {/each}
+    </div>
 {/if}
 
 <button on:click={RealodLobbyAndSvelte}>Reload</button>
+<br><br>
+<a href="../gameplayScreen">gameplay</a>
 
 
 
 <style>
-
+    #yourLobbyInfo{
+        height: 10vw;
+        width: 13vw;
+        background-color: rgb(230, 164, 21);
+        border: 2px solid black;
+    }
+    #onlinePlayersCont{
+        display: flex;
+        background-color: blueviolet;
+    }
+    .onlinePlayer{
+        height: 10vw;
+        width: 13vw;
+        background-color: aqua;
+        border: 2px solid black;
+        margin-right: 2vw;
+    }
 </style>

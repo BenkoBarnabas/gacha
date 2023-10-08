@@ -1,7 +1,17 @@
 //let ip = "10.7.147.201";
 let ip = "localhost";
 
-let userId = "1" //ph obvs
+
+export let userData = {
+  ID: "",
+  username: "",
+  email: "",
+  password: "",
+  level: "",
+  xp: "",
+  gachaCurrency: "",
+  tickets: ""
+}
 
 // ES modules
 import io from "socket.io-client";
@@ -19,7 +29,6 @@ socket.on('disconnect', () => {
 });
 
 
-let dataFromServer
 
 export function sendSocketValue(columnName,id,tableName,storage){
   const query = {
@@ -40,10 +49,7 @@ export function sendSocketValue(columnName,id,tableName,storage){
   }
   
 }
-
-
 export let lobby = []
-
 export function LoadLobby(user){ //user: {username: "", id: ""}
   user.id = clientID
   console.log("connected user: ",user);
@@ -55,7 +61,6 @@ export function LoadLobby(user){ //user: {username: "", id: ""}
   })
   lobby = lobby
 }
-
 export function ReloadLobby(){
   socket.emit("reloadLobby","hewo")
 
@@ -64,6 +69,24 @@ export function ReloadLobby(){
     //console.log("users in lobby: ", lobby);
   })
   lobby = lobby
+}
+
+export function getAccountData(email){
+  socket.emit("getAccountData", email)
+  socket.on("getAccountData", data =>{
+    console.log("account data: ",data);
+    userData = data
+    console.log(userData);
+  })
+}
+
+export function makeNewAccount(email,password,username){
+  var info = {email: email, password: password, username: username}
+  socket.emit("makeNewAccount", info)
+  socket.on("makeNewAccount", data =>{
+    console.log("account data: ",data);
+    userData = data
+  })
 }
 
 
