@@ -24,6 +24,32 @@ app.get('/', (req, res) => {
 });
 
 
+const nodemailer = require("nodemailer");
+// Create a transporter using Gmail's SMTP server
+const transporter = nodemailer.createTransport({
+  service: "Gmail",
+  auth: {
+    user: "your_email@gmail.com",
+    pass: "your_password",
+  },
+});
+const mailOptions = {
+  from: "your_email@gmail.com",
+  to: "recipient@example.com",
+  subject: "Hello from Node.js",
+  text: "This is a test email sent from Node.js.",
+};
+
+transporter.sendMail(mailOptions, (error, info) => {
+  if (error) {
+    console.error("Error sending email: ", error);
+  } else {
+    console.log("Email sent: " + info.response);
+  }
+});
+
+
+
 //DB------------------------------------
 // create the db, accounts is the beta test
 let db = new sqlite3.Database('Sagvari.db');
@@ -73,15 +99,15 @@ function makeNewAccount(email,password,username){
   console.log("level 1");
   db.run(`INSERT INTO account DEFAULT VALUES`, function (err) {
     if (err) {
-      res.status(500).send('Error');
+      console.log(err);
     } else {
       console.log("level 2");
-      db.run(`UPDATE account SET email = (?), password = (?), username = (?) WHERE id = 2`,(email,password,username), function (err) {
+      db.run(`UPDATE account SET email = (?), password = (?), username = (?) WHERE id = (SELECT MAX(id) FROM account)`,[email,password,username], function (err) {
         if (err) {
           console.error(err.message);
         } else {
           console.log("level 3");
-          db.get(`SELECT * FROM account`,(err, row) => {
+          db.get(`SELECT * FROM account WHERE id = (SELECT MAX(id) FROM account)`,(err, row) => {
             console.log("rows: ",row);
             io.emit("makeNewAccount", row)
           });

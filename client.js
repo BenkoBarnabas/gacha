@@ -13,6 +13,9 @@ export let userData = {
   tickets: ""
 }
 
+
+
+
 // ES modules
 import io from "socket.io-client";
 
@@ -74,9 +77,8 @@ export function ReloadLobby(){
 export function getAccountData(email){
   socket.emit("getAccountData", email)
   socket.on("getAccountData", data =>{
-    console.log("account data: ",data);
     userData = data
-    console.log(userData);
+    console.log("account data: ",userData);
   })
 }
 
@@ -84,8 +86,8 @@ export function makeNewAccount(email,password,username){
   var info = {email: email, password: password, username: username}
   socket.emit("makeNewAccount", info)
   socket.on("makeNewAccount", data =>{
-    console.log("account data: ",data);
     userData = data
+    console.log("account data: ",userData);
   })
 }
 

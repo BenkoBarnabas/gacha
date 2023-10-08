@@ -1,4 +1,18 @@
 <script>
+
+  import { onMount } from 'svelte';
+  onMount(() => {
+    // Storing a variable in local storage
+    localStorage.setItem("username", "john_doe");
+    // Accessing a variable from local storage
+    const username = localStorage.getItem("username");
+    if (username) {
+      console.log(`Hello, ${username}!`);
+    } else {
+      console.log("Username not found in local storage.");
+    }
+  });
+
   import {sendData, getData, DeleteAll, AddEmptyRow, sendSocketValue,  DeleteRow, getAccountData,makeNewAccount, userData} from "../client.js" //we import all the functions
 
   let dataToSend = ""
@@ -6,15 +20,7 @@
   let id = "1"
   let tableName = "account"
 
-  var query = {
-    column: "tickets",
-    id: 1,
-    table: "account"
-  }
 
-  var fel = {
-    value: ""
-  }
 
   let isAdminUp = false
   function ChangeAdmin(){isAdminUp = !isAdminUp; isAdminUp = isAdminUp}
@@ -47,6 +53,9 @@
   }
   function Signup(email,password,username){
     makeNewAccount(email,password,username)
+
+    isAuthenticationUp = false
+    isAuthenticationUp = isAuthenticationUp
   }
 
 </script>
