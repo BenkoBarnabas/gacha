@@ -20,7 +20,7 @@ app.use(bodyParser.json());
 // connect to us client
 // connect to us client
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + 'C:/Users/Család/svelte/src/routes/+page.svelte');
+  res.sendFile(__dirname + 'D:/gachagame/src/routes/+page.svelte');
 });
 
 
@@ -29,13 +29,13 @@ const nodemailer = require("nodemailer");
 const transporter = nodemailer.createTransport({
   service: "Gmail",
   auth: {
-    user: "your_email@gmail.com",
-    pass: "your_password",
+    user: "sagvarigacha.TETMS@gmail.com",
+    pass: "zjcu lmsq snxt iuhz",
   },
 });
 const mailOptions = {
-  from: "your_email@gmail.com",
-  to: "recipient@example.com",
+  from: "sagvarigacha.TETMS@gmail.com",
+  to: "sagvarigacha.TETMS@gmail.com",
   subject: "Hello from Node.js",
   text: "This is a test email sent from Node.js.",
 };
