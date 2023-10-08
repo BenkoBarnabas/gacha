@@ -1,42 +1,59 @@
 <script>
     import * as Cards from "../../card"
     import cardV2Background from "../../lib/assets/global/cardV2BG.png"
-    import {sendData, getData, responsData, sendSocketValue} from "../../client"
+    import {sendSocketValue, sendData} from "../../client"
 
     let userId = "1" //ph obvs
-    getData("*", userId, "deck", "deck")
 
     let deckObject = {
         deckarray: "",
     }
-    sendSocketValue("deckarray",userId,"deck",deckObject)
-    setTimeout(() => {
-        deckObject = deckObject
-    }, 500);
 
     let selectedList = []
 
     function selectByClick(card){
-        if(!selectedList.includes(card)){
-            selectedList.push(card)
+        if(!selectedList.includes(card.name)){
+            selectedList.push(card.name)
             selectedList = selectedList
-            document.getElementById(card.cardSRCText).classList.remove("filtergrayscale")
-            document.getElementById(card.cardSRCText).classList.add("selected")
+            console.log(String(selectedList));
+            sendData("deckarray", String(selectedList), userId, "deck")
 
-            sendData("deckarray",String(selectedList),userId, "deck")
+            updateDeckArray()
+
+            console.log(deckObject.deckarray);
+            document.getElementById(card.name).classList.remove("filtergrayscale")
+            document.getElementById(card.name).classList.add("selected")
         }else{
-            selectedList.splice(selectedList.indexOf(card), 1)
+            selectedList.splice(selectedList.indexOf(card.name), 1)
             selectedList = selectedList
-            document.getElementById(card.cardSRCText).classList.remove("selected")
-            document.getElementById(card.cardSRCText).classList.add("filtergrayscale")
+            sendData("deckarray", String(selectedList), userId, "deck")
+
+            updateDeckArray()
+
+            console.log(deckObject.deckarray);
+            document.getElementById(card.name).classList.remove("selected")
+            document.getElementById(card.name).classList.add("filtergrayscale")
         }
     }
+    //sendSocketValue("deckarray",userId,"deck",deckObject)
+    var preDeck = deckObject
+    function updateDeckArray(){
+        while(preDeck == deckObject){
+            sendSocketValue("deckarray",userId,"deck",deckObject)
+            deckObject = deckObject
+            console.log("in update");
+            //updateDeckArray()
+        }
+        
+        console.log("done");
+        return
+    }
 
-    function deleteCard(card){
-        selectedList.splice(selectedList.indexOf(card), 1)
+    function deleteCard(cardname){
+        selectedList.splice(selectedList.indexOf(cardname), 1)
         selectedList = selectedList
-        document.getElementById(card.cardSRCText).classList.remove("selected")
-        document.getElementById(card.cardSRCText).classList.add("filtergrayscale")
+        document.getElementById(cardname).classList.remove("selected")
+        document.getElementById(cardname).classList.add("filtergrayscale")
     }
 
     var starSizeArray = [] //for some reason it didnt work with a normal return so i had to put them into an array ,im throwing up
@@ -47,13 +64,13 @@
 <div style="display:flex; margin-inline:5vw; margin-block:4vh;">
 <div id="deckBox">
     <h1>Paklid</h1>
-    {#each selectedList as card}
-        <button style="display:block;" on:click={deleteCard(card)}>{card.name}</button>
+    {#each selectedList as cardname}
+        <button style="display:block;" on:click={deleteCard(cardname)}>{cardname}</button>
     {/each}
 </div>
 <div id = "cardcollection">
     {#each Cards.allCardsArr as card}
-        <div id={card.cardSRCText} class="cardPreviewListCont filtergrayscale">
+        <div id={card.name} class="cardPreviewListCont filtergrayscale">
             <img style="width: 12.5vw; position:absolute" src={cardV2Background} alt="cardBg">
             <div class="rarityBGList" style="background: {backgroundColorByCost[(card.stars)-3]}; "></div>
             <img class="cardButton" src={card.source} alt="preview"/>
