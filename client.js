@@ -1,23 +1,37 @@
 //let ip = "10.7.147.201";
 let ip = "localhost";
 
-let userId = "1" //ph obvs
+
+export let userData = {
+  ID: "",
+  username: "",
+  email: "",
+  password: "",
+  level: "",
+  xp: "",
+  gachaCurrency: "",
+  tickets: ""
+}
+
+
+
 
 // ES modules
 import io from "socket.io-client";
 
 const socket = io(`http://${ip}:3000` , { transports : ['websocket'] }); // Replace with your server's URL
+export let clientID
 
 socket.on('connect', () => {
-  console.log('Connected to server');
+  console.log(`Connected with ID: ${socket.id}`);
+  clientID = socket.id
 });
 
 socket.on('disconnect', () => {
-  console.log('Disconnected from server');
+  console.log(`Disonnected with ID: ${socket.id}`);
 });
 
 
-let dataFromServer
 
 export function sendSocketValue(columnName,id,tableName,storage){
   const query = {
@@ -28,7 +42,7 @@ export function sendSocketValue(columnName,id,tableName,storage){
   console.log("client send: ",query);
   socket.emit(columnName, query)
 
-  if(columnName != "*"){
+  if(columnName != "*" && tableName == "account" || "deck"){
     socket.on(columnName, msg => {
       //console.log("client got: ",msg);
       console.log("megjött: "+columnName,msg);
@@ -37,21 +51,45 @@ export function sendSocketValue(columnName,id,tableName,storage){
     })
   }
   
-  socket.on("*",msg => {
-    console.log("jött a lobby: ",msg);
-    storage.lobby = msg
-    //console.log("a storage: ",storage.lobby[0].username);
+}
+export let lobby = []
+export function LoadLobby(user){ //user: {username: "", id: ""}
+  user.id = clientID
+  console.log("connected user: ",user);
+  socket.emit("loadLobby", user)
+
+  socket.on("loadLobby", msg => {
+    lobby = msg
+    console.log("users in lobby after got: ", lobby);
   })
-  
+  lobby = lobby
+}
+export function ReloadLobby(){
+  socket.emit("reloadLobby","hewo")
+
+  socket.on("reloadLobby", msg => {
+    lobby = msg
+    //console.log("users in lobby: ", lobby);
+  })
+  lobby = lobby
 }
 
-
-export function getSocketValue(storage){
-  console.log(storage);
-  storage.value = dataFromServer
-  //return dataFromServer
+export function getAccountData(email){
+  socket.emit("getAccountData", email)
+  socket.on("getAccountData", data =>{
+    userData = data
+    console.log("account data: ",userData);
+  })
 }
 
+export function makeNewAccount(email,password,username){
+  var info = {email: email, password: password, username: username}
+  socket.emit("makeNewAccount", info)
+  socket.on("makeNewAccount", data =>{
+    userData = data
+    console.log("account data: ",userData);
+  })
+}
 
 
 
@@ -138,6 +176,16 @@ export function DeleteAll(tableName){
         'Content-Type': 'application/json',
     },
     body: JSON.stringify({table:tableName}), //body is the shit we send, the rest is costums, here its an object
+    })
+}
+
+export function DeleteRow(tableName,id){
+  fetch(`http://${ip}:3000/delRow`, { //the "function" id i talked about in server ("sendData" here)
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({table:tableName, id: id}), //body is the shit we send, the rest is costums, here its an object
     })
 }
 

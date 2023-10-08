@@ -22,7 +22,7 @@
     import infoBox from "../../lib/assets/gacha/infoBox.png"
 
     //server functions, db control
-    import {sendData, getData, responsData, Cpity4S, Cpity5S, CpityUR, sendSocketValue} from "../../client"
+    import {sendData, getData, responsData, Cpity4S, Cpity5S, CpityUR, sendSocketValue,userData} from "../../client"
 
 
     //get the shit u need fomr the database 
@@ -63,17 +63,6 @@
     //console.log(tickets);
 
 
-    let gachaCurrencyObject = {
-        gachaCurrency: "",
-        tickets: "",
-    }
-    sendSocketValue("tickets",userId,"account",gachaCurrencyObject)
-    sendSocketValue("gachaCurrency",userId,"account",gachaCurrencyObject)
-    setTimeout(() => {
-        gachaCurrencyObject = gachaCurrencyObject
-    }, 500);
-
-    
 
 
     //VARIABLE DECLARATION
@@ -163,13 +152,13 @@
 
 
     function CalculatePulls(num){ //loads the pull cards and already calculates their content
-        if (gachaCurrencyObject.tickets > num){
-            gachaCurrencyObject.tickets -= num
-            sendData("tickets",gachaCurrencyObject.tickets,userId,"account")
+        if (userData.tickets >= num){
+            userData.tickets -= num
+            sendData("tickets",userData.tickets,userId,"account")
         }
         else {
-            gachaCurrencyObject.gachaCurrency -= num*200
-            sendData("gachaCurrency",gachaCurrencyObject.gachaCurrency,userId,"account")
+            userData.gachaCurrency -= num*200
+            sendData("gachaCurrency",userData.gachaCurrency,userId,"account")
         }
         isBannerUp = false
         isBannerUp = isBannerUp
@@ -469,10 +458,10 @@
             <td style="width: 30vw; padding-right:1.5vw;text-align:center">
                 <div class="accountInfoHeader">
                     <td>
-                        <div class="accountInfoBubbles"><img src={gachaCurrencyIcon} alt="gCurrency" style="width:1vw; height:1vw;"> {gachaCurrencyObject.gachaCurrency}</div>
+                        <div class="accountInfoBubbles"><img src={gachaCurrencyIcon} alt="gCurrency" style="width:1vw; height:1vw;"> {userData.gachaCurrency}</div>
                     </td>
                     <td>
-                        <div class="accountInfoBubbles"><img src={ticketIcon} alt="tickets" style="width:1vw; height:1vw;"> {gachaCurrencyObject.tickets}</div>
+                        <div class="accountInfoBubbles"><img src={ticketIcon} alt="tickets" style="width:1vw; height:1vw;"> {userData.tickets}</div>
                     </td>
                     <td>
                         <button class="closeButton" on:click={() => GoToPage("../")}></button>

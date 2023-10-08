@@ -20,8 +20,34 @@ app.use(bodyParser.json());
 // connect to us client
 // connect to us client
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + 'C:/Users/Eszti/Svelte/src/client.js');
+  res.sendFile(__dirname + 'C:/Users/Család/svelte/src/routes/+page.svelte');
 });
+
+
+const nodemailer = require("nodemailer");
+// Create a transporter using Gmail's SMTP server
+const transporter = nodemailer.createTransport({
+  service: "Gmail",
+  auth: {
+    user: "your_email@gmail.com",
+    pass: "your_password",
+  },
+});
+const mailOptions = {
+  from: "your_email@gmail.com",
+  to: "recipient@example.com",
+  subject: "Hello from Node.js",
+  text: "This is a test email sent from Node.js.",
+};
+
+transporter.sendMail(mailOptions, (error, info) => {
+  if (error) {
+    console.error("Error sending email: ", error);
+  } else {
+    console.log("Email sent: " + info.response);
+  }
+});
+
 
 
 //DB------------------------------------
@@ -30,9 +56,8 @@ let db = new sqlite3.Database('Sagvari.db');
 let table =""
 
 let tableStructures = {
-  rolls : "(id INTEGER PRIMARY KEY, history TEXT, pity4S INTEGER, pity5S INTEGER, pityUR INTEGER)",
-  account : "(id INTEGER PRIMARY KEY, username TEXT, email TEXT, level INTEGER, xp INTEGER, gachaCurrency INTEGER, tickets INTEGER)",
-  lobby : "(id INTEGER PRIMARY KEY, username TEXT, level INTEGER)",
+  rolls : "(id INTEGER PRIMARY KEY, history TEXT, pity4S INTEGER DEFAULT 0, pity5S INTEGER DEFAULT 0, pityUR INTEGER DEFAULT 0)",
+  account : "(id INTEGER PRIMARY KEY, username TEXT, email TEXT, password TEXT, level INTEGER DEFAULT 1, xp INTEGER DEFAULT 1, gachaCurrency INTEGER DEFAULT 0, tickets INTEGER DEFAULT 0)",
   deck : "(id  INTEGER PRIMARY KEY, deckarray TEXT)"
 
 }
@@ -41,10 +66,7 @@ let tableStructures = {
 // Initialize the database with a table if it doesn't exist
 db.run(`CREATE TABLE IF NOT EXISTS account ${tableStructures.account}`);
 db.run(`CREATE TABLE IF NOT EXISTS rolls ${tableStructures.rolls}`);
-db.run(`CREATE TABLE IF NOT EXISTS lobby ${tableStructures.lobby}`);
 db.run(`CREATE TABLE IF NOT EXISTS deck ${tableStructures.deck}`);
-
-
 
 
 //SOCKET-----------------------------
@@ -66,26 +88,44 @@ function getValueFromDB(columnName,id,tableName){
     //console.log("result: ",result);
   });
 }
-function getLobbyParties(columnName,id,tableName){
-  db.all(`SELECT * FROM lobby`,(err, row) => {
-    console.log("emited: ",row);
-    io.emit("*", row)
+// Socket.io connection event
+function getAccountInfoFromDB(email){
+  db.get(`SELECT * FROM account WHERE email = (?)`,email,(err, row) => {
+    console.log("rows: ",row);
+    io.emit("getAccountData", row)
   });
 }
+function makeNewAccount(email,password,username){
+  console.log("level 1");
+  db.run(`INSERT INTO account DEFAULT VALUES`, function (err) {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log("level 2");
+      db.run(`UPDATE account SET email = (?), password = (?), username = (?) WHERE id = (SELECT MAX(id) FROM account)`,[email,password,username], function (err) {
+        if (err) {
+          console.error(err.message);
+        } else {
+          console.log("level 3");
+          db.get(`SELECT * FROM account WHERE id = (SELECT MAX(id) FROM account)`,(err, row) => {
+            console.log("rows: ",row);
+            io.emit("makeNewAccount", row)
+          });
+        }
+      });
+    }
+  });
+}
+let usersInLobby = []
+let connectedClients = [];
 
-// Socket.io connection event
 io.on('connection', (socket) => {
-  console.log('A user connected');
+  //console.log(`A user connected with ID: ${socket.id}`);
+  connectedClients.push(socket.id)
+  //console.log(connectedClients);
 
-  //socket.on('tickets', msg => {
-    //console.log("server got: ",msg);
-    //getValueFromDB(msg.column,msg.id,msg.table)
-  //})
-  
   var columnNames
   db.all(`PRAGMA table_info(account)`, [], (err, rows) => {
-    // Extract and print the column names
-    //console.log("rows: ",rows);
     columnNames = rows.map(row => row.name);
     for (let i = 0; i<columnNames.length;i++){
       socket.on(columnNames[i], msg => {
@@ -96,8 +136,6 @@ io.on('connection', (socket) => {
   });
 
   db.all(`PRAGMA table_info(deck)`, [], (err, rows) => {
-    // Extract and print the column names
-    //console.log("rows: ",rows);
     columnNames = rows.map(row => row.name);
     for (let i = 0; i<columnNames.length;i++){
       socket.on(columnNames[i], msg => {
@@ -106,15 +144,38 @@ io.on('connection', (socket) => {
       })
     }
   });
-
-  socket.on("*", msg => {
-    console.log("server got: ",msg);
-    getLobbyParties(msg.column,msg.id,msg.table)
+  socket.on("loadLobby", msg => {
+    usersInLobby.push(msg)
+    console.log("sent users: ",usersInLobby);
+    io.emit("loadLobby", usersInLobby)
+  })
+  socket.on("reloadLobby", msg => {
+    console.log("sent users and reloaded: ",usersInLobby);
+    io.emit("reloadLobby", usersInLobby)
+  })
+  socket.on("getAccountData", data =>{
+    getAccountInfoFromDB(data)
+    console.log("ment a query");
+  })
+  socket.on("makeNewAccount", info => {
+    makeNewAccount(info.email,info.password,info.username)
+    console.log("új account: ",info)
   })
 
   // Handle disconnection
   socket.on('disconnect', () => {
-    console.log('A user disconnected');
+    console.log(`User with ID ${socket.id} disconnected`);
+
+    for (let i = 0; i < usersInLobby.length; i++){
+      if(usersInLobby[i].id == socket.id){
+        usersInLobby.splice(i,1)
+      }
+    }
+    //console.log(usersInLobby);
+
+    // Remove the client from the connectedClients object
+    connectedClients.splice(connectedClients.indexOf(socket.id),1)
+    console.log(connectedClients);
   });
 
 });
@@ -197,12 +258,21 @@ app.post('/delTable', (req, res) => {
     return res.status(500).json({ error: 'Database error' });
   }
 
-
   db.run(`CREATE TABLE IF NOT EXISTS ${table} ${tableStructures[table]}`);
 
-  
-
   res.json({ message: 'All rows deleted successfully' });
+  });
+});
+app.post('/delRow', (req, res) => {
+  table = req.body.table
+  id = req.body.id
+  db.run(`DELETE FROM ${table} WHERE id = (?)`, id, function (err) {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Database error' });
+    }
+
+    res.json({ message: 'Row deleted successfully' });
   });
 });
 

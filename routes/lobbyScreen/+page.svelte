@@ -1,66 +1,82 @@
 <script>
-    import {sendData, getData, responsData, Cpity4S, Cpity5S, CpityUR, sendSocketValue, AddEmptyRow} from "../../client"
+    import {lobby, LoadLobby, ReloadLobby, clientID} from "../../client"
 
-    var loginScreen = true
-    let userId = "1"
+    let loginScreen = true
     let username = "barnix"
+
+
     
-    let usersInLobby = {
-        lobby: []
-    }
+    let usersInLobby= []
     function LoadCurrentLobby(){
-        sendData("username",username,userId,"lobby")
-        setTimeout(() => {
-            sendSocketValue("*",userId,"lobby",usersInLobby)
-            //console.log(usersInLobby.lobby);
-        }, 100);
-        loginScreen = false
-        loginScreen = loginScreen
-        usersInLobby = usersInLobby
-        //f()
-        
+        if (username != ""){
+            LoadLobby({username: username, id: ""})
+            usersInLobby= Array.from(lobby)
+
+            loginScreen = false
+            loginScreen = loginScreen
+
+        }
+        else{
+            window.alert("írj is bele valamit haver")
+        }
     }
-    function f(){
-        setTimeout(() => {
-            sendSocketValue("*",userId,"lobby",usersInLobby)
-            usersInLobby = usersInLobby
-            console.log(usersInLobby);
-            f()
-        }, 100);
+    
+    function RealodLobbyAndSvelte(){
+        ReloadLobby()
+        usersInLobby= Array.from(lobby)
+        while (usersInLobby== lobby){
+            console.log("fasz");
+            usersInLobby= Array.from(lobby)
+            usersInLobby= usersInLobby
+        }
     }
-    $: {
-        sendSocketValue("*",userId,"lobby",usersInLobby)
-            usersInLobby = usersInLobby
-            console.log(usersInLobby);
-    }
+    
 
 
 </script>
-<div id="background"></div>
-<a href="../gameplayScreen">gameplay</a>
+
 
 {#if loginScreen}
-    <input type="text" placeholder="give a id" bind:value={userId}>
-    <input type="text" placeholder="give a username" bind:value={username}>
+    <input type="telobbyt" placeholder="give a username" bind:value={username}>
     <button on:click={LoadCurrentLobby}>log in</button>
 {:else}
-    {#each usersInLobby.lobby as lobbyMembers}
-        id: {lobbyMembers.id}  username: {lobbyMembers.username} {usersInLobby.lobby.length}<br>
-    {/each}
+    <div id="yourLobbyInfo">
+        username: {username}<br> id: {clientID}
+    </div>
+    
+    <div id="onlinePlayersCont">
+        {#each usersInLobby as lobbyMembers}
+        {#if lobbyMembers.id != clientID}
+        <div class="onlinePlayer">
+            username: {lobbyMembers.username}<br> id: {lobbyMembers.id}
+        </div>
+        {/if}
+        {/each}
+    </div>
 {/if}
 
-<button on:click={() => AddEmptyRow("lobby")}>add r</button>
-
+<button on:click={RealodLobbyAndSvelte}>Reload</button>
+<br><br>
+<a href="../gameplayScreen">gameplay</a>
 
 
 
 <style>
-#background{
-        width: 100vw;
-        height: 100vh;
-        position: fixed;
-        z-index: -1;
-        background-image: url("../../lib/assets/gameplay/PHBG.jpg");
-        background-size: 100% 100%;
+    #yourLobbyInfo{
+        height: 10vw;
+        width: 13vw;
+        background-color: rgb(230, 164, 21);
+        border: 2px solid black;
+    }
+    #onlinePlayersCont{
+        display: flex;
+        background-color: blueviolet;
+    }
+    .onlinePlayer{
+        height: 10vw;
+        width: 13vw;
+        background-color: aqua;
+        border: 2px solid black;
+        margin-right: 2vw;
     }
 </style>
