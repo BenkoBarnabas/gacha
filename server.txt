@@ -20,7 +20,7 @@ app.use(bodyParser.json());
 // connect to us client
 // connect to us client
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + 'C:/Users/Család/svelte/src/routes/+page.svelte');
+  res.sendFile(__dirname + 'C:/Users/Eszti/Svelte/src/client.js');
 });
 
 
@@ -29,25 +29,10 @@ const nodemailer = require("nodemailer");
 const transporter = nodemailer.createTransport({
   service: "Gmail",
   auth: {
-    user: "your_email@gmail.com",
-    pass: "your_password",
+    user: "sagvarigacha.TETMS@gmail.com",
+    pass: "zjcu lmsq snxt iuhz",
   },
 });
-const mailOptions = {
-  from: "your_email@gmail.com",
-  to: "recipient@example.com",
-  subject: "Hello from Node.js",
-  text: "This is a test email sent from Node.js.",
-};
-
-transporter.sendMail(mailOptions, (error, info) => {
-  if (error) {
-    console.error("Error sending email: ", error);
-  } else {
-    console.log("Email sent: " + info.response);
-  }
-});
-
 
 
 //DB------------------------------------
@@ -94,6 +79,93 @@ function getAccountInfoFromDB(email){
     console.log("rows: ",row);
     io.emit("getAccountData", row)
   });
+}
+app.post('/verifyEmail', (req, res) => { 
+  const email = req.body.email; 
+  const username = req.body.username
+  sendVerificationEmail(email,username)
+});
+let verificationCodes = {}
+app.post('/verifyCode', (req, res) => { 
+  const code = req.body.code;
+  const email = req.body.email;
+  const username = req.body.username
+  const password = req.body.password
+  //console.log(verificationCodes[email]);
+  console.log(req.body);
+  if (code == verificationCodes[email]){
+    console.log("sucsessful signup");
+    res.json(verificationCodes[email]);
+
+    makeNewAccount(email,password,username)
+  }
+  else{
+    console.log("wrong code");
+    res.json("wrong code");
+  }
+});
+function generateVerificationCode(length) {
+  const characters = '0123456789'; // Define the characters to use for the code
+  let code = '';
+
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    code += characters.charAt(randomIndex);
+  }
+  return code;
+}
+function sendVerificationEmail(email,username){
+  let verificationCode = generateVerificationCode(6)
+  verificationCodes[email] = verificationCode
+  console.log(verificationCodes);
+  let emailContent = `
+  <html>
+    <head>
+      <style>
+      @media (max-width: 900px) {
+        .cont {
+          width: 100vw;
+        }
+        #logo{
+          width: 20vw;
+        }
+      }
+      @media (min-width: 900px) {
+          .cont {
+            width: 40vw;
+          }
+          #logo{
+            width: 7vw;
+          }
+      }
+      </style>
+    </head>
+    <body>
+      <div class="cont" style="margin:auto; text-align:center; padding:1vw;">
+      <div style="text-align: center; width:20vw; margin:auto; border-bottom:0.2vw solid #1c1c1c;"><img id="logo" src='https://drive.google.com/uc?id=1VZC0v8NBMv36NX8bkIkyuV8VLgFYcweS' alt="logoText"></div>
+      <h1 style="margin-top:2vw;">Hello ${username}!</h1>
+      <p>Az <span style="font-weight: bold;">[SG gacha - The Epic Tale of Masters and Students]</span> fiókja hamarosan készenáll!</p>
+      <p>Kérjük azonosítsa az email címét a következő kóddal:</p>
+      <div style="font-weight: bolder; font-size:xx-large; margin:auto;">${verificationCode}</div>
+      <p style="font-size:small;">Jó szórakozást!</p>
+      <p style="font-size:small; text-align:right">-SGgacha team :)</p>
+    </div>
+    </body>
+  </html>`;
+  const mailOptions = {
+    from: "sagvarigacha.tetms@gmail.com",
+    to: email,
+    subject: "SGgacha verification code",
+    html: emailContent,
+  };
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error("Error sending email: ", error);
+    } else {
+      console.log("Email sent: " + info.response);
+      }
+    });
+    //22 eamilt küldtem magamnak szóval most már csak lenézzük a kódot (kilogolja a console)
 }
 function makeNewAccount(email,password,username){
   console.log("level 1");

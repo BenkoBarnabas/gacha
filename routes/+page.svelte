@@ -1,4 +1,4 @@
-<script>
+<script src="../client.js">
 
   import { onMount } from 'svelte';
   onMount(() => {
@@ -13,7 +13,7 @@
     }
   });
 
-  import {sendData, getData, DeleteAll, AddEmptyRow, sendSocketValue,  DeleteRow, getAccountData,makeNewAccount, userData} from "../client.js" //we import all the functions
+  import {sendData, getData, DeleteAll, AddEmptyRow, sendSocketValue,  DeleteRow, getAccountData,makeNewAccount, userData, verifyEmail, verifyCode, clientID} from "../client.js" //we import all the functions
 
   let dataToSend = ""
   let selectedColumn = "username"
@@ -38,10 +38,12 @@
   }
 
   let isLogin = true //false a sign up
+  let isVerifying = false
 
-  let email = "moni@gmail.com"
+  let email = "zseszti42@gmail.com"
   let password = "alma"
-  let username = "moni"
+  let username = "esztix"
+  let verificationCode = ""
 
   function ChangeAccountStatus(){isLogin = !isLogin; isLogin = isLogin}
 
@@ -52,11 +54,23 @@
     isAuthenticationUp = isAuthenticationUp
   }
   function Signup(email,password,username){
-    makeNewAccount(email,password,username)
+    verifyEmail(email,username)
+    //makeNewAccount(email,password,username)
 
-    isAuthenticationUp = false
-    isAuthenticationUp = isAuthenticationUp
+    //isAuthenticationUp = false
+    //isAuthenticationUp = isAuthenticationUp
+    isVerifying = !isVerifying
+    isVerifying = isVerifying
   }
+  function Verify(code){
+    verifyCode(email,code,password,username)
+    console.log(code);
+  }
+
+  
+
+
+
 
 </script>
 {#if isAuthenticationUp}
@@ -70,21 +84,29 @@
       <button class="accountStatusButton" on:click={ChangeAccountStatus}>Nincs fiókom :(</button>
     </div>
   {:else}
-    <div class="login" id="signup">
-      Csinálj egy fiókot<br>
-      <input type="text" placeholder="email cím" bind:value={email}><br>
-      <input type="text" placeholder="felhasználónév" bind:value={username}><br>
-      <input type="password" placeholder="jelszó" bind:value={password}><br>
-      <button on:click={() =>Signup(email,password,username)}>Regisztráció</button><br>
-      <button class="accountStatusButton" on:click={ChangeAccountStatus}>Már van fiókom :)</button>
+    {#if isVerifying}
+    <div style="width: 30vw;position: absolute;left: 35vw;top: 1vw;background-color: aquamarine;" id="verify">
+      Elküldünk egy ellenőrző kódot a következő email címre:<br>
+      <span style="font-weight: bold;">{email}</span>
+      <input type="text" placeholder="ellenőrző kód" bind:value={verificationCode}><br>
+      <button on:click={() =>Verify(verificationCode)}>Ellenőrzés</button><br>
     </div>
+    {:else}
+      <div class="login" id="signup">
+        Csinálj egy fiókot<br>
+        <input type="text" placeholder="email cím" bind:value={email}><br>
+        <input type="text" placeholder="felhasználónév" bind:value={username}><br>
+        <input type="password" placeholder="jelszó" bind:value={password}><br>
+        <button on:click={() =>Signup(email,password,username)}>Regisztráció</button><br>
+        <button class="accountStatusButton" on:click={ChangeAccountStatus}>Már van fiókom :)</button>
+      </div>
+    {/if}
   {/if}
   
 </div>
 {/if}
 your username: {userData.username}<br>
 your email: {userData.email}<br>
-
 
 
 <br><button on:click={ChangeAdmin}>Admin</button>
@@ -114,11 +136,12 @@ your email: {userData.email}<br>
 
 
 <style>
+  
   #authenticationBox{
-    border: 2px solid black;
-    height: 25vw;
-    background-color: rgba(255, 127, 80, 0.705);
-    position: relative;
+  border: 2px solid black;
+  height: 25vw;
+  background-color: rgba(255, 127, 80, 0.705);
+  position: relative;
   }
   .login{
     width: 18vw;

@@ -1,7 +1,6 @@
 //let ip = "10.7.147.201";
 let ip = "localhost";
 
-
 export let userData = {
   ID: "",
   username: "",
@@ -90,6 +89,52 @@ export function makeNewAccount(email,password,username){
     console.log("account data: ",userData);
   })
 }
+export function verifyEmail(email,username) { 
+
+  fetch(`http://${ip}:3000/verifyEmail`, { 
+  method: 'POST',
+  headers: {
+      'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({email: email,username:username}),
+  })
+  .catch(error => {
+    console.error(error);
+  });
+}
+export let clientVerificationCode
+export function verifyCode(email,code,password,username) { 
+  console.log(email,code);
+  fetch(`http://${ip}:3000/verifyCode`, { 
+  method: 'POST',
+  headers: {
+      'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({email: email,code:code,password: password,username: username}),
+  })
+  .then(response => {
+    if (response.ok) {
+      return response.json();
+    } else {
+      throw new Error('Failed to send data');
+    }
+  })
+  .then(data => {
+    console.log(data);
+    if(data == "wrong code"){
+      window.alert("Hibás kód!")
+    }
+    else{
+      console.log("succsessful login");
+      clientVerificationCode = data
+      console.log(clientVerificationCode);
+    }
+  })
+  .catch(error => {
+    console.error(error);
+  });
+}
+
 
 
 
