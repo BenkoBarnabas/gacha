@@ -37,6 +37,7 @@
     import Zalan from "./lib/assets/collection/diak/Zalan.png"
     import Zeno from "./lib/assets/collection/diak/Zeno.png"
     import AproNo from "./lib/assets/collection/diak/AproNo.png"
+    import Regina from "./lib/assets/collection/diak/Regina.png"
 
     //gacha SRC
     import GachaPH from "./lib/assets/collection/tanar/GachaPH.png"
@@ -157,7 +158,7 @@
 
     export let tanarCardsArr = [BizsoCard, FarkasCard,MartiCard, MoniCard, NagyoraCard, RozgonyiCard, TabiCard,BencusCard,DobiCard,IvanEvaCard,TomiCard,KocsiAndiCard,KoPaszCard,KutiCard,MatosCard,MeszarosCard,JeffCard,FiloRekaCard,IzigCard,KinyoCard, LaciNeniCard, MsFarkasCard,NagyTCard,ParagiCard,RixerCard,SisakCard,SzaszakCard,TothKareszCard,VeronikaCard,WeiszCard,TritzCard]
     export let diakCardsArr = [ArhoCard, BarniCard, EszterCard, OliviaCard, ZalanCard, ZenoCard,AproNoCard,ReginaCard]
-    export let allCardsArr = [BizsoCard, FarkasCard,MartiCard, MoniCard, NagyoraCard, RozgonyiCard, TabiCard,BencusCard,DobiCard,IvanEvaCard,TomiCard,KocsiAndiCard,KoPaszCard,KutiCard,MatosCard,MeszarosCard,JeffCard,FiloRekaCard,IzigCard,KinyoCard, LaciNeniCard, MsFarkasCard,NagyTCard,ParagiCard,RixerCard,SisakCard,SzaszakCard,TothKareszCard,VeronikaCard,WeiszCard,TritzCard, ArhoCard, BarniCard, EszterCard, OliviaCard, ZalanCard, ZenoCard,AproNoCard]
+    export let allCardsArr = tanarCardsArr.concat(diakCardsArr)
 
     export let URTanars = []
     export let FiveStarTanars = []

@@ -2,7 +2,7 @@
 let ip = "localhost";
 
 export let userData = {
-  ID: "",
+  id: "",
   username: "",
   email: "",
   password: "",
@@ -11,10 +11,32 @@ export let userData = {
   gachaCurrency: "",
   tickets: ""
 }
+export let pullData = {
+  pity4S: "",
+  pity5S: "",
+  pityUR: "",
+  pullHistory: "",
+  id: ""
+}
 
+export function getUserDataFromLocalStorage(data, key){
+  console.log(data);
+  console.log(key);
+  switch (key) {
+    case "userData":
+      userData = data
+      console.log("hello john doe: ",userData);
+      break;
+    case "pullData":
+      pullData = data
+      console.log("hello john doe: ",pullData);
+      break;
+    default:
+      break;
+  }
+}
 
-
-
+  
 // ES modules
 import io from "socket.io-client";
 
@@ -39,9 +61,13 @@ export function sendSocketValue(columnName,id,tableName,storage){
     table: tableName,
   }
   console.log("client send: ",query);
-  socket.emit(columnName, query)
+  if(tableName == "account" ||tableName == "deck"){
+    socket.emit(columnName,query)
+    console.log("account, deck");
+  }
+  //socket.emit(columnName, query)
 
-  if(columnName != "*" && tableName == "account" || "deck"){
+  if(columnName != "*" && tableName == "account" ||tableName == "deck"){
     socket.on(columnName, msg => {
       //console.log("client got: ",msg);
       console.log("megjött: "+columnName,msg);
@@ -49,6 +75,7 @@ export function sendSocketValue(columnName,id,tableName,storage){
       //console.log("stroage: ",storage.value);
     })
   }
+  
   
 }
 export let lobby = []
@@ -76,8 +103,28 @@ export function ReloadLobby(){
 export function getAccountData(email){
   socket.emit("getAccountData", email)
   socket.on("getAccountData", data =>{
-    userData = data
+    console.log(data);
+    userData = data["account"]
+    pullData = data["rolls"]
+
+
     console.log("account data: ",userData);
+    console.log("rolls data: ",pullData);
+    if (pullData.history == ""){
+      pullData.history = []
+    }
+    else{
+      if (typeof pullData.history != "object"){
+        pullData.history= pullData.history.split(',');
+      }
+    }
+    
+    
+
+    localStorage.setItem("userData", JSON.stringify(userData));
+    localStorage.setItem("pullData", JSON.stringify(pullData));
+    //localUserData = JSON.parse(localStorage.getItem("userData"))
+    
   })
 }
 

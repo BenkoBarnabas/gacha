@@ -1,10 +1,8 @@
 <script>
-    import {lobby, LoadLobby, ReloadLobby, clientID} from "../../client"
+    import {lobby, LoadLobby, ReloadLobby, clientID,userData} from "../../client"
 
     let loginScreen = true
-    let username = "barnix"
-
-
+    let username = userData.username
     
     let usersInLobby= []
     function LoadCurrentLobby(){
@@ -37,7 +35,6 @@
 
 
 {#if loginScreen}
-    <input type="telobbyt" placeholder="give a username" bind:value={username}>
     <button on:click={LoadCurrentLobby}>log in</button>
 {:else}
     <div id="yourLobbyInfo">

@@ -1,5 +1,4 @@
 <script>
-
     //IMPORT ALL THE NECCESARY ASSETS HERE
     import * as Cards from "../../card"
     
@@ -22,43 +21,26 @@
     import infoBox from "../../lib/assets/gacha/infoBox.png"
 
     //server functions, db control
-    import {sendData, getData, responsData, Cpity4S, Cpity5S, CpityUR, sendSocketValue,userData} from "../../client"
+    import {sendData, getData, responsData, Cpity4S, Cpity5S, CpityUR, sendSocketValue,userData,pullData,getUserDataFromLocalStorage,getAccountData} from "../../client"
+    //console.log(userData);
+    //console.log(pullData);
 
-
+    //getAccountData(userData.email)
+    let localPullData
     //get the shit u need fomr the database 
+    import { onMount } from 'svelte';
+    onMount(() => {
+      localPullData = JSON.parse(localStorage.getItem("pullData"))
+      console.log("fasz3: logcaPulDa: ",localPullData);
+      if (localPullData) {
+        //localPullData = JSON.parse(localStorage.getItem("userData"))
+        getUserDataFromLocalStorage(localPullData, "pullData")
+      } else {
+        console.log("Username not found in local storage.");
+      }
+    });
 
-    let userId = "1" //ph obvs
-
-    var pity4S = 0
-    var pity5S = 0
-    var pityUR = 0
-    let pullHistory = ""
-
-    getData("history",userId,"rolls") //the one can be adjusted later depending on the ip of the PC (the user who playing)
-    console.log("1. get data");
-    setTimeout(() => {
-        pullHistory = responsData.split(',');
-    }, 1000);
-    //^^^when u inicialize(? im tired) the gacha screen ull ave the history immidiately kinda
-    getData("pity4S",userId,"rolls") 
-    setTimeout(() => {
-        pity4S = Cpity4S
-        //console.log(pity4S);
-        
-    }, 1000);
-    getData("pity5S",userId,"rolls") 
-    setTimeout(() => {
-        pity5S = Cpity5S
-        //console.log(pity5S);
-        
-    }, 1000);
-    getData("pityUR",userId,"rolls") 
-    setTimeout(() => {
-        pityUR = CpityUR
-        //console.log(pityUR);
-    }, 1000);
-
-    //var tickets = getData("tickets",userId,"account")
+    //var tickets = getData("tickets",userData.id,"account")
 
     //console.log(tickets);
 
@@ -152,104 +134,114 @@
 
 
     function CalculatePulls(num){ //loads the pull cards and already calculates their content
-        if (userData.tickets >= num){
+        if(userData.tickets < num && userData.gachaCurrency < num*200){
+            window.alert("nincs elég pénzed haver")
+        }
+        else{
+            if (userData.tickets >= num){
             userData.tickets -= num
-            sendData("tickets",userData.tickets,userId,"account")
-        }
-        else {
-            userData.gachaCurrency -= num*200
-            sendData("gachaCurrency",userData.gachaCurrency,userId,"account")
-        }
-        isBannerUp = false
-        isBannerUp = isBannerUp
-        isRolling = true
-        setTimeout(() => {rollIsSkippable = true}, num*100+700); //deleyed close button pops up
-        pullNum = num
+            sendData("tickets",userData.tickets,userData.id,"account")
+            }
+            else {
+                userData.gachaCurrency -= num*200
+                sendData("gachaCurrency",userData.gachaCurrency,userData.id,"account")
+            }
+            isBannerUp = false
+            isBannerUp = isBannerUp
+            isRolling = true
+            setTimeout(() => {rollIsSkippable = true}, num*100+700); //deleyed close button pops up
+            pullNum = num
+            lastPulls = []
 
-        for (let i = 0; i < num; i++) {
-            if (Math.floor(Math.random() * 100) >= 98 || pity5S == 50){ //returns a number between 0-100, 2% esély hogy 5*
+            for (let i = 0; i < num; i++) {
+                if (Math.floor(Math.random() * 100) >= 98 || localPullData.pity5S== 50){ //returns a number between 0-100, 2% esély hogy 5*
 
-                if (Math.floor(Math.random() * 100) >= 80 || pityUR == 3){ //ha 5*-t kapsz 20% esély hogy UR lesz belőle
+                    if (Math.floor(Math.random() * 100) >= 80 || localPullData.pityUR== 3){ //ha 5*-t kapsz 20% esély hogy UR lesz belőle
 
-                    if (whichBanner){  //tanar banner active
-                        var yourCard = Cards.URTanars[Math.floor(Math.random() * Cards.URTanars.length)] //gives back the object of yoour card
+                        if (whichBanner){  //tanar banner active
+                            var yourCard = Cards.URTanars[Math.floor(Math.random() * Cards.URTanars.length)] //gives back the object of yoour card
+                        }
+                        else{
+                            var yourCard = Cards.URDiaks[Math.floor(Math.random() * Cards.URDiaks.length)]
+                        }
+
+                        lastPullBatch[i] = yourCard.gachaSRC
+
+                        lastPulls[i] = yourCard.name + " (UR)"+":"+yourCard.type+":"+bannerName
+                        console.log("u got:"+lastPulls[i]);
+                        console.log("UR woooooooooooo");
+                        localPullData.pityUR= 0
+                        localPullData.pity5S= 0
                     }
                     else{
-                        var yourCard = Cards.URDiaks[Math.floor(Math.random() * Cards.URDiaks.length)]
+                        if (whichBanner){  //tanar banner active
+                        var yourCard = Cards.FiveStarTanars[Math.floor(Math.random() * Cards.FiveStarTanars.length)] //gives back the object of yoour card
+                        }
+                        else{
+                            var yourCard = Cards.FiveStarDiaks[Math.floor(Math.random() * Cards.FiveStarDiaks.length)]
+                        }
+
+                        lastPullBatch[i] = yourCard.gachaSRC
+
+                        lastPulls[i] = yourCard.name + " (" + yourCard.stars + "*)"+":"+yourCard.type+":"+bannerName
+                        console.log("u got:"+lastPulls[i]);
+                        console.log("5 star");
+                        localPullData.pityUR+= 1
+                        localPullData.pity5S= 0
                     }
-
-                    lastPullBatch[i] = yourCard.gachaSRC
-
-                    lastPulls[i] = yourCard.name + " (UR)"+":"+yourCard.type+":"+bannerName
-                    console.log("u got:"+lastPulls[i]);
-                    console.log("UR woooooooooooo");
-                    pityUR = 0
-                    pity5S = 0
                 }
-                else{
+                else if (Math.floor(Math.random() * 100) >= 85 || localPullData.pity4S== 10){ //returns a number between 0-100, 15% esély hogy 4*
                     if (whichBanner){  //tanar banner active
-                    var yourCard = Cards.FiveStarTanars[Math.floor(Math.random() * Cards.FiveStarTanars.length)] //gives back the object of yoour card
+                        var yourCard = Cards.FourStarTanars[Math.floor(Math.random() * Cards.FourStarTanars.length)] //gives back the object of yoour card
                     }
                     else{
-                        var yourCard = Cards.FiveStarDiaks[Math.floor(Math.random() * Cards.FiveStarDiaks.length)]
+                        var yourCard = Cards.FourStarDiaks[Math.floor(Math.random() * Cards.FourStarDiaks.length)]
                     }
 
                     lastPullBatch[i] = yourCard.gachaSRC
-
+                    
                     lastPulls[i] = yourCard.name + " (" + yourCard.stars + "*)"+":"+yourCard.type+":"+bannerName
                     console.log("u got:"+lastPulls[i]);
-                    console.log("5 star");
-                    pityUR += 1
-                    pity5S = 0
+                    console.log("4 star");
+                    localPullData.pity4S= 0
                 }
-            }
-            else if (Math.floor(Math.random() * 100) >= 85 || pity4S == 10){ //returns a number between 0-100, 15% esély hogy 4*
-                if (whichBanner){  //tanar banner active
-                    var yourCard = Cards.FourStarTanars[Math.floor(Math.random() * Cards.FourStarTanars.length)] //gives back the object of yoour card
-                }
-                else{
-                    var yourCard = Cards.FourStarDiaks[Math.floor(Math.random() * Cards.FourStarDiaks.length)]
+                else { //3*
+                    if (whichBanner){  //tanar banner active
+                        var yourCard = Cards.ThreeStarTanars[Math.floor(Math.random() * Cards.ThreeStarTanars.length)] //gives back the object of yoour card
+                    }
+                    else{
+                        var yourCard = Cards.ThreeStarDiaks[Math.floor(Math.random() * Cards.ThreeStarDiaks.length)]
+                    }
+                    
+                    lastPulls[i] = yourCard.name + " (" + yourCard.stars + "*)"+":"+yourCard.type+":"+bannerName
+
+                    lastPullBatch[i] = yourCard.gachaSRC
+                    console.log("u got:"+lastPulls[i]);
                 }
 
-                lastPullBatch[i] = yourCard.gachaSRC
+                localPullData.pity4S+= 1
+                localPullData.pity5S+= 1
+                console.log("4pity: "+localPullData.pity4S+" 5pity: "+localPullData.pity5S+" URpity: "+localPullData.pityUR);
+                DoPullAnimation(i)
+                DoShineAnimation(i,yourCard.stars)
                 
-                lastPulls[i] = yourCard.name + " (" + yourCard.stars + "*)"+":"+yourCard.type+":"+bannerName
-                console.log("u got:"+lastPulls[i]);
-                console.log("4 star");
-                pity4S = 0
             }
-            else { //3*
-                if (whichBanner){  //tanar banner active
-                    var yourCard = Cards.ThreeStarTanars[Math.floor(Math.random() * Cards.ThreeStarTanars.length)] //gives back the object of yoour card
-                }
-                else{
-                    var yourCard = Cards.ThreeStarDiaks[Math.floor(Math.random() * Cards.ThreeStarDiaks.length)]
-                }
-                
-                lastPulls[i] = yourCard.name + " (" + yourCard.stars + "*)"+":"+yourCard.type+":"+bannerName
-
-                lastPullBatch[i] = yourCard.gachaSRC
-                console.log("u got:"+lastPulls[i]);
+            console.log("fasz: ",localPullData.history);
+            console.log("fasz2: ",lastPulls);
+            for (let i = 0; i < lastPulls.length; i++){
+                localPullData.history.push(lastPulls[i])
             }
-
-            pity4S += 1
-            pity5S += 1
-            console.log("4pity: "+pity4S+" 5pity: "+pity5S+" URpity: "+pityUR);
-            DoPullAnimation(i)
-            DoShineAnimation(i,yourCard.stars)
+            //localPullData.history = localPullData.history.concat(lastPulls)
             
-        }
-        sendData("history",pullHistory+","+String(lastPulls),userId,"rolls")
+            sendData("history",localPullData.history,userData.id,"rolls")
 
-        //send back the pity
-        sendData("pity4S",pity4S,userId,"rolls")
-        sendData("pity5S",pity5S,userId,"rolls")
-        sendData("pityUR",pityUR,userId,"rolls")
+            //send back the pity
+            sendData("pity4S",localPullData.pity4S,userData.id,"rolls")
+            sendData("pity5S",localPullData.pity5S,userData.id,"rolls")
+            sendData("pityUR",localPullData.pityUR,userData.id,"rolls")
 
-        getData("history",userId,"rolls") //this updates the responsData
-        setTimeout(() => {
-        pullHistory = responsData.split(',');
-        }, 1000);
+            
+            }
     }
 
     function DoPullAnimation(i) {
@@ -288,15 +280,18 @@
         lastPullBatchVisibilityClass[i].src = lastPullBatch[i] //when clicked it switched the src of the #each image to roll3/4/5star that we caluclated in CalulatePulls()
     }
     
-    var pullHistoryTableForm = []
+    let historyTableForm = []
 
     function LoadHistory(){
-        pullHistory = responsData.split(','); //updates res data
-        console.log(pullHistory);
-        for (let i = 0; i < pullHistory.length; i++){
-            pullHistoryTableForm[i] = pullHistory[i].split(':')
+        historyTableForm = localPullData.history
+        console.log("fasz:4 loadhis: ",localPullData.history);
+        //localPullData.history= localPullData.history.split(',');
+        
+        for (let i = 0; i < localPullData.history.length; i++){
+            historyTableForm[i] = localPullData.history[i].split(':')
         }
-        console.log(pullHistoryTableForm);
+        console.log("history table form: ",historyTableForm);
+
 
         isHistory= true
         isHistory = isHistory
@@ -368,9 +363,9 @@
                 <th>Type</th>
                 <th>Banner Name</th>
             </tr>
-            {#each pullHistoryTableForm.reverse() as item, index}
-            <tr>
-                {#each pullHistoryTableForm[index] as cell}
+            {#each historyTableForm.reverse() as item}
+            <tr class="historyTableRow">
+                {#each item as cell}
                 <td>
                     <p class="historyText" class:historyText4S={cell.includes("4")} class:historyText5S={cell.includes("5")} class:historyTextUR={cell.includes("UR")}>{cell}</p>
                 </td>
@@ -381,7 +376,7 @@
         </div>
         </div>
         <div class="historyTitle">Gacha Történelmed</div>
-        <div class="pityCounter">{50-pity5S}</div>
+        <div class="pityCounter">{50- localPullData.pity5S}</div>
     </div>
 
     <button class="closeButton" on:click={CloseHistoryScreen}></button>
@@ -435,7 +430,7 @@
         </div>
         </div>
         <div class="historyTitle">{bannerName}</div>
-        <div class="pityCounter">{50-pity5S}</div>
+        <div class="pityCounter">{50- localPullData.pity5S}</div>
     </div>
 
     <button class="closeButton" on:click={CloseInfoScreen}></button>
@@ -726,7 +721,9 @@
     }
     .historyTable{
         margin: auto;
+        
     }
+
     td {
         padding-left: 1vw;
         padding-right: 1vw;

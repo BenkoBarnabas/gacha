@@ -1,24 +1,25 @@
-<script src="../client.js">
+<script >
 
-  import { onMount } from 'svelte';
-  onMount(() => {
-    // Storing a variable in local storage
-    localStorage.setItem("username", "john_doe");
-    // Accessing a variable from local storage
-    const username = localStorage.getItem("username");
-    if (username) {
-      console.log(`Hello, ${username}!`);
-    } else {
-      console.log("Username not found in local storage.");
-    }
-  });
 
-  import {sendData, getData, DeleteAll, AddEmptyRow, sendSocketValue,  DeleteRow, getAccountData,makeNewAccount, userData, verifyEmail, verifyCode, clientID} from "../client.js" //we import all the functions
+  import {sendData, getData, DeleteAll, AddEmptyRow, sendSocketValue,  DeleteRow, getAccountData,makeNewAccount, userData, verifyEmail, verifyCode, clientID, getUserDataFromLocalStorage} from "../client.js" //we import all the functions
 
   let dataToSend = ""
   let selectedColumn = "username"
   let id = "1"
   let tableName = "account"
+
+  let localUserData
+
+  import { onMount } from 'svelte';
+    onMount(() => {
+      localUserData = JSON.parse(localStorage.getItem("userData"))
+      if (localUserData) {
+        //localUserData = JSON.parse(localStorage.getItem("userData"))
+        getUserDataFromLocalStorage(localUserData, "userData")
+      } else {
+        console.log("Username not found in local storage.");
+      }
+    });
 
 
 
@@ -48,10 +49,12 @@
   function ChangeAccountStatus(){isLogin = !isLogin; isLogin = isLogin}
 
   function Login(email, password){
+    var pre = userData
     getAccountData(email)
 
     isAuthenticationUp = false
     isAuthenticationUp = isAuthenticationUp
+    var pre = userData
   }
   function Signup(email,password,username){
     verifyEmail(email,username)
