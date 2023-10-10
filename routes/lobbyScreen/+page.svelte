@@ -1,5 +1,5 @@
 <script>
-    import {lobby, LoadLobby, ReloadLobby, clientID,userData} from "../../client"
+    import {lobby, LoadLobby, ReloadLobby, clientID,userData,sendMatchRequest} from "../../client"
 
     let loginScreen = true
     let username = userData.username
@@ -28,6 +28,12 @@
             usersInLobby= usersInLobby
         }
     }
+
+    function StartMatchWithPlayer(id){
+        //id is the players clinetId u clicked on
+        sendMatchRequest(id)
+
+    }
     
 
 
@@ -44,9 +50,9 @@
     <div id="onlinePlayersCont">
         {#each usersInLobby as lobbyMembers}
         {#if lobbyMembers.id != clientID}
-        <div class="onlinePlayer">
+        <button style="cursor: pointer;" class="onlinePlayer" on:click={() => StartMatchWithPlayer(lobbyMembers.id)}>
             username: {lobbyMembers.username}<br> id: {lobbyMembers.id}
-        </div>
+        </button>
         {/if}
         {/each}
     </div>

@@ -1,6 +1,7 @@
 //let ip = "10.7.147.201";
 let ip = "localhost";
 
+
 export let userData = {
   id: "",
   username: "",
@@ -40,7 +41,7 @@ export function getUserDataFromLocalStorage(data, key){
 // ES modules
 import io from "socket.io-client";
 
-const socket = io(`http://${ip}:3000` , { transports : ['websocket'] }); // Replace with your server's URL
+export const socket = io(`http://${ip}:3000` , { transports : ['websocket'] }); // Replace with your server's URL
 export let clientID
 
 socket.on('connect', () => {
@@ -51,6 +52,31 @@ socket.on('connect', () => {
 socket.on('disconnect', () => {
   console.log(`Disonnected with ID: ${socket.id}`);
 });
+
+//MATCH HANDLING
+export let currentMatch = {
+    player1: undefined,
+    player2: undefined
+}
+
+export function sendMatchRequest(id){
+    socket.emit(id,"I ${clientID} sent u an invite")
+    console.log(id);
+    socket.on(clientID, msg => {
+      console.log("got msg in matchH: ",msg);
+  })
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
