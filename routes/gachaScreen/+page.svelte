@@ -1,6 +1,8 @@
 <script>
     //IMPORT ALL THE NECCESARY ASSETS HERE
     import * as Cards from "../../card"
+
+    import loadingScreen from "../../lib/assets/global/loadingScreen.gif"
     
     import ticketIcon from "../../lib/assets/global/ticketIcon.png"
     import gachaCurrencyIcon from "../../lib/assets/global/currencyIcon.png"
@@ -27,6 +29,7 @@
 
     //getAccountData(userData.email)
     let localPullData
+    let pageLoaded = false
     //get the shit u need fomr the database 
     import { onMount } from 'svelte';
     onMount(() => {
@@ -38,7 +41,13 @@
       } else {
         console.log("Username not found in local storage.");
       }
+
+
+    pageLoaded = true
+    pageLoaded = pageLoaded
     });
+    
+
 
     //var tickets = getData("tickets",userData.id,"account")
 
@@ -330,6 +339,13 @@
     }
 
 </script>
+{#if !pageLoaded}
+<div id="loadingScreen">
+  <img src={loadingScreen} alt="loading..." style="width: 15vw; margin: auto; display: block">
+  <h1 style="font-family: cursive; text-align: center;">LOADING...</h1>
+</div>
+{/if}
+
 <div style='--bgWidth:{bgWidth};'></div>
 
 <!-- roll screen az #if-ben -->
@@ -538,6 +554,17 @@
 {/if}
 
 <style>
+
+    #loadingScreen {
+    z-index: 9999;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgb(255, 255, 255);
+    }
+
     @font-face {
             font-family: 'ShadowLight';
             src: url('../../lib/assets/fonts/ShadowsIntoLight-Regular.ttf');

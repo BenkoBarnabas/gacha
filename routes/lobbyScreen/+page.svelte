@@ -36,15 +36,16 @@
         sendMatchRequest(id)
 
     }
-
+    let matchLoaded = false
     function update() {
     //logic
     SenseOpponentPresence()
     requestAnimationFrame(update)
     }
     function SenseOpponentPresence(){
-        if(currentOpponentId != ""){
+        if(currentOpponentId != "" && !matchLoaded){
             console.log("went to page");
+            matchLoaded = true
             GoToPage("../matchScreen")
             
         }
