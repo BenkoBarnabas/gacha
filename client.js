@@ -58,13 +58,10 @@ export let currentMatch = {
     player1: undefined,
     player2: undefined
 }
-
+export let currentOpponentId
 export function sendMatchRequest(id){
-    socket.emit(id,"I ${clientID} sent u an invite")
-    console.log(id);
-    socket.on(clientID, msg => {
-      console.log("got msg in matchH: ",msg);
-  })
+    currentOpponentId = id
+    //socket.emit("makeLobby",)
 }
 
 
