@@ -53,31 +53,6 @@ socket.on('disconnect', () => {
   console.log(`Disonnected with ID: ${socket.id}`);
 });
 
-//MATCH HANDLING
-export let currentMatch = {
-    player1: undefined,
-    player2: undefined
-}
-export let currentOpponentId
-export function sendMatchRequest(id){
-    currentOpponentId = id
-    socket.emit("makeLobby",clientID+currentOpponentId)
-    socket.on(clientID+currentOpponentId, msg => {
-      console.log(msg);
-    })
-}
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 export function sendSocketValue(columnName,id,tableName,storage){

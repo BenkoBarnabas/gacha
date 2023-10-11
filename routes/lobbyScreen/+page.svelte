@@ -1,5 +1,7 @@
 <script>
-    import {lobby, LoadLobby, ReloadLobby, clientID,userData,sendMatchRequest} from "../../client"
+	import { goto } from "$app/navigation";
+    import {lobby, LoadLobby, ReloadLobby, clientID,userData} from "../../client"
+    import {currentOpponentId, sendMatchRequest} from "../../matchHandler"
 
     let loginScreen = true
     let username = userData.username
@@ -34,6 +36,23 @@
         sendMatchRequest(id)
 
     }
+
+    function update() {
+    //logic
+    SenseOpponentPresence()
+    requestAnimationFrame(update)
+    }
+    function SenseOpponentPresence(){
+        if(currentOpponentId != ""){
+            console.log("went to page");
+            GoToPage("../matchScreen")
+            
+        }
+    }
+    function GoToPage(filePath) {
+        window.location.href = filePath; // Navigate to the parent directory
+    }
+    update()
     
 
 
