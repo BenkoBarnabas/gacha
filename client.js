@@ -61,7 +61,10 @@ export let currentMatch = {
 export let currentOpponentId
 export function sendMatchRequest(id){
     currentOpponentId = id
-    //socket.emit("makeLobby",)
+    socket.emit("makeLobby",clientID+currentOpponentId)
+    socket.on(clientID+currentOpponentId, msg => {
+      console.log(msg);
+    })
 }
 
 
