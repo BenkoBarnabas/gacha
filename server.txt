@@ -20,8 +20,7 @@ app.use(bodyParser.json());
 // connect to us client
 // connect to us client
 app.get('/', (req, res) => {
-  //res.sendFile(__dirname + 'C:/Users/Eszti/Svelte/src/client.js');
-  res.sendFile(__dirname + 'D:/gachagame/src/routes/+page.svelte');
+  res.sendFile(__dirname + 'C:/Users/Eszti/Svelte/src/client.js');
 });
 
 
@@ -30,8 +29,8 @@ const nodemailer = require("nodemailer");
 const transporter = nodemailer.createTransport({
   service: "Gmail",
   auth: {
-    user: "sagvarigacha.TETMS@gmail.com",
-    pass: "zjcu lmsq snxt iuhz",
+    user: "sagvarigacha.tetms@gmail.com",
+    pass: "grlz mrwf qiau cjvi",
   },
 });
 
@@ -59,12 +58,11 @@ db.run(`CREATE TABLE IF NOT EXISTS deck ${tableStructures.deck}`);
 
 //io.emit('update', n); 
 function getValueFromDB(columnName,id,tableName){
-  db.get(`SELECT ${columnName} FROM ${tableName}`,(err, row) => {
+  db.get(`SELECT ${columnName} FROM ${tableName} WHERE id = (?)`,[id],(err, row) => {
     //console.log("rows: ",row);
     if(columnName == "*"){
       console.log("sent: "+columnName,row);
       io.emit(columnName, row)
-      
     }
     else if(columnName != ""){
       console.log("sent: "+columnName,row[columnName]);
@@ -76,9 +74,19 @@ function getValueFromDB(columnName,id,tableName){
 }
 // Socket.io connection event
 function getAccountInfoFromDB(email){
+  var data = {
+    account: {},
+    rows: {}
+  }
   db.get(`SELECT * FROM account WHERE email = (?)`,email,(err, row) => {
-    console.log("rows: ",row);
-    io.emit("getAccountData", row)
+    console.log("row: ",row);
+    data["account"] = row
+    console.log(row.id);
+    db.get(`SELECT * FROM rolls WHERE id = (?)`,row.id,(err, rows) => {
+      data["rolls"] = rows
+      console.log("rows: ",rows);
+      io.emit("getAccountData", data)
+    });
   });
 }
 app.post('/verifyEmail', (req, res) => { 
@@ -99,6 +107,7 @@ app.post('/verifyCode', (req, res) => {
     res.json(verificationCodes[email]);
 
     makeNewAccount(email,password,username)
+    delete verificationCodes[email]
   }
   else{
     console.log("wrong code");
@@ -174,6 +183,8 @@ function makeNewAccount(email,password,username){
     if (err) {
       console.log(err);
     } else {
+      db.run(`INSERT INTO rolls DEFAULT VALUES`);
+      db.run(`INSERT INTO deck DEFAULT VALUES`);
       console.log("level 2");
       db.run(`UPDATE account SET email = (?), password = (?), username = (?) WHERE id = (SELECT MAX(id) FROM account)`,[email,password,username], function (err) {
         if (err) {
@@ -192,11 +203,22 @@ function makeNewAccount(email,password,username){
 let usersInLobby = []
 let connectedClients = [];
 
+
+
+//SSERVER ON CONNECT
 io.on('connection', (socket) => {
   //console.log(`A user connected with ID: ${socket.id}`);
   connectedClients.push(socket.id)
   //console.log(connectedClients);
 
+  //MATCH
+  socket.on(socket.id, msg => {
+    console.log("msg got:   ",msg);
+  })
+
+
+
+  //DATABASE SOCKETS
   var columnNames
   db.all(`PRAGMA table_info(account)`, [], (err, rows) => {
     columnNames = rows.map(row => row.name);
@@ -217,15 +239,21 @@ io.on('connection', (socket) => {
       })
     }
   });
+
+
+  //LOBBY CONNECTION
   socket.on("loadLobby", msg => {
     usersInLobby.push(msg)
-    console.log("sent users: ",usersInLobby);
+    //console.log("sent users: ",usersInLobby);
     io.emit("loadLobby", usersInLobby)
   })
   socket.on("reloadLobby", msg => {
-    console.log("sent users and reloaded: ",usersInLobby);
+    //console.log("sent users and reloaded: ",usersInLobby);
     io.emit("reloadLobby", usersInLobby)
   })
+
+
+  //ACCOUNT MAKING
   socket.on("getAccountData", data =>{
     getAccountInfoFromDB(data)
     console.log("ment a query");
@@ -234,6 +262,7 @@ io.on('connection', (socket) => {
     makeNewAccount(info.email,info.password,info.username)
     console.log("új account: ",info)
   })
+
 
   // Handle disconnection
   socket.on('disconnect', () => {
@@ -350,5 +379,6 @@ app.post('/delRow', (req, res) => {
 });
 
 server.listen(3000, () => {
-  console.log("Server listening on http://localhost:3000");
+  console.log("Server listening on http://10.7.147.201:3000");
+  //console.log("Server listening on http://localhost:3000");
 });
