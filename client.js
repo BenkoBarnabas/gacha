@@ -1,5 +1,5 @@
-//let ip = "10.7.147.201";
-let ip = "localhost";
+let ip = "10.7.147.201";
+//let ip = "localhost";
 
 
 export let userData = {
@@ -18,6 +18,13 @@ export let pullData = {
   pityUR: "",
   pullHistory: "",
   id: ""
+}
+export let deckData = {
+  id: "",
+  deckarray1: "",
+  deckarray2: "",
+  deckarray3: "",
+  deckarray4: ""
 }
 
 export function getUserDataFromLocalStorage(data, key){
