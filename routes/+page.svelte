@@ -130,6 +130,8 @@ your email: {userData.email}<br>
 {/if}
 
 <div class = "links">
+  <a href="/mainmenuScreen">actual game menu</a><br>
+  <a href="/gachaScreen">itt fizess</a><br>
   <a href="/gachaScreen">itt fizess</a><br>
   <a href="/collectionScreen">kártyáid</a><br>
   <a href="/selectionScreen">paklid</a><br>

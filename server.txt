@@ -43,7 +43,7 @@ let table =""
 let tableStructures = {
   rolls : "(id INTEGER PRIMARY KEY, history TEXT, pity4S INTEGER DEFAULT 0, pity5S INTEGER DEFAULT 0, pityUR INTEGER DEFAULT 0)",
   account : "(id INTEGER PRIMARY KEY, username TEXT, email TEXT, password TEXT, level INTEGER DEFAULT 1, xp INTEGER DEFAULT 1, gachaCurrency INTEGER DEFAULT 0, tickets INTEGER DEFAULT 0)",
-  deck : "(id  INTEGER PRIMARY KEY, deckarray TEXT)"
+  deck : "(id  INTEGER PRIMARY KEY, deckarray1 TEXT, deckarray2 TEXT, deckarray3 TEXT, deckarray4 TEXT)"
 
 }
 
@@ -65,7 +65,7 @@ function getValueFromDB(columnName,id,tableName){
       io.emit(columnName, row)
     }
     else if(columnName != ""){
-      console.log("sent: "+columnName,row[columnName]);
+      //console.log("sent: "+columnName,row[columnName]);
       io.emit(columnName, row[columnName])
       
     }
@@ -212,8 +212,10 @@ io.on('connection', (socket) => {
   //console.log(connectedClients);
 
   //MATCH
-  socket.on(socket.id, msg => {
-    console.log("msg got:   ",msg);
+  socket.on("makeMatchSocket", msg => {
+    console.log(msg);
+    io.emit(msg, `got it: ${msg}`)
+    io.emit("makeMatchSocket",msg)
   })
 
 
