@@ -1,80 +1,84 @@
 <script>
     import * as Cards from "../../card"
     import cardV2Background from "../../lib/assets/global/cardV2BG.png"
-    import {sendSocketValue, sendData} from "../../client"
+    import {sendSocketValue, sendData, userData, deckData} from "../../client"
 
-    let userId = "1" //ph obvs
+    let userId = userData.id //ph obvs
+    let tanarcardnames = Cards.tanarCardsArr.map(item => item.name)
+    let diakcardnames = Cards.diakCardsArr.map(item => item.name)
+    let allcardnames = tanarcardnames.concat(diakcardnames)
 
-    let deckObject = {
-        deckarray: "",
-    }
+    let selectedDeck = 1
+    let selectedList = deckData[`deckarray${selectedDeck}`].split("")
 
-    let selectedList = []
-
-    function selectByClick(card){
+    function selectByClick(card, i){
         if(!selectedList.includes(card.name)){
             selectedList.push(card.name)
             selectedList = selectedList
             console.log(String(selectedList));
-            sendData("deckarray", String(selectedList), userId, "deck")
+            sendData(`deckarray${selectedDeck}`, String(selectedList), userId, "deck")
 
-            updateDeckArray()
+            setTimeout(() => {
+                console.log(selectedList);
+                sendSocketValue(`deckarray${selectedDeck}`,userId,"deck",deckData)
+            }, 1000);
 
-            console.log(deckObject.deckarray);
-            document.getElementById(card.name).classList.remove("filtergrayscale")
-            document.getElementById(card.name).classList.add("selected")
+            allcardnames[i].classList.remove('filtergrayscale')
         }else{
+            allcardnames[i].classList.add('filtergrayscale')
             selectedList.splice(selectedList.indexOf(card.name), 1)
             selectedList = selectedList
-            sendData("deckarray", String(selectedList), userId, "deck")
+            sendData(`deckarray${selectedDeck}`, String(selectedList), userId, "deck")
 
-            updateDeckArray()
-
-            console.log(deckObject.deckarray);
-            document.getElementById(card.name).classList.remove("selected")
-            document.getElementById(card.name).classList.add("filtergrayscale")
+            setTimeout(() => {
+                console.log(selectedList);
+                sendSocketValue(`deckarray${selectedDeck}`,userId,"deck",deckData)
+            }, 500);
         }
     }
-    //sendSocketValue("deckarray",userId,"deck",deckObject)
-    var preDeck = deckObject
-    function updateDeckArray(){
-        while(preDeck == deckObject){
-            sendSocketValue("deckarray",userId,"deck",deckObject)
-            deckObject = deckObject
-            console.log("in update");
-            //updateDeckArray()
-        }
-        
-        console.log("done");
-        return
-    }
 
-    function deleteCard(cardname){
+    function deleteCard(cardname, i){
         selectedList.splice(selectedList.indexOf(cardname), 1)
         selectedList = selectedList
-        document.getElementById(cardname).classList.remove("selected")
-        document.getElementById(cardname).classList.add("filtergrayscale")
+        allcardnames[i].classList.add("filtergrayscale")
+        sendData(`deckarray${selectedDeck}`, String(selectedList), userId, "deck")
+
+        setTimeout(() => {
+            console.log(selectedList);
+            sendSocketValue(`deckarray${selectedDeck}`,userId,"deck",deckData)
+        }, 500);
     }
 
-    var starSizeArray = [] //for some reason it didnt work with a normal return so i had to put them into an array ,im throwing up
-    var starSizeTop = [1,1,0,0]
+    function selectDeck(n){
+        selectedDeck = n
+        document.getElementById(`deck${n}`).classList.remove("")
+    }
+
     var backgroundColorByCost = ["#2672ed","#8626ed","#ed7c26","linear-gradient(180deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235))"]
     var starsColorByCost = ["color: #2672ed;","color: #8626ed;","color: #ed7c26;","background-image: linear-gradient(90deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235));-webkit-background-clip: text;background-clip: text;color: transparent;"]
 </script>
+
+<div id = "background"></div>
+
 <div style="display:flex; margin-inline:5vw; margin-block:4vh;">
 <div id="deckBox">
     <h1>Paklid</h1>
-    {#each selectedList as cardname}
-        <button style="display:block;" on:click={deleteCard(cardname)}>{cardname}</button>
+    <button id="deck1" class = "deckchooser" on:click={selectDeck(1)}>[1]</button>
+    <button id="deck2" class = "deckchooser" on:click={selectDeck(2)}>[2]</button>
+    <button id="deck3" class = "deckchooser" on:click={selectDeck(3)}>[3]</button>
+    <button id="deck4" class = "deckchooser" on:click={selectDeck(4)}>[4]</button>
+
+    {#each selectedList as cardname, i}
+        <button style="display:block;" id={cardname} on:click={deleteCard(cardname, i)}>{cardname}</button>
     {/each}
 </div>
 <div id = "cardcollection">
-    {#each Cards.allCardsArr as card}
-        <div id={card.name} class="cardPreviewListCont filtergrayscale">
+    {#each Cards.allCardsArr as card, i}
+        <div bind:this={allcardnames[i]} class="cardPreviewListCont filtergrayscale">
             <img style="width: 12.5vw; position:absolute" src={cardV2Background} alt="cardBg">
             <div class="rarityBGList" style="background: {backgroundColorByCost[(card.stars)-3]}; "></div>
             <img class="cardButton" src={card.source} alt="preview"/>
-            <button class="cardListFrame" alt="cardBg" on:click={() => selectByClick(card)}></button>
+            <button class="cardListFrame" alt="cardBg" on:click={() => selectByClick(card, i)}></button>
             <div class="curCardStatsList" style="left: 2.68vw;">{card.attack}</div>
             <div class="curCardStatsList" style="left: 9.65vw;">{card.health}</div>
             <div class="curCardCostList">{card.cost}</div>
@@ -110,20 +114,15 @@
 
     }
 
-    #plussign{
-        margin:auto;
-        width:100%;
-        height:5vh;
-        background-image: url("../../lib/assets/global/plus.png");
-        background-size:contain;
-        background-position: center center;
-    }
-
     #deckBox{
         height:90vh;
         width:20vw;
         margin:auto;
         border:2px solid goldenrod;
+    }
+
+    .deckchooser{
+        width:22%;
     }
 
     .cardPreviewListCont{
@@ -135,6 +134,7 @@
 
     .filtergrayscale{
         filter:grayscale();
+        transform: scale(0.98);
     }
 
     #cardcollection {
@@ -228,8 +228,17 @@
         transform: scale(1.05);
     }
 
-    .selected{
-        transform: scale(1.05);
-        filter:none;
+    #background {
+        background-image: url("../../lib/assets/collection/bg.png");
+        overflow: hidden;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background-size: cover; /* Adjust as needed: cover, contain, etc. */
+        background-repeat: no-repeat;
+        background-position: center center;
+        z-index: -3;
     }
 </style>

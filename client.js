@@ -19,6 +19,13 @@ export let pullData = {
   pullHistory: "",
   id: ""
 }
+export let deckData = {
+  id: "",
+  deckarray1: "",
+  deckarray2: "",
+  deckarray3: "",
+  deckarray4: ""
+}
 
 export function getUserDataFromLocalStorage(data, key){
   console.log(data);
