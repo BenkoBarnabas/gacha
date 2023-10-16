@@ -14,6 +14,11 @@
       }
     });
 
+    function GoToPage(filePath) {
+        window.location = filePath; // Navigate to the parent directory
+    }
+
+
 </script>
 <div id="background"></div>
 <div id="header">
@@ -50,21 +55,21 @@
     </div>
     <div id="content">
         <div id="contentCol1" style="width: 38vw; height:38vw; float:left">
-            <div class="zoom-div" id="kartyazz" style="height: 70%; width:100%; border: 10px solid white; margin-bottom:2vw;">
+            <div on:click={() => GoToPage("../lobbyScreen")} class="zoom-div" id="kartyazz" style="height: 70%; width:100%; border: 10px solid white; margin-bottom:2vw;">
                 
-                <div class="tag" style="width: 28vw; height: 7vw;"><p class="tagText">Kartyazz</p></div>
+                <div class="tag" style="width: 28vw; height: 7vw;"><p class="tagText">Kártyázz</p></div>
             </div>
-            <div class="zoom-div" id="szerencses" style="height: 30%; width:100%; border: 10px solid white; ">
+            <div on:click={() => GoToPage("../gachaScreen")} class="zoom-div" id="szerencses" style="height: 30%; width:100%; border: 10px solid white; ">
                 
-                <div class="tag" style="filter:hue-rotate(-70deg); width: 28vw; height: 5vw;"><p class="tagText">Szerencses huzas</p></div>
+                <div class="tag" style="filter:hue-rotate(-70deg); width: 28vw; height: 5vw;"><p class="tagText">Szerencsés húzás</p></div>
             </div>
         </div>
         <div id="contentCol2" style="width: 28vw; height:38vw; float:right">
-            <div class="zoom-div" id="gyujtemeny" style="height: 50%; width:100%; border: 10px solid white; margin-bottom:1vw;">
+            <div on:click={() => GoToPage("../collectionScreen")} class="zoom-div" id="gyujtemeny" style="height: 50%; width:100%; border: 10px solid white; margin-bottom:1vw;">
                 
-                <div class="tag" style="filter:hue-rotate(50deg); width: 20vw; height: 7vw;"><p class="tagText">Gyujtemen</p></div>
+                <div class="tag" style="filter:hue-rotate(50deg); width: 20vw; height: 7vw;"><p class="tagText">Gyüjtemény</p></div>
             </div>
-            <div class="zoom-div" id="paklim" style="height: 50%; width:100%; border: 10px solid white; margin-top:2vw;">
+            <div on:click={() => GoToPage("../selectionScreen")} class="zoom-div" id="paklim" style="height: 50%; width:100%; border: 10px solid white; margin-top:2vw;">
                 
                 <div class="tag" style="filter:hue-rotate(-50deg); width: 20vw; height: 7vw;"><p class="tagText">Paklim</p></div>
             </div>
@@ -74,7 +79,7 @@
 <style>
     @font-face {
       font-family: 'sgGachaFont';
-      src: url('../../lib/assets/fonts/The Frontman.ttf');
+      src: url('../../lib/assets/fonts/MyFont-Regular.otf');
     }
     #main{
         margin-top: 4vw;
@@ -113,15 +118,15 @@
     #gyujtemeny{background-image: url('../../lib/assets/mainmenu/gyujtemeny.png');}
     #kartyazz{background-image: url('../../lib/assets/mainmenu/kartyazz.png');}
     .zoom-div:hover {
-        animation: zoomDiv 0.5s forwards ease-out;
+        animation: zoomDiv 5s forwards ease-out;
         cursor: pointer; /* Change the cursor to a pointer on hover */
     }
     @keyframes zoomDiv{
         0%{
-            background-size: 100%; /* Zoom in the background image by 10% on hover */
+            background-size: 100%;
         }
         100%{
-            background-size: 120%; /* Zoom in the background image by 10% on hover */
+            background-size: 115%; 
         }
     }
     .tag{
@@ -194,8 +199,7 @@
         width: 9vw;
         height: 3vw;
         display: inline-block;
-
-        
+ 
     }
     #gachaCurrency{
         background-image: url(../../lib/assets/global/headerMoney.png);

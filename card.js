@@ -104,7 +104,7 @@
     import MartiA from "./lib/assets/voicelines/Marti.aac"
     import MatosA from "./lib/assets/voicelines/Matos.aac"
     import MeszarosA from "./lib/assets/voicelines/Meszaros.aac"
-    import MoniA from "./lib/assets/voicelines/Moni.aac"
+    import MoniA from "./lib/assets/voicelines/Moni.wav"
     import MrsFarkasA from "./lib/assets/voicelines/Mrs_Farkas.aac"
     import NagyTA from "./lib/assets/voicelines/Nagy_T.aac"
     import VeronikaA from "./lib/assets/voicelines/Nemeth_Veronika.aac"
@@ -123,7 +123,7 @@
     import ZenoA from "./lib/assets/voicelines/Zeno.aac"
 
     export class diakCards {
-        constructor(name, description, health, attack, source, stars, cost, type, gachaSRC, cardSRCText) {
+        constructor(name, description, health, attack, source, stars, cost, type, gachaSRC, cardSRCText,audio) {
             this.name = name;
             this.description = description;
             this.health = health;
@@ -134,6 +134,7 @@
             this.type = type
             this.gachaSRC = gachaSRC;
             this.cardSRCText = cardSRCText;
+            this.audio = audio;
         }
     }
 

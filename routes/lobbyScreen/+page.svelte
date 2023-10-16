@@ -37,11 +37,17 @@
 
     }
     let matchLoaded = false
+
     function update() {
-    //logic
-    SenseOpponentPresence()
-    requestAnimationFrame(update)
+        SenseOpponentPresence()
+        requestAnimationFrame(update)
     }
+
+    import { onMount } from 'svelte';
+    onMount(() => {
+        update()
+    });
+
     function SenseOpponentPresence(){
         if(currentOpponentId != "" && !matchLoaded){
             console.log("went to page");
@@ -53,7 +59,7 @@
     function GoToPage(filePath) {
         window.location.href = filePath; // Navigate to the parent directory
     }
-    update()
+    
     
 
 

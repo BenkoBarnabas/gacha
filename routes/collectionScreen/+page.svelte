@@ -51,7 +51,6 @@
             CalcStarSize(i)
         }
 
-        console.log(voicelines);
         voicelines[name].play();
         
     }
