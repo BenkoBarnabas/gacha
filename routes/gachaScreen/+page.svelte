@@ -27,24 +27,69 @@
     //console.log(userData);
     //console.log(pullData);
 
+    let screenWidth
+    let screenHeight
+
+    //screenRatio = window.innerWidth/window.innerHeight;
+    //rollsCardSize = (100-(33.725554*screenRatio))/2
+
+        
+
+    //screenPixels = window.innerWidth
+    //bgWidth = screenPixels + 7498
+    let screenRatio
+    let rollsCardSize = (100-(33.725554*1.3))/2
+
+
+    let screenPixels 
+    let bgWidth 
+
     //getAccountData(userData.email)
     let localPullData
+    let localUserData = userData
     let pageLoaded = false
     //get the shit u need fomr the database 
     import { onMount } from 'svelte';
     onMount(() => {
       localPullData = JSON.parse(localStorage.getItem("pullData"))
+      localUserData = JSON.parse(localStorage.getItem("userData"))
       console.log("fasz3: logcaPulDa: ",localPullData);
+      console.log("fasz3: logcaUseDa: ",localUserData);
       if (localPullData) {
         //localPullData = JSON.parse(localStorage.getItem("userData"))
         getUserDataFromLocalStorage(localPullData, "pullData")
       } else {
         console.log("Username not found in local storage.");
       }
+      if (localUserData) {
+        //localPullData = JSON.parse(localStorage.getItem("userData"))
+        getUserDataFromLocalStorage(localUserData, "userData")
+        localUserData = localUserData
+      } else {
+        console.log("Username not found in local storage.");
+      }
+        screenRatio = window.innerWidth/window.innerHeight;
+        rollsCardSize = (100-(33.725554*screenRatio))/2
+        console.log("sRatio: "+screenRatio);
+
+      window.addEventListener('resize', ()=> {
+        screenRatio = window.innerWidth/window.innerHeight;
+        rollsCardSize = (100-(33.725554*screenRatio))/2
+        
+        });
+
+        
 
 
-    pageLoaded = true
-    pageLoaded = pageLoaded
+        screenPixels = screenWidth
+        bgWidth = screenPixels + 7498
+
+
+
+
+        pageLoaded = true
+        pageLoaded = pageLoaded
+
     });
     
 
@@ -84,18 +129,7 @@
     {id: 9, name: 'rollCard', src: rollCard}
     ];
 
-    var screenRatio = window.innerWidth/window.innerHeight;
-    var rollsCardSize = (100-(33.725554*screenRatio))/2
 
-    console.log("sRatio: "+screenRatio);
-    window.addEventListener('resize', ()=> {
-        screenRatio = window.innerWidth/window.innerHeight;
-        rollsCardSize = (100-(33.725554*screenRatio))/2
-        console.log("sRatio: "+screenRatio);
-    });
-
-    var screenPixels = window.innerWidth
-    var bgWidth = screenPixels + 7498
 
     function GoToPage(filePath) {
         window.location.href = filePath; // Navigate to the parent directory
@@ -143,17 +177,17 @@
 
 
     function CalculatePulls(num){ //loads the pull cards and already calculates their content
-        if(userData.tickets < num && userData.gachaCurrency < num*200){
+        if(localUserData.tickets < num && localUserData.gachaCurrency < num*200){
             window.alert("nincs elég pénzed haver")
         }
         else{
-            if (userData.tickets >= num){
-            userData.tickets -= num
-            sendData("tickets",userData.tickets,userData.id,"account")
+            if (localUserData.tickets >= num){
+            localUserData.tickets -= num
+            sendData("tickets",localUserData.tickets,localUserData.id,"account")
             }
             else {
-                userData.gachaCurrency -= num*200
-                sendData("gachaCurrency",userData.gachaCurrency,userData.id,"account")
+                localUserData.gachaCurrency -= num*200
+                sendData("gachaCurrency",localUserData.gachaCurrency,localUserData.id,"account")
             }
             isBannerUp = false
             isBannerUp = isBannerUp
@@ -242,12 +276,12 @@
             }
             //localPullData.history = localPullData.history.concat(lastPulls)
             
-            sendData("history",localPullData.history,userData.id,"rolls")
+            sendData("history",localPullData.history,localUserData.id,"rolls")
 
             //send back the pity
-            sendData("pity4S",localPullData.pity4S,userData.id,"rolls")
-            sendData("pity5S",localPullData.pity5S,userData.id,"rolls")
-            sendData("pityUR",localPullData.pityUR,userData.id,"rolls")
+            sendData("pity4S",localPullData.pity4S,localUserData.id,"rolls")
+            sendData("pity5S",localPullData.pity5S,localUserData.id,"rolls")
+            sendData("pityUR",localPullData.pityUR,localUserData.id,"rolls")
 
             
             }
@@ -341,10 +375,12 @@
 </script>
 {#if !pageLoaded}
 <div id="loadingScreen">
-  <img src={loadingScreen} alt="loading..." style="width: 15vw; margin: auto; display: block">
-  <h1 style="font-family: cursive; text-align: center;">LOADING...</h1>
+  <img src={loadingScreen} alt="loading..." style="width: 15vw; display: block; margin-top:20vw; margin-left:auto; margin-right:auto;">
+  <h1 style="font-family: cursive; display: block; text-align:center;">LOADING...</h1>
 </div>
 {/if}
+
+<div id="background"></div>
 
 <div style='--bgWidth:{bgWidth};'></div>
 
@@ -469,10 +505,12 @@
             <td style="width: 30vw; padding-right:1.5vw;text-align:center">
                 <div class="accountInfoHeader">
                     <td>
-                        <div class="accountInfoBubbles"><img src={gachaCurrencyIcon} alt="gCurrency" style="width:1vw; height:1vw;"> {userData.gachaCurrency}</div>
+                        <div class="money" id="gachaCurrency"><p style="margin-top:1.2vw;">{localUserData.gachaCurrency}</p></div>
+                        
                     </td>
                     <td>
-                        <div class="accountInfoBubbles"><img src={ticketIcon} alt="tickets" style="width:1vw; height:1vw;"> {userData.tickets}</div>
+                        <div class="money" id="tickets"><p style="margin-top:1.2vw;">{localUserData.tickets}</p></div>
+                        
                     </td>
                     <td>
                         <button class="closeButton" on:click={() => GoToPage("../")}></button>
@@ -554,6 +592,21 @@
 {/if}
 
 <style>
+
+
+    :global(body){
+        font-family: 'mainFont';
+        background: url("../../lib/assets/global/diszterem.png") no-repeat;
+        background-size: 100% 100%;
+        /*animation: backgroundLoop 120s linear infinite;*/
+        background-size: 100vw 100vh;
+        margin: 0;
+        padding: 0;
+       }
+    @font-face {
+      font-family: 'mainFont';
+      src: url('../../lib/assets/fonts/zh-cn.ttf');
+  }
 
     #loadingScreen {
     z-index: 9999;
@@ -1125,6 +1178,25 @@
         left:15vw;
         top: 27.5vw;
         scale: 1.1;
+    }
+    .money{
+        width: 9vw;
+        height: 3vw;
+        display: inline-block;
+
+        font-family: "impact";
+ 
+    }
+    #gachaCurrency{
+        background-image: url(../../lib/assets/global/headerMoney.png);
+        background-size: 100% 100%;
+
+    }
+    #tickets{
+        background-image: url(../../lib/assets/global/headerTicket.png);
+        background-size: 100% 100%;
+
+
     }
 
 

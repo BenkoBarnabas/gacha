@@ -33,7 +33,9 @@
     var starSizeTop = [1,1,0,0]
     var backgroundColorByCost = ["#2672ed","#8626ed","#ed7c26","linear-gradient(180deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235))"]
     var starsColorByCost = ["color: #2672ed;","color: #8626ed;","color: #ed7c26;","background-image: linear-gradient(90deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235));-webkit-background-clip: text;background-clip: text;color: transparent;"]
-
+    
+    
+    let voicelines = {}
     function handleClick(source,name,atk,hp,cost,rarity,desc) {
         curCardInView.source = source
         curCardInView.name = name
@@ -48,8 +50,11 @@
         for (let i = 0; i < curCardInView.rarity; i++){
             CalcStarSize(i)
         }
+
+        voicelines[name].play();
         
     }
+    
     
     function CalcStarSize(i){
         var starSize = 0
@@ -193,6 +198,13 @@
         </tr>
     </div>
 </div>
+
+{#each Cards.allCardsArr as card,i}
+<audio controls id="music" style="display: none;"  src={card.audio}   bind:this={voicelines[card.name]}>  </audio>
+{/each}
+
+
+
 
 {#if selectedCollection == 1}
     <div class = "cardcollection" id = "tanarcollection">
