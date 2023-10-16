@@ -51,7 +51,7 @@
 
     function selectDeck(n){
         selectedDeck = n
-        document.getElementById(`deck${n}`).classList.remove("")
+        document.getElementById(`deck${n}`).classList.remove("filtergrayscale")
     }
 
     var backgroundColorByCost = ["#2672ed","#8626ed","#ed7c26","linear-gradient(180deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235))"]
