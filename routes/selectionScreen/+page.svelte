@@ -3,7 +3,7 @@
     import cardV2Background from "../../lib/assets/global/cardV2BG.png"
     import {sendSocketValue, sendData, userData, deckData} from "../../client"
 
-    let userId = userData.id //ph obvs
+    let userId = userData.id
     let tanarcardnames = Cards.tanarCardsArr.map(item => item.name)
     let diakcardnames = Cards.diakCardsArr.map(item => item.name)
     let allcardnames = tanarcardnames.concat(diakcardnames)

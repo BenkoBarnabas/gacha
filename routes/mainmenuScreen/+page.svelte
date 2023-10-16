@@ -55,21 +55,21 @@
     </div>
     <div id="content">
         <div id="contentCol1" style="width: 38vw; height:38vw; float:left">
-            <div on:click={() => GoToPage("../lobbyScreen")} class="zoom-div" id="kartyazz" style="height: 70%; width:100%; border: 10px solid white; margin-bottom:2vw;">
+            <div on:click={() => GoToPage("../lobbyScreen")} class="zoom-div" id="kartyazz" style="height: 70%; width:100%; border: 10px solid white; margin-bottom:2vw;" on:keydown role="button" tabindex="">
                 
                 <div class="tag" style="width: 28vw; height: 7vw;"><p class="tagText">Kártyázz</p></div>
             </div>
-            <div on:click={() => GoToPage("../gachaScreen")} class="zoom-div" id="szerencses" style="height: 30%; width:100%; border: 10px solid white; ">
+            <div on:click={() => GoToPage("../gachaScreen")} class="zoom-div" id="szerencses" style="height: 30%; width:100%; border: 10px solid white; " on:keydown role="button" tabindex="">
                 
                 <div class="tag" style="filter:hue-rotate(-70deg); width: 28vw; height: 5vw;"><p class="tagText">Szerencsés húzás</p></div>
             </div>
         </div>
         <div id="contentCol2" style="width: 28vw; height:38vw; float:right">
-            <div on:click={() => GoToPage("../collectionScreen")} class="zoom-div" id="gyujtemeny" style="height: 50%; width:100%; border: 10px solid white; margin-bottom:1vw;">
+            <div on:click={() => GoToPage("../collectionScreen")} class="zoom-div" id="gyujtemeny" style="height: 50%; width:100%; border: 10px solid white; margin-bottom:1vw;" on:keydown role="button" tabindex="">
                 
                 <div class="tag" style="filter:hue-rotate(50deg); width: 20vw; height: 7vw;"><p class="tagText">Gyüjtemény</p></div>
             </div>
-            <div on:click={() => GoToPage("../selectionScreen")} class="zoom-div" id="paklim" style="height: 50%; width:100%; border: 10px solid white; margin-top:2vw;">
+            <div on:click={() => GoToPage("../selectionScreen")} class="zoom-div" id="paklim" style="height: 50%; width:100%; border: 10px solid white; margin-top:2vw;" on:keydown role="button" tabindex="">
                 
                 <div class="tag" style="filter:hue-rotate(-50deg); width: 20vw; height: 7vw;"><p class="tagText">Paklim</p></div>
             </div>
