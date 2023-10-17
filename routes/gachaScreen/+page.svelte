@@ -78,14 +78,8 @@
         
         });
 
-        
-
-
         screenPixels = screenWidth
         bgWidth = screenPixels + 7498
-
-
-
 
         pageLoaded = true
         pageLoaded = pageLoaded
