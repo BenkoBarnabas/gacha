@@ -43,7 +43,7 @@
     <div id="logo"><img src={logo} alt="SG gacha" style="width: 16vw;"></div>
     <table id="headerTable">
         <tr>
-            <td class="headerTd"><button id="homeButton">HOME</button></td>
+            <td class="headerTd"><button id="homeButton" on:click={() => GoToPage("../")}></button></td>
             <td class="headerTd"></td>
             <td class="headerTd">
                 <div class="money" id="gachaCurrency" style="margin-right: 2vw;"><p style="margin-top:1.2vw;">asddf</p></div>
@@ -218,10 +218,10 @@
         text-align: center;
     }
     #homeButton{
-        background: url(../../lib/assets/gacha/pullButton.png);
+        background: url(../../lib/assets/mainmenu/home.png);
         background-size: 100% 100%;
-        width: 8vw;
-        height: 5vw;
+        width: 12vw;
+        height: 4vw;
 
         float: left;
 
