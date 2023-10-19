@@ -1,5 +1,6 @@
 <script>
-    import logo from "../../lib/assets/global/logoTextv2.png"
+
+    import logo from "../../lib/assets/global/logoTextv3.png"
     import background from "../../lib/assets/global/background.mp4"
     import loadingScreen from "../../lib/assets/global/loadingScreen.gif"
 
@@ -28,8 +29,50 @@
         window.location = filePath; // Navigate to the parent directory
     }
 
+    let optionButtons = Array(4)
+    function OptionButtonClick(element){
+        console.log(element);
+        element.style.animation = "optionButtonAnim 0.5s 0.1s";
+        console.log("katt");
+
+        switch (optionButtons.indexOf(element)) {
+            case 0:
+                console.log("profile");
+                OpenProfile()
+                break;
+            case 1:
+                console.log("settings");
+                break;
+            
+            case 2:
+                console.log("account");
+                break;
+            case 3:
+                console.log("frineds");
+                break;
+        
+            default:
+                break;
+        }
+
+        
+    }
+    
+
+    let isProfile = false
+    let isAccount = false
+    let isSettings = false
+    let isFriends = false
+
+    function OpenProfile(){
+        isProfile = true
+        isProfile = isProfile
+    }
+    function CloseProfile(){isProfile = false; isProfile = isProfile}
+
 
 </script>
+
 {#if !pageLoaded}
 <div id="loadingScreen">
   <img src={loadingScreen} alt="loading..." style="width: 15vw; display: block; margin-top:20vw; margin-left:auto; margin-right:auto;">
@@ -39,11 +82,19 @@
 
 <div id="background"></div>
 
+{#if isProfile}
+    <div id="profileMenu">
+        <button on:click={CloseProfile}>x</button>
+    </div>
+{/if}
+
+
+
 <div id="header">
     <div id="logo"><img src={logo} alt="SG gacha" style="width: 16vw;"></div>
     <table id="headerTable">
         <tr>
-            <td class="headerTd"><button id="homeButton" on:click={() => GoToPage("../")}></button></td>
+            <td class="headerTd"><button id="homeButton" on:click={() => GoToPage("../")} ></button></td>
             <td class="headerTd"></td>
             <td class="headerTd">
                 <div class="money" id="gachaCurrency" style="margin-right: 2vw;"><p style="margin-top:1.2vw;">asddf</p></div>
@@ -53,23 +104,45 @@
     </table>
     
 </div>
+
+
+
+
 <div id="main">
-    <div id="settingsMenu">
-        <div id="settingsMenuCol" style="width: 14vw; height:36vw; border:2px solid black; margin-left:auto;margin-right:auto;margin-top:2vw;">
-            <div style="width:100%; height:5vw; border:2px solid black; margin-bottom:4vw; margin-top:1.5vw;">
-                Profil
-            </div>
-            <div style="width:100%; height:5vw; border:2px solid black; margin-bottom:4vw;">
-                Beallitasok
-            </div>
-            <div style="width:100%; height:5vw; border:2px solid black; margin-bottom:4vw;">
-                Fiok
-            </div>
-            <div style="width:100%; height:5vw; border:2px solid black;">
-                Baratok
-            </div>
-            
+    <div id="settingsMenu" style="width: 16vw; background:azure;">
+        <div id="settingMenuLine" style="background: violet; float:right; width:1vw; height:37vw; margin-top:1.7vw;">
         </div>
+
+                <div class="optionButtonCont" style="top:7%; filter:hue-rotate(90deg);">
+                    <button class="optionButtonShadow"></button>
+                    <button class="optionButton" bind:this={optionButtons[0]} on:click={() => OptionButtonClick(optionButtons[0])}>
+                        Profil
+                    </button>
+                </div>
+                
+                <div class="optionButtonCont" style="top:22%; filter:hue-rotate(180deg);">
+                    <button class="optionButtonShadow"></button>
+                    <button class="optionButton" bind:this={optionButtons[1]} on:click={() => OptionButtonClick(optionButtons[1])}>
+                        Beállítások
+                    </button>
+                </div>
+
+
+                <div class="optionButtonCont" style="top:65%; filter:hue-rotate(-90deg);">
+                    <button class="optionButtonShadow"></button>
+                    <button class="optionButton" bind:this={optionButtons[2]} on:click={() => OptionButtonClick(optionButtons[2])}>
+                        Fiók
+                    </button>
+                </div>
+                
+                <div class="optionButtonCont" style="top:80%;">
+                    <button class="optionButtonShadow"></button>
+                    <button class="optionButton" bind:this={optionButtons[3]} on:click={() => OptionButtonClick(optionButtons[3])}>
+                        Barátok
+                    </button>
+                </div>
+
+        
     </div>
     <div id="content">
         <div id="contentCol1" style="width: 38vw; height:38vw; float:left">
@@ -97,6 +170,8 @@
         </div>
     </div>
 </div>
+
+
 <style>
     #background {
         background: url("../../lib/assets/global/background.gif");
@@ -110,6 +185,13 @@
         background-repeat: no-repeat;
         background-position: center center;
         z-index: -3;
+
+        padding: 0;
+        margin: 0;
+    }
+    :global(html){
+        margin: 0;
+        padding: 0;
     }
     #loadingScreen {
     z-index: 9999;
@@ -136,13 +218,85 @@
 
         font-family: "sgGachaFont";
     }
+
+    #profileMenu{
+        background-color: #1c1a22c1;
+        width: 100vw;
+        height: 100vh;
+        position: absolute;
+        z-index: 10;
+        margin: 0;
+        left: 0;
+        top: 0;
+    }
+
+
     #settingsMenu{
         float: left;
-        background-color: blueviolet;
 
         width: 18vw;
         height: 40vw;
+
+        position: relative;
     }
+    .optionButtonCont{
+        position: absolute;
+    }
+    .optionButton{
+        width:13.5vw;
+        height:5vw;
+        
+        background: url(../../lib/assets/mainmenu/optionButton.png);
+        background-size: 100% 100%;
+
+        border: none;
+
+        margin-bottom:1vw;
+        font-family: "sgGachaFont";
+        font-size: 0.8vw;
+    }
+    .optionButtonShadow{
+        width:13.5vw;
+        height:5vw;
+        
+        background: url(../../lib/assets/mainmenu/optionButtonShadow.png);
+        background-size: 100% 100%;
+
+        border: none;
+        position: absolute;
+        z-index: -1;
+    }
+    .optionButton:hover{
+        cursor: pointer;
+        transform: scale(1.1);
+        margin-left: -0.6vw;
+        margin-top: -0.6vw;
+    }
+
+    @keyframes -global-optionButtonAnim {
+        0%{
+            margin-left: 0.6vw;
+            margin-top: 0vw;
+        }
+        49%{
+            margin-left: 0.6vw;
+            margin-top: 1vw;
+        }
+        50%{
+            margin-left: -0.6vw;
+            margin-top: -0.6vw;
+        }
+        90%{
+            margin-left: -0.6vw;
+            margin-top: -0.6vw;
+        }
+        100%{
+            margin-left: 0vw;
+            margin-top:0vw;
+        }
+    }
+
+
     #content{
         float: right;
 
@@ -155,6 +309,8 @@
 
         position: relative;
         box-shadow: 0.3vw 0.1vw 1vw #00000096;
+        border-bottom-right-radius: 2%;
+        border-top-left-radius: 2%;
     }
     #paklim{background-image: url('../../lib/assets/mainmenu/paklim.png');}
     #szerencses{background-image: url('../../lib/assets/mainmenu/szerencses.png');}

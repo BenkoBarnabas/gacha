@@ -1,5 +1,4 @@
 <script>
-    import background from "../../lib/assets/global/background4.mp4"
     let particleContainer
     import { onMount } from 'svelte';
     onMount(() => {
@@ -86,7 +85,6 @@ function moveParticle(particle,left,top,dirx,diry,i,op){
 uwu uwu
 
 
-<video autoplay muted loop id="video" src={background}></video>
 
 <style>
 
