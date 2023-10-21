@@ -43,7 +43,7 @@ let table =""
 let tableStructures = {
   rolls : "(id INTEGER PRIMARY KEY, history TEXT, pity4S INTEGER DEFAULT 0, pity5S INTEGER DEFAULT 0, pityUR INTEGER DEFAULT 0)",
   account : "(id INTEGER PRIMARY KEY, username TEXT, email TEXT, password TEXT, level INTEGER DEFAULT 1, xp INTEGER DEFAULT 1, gachaCurrency INTEGER DEFAULT 0, tickets INTEGER DEFAULT 0)",
-  deck : "(id  INTEGER PRIMARY KEY, deckarray1 TEXT, deckarray2 TEXT, deckarray3 TEXT, deckarray4 TEXT)"
+  deck : "(id  INTEGER PRIMARY KEY, deckarray0 TEXT, deckarray1 TEXT, deckarray2 TEXT, deckarray3 TEXT)"
 
 }
 
@@ -76,7 +76,8 @@ function getValueFromDB(columnName,id,tableName){
 function getAccountInfoFromDB(email){
   var data = {
     account: {},
-    rows: {}
+    rows: {},
+    deck: {}
   }
   db.get(`SELECT * FROM account WHERE email = (?)`,email,(err, row) => {
     console.log("row: ",row);
@@ -85,7 +86,11 @@ function getAccountInfoFromDB(email){
     db.get(`SELECT * FROM rolls WHERE id = (?)`,row.id,(err, rows) => {
       data["rolls"] = rows
       console.log("rows: ",rows);
-      io.emit("getAccountData", data)
+      db.get(`SELECT * FROM deck WHERE id = (?)`,row.id,(err, rows) => {
+        data["deck"] = rows
+        console.log("rows: ",rows);
+        io.emit("getAccountData", data)
+      });
     });
   });
 }
@@ -260,6 +265,7 @@ io.on('connection', (socket) => {
     getAccountInfoFromDB(data)
     console.log("ment a query");
   })
+
   socket.on("makeNewAccount", info => {
     makeNewAccount(info.email,info.password,info.username)
     console.log("új account: ",info)
@@ -381,6 +387,6 @@ app.post('/delRow', (req, res) => {
 });
 
 server.listen(3000, () => {
-  console.log("Server listening on http://10.7.147.201:3000");
-  //console.log("Server listening on http://localhost:3000");
+  //console.log("Server listening on http://10.7.147.201:3000");
+  console.log("Server listening on http://localhost:3000");
 });
