@@ -277,7 +277,7 @@
             sendData("pity5S",localPullData.pity5S,localUserData.id,"rolls")
             sendData("pityUR",localPullData.pityUR,localUserData.id,"rolls")
 
-            
+    
             }
     }
 

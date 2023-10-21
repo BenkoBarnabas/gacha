@@ -1,5 +1,5 @@
-let ip = "10.7.147.201";
-//let ip = "localhost";
+//let ip = "10.7.147.201";
+let ip = "localhost";
 
 
 export let userData = {
@@ -38,6 +38,10 @@ export function getUserDataFromLocalStorage(data, key){
     case "pullData":
       pullData = data
       console.log("hello john doe: ",pullData);
+      break;
+    case "deckData":
+      deckData = data
+      console.log("hello john doe: ",deckData);
       break;
     default:
       break;
@@ -114,10 +118,10 @@ export function getAccountData(email){
     console.log(data);
     userData = data["account"]
     pullData = data["rolls"]
+    deckData = data["deck"]
 
 
-    console.log("account data: ",userData);
-    console.log("rolls data: ",pullData);
+ 
     if (pullData.history == ""){
       pullData.history = []
     }
@@ -127,10 +131,20 @@ export function getAccountData(email){
       }
     }
     
+    for(let i = 0; i<4;i++){
+      if(deckData[`deckarray${i}`] == null){
+        deckData[`deckarray${i}`] = []
+      }
+    }
+    console.log("account data: ",userData);
+    console.log("rolls data: ",pullData);
+    console.log("deck data: ",deckData);
+    
     
 
     localStorage.setItem("userData", JSON.stringify(userData));
     localStorage.setItem("pullData", JSON.stringify(pullData));
+    localStorage.setItem("deckData", JSON.stringify(deckData));
     //localUserData = JSON.parse(localStorage.getItem("userData"))
     
   })

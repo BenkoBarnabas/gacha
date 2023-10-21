@@ -1,57 +1,87 @@
 <script>
     import * as Cards from "../../card"
     import cardV2Background from "../../lib/assets/global/cardV2BG.png"
-    import {sendSocketValue, sendData, userData, deckData} from "../../client"
+    import {sendSocketValue, sendData, userData, deckData, getUserDataFromLocalStorage} from "../../client"
 
-    let userId = userData.id
     let tanarcardnames = Cards.tanarCardsArr.map(item => item.name)
     let diakcardnames = Cards.diakCardsArr.map(item => item.name)
     let allcardnames = tanarcardnames.concat(diakcardnames)
 
-    let selectedDeck = 1
-    let selectedList = deckData[`deckarray${selectedDeck}`].split("")
+    let selectedDeck = 0
+    let selectedList = [[],[],[],[]]
+
+
+    let localUserData = userData
+    let localDeckData = deckData
+    import { onMount } from 'svelte';
+        onMount(() => {
+            localDeckData = JSON.parse(localStorage.getItem("deckData"))
+            localUserData = JSON.parse(localStorage.getItem("userData"))
+            console.log("fasz3: logcaPulDa: ",localDeckData);
+            console.log("fasz3: logcaUseDa: ",localUserData);
+            if (localDeckData) {
+                //localPullData = JSON.parse(localStorage.getItem("userData"))
+                getUserDataFromLocalStorage(localDeckData, "deckData")
+            } else {
+                console.log("Username not found in local storage.");
+            }
+            if (localUserData) {
+                //localPullData = JSON.parse(localStorage.getItem("userData"))
+                getUserDataFromLocalStorage(localUserData, "userData")
+                localUserData = localUserData
+            } else {
+                console.log("Username not found in local storage.");
+            }
+
+            for (let i = 0;i<4;i++){
+                selectedList[i] = localDeckData[`deckarray${i+1}`]
+                if( selectedList == ""){
+                selectedList[i] = []
+            }
+            }
+            console.log(selectedList);
+            selectedList = selectedList
+
+        });
+
+
+
 
     function selectByClick(card, i){
         if(!selectedList.includes(card.name)){
             selectedList.push(card.name)
             selectedList = selectedList
-            console.log(String(selectedList));
-            sendData(`deckarray${selectedDeck}`, String(selectedList), userId, "deck")
+            console.log(String(selectedList[selectedDeck]));
+            sendData(`deckarray${selectedDeck}`, String(selectedList[selectedDeck]), localUserData.id, "deck")
+            
+            localDeckData[`deckarray${selectedDeck}`] = selectedList[selectedDeck]
+            localStorage.setItem("deckData", JSON.stringify(localDeckData));
 
-            setTimeout(() => {
-                console.log(selectedList);
-                sendSocketValue(`deckarray${selectedDeck}`,userId,"deck",deckData)
-            }, 1000);
 
             allcardnames[i].classList.remove('filtergrayscale')
         }else{
             allcardnames[i].classList.add('filtergrayscale')
-            selectedList.splice(selectedList.indexOf(card.name), 1)
-            selectedList = selectedList
-            sendData(`deckarray${selectedDeck}`, String(selectedList), userId, "deck")
+            selectedList[selectedDeck].splice(selectedList[selectedDeck].indexOf(card.name), 1)
+            selectedList[selectedDeck] = String(selectedList[selectedDeck])
+            sendData(`deckarray${selectedDeck}`, String(selectedList), localUserData.id, "deck")
 
-            setTimeout(() => {
-                console.log(selectedList);
-                sendSocketValue(`deckarray${selectedDeck}`,userId,"deck",deckData)
-            }, 500);
+            localDeckData[`deckarray${selectedDeck}`] = selectedList[selectedDeck]
+            localStorage.setItem("deckData", JSON.stringify(localDeckData));
         }
     }
 
     function deleteCard(cardname, i){
-        selectedList.splice(selectedList.indexOf(cardname), 1)
+        selectedList[selectedDeck].splice(selectedList[selectedDeck].indexOf(cardname), 1)
         selectedList = selectedList
         allcardnames[i].classList.add("filtergrayscale")
-        sendData(`deckarray${selectedDeck}`, String(selectedList), userId, "deck")
+        sendData(`deckarray${selectedDeck}`, String(selectedList[selectedDeck]), localUserData.id, "deck")
 
-        setTimeout(() => {
-            console.log(selectedList);
-            sendSocketValue(`deckarray${selectedDeck}`,userId,"deck",deckData)
-        }, 500);
+        localDeckData[`deckarray${selectedDeck}`] = selectedList[selectedDeck]
+        localStorage.setItem("deckData", JSON.stringify(localDeckData));
     }
 
     function selectDeck(n){
         selectedDeck = n
-        document.getElementById(`deck${n}`).classList.remove("filtergrayscale")
     }
 
     var backgroundColorByCost = ["#2672ed","#8626ed","#ed7c26","linear-gradient(180deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235))"]
@@ -63,12 +93,12 @@
 <div style="display:flex; margin-inline:5vw; margin-block:4vh;">
 <div id="deckBox">
     <h1>Paklid</h1>
-    <button id="deck1" class = "deckchooser" on:click={selectDeck(1)}>[1]</button>
-    <button id="deck2" class = "deckchooser" on:click={selectDeck(2)}>[2]</button>
-    <button id="deck3" class = "deckchooser" on:click={selectDeck(3)}>[3]</button>
-    <button id="deck4" class = "deckchooser" on:click={selectDeck(4)}>[4]</button>
+    <button id="deck1" class = "deckchooser" on:click={()=> selectDeck(0)}>[1]</button>
+    <button id="deck2" class = "deckchooser" on:click={() =>selectDeck(1)}>[2]</button>
+    <button id="deck3" class = "deckchooser" on:click={()=>selectDeck(2)}>[3]</button>
+    <button id="deck4" class = "deckchooser" on:click={()=>selectDeck(3)}>[4]</button>
 
-    {#each selectedList as cardname, i}
+    {#each selectedList[selectedDeck] as cardname, i}
         <button style="display:block;" id={cardname} on:click={deleteCard(cardname, i)}>{cardname}</button>
     {/each}
 </div>

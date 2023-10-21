@@ -75,7 +75,7 @@
 
 {#if !pageLoaded}
 <div id="loadingScreen">
-  <img src={loadingScreen} alt="loading..." style="width: 15vw; display: block; margin-top:20vw; margin-left:auto; margin-right:auto;">
+  <img src={loadingScreen} alt="loading..." style="width: 15vw; display: block; margin-top:50vh; margin-left:auto; margin-right:auto;">
   <h1 style="font-family: cursive; display: block; text-align:center;">LOADING...</h1>
 </div>
 {/if}
@@ -83,11 +83,14 @@
 <div id="background"></div>
 
 {#if isProfile}
-    <div id="profileMenu">
-        <button on:click={CloseProfile}>x</button>
+    <div class="optionMenu">
+        <div class="optionCont">
+            <div class="optionNameTextCont"><div class="optionNameText">Profile</div></div>
+            <div class="optionContent"></div>
+        </div>
+        <button class="closeButton" on:click={CloseProfile}>x</button>
     </div>
 {/if}
-
 
 
 <div id="header">
@@ -98,7 +101,10 @@
             <td class="headerTd"></td>
             <td class="headerTd">
                 <div class="money" id="gachaCurrency" style="margin-right: 2vw;"><p style="margin-top:1.2vw;">asddf</p></div>
-                <div class="money" id="nameTag"><p style="margin-top:1.2vw;">{localUserData.username}</p></div>
+                <div class="money" id="nameTag" style="position: relative;">
+                    <div id="levelText">{localUserData.level}</div>
+                    <p style="margin-top:1.2vw;">{localUserData.username}</p>
+                </div>
             </td>
         </tr>
     </table>
@@ -106,12 +112,8 @@
 </div>
 
 
-
-
 <div id="main">
     <div id="settingsMenu" style="width: 16vw; background:azure;">
-        <div id="settingMenuLine" style="background: violet; float:right; width:1vw; height:37vw; margin-top:1.7vw;">
-        </div>
 
                 <div class="optionButtonCont" style="top:7%; filter:hue-rotate(90deg);">
                     <button class="optionButtonShadow"></button>
@@ -134,18 +136,21 @@
                         Fiók
                     </button>
                 </div>
-                
-                <div class="optionButtonCont" style="top:80%;">
+                <div class="optionButtonCont" style="top:80%; filter:hue-rotate(0deg);">
                     <button class="optionButtonShadow"></button>
                     <button class="optionButton" bind:this={optionButtons[3]} on:click={() => OptionButtonClick(optionButtons[3])}>
                         Barátok
                     </button>
                 </div>
 
+                
+                
+                
+
         
     </div>
     <div id="content">
-        <div id="contentCol1" style="width: 38vw; height:38vw; float:left">
+        <div id="contentCol1" style="width: 38vw; height:70vh; float:left">
             <div on:click={() => GoToPage("../lobbyScreen")} class="contentPicsDiv" id="kartyazz" style="height: 66%;margin-top:4%; width:100%; margin-bottom:2vw;" on:keydown role="button" tabindex="">
                 
                 <div class="tag" style="background-image: url({tag}); filter:hue-rotate(-10deg);"><p class="tagText" style="top: 68%; left: 17%;">Kártyázz</p></div>
@@ -157,7 +162,7 @@
                 
             </div>
         </div>
-        <div id="contentCol2" style="width: 28vw; height:38vw; float:right">
+        <div id="contentCol2" style="width: 28vw; height:70vh; float:right">
             <div on:click={() => GoToPage("../collectionScreen")} class="contentPicsDiv" id="gyujtemeny" style="height: 50%; width:90%; margin-bottom:1vw;" on:keydown role="button" tabindex="">
                 
                 <div class="tag" style="background-image: url({tag}); filter:hue-rotate(90deg);"><p class="tagText"  style="top: 64%; left: 17%;">Gyüjtemény</p></div>
@@ -174,7 +179,7 @@
 
 <style>
     #background {
-        background: url("../../lib/assets/global/background.gif");
+        background: url("../../lib/assets/global/diszterem.png");
         overflow: hidden;
         position: fixed;
         top: 0;
@@ -211,7 +216,7 @@
         margin-top: 4vw;
 
         width: 86vw;
-        height: 40vw;
+        height: 70vh;
 
         margin-left: auto;
         margin-right: auto;
@@ -219,24 +224,51 @@
         font-family: "sgGachaFont";
     }
 
-    #profileMenu{
-        background-color: #1c1a22c1;
+    .optionMenu{
+        background-color: #2c2c40af;
         width: 100vw;
         height: 100vh;
         position: absolute;
-        z-index: 10;
+        z-index: 2;
         margin: 0;
         left: 0;
         top: 0;
-        filter: blur(10px);
+        backdrop-filter: blur(0.5vw);
     }
+    .optionCont{
+        margin-left: auto;
+        margin-right: auto;
+
+        margin-top: 10vh;
+        background-image: linear-gradient(rgba(25, 25, 41, 0.877), rgba(93, 93, 189, 0.717));
+
+        width:80vw;
+        height: 80vh;
+    }
+    .optionNameTextCont{
+        background-color: violet;
+        width: 12%;
+        height: 100%;
+
+    }
+    .optionNameText{
+        transform: rotate(-90deg);
+        font-family: "sgGachaFont";
+        font-size: 10vh;
+        
+        position: absolute;
+        bottom: 40vh;
+        left: 1%;
+    }
+
+
 
 
     #settingsMenu{
         float: left;
 
         width: 18vw;
-        height: 40vw;
+        height: 70vh;
 
         position: relative;
     }
@@ -302,7 +334,8 @@
         float: right;
 
         width: 68vw;
-        height: 40vw;
+        height: 70vh;
+        background-color: violet;
     }
     .contentPicsDiv { 
         background-size: cover;
@@ -353,20 +386,19 @@
 
     #header{
         
-        background-color: rgba(137, 43, 226, 0.065);
+        background-color: rgba(137, 43, 226, 0.623);
         margin: auto;
 
         width: 90vw;
-        height: 8vw;
+        height: 12vh;
 
         font-family: "sgGachaFont";
     }
     #headerTable{
-        padding-top: 2vw;
-        background-color: rgba(0, 255, 255, 0.076);
+        background-color: rgba(0, 255, 255, 0.573);
 
         width: 90vw;
-        height: 6vw;
+        height: 12vh;
 
         font-family: 'sgGachaFont';
     }
@@ -399,7 +431,7 @@
     }
     .money{
         width: 9vw;
-        height: 3vw;
+        height: 3.5vw;
         display: inline-block;
  
     }
@@ -412,6 +444,43 @@
         background-image: url(../../lib/assets/global/headerProfile.png);
         background-size: 100% 100%;
 
+    }
+    @font-face {
+        font-family: 'ShadowLight';
+        src: url('../../lib/assets/fonts/ShadowsIntoLight-Regular.ttf');
+    }
+    #levelText{
+        font-size: 2vw;
+        font-weight: bold;
+        font: italic;
+        font-family: 'ShadowLight';
+        color: rgb(184, 11, 11);
+        text-shadow:
+                -0.01vw -0.01vw 0 rgb(184, 11, 11), /* Top-left shadow */
+                0.01vw -0.01vw 0 rgb(184, 11, 11), /* Top-right shadow */
+                -0.01vw 0.01vw 0 rgb(184, 11, 11), /* Bottom-left shadow */
+                0.01vw 0.01vw 0 rgb(184, 11, 11); /* Bottom-right shadow */
+
+        position: absolute;
+        top: 0%;
+        left: 2.5%;
+        text-align: center;
+
+        width: 2.5vw;
+        height: 2.5vw;
+
+        padding: 0;
+    }
+
+    .closeButton{
+        z-index: 3;
+        position: absolute;
+
+        left: 80%;
+        top: 3%;
+    }
+    .closeButton:hover{
+        cursor: pointer;
     }
     
 
