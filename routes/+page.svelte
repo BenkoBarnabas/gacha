@@ -23,7 +23,7 @@
 
 
 
-  let isAdminUp = false
+  let isAdminUp = true
   function ChangeAdmin(){isAdminUp = !isAdminUp; isAdminUp = isAdminUp}
 
   

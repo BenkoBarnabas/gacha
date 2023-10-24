@@ -369,7 +369,7 @@
 </script>
 {#if !pageLoaded}
 <div id="loadingScreen">
-  <img src={loadingScreen} alt="loading..." style="width: 15vw; display: block; margin-top:20vw; margin-left:auto; margin-right:auto;">
+  <img src={loadingScreen} alt="loading..." style="width: 15vw; display: block; margin-top:15%; margin-left:auto; margin-right:auto;">
   <h1 style="font-family: cursive; display: block; text-align:center;">LOADING...</h1>
 </div>
 {/if}
@@ -507,7 +507,7 @@
                         
                     </td>
                     <td>
-                        <button class="closeButton" on:click={() => GoToPage("../")}></button>
+                        <button class="closeButton" on:click={() => GoToPage("../mainmenuScreen")}></button>
                     </td>
                 </div>
             </td>
@@ -602,14 +602,14 @@
       src: url('../../lib/assets/fonts/zh-cn.ttf');
   }
 
-    #loadingScreen {
+  #loadingScreen {
     z-index: 9999;
     position: fixed;
     top: 0;
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: rgb(255, 255, 255);
+    background-color: rgb(228, 231, 242);
     }
 
     @font-face {

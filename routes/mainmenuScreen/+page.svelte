@@ -1,5 +1,4 @@
 <script>
-
     import logo from "../../lib/assets/global/logoTextv3.png"
     import background from "../../lib/assets/global/background.mp4"
     import loadingScreen from "../../lib/assets/global/loadingScreen.gif"
@@ -24,10 +23,11 @@
         pageLoaded = true
         pageLoaded = pageLoaded
     });
-
     function GoToPage(filePath) {
         window.location = filePath; // Navigate to the parent directory
     }
+
+
 
     let optionButtons = Array(4)
     function OptionButtonClick(element){
@@ -75,7 +75,7 @@
 
 {#if !pageLoaded}
 <div id="loadingScreen">
-  <img src={loadingScreen} alt="loading..." style="width: 15vw; display: block; margin-top:50vh; margin-left:auto; margin-right:auto;">
+  <img src={loadingScreen} alt="loading..." style="width: 15vw; display: block; margin-top:15%; margin-left:auto; margin-right:auto;">
   <h1 style="font-family: cursive; display: block; text-align:center;">LOADING...</h1>
 </div>
 {/if}
@@ -97,10 +97,10 @@
     <div id="logo"><img src={logo} alt="SG gacha" style="width: 16vw;"></div>
     <table id="headerTable">
         <tr>
-            <td class="headerTd"><button id="homeButton" on:click={() => GoToPage("../")} ></button></td>
+            <td class="headerTd"><button id="homeButton" on:click={() => GoToPage("../mainmenuScreen")} ></button></td>
             <td class="headerTd"></td>
             <td class="headerTd">
-                <div class="money" id="gachaCurrency" style="margin-right: 2vw;"><p style="margin-top:1.2vw;">asddf</p></div>
+                <div class="money" id="gachaCurrency" style="margin-right: 2vw;"><p style="margin-top:1.2vw;">{localUserData.gachaCurrency}</p></div>
                 <div class="money" id="nameTag" style="position: relative;">
                     <div id="levelText">{localUserData.level}</div>
                     <p style="margin-top:1.2vw;">{localUserData.username}</p>
@@ -108,9 +108,7 @@
             </td>
         </tr>
     </table>
-    
 </div>
-
 
 <div id="main">
     <div id="settingsMenu" style="width: 16vw; background:azure;">
@@ -142,11 +140,6 @@
                         Barátok
                     </button>
                 </div>
-
-                
-                
-                
-
         
     </div>
     <div id="content">
@@ -174,6 +167,7 @@
             </div>
         </div>
     </div>
+    <a href="../" style="font-family: Arial;font-weight:bold; color:black; font-size:1.5vw;">Admin</a>
 </div>
 
 
@@ -205,12 +199,16 @@
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: rgb(255, 255, 255);
+    background-color: rgb(228, 231, 242);
     }
 
     @font-face {
       font-family: 'sgGachaFont';
       src: url('../../lib/assets/fonts/MyFont-Regular.otf');
+    }
+    @font-face {
+      font-family: 'mainFont';
+      src: url('../../lib/assets/fonts/zh-cn.ttf');
     }
     #main{
         margin-top: 4vw;
@@ -439,6 +437,8 @@
         background-image: url(../../lib/assets/global/headerMoney.png);
         background-size: 100% 100%;
 
+        font-family: 'mainFont';
+        font-size: 1.7vw;
     }
     #nameTag{
         background-image: url(../../lib/assets/global/headerProfile.png);

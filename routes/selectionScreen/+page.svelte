@@ -1,11 +1,18 @@
 <script>
+    import loadingScreen from "../../lib/assets/global/loadingScreen.gif"
+
     import * as Cards from "../../card"
     import cardV2Background from "../../lib/assets/global/cardV2BG.png"
     import {sendSocketValue, sendData, userData, deckData, getUserDataFromLocalStorage} from "../../client"
+    let backgroundColorByCost = ["#2672ed","#8626ed","#ed7c26","linear-gradient(180deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235))"]
+    let starsColorByCost = ["color: #2672ed;","color: #8626ed;","color: #ed7c26;","background-image: linear-gradient(90deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235));-webkit-background-clip: text;background-clip: text;color: transparent;"]
 
-    let tanarcardnames = Cards.tanarCardsArr.map(item => item.name)
-    let diakcardnames = Cards.diakCardsArr.map(item => item.name)
-    let allcardnames = tanarcardnames.concat(diakcardnames)
+    let allcardnames = []
+
+    for(let i = 0; i < Cards.allCardsArr.length; i++){
+        allcardnames.push((Cards.allCardsArr[i]).name)
+    }
+    console.log(allcardnames);
 
     let selectedDeck = 0
     let selectedList = [[],[],[],[]]
@@ -13,6 +20,8 @@
 
     let localUserData = userData
     let localDeckData = deckData
+
+    let pageLoaded = false
     import { onMount } from 'svelte';
         onMount(() => {
             localDeckData = JSON.parse(localStorage.getItem("deckData"))
@@ -34,77 +43,140 @@
             }
 
             for (let i = 0;i<4;i++){
-                selectedList[i] = localDeckData[`deckarray${i+1}`]
-                if( selectedList == ""){
+                selectedList[i] = localDeckData[`deckarray${i}`]
+                if( selectedList[i] == ""){
                 selectedList[i] = []
             }
             }
             console.log(selectedList);
             selectedList = selectedList
 
+
+            pageLoaded = true
+            pageLoaded = pageLoaded
+
         });
 
 
-
+    let cardsClassName = Array(Cards.allCardsArr.length).fill("cardPreviewListCont filtergrayscale")
 
     function selectByClick(card, i){
-        if(!selectedList.includes(card.name)){
-            selectedList.push(card.name)
+        if(!selectedList[selectedDeck].includes(card.name)){
+            console.log(selectedList[selectedDeck]);
+            selectedList[selectedDeck].push(card.name)
             selectedList = selectedList
+            console.log(selectedList);
+
             console.log(String(selectedList[selectedDeck]));
             sendData(`deckarray${selectedDeck}`, String(selectedList[selectedDeck]), localUserData.id, "deck")
-            
+
             localDeckData[`deckarray${selectedDeck}`] = selectedList[selectedDeck]
             localStorage.setItem("deckData", JSON.stringify(localDeckData));
 
 
-            allcardnames[i].classList.remove('filtergrayscale')
+            cardsClassName[i] = "cardPreviewListCont"
         }else{
-            allcardnames[i].classList.add('filtergrayscale')
             selectedList[selectedDeck].splice(selectedList[selectedDeck].indexOf(card.name), 1)
-            selectedList[selectedDeck] = String(selectedList[selectedDeck])
-            sendData(`deckarray${selectedDeck}`, String(selectedList), localUserData.id, "deck")
+            console.log(selectedList);
+            //selectedList[selectedDeck] = String(selectedList[selectedDeck])
+            sendData(`deckarray${selectedDeck}`, String(selectedList[selectedDeck]), localUserData.id, "deck")
 
             localDeckData[`deckarray${selectedDeck}`] = selectedList[selectedDeck]
             localStorage.setItem("deckData", JSON.stringify(localDeckData));
+
+            cardsClassName[i] = "cardPreviewListCont filtergrayscale"
         }
+        selectedList = selectedList
     }
 
     function deleteCard(cardname, i){
         selectedList[selectedDeck].splice(selectedList[selectedDeck].indexOf(cardname), 1)
         selectedList = selectedList
-        allcardnames[i].classList.add("filtergrayscale")
         sendData(`deckarray${selectedDeck}`, String(selectedList[selectedDeck]), localUserData.id, "deck")
 
         localDeckData[`deckarray${selectedDeck}`] = selectedList[selectedDeck]
         localStorage.setItem("deckData", JSON.stringify(localDeckData));
+
+        cardsClassName[i] = "cardPreviewListCont filtergrayscale"
     }
 
+    let isSelectingDeck = true
+    function ChangeDeck(){
+        isSelectingDeck = true
+        isSelectingDeck = isSelectingDeck
+    }
     function selectDeck(n){
         selectedDeck = n
+
+        cardsClassName.fill("cardPreviewListCont filtergrayscale")
+
+        if(selectedList[selectedDeck] != []){
+            for (let i = 0; i<selectedList[selectedDeck].length;i++){
+            console.log(allcardnames);
+            console.log(selectedList[selectedDeck][i]);
+            var index = allcardnames.indexOf(selectedList[selectedDeck][i])
+            console.log(index);
+            cardsClassName[index] = "cardPreviewListCont"
+            }
+        }
+
+        console.log(cardsClassName);
+        selectedList = selectedList
+
+        isSelectingDeck = false
+        isSelectingDeck = isSelectingDeck
+
+        curDeckName = localDeckData[`deckname${selectedDeck}`]
+
+    }
+    
+    let curDeckName = ""
+
+    function SaveDeckName(name){
+        localDeckData[`deckname${selectedDeck}`] = name
+
+        sendData(`deckname${selectedDeck}`, name, localUserData.id, "deck")
+
+        localStorage.setItem("deckData", JSON.stringify(localDeckData));
     }
 
-    var backgroundColorByCost = ["#2672ed","#8626ed","#ed7c26","linear-gradient(180deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235))"]
-    var starsColorByCost = ["color: #2672ed;","color: #8626ed;","color: #ed7c26;","background-image: linear-gradient(90deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235));-webkit-background-clip: text;background-clip: text;color: transparent;"]
+
 </script>
+{#if !pageLoaded}
+<div id="loadingScreen">
+  <img src={loadingScreen} alt="loading..." style="width: 15vw; display: block; margin-top:15%; margin-left:auto; margin-right:auto;">
+  <h1 style="font-family: cursive; display: block; text-align:center;">LOADING...</h1>
+</div>
+{/if}
 
 <div id = "background"></div>
 
 <div style="display:flex; margin-inline:5vw; margin-block:4vh;">
 <div id="deckBox">
     <h1>Paklid</h1>
-    <button id="deck1" class = "deckchooser" on:click={()=> selectDeck(0)}>[1]</button>
-    <button id="deck2" class = "deckchooser" on:click={() =>selectDeck(1)}>[2]</button>
-    <button id="deck3" class = "deckchooser" on:click={()=>selectDeck(2)}>[3]</button>
-    <button id="deck4" class = "deckchooser" on:click={()=>selectDeck(3)}>[4]</button>
+    {#if isSelectingDeck}
+        <div id="deckChooserContainer" style="text-align:center">
+            <button class="deckChooser" on:click={()=>selectDeck(0)}><span class="deckNumbering">1</span>{localDeckData[`deckname${0}`]}</button>
+            <button class="deckChooser" on:click={()=>selectDeck(1)}><span class="deckNumbering">2</span>{localDeckData[`deckname${1}`]}</button><br><br>
+            <button class="deckChooser" on:click={()=>selectDeck(2)}><span class="deckNumbering">3</span>{localDeckData[`deckname${2}`]}</button>
+            <button class="deckChooser" on:click={()=>selectDeck(3)}><span class="deckNumbering">4</span>{localDeckData[`deckname${3}`]}</button>
+        </div>
+    {:else}
+        <input type="text" bind:value={curDeckName} placeholder="Nevezd el a paklid" style="width:80%;">
+        <button style="width: 15%;" on:click={() => SaveDeckName(curDeckName)}>Mentés</button>
+        <br><br><br><br>
+        
+        <button style="float: right;" on:click={()=> ChangeDeck()}>Change Deck</button>
 
-    {#each selectedList[selectedDeck] as cardname, i}
-        <button style="display:block;" id={cardname} on:click={deleteCard(cardname, i)}>{cardname}</button>
-    {/each}
+        {#each selectedList[selectedDeck] as cardname, i}
+            <button style="display:block;" id={cardname} on:click={() => deleteCard(cardname, i)}>{cardname}</button>
+        {/each}
+    {/if}
+
 </div>
 <div id = "cardcollection">
     {#each Cards.allCardsArr as card, i}
-        <div bind:this={allcardnames[i]} class="cardPreviewListCont filtergrayscale">
+        <div class={cardsClassName[i]}>
             <img style="width: 12.5vw; position:absolute" src={cardV2Background} alt="cardBg">
             <div class="rarityBGList" style="background: {backgroundColorByCost[(card.stars)-3]}; "></div>
             <img class="cardButton" src={card.source} alt="preview"/>
@@ -137,6 +209,15 @@
         font-family: 'ShadowLight';
         src: url('../../lib/assets/fonts/ShadowsIntoLight-Regular.ttf');
     }
+    #loadingScreen {
+    z-index: 9999;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgb(228, 231, 242);
+    }
 
     h1{
         text-align: center;
@@ -151,9 +232,25 @@
         border:2px solid goldenrod;
     }
 
-    .deckchooser{
-        width:22%;
+    .deckChooser{
+        width: 40%;
+        height: 11vw;
+
+        background: url(../../lib/assets/deck/deckThumbnail.png);
+        background-size: 100% 100%;
     }
+    .deckChooser:hover{
+        transform: scale(1.1);
+    }
+    .deckNumbering{
+        font-size: 3vw;
+        color: rgb(72, 72, 149);
+
+        font-family: "ShadowLight";
+        display: block;
+        margin-top: 50%;
+    }
+
 
     .cardPreviewListCont{
         position: relative;

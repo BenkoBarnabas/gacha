@@ -1,4 +1,7 @@
 <script>
+    import loadingScreen from "../../lib/assets/global/loadingScreen.gif"
+    import logo from "../../lib/assets/global/logoTextv3.png"
+
     import cardBackground from "../../lib/assets/global/cardV1BG.png"
     import cardForeground from "../../lib/assets/global/cardV1Top.png"
     import cardV2Background from "../../lib/assets/global/cardV2BG.png"
@@ -15,6 +18,29 @@
 
     import * as Cards from "../../card"
     //made a separate file just for all the cards, they can be used in every file with this import 
+
+    import {userData,getUserDataFromLocalStorage} from "../../client"
+
+    let localUserData = userData
+    let pageLoaded = false
+    import { onMount } from 'svelte';
+    onMount(() => {
+        localUserData = JSON.parse(localStorage.getItem("userData"))
+        if (localUserData) {
+            //localUserData = JSON.parse(localStorage.getItem("userData"))
+            getUserDataFromLocalStorage(localUserData, "userData")
+        } else {
+            console.log("Username not found in local storage.");
+        }
+
+        pageLoaded = true
+        pageLoaded = pageLoaded
+    });
+    function GoToPage(filePath) {
+        window.location = filePath; // Navigate to the parent directory
+    }
+
+
     
     let selectedCollection = 1
     let refTanarDeck = Array.from(Cards.tanarCardsArr)
@@ -54,7 +80,6 @@
         voicelines[name].play();
         
     }
-    
     
     function CalcStarSize(i){
         var starSize = 0
@@ -160,9 +185,34 @@
         console.log("kill me");
     }
 </script>
+{#if !pageLoaded}
+<div id="loadingScreen">
+  <img src={loadingScreen} alt="loading..." style="width: 15vw; display: block; margin-top:15%; margin-left:auto; margin-right:auto;">
+  <h1 style="font-family: cursive; display: block; text-align:center;">LOADING...</h1>
+</div>
+{/if}
 
 <div id = "background"></div>
-<h1 style="margin-top:2vh; font-size:2.5vw; text-align:center; color:white">Collection</h1>
+
+<div id="header">
+    <div id="logo"><h1 style="margin-top:2vh; font-size:2.5vw; text-align:center; color:white;">Collection</h1></div>
+    <table id="headerTable">
+        <tr>
+            <td class="headerTd"><button id="homeButton" on:click={() => GoToPage("../mainmenuScreen")} ></button></td>
+            <td class="headerTd"></td>
+            <td class="headerTd">
+                <div class="money" id="gachaCurrency" style="margin-right: 2vw;"><p style="margin-top:1.2vw;">{localUserData.gachaCurrency}</p></div>
+                <div class="money" id="nameTag" style="position: relative;">
+                    <div id="levelText">{localUserData.level}</div>
+                    <p style="margin-top:1.2vw;">{localUserData.username}</p>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+
+
 <div id="typeChoosers">
     <!-- buttons to choose the active banner -->
     <button style="background: URL({SNCover}), no-repeat; background-size:cover" class="bannerIcon" on:click={() => selectedCollection = 1}></button>
@@ -250,28 +300,34 @@
     </div>
 {/if}
 
-<div id="cardPreview">
-    <img class="cardTemplate" src={cardBackground} alt="cardBg">
-    <div id="rarityBG" style="background: {backgroundColorByCost[(curCardInView.rarity)-3]}; "></div>
-    <img id="curCardInView" src={curCardInView.source} alt="">
-    <img class="cardTemplate" src={cardForeground} alt="cardBg">
-    <div id="curCardDesc" class="noScrollers">{curCardInView.desc}</div>
-    <div class="curCardStats" style="left: 7.4vw;">{curCardInView.atk}</div>
-    <div class="curCardStats" style="left: 21.5vw;">{curCardInView.hp}</div>
-    <div class="curCardCost">{curCardInView.cost}</div>
-    <div class="curCardName">{curCardInView.name}</div>
-    
-    <div id="curCardRarity" style="{starsColorByCost[(curCardInView.rarity)-3]}; top: {starSizeTop[(curCardInView.rarity)-3]}vw;">
-        {#each Array(Number(curCardInView.rarity)) as card,index}
-            <span style="font-size: {starSizeArray[index]}vw;">★</span>
-        {/each}
+<div id="cardPreview" >
+    <div id="curCardQuote" class="noScrollers"><i>"{curCardInView.desc}"</i></div>
+    <div style="position:relative">
+        <img class="cardTemplate" src={cardBackground} alt="cardBg">
+        <div id="rarityBG" style="background: {backgroundColorByCost[(curCardInView.rarity)-3]}; "></div>
+        <img id="curCardInView" src={curCardInView.source} alt="">
+        <img class="cardTemplate" src={cardForeground} alt="cardBg">
+        <div id="curCardDesc" class="noScrollers">{curCardInView.desc}</div>
+        <div class="curCardStats" style="left: 7.4vw;">{curCardInView.atk}</div>
+        <div class="curCardStats" style="left: 21.5vw;">{curCardInView.hp}</div>
+        <div class="curCardCost">{curCardInView.cost}</div>
+        <div class="curCardName">{curCardInView.name}</div>
+        
+        <div id="curCardRarity" style="{starsColorByCost[(curCardInView.rarity)-3]}; top: {starSizeTop[(curCardInView.rarity)-3]}vw;">
+            {#each Array(Number(curCardInView.rarity)) as card,index}
+                <span style="font-size: {starSizeArray[index]}vw;">★</span>
+            {/each}
+        </div>
+
     </div>
 </div>
 
-<div class = "links">
-    <a href="/gachaScreen">sepd ur money here</a><br>
-    <a href="./">main menu here</a>
+<div style="margin-right: 14vw;">
+    <button style="float: right;" on:click={()=> GoToPage("../gachaScreen")}>=></button>
+    <div id="cardSrouceInfo" style="background-color: aqua; display:inline-block">Source: [Senior Bölcsesség]</div>
 </div>
+
+
 
 <style>
     @font-face {
@@ -281,6 +337,134 @@
     @font-face {
         font-family: 'ShadowLight';
         src: url('../../lib/assets/fonts/ShadowsIntoLight-Regular.ttf');
+    }
+    @font-face {
+      font-family: 'sgGachaFont';
+      src: url('../../lib/assets/fonts/MyFont-Regular.otf');
+    }
+    @font-face {
+      font-family: 'mainFont';
+      src: url('../../lib/assets/fonts/zh-cn.ttf');
+    }
+
+    #loadingScreen {
+    z-index: 9999;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgb(228, 231, 242);
+    }
+    #header{
+        
+        background-color: rgba(137, 43, 226, 0.623);
+        margin: auto;
+
+        width: 90vw;
+        height: 10vh;
+
+        font-family: "sgGachaFont";
+
+        margin-bottom: 2vh;
+    }
+    #headerTable{
+        background-color: rgba(0, 255, 255, 0.573);
+
+        width: 90vw;
+        height: 10vh;
+
+        font-family: 'sgGachaFont';
+    }
+    .headerTd{
+        width: 30vw;
+        text-align: center;
+    }
+    #homeButton{
+        background: url(../../lib/assets/mainmenu/home.png);
+        background-size: 100% 100%;
+        width: 12vw;
+        height: 4vw;
+
+        float: left;
+
+        border: none;
+        font-family: "sgGachaFont";
+
+        margin-left: 1vw;
+    }
+    #homeButton:hover{
+        transform: scale(1.1);
+    }
+    #logo{
+        width:1vw;
+        position: absolute;
+
+        left: 40vw;
+        top:0vh;
+    }
+    .money{
+        width: 9vw;
+        height: 3.5vw;
+        display: inline-block;
+ 
+    }
+    #gachaCurrency{
+        background-image: url(../../lib/assets/global/headerMoney.png);
+        background-size: 100% 100%;
+        font-family: 'mainFont';
+
+        font-size: 1.7vw;
+    }
+    #nameTag{
+        background-image: url(../../lib/assets/global/headerProfile.png);
+        background-size: 100% 100%;
+
+    }
+    @font-face {
+        font-family: 'ShadowLight';
+        src: url('../../lib/assets/fonts/ShadowsIntoLight-Regular.ttf');
+    }
+    #levelText{
+        font-size: 2vw;
+        font-weight: bold;
+        font: italic;
+        font-family: 'ShadowLight';
+        color: rgb(184, 11, 11);
+        text-shadow:
+                -0.01vw -0.01vw 0 rgb(184, 11, 11), /* Top-left shadow */
+                0.01vw -0.01vw 0 rgb(184, 11, 11), /* Top-right shadow */
+                -0.01vw 0.01vw 0 rgb(184, 11, 11), /* Bottom-left shadow */
+                0.01vw 0.01vw 0 rgb(184, 11, 11); /* Bottom-right shadow */
+
+        position: absolute;
+        top: 0%;
+        left: 2.5%;
+        text-align: center;
+
+        width: 2.5vw;
+        height: 2.5vw;
+
+        padding: 0;
+    }
+
+
+
+
+    #cardSrouceInfo{
+        font-size:1.5vw;
+        float: right;
+    }
+
+    .bannerIcon {   /*the selectors itself */
+        height: 4vw;
+        width: 6vw;
+        background-size: 100% 100%;
+        margin: 10px;
+    }
+    .bannerIcon:hover {
+        transform: scale(1.06);
+        cursor: pointer;
     }
 
     #filtersCont{
@@ -338,15 +522,14 @@
 
         font-family: "ShadowLight";
     }
-
     .hidden {
         display: none;
     }
 
-    /* Show the menu when hovering over .menu-container */
     #filterChooser:hover .menu {
         display: block;
     }
+
 
 
     #cardPreviewListCont{
@@ -362,8 +545,6 @@
         float: left;
         padding-top: 4vh;
     }
-
-
     .cardListFrame{
         width: 12.5vw;
         height: 15.8754vw;
@@ -443,6 +624,17 @@
         left: 3.7vw;
         top: 0.4vw;
     }
+    #curCardQuote{
+        background-color: rgba(192, 101, 134, 0.533);
+        height: 10%;
+        width: 90%;
+        text-align: center;
+        margin-left: 1vw;
+        margin-right: 1vw;
+        overflow: auto;
+    }
+
+
 
 
     #cardPreview{
