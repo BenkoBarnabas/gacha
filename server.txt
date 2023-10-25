@@ -43,7 +43,7 @@ let table =""
 let tableStructures = {
   rolls : "(id INTEGER PRIMARY KEY, history TEXT, pity4S INTEGER DEFAULT 0, pity5S INTEGER DEFAULT 0, pityUR INTEGER DEFAULT 0)",
   account : "(id INTEGER PRIMARY KEY, username TEXT, email TEXT, password TEXT, level INTEGER DEFAULT 1, xp INTEGER DEFAULT 1, gachaCurrency INTEGER DEFAULT 0, tickets INTEGER DEFAULT 0)",
-  deck : "(id  INTEGER PRIMARY KEY, deckarray0 TEXT, deckarray1 TEXT, deckarray2 TEXT, deckarray3 TEXT)"
+  deck : "(id  INTEGER PRIMARY KEY, deckarray0 TEXT, deckarray1 TEXT, deckarray2 TEXT, deckarray3 TEXT, deckname0 TEXT DEFAULT myDeck1, deckname1 TEXT DEFAULT myDeck2, deckname2 TEXT DEFAULT myDeck3, deckname3 TEXT DEFAULT myDeck4)"
 
 }
 
@@ -73,11 +73,12 @@ function getValueFromDB(columnName,id,tableName){
   });
 }
 // Socket.io connection event
-function getAccountInfoFromDB(email){
+function getAccountInfoFromDB(email,id){
   var data = {
     account: {},
     rows: {},
-    deck: {}
+    deck: {},
+    id: id
   }
   db.get(`SELECT * FROM account WHERE email = (?)`,email,(err, row) => {
     console.log("row: ",row);
@@ -262,7 +263,7 @@ io.on('connection', (socket) => {
 
   //ACCOUNT MAKING
   socket.on("getAccountData", data =>{
-    getAccountInfoFromDB(data)
+    getAccountInfoFromDB(data.email,data.id)
     console.log("ment a query");
   })
 

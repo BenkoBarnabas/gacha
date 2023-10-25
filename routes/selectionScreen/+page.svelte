@@ -109,7 +109,7 @@
         selectedDeck = n
 
         cardsClassName.fill("cardPreviewListCont filtergrayscale")
-
+        console.log(selectedList[selectedDeck]);
         if(selectedList[selectedDeck] != []){
             for (let i = 0; i<selectedList[selectedDeck].length;i++){
             console.log(allcardnames);
@@ -125,6 +125,7 @@
 
         isSelectingDeck = false
         isSelectingDeck = isSelectingDeck
+        cardsClassName = cardsClassName
 
         curDeckName = localDeckData[`deckname${selectedDeck}`]
 

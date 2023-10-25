@@ -49,12 +49,10 @@
   function ChangeAccountStatus(){isLogin = !isLogin; isLogin = isLogin}
 
   function Login(email, password){
-    var pre = userData
     getAccountData(email)
 
     isAuthenticationUp = false
     isAuthenticationUp = isAuthenticationUp
-    var pre = userData
   }
   function Signup(email,password,username){
     verifyEmail(email,username)

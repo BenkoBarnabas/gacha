@@ -113,40 +113,42 @@ export function ReloadLobby(){
 }
 
 export function getAccountData(email){
-  socket.emit("getAccountData", email)
+  data = {email: email, id:clientID}
+  socket.emit("getAccountData", data)
   socket.on("getAccountData", data =>{
-    console.log(data);
-    userData = data["account"]
-    pullData = data["rolls"]
-    deckData = data["deck"]
+    if(data.id == clientID){
+      console.log(data);
+      userData = data["account"]
+      pullData = data["rolls"]
+      deckData = data["deck"]
 
 
- 
-    if (pullData.history == ""){
-      pullData.history = []
-    }
-    else{
-      if (typeof pullData.history != "object"){
-        pullData.history= pullData.history.split(',');
+  
+      if (pullData.history == ""){
+        pullData.history = []
       }
-    }
-    
-    for(let i = 0; i<4;i++){
-      if(deckData[`deckarray${i}`] == null){
-        deckData[`deckarray${i}`] = []
+      else{
+        if (typeof pullData.history != "object"){
+          pullData.history= pullData.history.split(',');
+        }
       }
-    }
-    console.log("account data: ",userData);
-    console.log("rolls data: ",pullData);
-    console.log("deck data: ",deckData);
-    
-    
+      
+      for(let i = 0; i<4;i++){
+        if(deckData[`deckarray${i}`] == null){
+          deckData[`deckarray${i}`] = []
+        }
+      }
+      console.log("account data: ",userData);
+      console.log("rolls data: ",pullData);
+      console.log("deck data: ",deckData);
+      
+      
 
-    localStorage.setItem("userData", JSON.stringify(userData));
-    localStorage.setItem("pullData", JSON.stringify(pullData));
-    localStorage.setItem("deckData", JSON.stringify(deckData));
-    //localUserData = JSON.parse(localStorage.getItem("userData"))
-    
+      localStorage.setItem("userData", JSON.stringify(userData));
+      localStorage.setItem("pullData", JSON.stringify(pullData));
+      localStorage.setItem("deckData", JSON.stringify(deckData));
+      //localUserData = JSON.parse(localStorage.getItem("userData"))
+    }
   })
 }
 
