@@ -113,7 +113,10 @@ export function ReloadLobby(){
 }
 
 export function getAccountData(email){
-  data = {email: email, id:clientID}
+  var data = {
+    email: email,
+    id: clientID
+  }
   socket.emit("getAccountData", data)
   socket.on("getAccountData", data =>{
     if(data.id == clientID){
@@ -153,11 +156,14 @@ export function getAccountData(email){
 }
 
 export function makeNewAccount(email,password,username){
-  var info = {email: email, password: password, username: username}
+  var info = {email: email, password: password, username: username, id: clientID}
   socket.emit("makeNewAccount", info)
   socket.on("makeNewAccount", data =>{
-    userData = data
+    if(data.id == clientID){
+      userData = data
+      delete userData.id
     console.log("account data: ",userData);
+    }
   })
 }
 export function verifyEmail(email,username) { 

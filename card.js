@@ -122,6 +122,18 @@
     import ZalanA from "./lib/assets/voicelines/Zalan.aac"
     import ZenoA from "./lib/assets/voicelines/Zeno.aac"
 
+    //spell
+    import ebed from "./lib/assets/collection/spell/ebed.png"
+    import feleles from "./lib/assets/collection/spell/feleles.png"
+    import instantMerevedes from "./lib/assets/collection/spell/instantMerevedes.png"
+    import jegkrem from "./lib/assets/collection/spell/jegkrem.png"
+    import lyukasora from "./lib/assets/collection/spell/lyukasora.png"
+    import palacsintaFesz from "./lib/assets/collection/spell/palacsintsFesz.png"
+    import sportSzelet from "./lib/assets/collection/spell/sportSzelet.png"
+
+    import GachaPHSpell from "./lib/assets/collection/spell/GachaPHSpell.png"
+    
+
     export class diakCards {
         constructor(name, description, health, attack, source, stars, cost, type, gachaSRC, cardSRCText,audio) {
             this.name = name;
@@ -137,7 +149,6 @@
             this.audio = audio;
         }
     }
-
     export class tanarCards {
         constructor(name, description, health, attack, source, stars, cost, type, gachaSRC, cardSRCText,audio) {
             this.name = name;
@@ -153,6 +164,25 @@
             this.audio = audio;
         }
     }
+    export class spellCards{
+        constructor(name,description,source,stars,cost,type,gachaSRC) {
+            this.name = name;
+            this.description = description;
+            this.source = source;
+            this.stars = stars;
+            this.cost = cost;
+            this.type = type;
+            this.gachaSRC = gachaSRC;
+        }
+    }
+
+    export const ebedCard = new spellCards("ebéd","ez egy spell",ebed,5,4,"spell",GachaPHSpell)
+    export const felelesCard = new spellCards("felelés","ez egy spell",feleles,5,4,"spell",GachaPHSpell)
+    export const instantMerevedesCard = new spellCards("instant merevedés","ez egy spell",instantMerevedes,5,4,"spell",GachaPHSpell)
+    export const jegkremCard = new spellCards("ingyen jégkrém az udvaron","ez egy spell",jegkrem,5,4,"spell",GachaPHSpell)
+    export const lyukasoraCard = new spellCards("lyuksóra","ez egy spell",lyukasora,5,4,"spell",GachaPHSpell)
+    export const palacsintaFeszCard = new spellCards("palacsinta fesztivál","ez egy spell",palacsintaFesz,5,4,"spell",GachaPHSpell)
+    export const sportSzeletCard = new spellCards("sport szelet a futónapon","ez egy spell",sportSzelet,5,4,"spell",GachaPHSpell)
 
     //TANAROK
     export const BizsoCard = new tanarCards("Bizsó", "Kedvence egy jó python feladat. Ha szépen kéred, kienged a hátsó kijáraton. Szexi apuka.", 9, 5, Bizso, 4, 2, "character", BizsoGacha, "BizsoCard", BizsoA); 
@@ -163,7 +193,7 @@
     export const TabiCard = new tanarCards("Tábi", "Tesitanár és röplabdaedző. Epic gamer szabadidejében. Sose hagyja ki az alkalmat, hogy politizáljon.", 6, 7, Tabi, 3, 2, "character", TabiGacha, "TabiCard", TabiA);
     export const BencusCard = new tanarCards("Bencus", "Másodállásban professzionális diáktanya dolgozó.", 7, 4, Bencus, 4, 1, "character", BencusGacha, "BencusCard", BencusA);
     export const DobiCard = new tanarCards("Dobby", "Dob", 8, 7, Dobi, 6, 2, "character", DobiGacha, "DobiCard", DobbyA);
-    export const IvanEvaCard = new tanarCards("Iván Éva", "Average Edward Allen Poe fan, nem egy szakbarbár. Irigylésre méltó!", 11, 4, IvanEva, 3, 2, "character", IvanEvaGacha, "IvanEvaCard", IvanEvaA);
+    export const IvanEvaCard = new tanarCards("Iván Éva", "Average Edward Allen Poe fan, nem egy szakbarbár. Irigylésre méltó!", 5, 5, IvanEva, 3, 2, "character", IvanEvaGacha, "IvanEvaCard", IvanEvaA);
     export const KocsiAndiCard = new tanarCards("KocsiAndi", "Senki se tudja, hogy pontosan mit csinál. A sárga könyvvel kapcsolatban őt keresd!", 12, 9, KocsiAndi, 3, 4, "character", KocsiAndiGacha, "KocsiAndiCard", KocsiAndiA);
     export const KoPaszCard = new tanarCards("Kopaszka", "Gyakran látom a ligetben sétálni. Az edaq ott is a zsebében van.", 10, 6, KoPasz, 5, 3, "character", KoPaszGacha, "KoPaszCard", KopaszkaA);
     export const KutiCard = new tanarCards("Kúti", "Irodalom, nyelvtan, matematika, tesi szakos, síoktató, asztronauta és agysebész.", 12, 5, Kuti, 5, 3, "character", KutiGacha, "KutiCard", KutiA);
@@ -201,7 +231,9 @@
 
     export let tanarCardsArr = [BizsoCard, FarkasCard,MartiCard, MoniCard, NagyoraCard, RozgonyiCard, TabiCard,BencusCard,DobiCard,IvanEvaCard,TomiCard,KocsiAndiCard,KoPaszCard,KutiCard,MatosCard,MeszarosCard,JeffCard,FiloRekaCard,IzigCard,KinyoCard, LaciNeniCard, MsFarkasCard,NagyTCard,ParagiCard,RixerCard,SisakCard,SzaszakCard,TothKareszCard,VeronikaCard,WeiszCard,TritzCard]
     export let diakCardsArr = [ArhoCard, BarniCard, EszterCard, OliviaCard, ZalanCard, ZenoCard,AproNoCard,ReginaCard]
+    export let spellCardsArr = [ebedCard,felelesCard,instantMerevedesCard,jegkremCard,lyukasoraCard,palacsintaFeszCard,sportSzeletCard]
     export let allCardsArr = tanarCardsArr.concat(diakCardsArr)
+    allCardsArr = allCardsArr.concat(spellCardsArr)
 
     export let URTanars = []
     export let FiveStarTanars = []
@@ -213,6 +245,11 @@
     export let FourStarDiaks = []
     export let ThreeStarDiaks = []
 
+    export let URSpells = []
+    export let FiveStarSpells = []
+    export let FourStarSpells = []
+    export let ThreeStarSpells = []
+
 
     function CountStars(cardArr,type){ //im lazy
         for(let i = 0; i < cardArr.length; i++){
@@ -222,7 +259,10 @@
                 } 
                 else if(type == "diak"){
                     URDiaks.push(cardArr[i])
-                }   
+                }
+                else if(type == "spell"){
+                    URSpells.push(cardArr[i])
+                }     
             }
             if(cardArr[i].stars == 5){
                 if(type == "tanar"){
@@ -230,6 +270,9 @@
                 } 
                 else if(type == "diak"){
                     FiveStarDiaks.push(cardArr[i])
+                }
+                else if(type == "spell"){
+                    FiveStarSpells.push(cardArr[i])
                 }   
             }
             if(cardArr[i].stars == 4){
@@ -239,6 +282,9 @@
                 else if(type == "diak"){
                     FourStarDiaks.push(cardArr[i])
                 }
+                else if(type == "spell"){
+                    FourStarSpells.push(cardArr[i])
+                }
             }
             if(cardArr[i].stars == 3){
                 if(type == "tanar"){
@@ -247,9 +293,13 @@
                 else if(type == "diak"){
                     ThreeStarDiaks.push(cardArr[i])
                 } 
+                else if(type == "spell"){
+                    ThreeStarSpells.push(cardArr[i])
+                } 
             }
         }
     }
 
     CountStars(tanarCardsArr,"tanar")
     CountStars(diakCardsArr,"diak")
+    CountStars(spellCardsArr,"spell")

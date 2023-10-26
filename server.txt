@@ -183,7 +183,7 @@ function sendVerificationEmail(email,username){
     });
     //22 eamilt küldtem magamnak szóval most már csak lenézzük a kódot (kilogolja a console)
 }
-function makeNewAccount(email,password,username){
+function makeNewAccount(email,password,username,Cid){
   console.log("level 1");
   db.run(`INSERT INTO account DEFAULT VALUES`, function (err) {
     if (err) {
@@ -199,7 +199,8 @@ function makeNewAccount(email,password,username){
           console.log("level 3");
           db.get(`SELECT * FROM account WHERE id = (SELECT MAX(id) FROM account)`,(err, row) => {
             console.log("rows: ",row);
-            io.emit("makeNewAccount", row)
+            var data = {row:row,id:Cid}
+            io.emit("makeNewAccount", data)
           });
         }
       });
@@ -268,7 +269,7 @@ io.on('connection', (socket) => {
   })
 
   socket.on("makeNewAccount", info => {
-    makeNewAccount(info.email,info.password,info.username)
+    makeNewAccount(info.email,info.password,info.username,info.id)
     console.log("új account: ",info)
   })
 

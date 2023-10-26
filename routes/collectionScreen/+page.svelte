@@ -8,9 +8,6 @@
 
     import ph from "../../lib/assets/collection/tanar/Bizso.png"
 
-    import Filozofia from "../../lib/assets/collection/spell/filozofia.png"
-    import Gomboc from "../../lib/assets/collection/spell/gomboc.png"
-    import Tz from "../../lib/assets/collection/spell/tz.png"
 
     import SNCover from "../../lib/assets/gacha/SWCover.png" //cover for the buttons for switching banners
     import YCCover from "../../lib/assets/gacha/YCCover.png" //^^^
@@ -195,7 +192,7 @@
 <div id = "background"></div>
 
 <div id="header">
-    <div id="logo"><h1 style="margin-top:2vh; font-size:2.5vw; text-align:center; color:white;">Collection</h1></div>
+    <div id="logo"><h1 style="margin-top:2vh; font-size:2.5vw; text-align:center; color:white;">Decathlon</h1></div>
     <table id="headerTable">
         <tr>
             <td class="headerTd"><button id="homeButton" on:click={() => GoToPage("../mainmenuScreen")} ></button></td>
@@ -287,6 +284,26 @@
             <button class="cardListFrame" alt="cardBg" on:click={() => handleClick(card.source,card.name,card.attack,card.health,card.cost,card.stars,card.description)}></button>
             <div class="curCardStatsList" style="left: 2.68vw;">{card.attack}</div>
             <div class="curCardStatsList" style="left: 9.65vw;">{card.health}</div>
+            <div class="curCardCostList">{card.cost}</div>
+            <div class="curCardNameList">{card.name}</div>
+
+            <div class="curCardRarityList" style="{starsColorByCost[(card.stars)-3]}">
+                {#each Array(Number(card.stars)) as card}
+                    <span style="font-size: 1vw;">★</span>
+                {/each}
+            </div>
+        </div>
+        {/each}
+    </div>
+{:else}
+    <div class = "cardcollection" id = "spellcollection">
+        {#each Cards.spellCardsArr as card}
+        <div id="cardPreviewListCont">
+            <img style="width: 12.5vw; position:absolute" src={cardV2Background} alt="cardBg">
+            <div id="rarityBGList" style="background: {backgroundColorByCost[(card.stars)-3]}; "></div>
+            <img class = "cardButton" src={card.source} alt="preview"/>
+            <button class="cardListFrame" alt="cardBg" on:click={() => handleClick(card.source,card.name,card.cost,card.stars,card.description)}></button>
+
             <div class="curCardCostList">{card.cost}</div>
             <div class="curCardNameList">{card.name}</div>
 

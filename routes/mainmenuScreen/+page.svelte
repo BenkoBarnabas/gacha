@@ -199,7 +199,6 @@
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: rgb(228, 231, 242);
     }
 
     @font-face {
