@@ -132,6 +132,7 @@
     import sportSzelet from "./lib/assets/collection/spell/sportSzelet.png"
 
     import GachaPHSpell from "./lib/assets/collection/spell/GachaPHSpell.png"
+    import gachaPHAudio from "./lib/assets/voicelines/Weisz.aac"
     
 
     export class diakCards {
@@ -165,7 +166,7 @@
         }
     }
     export class spellCards{
-        constructor(name,description,source,stars,cost,type,gachaSRC) {
+        constructor(name,description,source,stars,cost,type,gachaSRC,cardSRCText,audio) {
             this.name = name;
             this.description = description;
             this.source = source;
@@ -173,16 +174,30 @@
             this.cost = cost;
             this.type = type;
             this.gachaSRC = gachaSRC;
+            this.cardSRCText = cardSRCText;
+            this.audio = audio;
         }
     }
 
-    export const ebedCard = new spellCards("ebéd","ez egy spell",ebed,5,4,"spell",GachaPHSpell)
-    export const felelesCard = new spellCards("felelés","ez egy spell",feleles,5,4,"spell",GachaPHSpell)
-    export const instantMerevedesCard = new spellCards("instant merevedés","ez egy spell",instantMerevedes,5,4,"spell",GachaPHSpell)
-    export const jegkremCard = new spellCards("ingyen jégkrém az udvaron","ez egy spell",jegkrem,5,4,"spell",GachaPHSpell)
-    export const lyukasoraCard = new spellCards("lyuksóra","ez egy spell",lyukasora,5,4,"spell",GachaPHSpell)
-    export const palacsintaFeszCard = new spellCards("palacsinta fesztivál","ez egy spell",palacsintaFesz,5,4,"spell",GachaPHSpell)
-    export const sportSzeletCard = new spellCards("sport szelet a futónapon","ez egy spell",sportSzelet,5,4,"spell",GachaPHSpell)
+    export const ebedCard = new spellCards("ebéd","ez egy spell",ebed,5,4,"spell",GachaPHSpell,"ebedCard",gachaPHAudio)
+    export const felelesCard = new spellCards("felelés","ez egy spell",feleles,5,4,"spell",GachaPHSpell,"felelesCard",gachaPHAudio)
+    export const instantMerevedesCard = new spellCards("instant merevedés","ez egy spell",instantMerevedes,5,4,"spell",GachaPHSpell,"instantMerevedesCard",gachaPHAudio)
+    export const jegkremCard = new spellCards("ingyen jégkrém az udvaron","ez egy spell",jegkrem,5,4,"spell",GachaPHSpell,"jegkremCard",gachaPHAudio)
+    export const lyukasoraCard = new spellCards("lyukasóra","ez egy spell",lyukasora,5,4,"spell",GachaPHSpell,"ebedCard",gachaPHAudio)
+    export const palacsintaFeszCard = new spellCards("palacsinta fesztivál","ez egy spell",palacsintaFesz,5,4,"spell",GachaPHSpell,"lyukasoraCard",gachaPHAudio)
+    export const sportSzeletCard = new spellCards("sport szelet a futónapon","ez egy spell",sportSzelet,5,4,"spell",GachaPHSpell,"sportSzeletCard",gachaPHAudio)
+    export const keszultemCard = new spellCards("készültem","ez egy spell",sportSzelet,5,4,"spell",GachaPHSpell,"sportSzeletCard",gachaPHAudio)
+    export const nemKeszultemCard = new spellCards("nem készültem","ez egy spell",sportSzelet,5,4,"spell",GachaPHSpell,"sportSzeletCard",gachaPHAudio)
+    export const ideAManaddalCard = new spellCards("Ide a manáddal!","ez egy spell",sportSzelet,5,4,"spell",GachaPHSpell,"sportSzeletCard",gachaPHAudio)
+    export const tuzgolyoCard = new spellCards("tűzgolyó","ez egy spell",sportSzelet,5,4,"spell",GachaPHSpell,"sportSzeletCard",gachaPHAudio)
+    export const tuzsarkanyLangjaCard = new spellCards("tűzsárkány lángja","ez egy spell",sportSzelet,5,4,"spell",GachaPHSpell,"sportSzeletCard",gachaPHAudio)
+    export const lanchegysegCard = new spellCards("lánchegység","ez egy spell",sportSzelet,5,4,"spell",GachaPHSpell,"sportSzeletCard",gachaPHAudio)
+    export const sagvarizmusEjszakajaCard = new spellCards("Ságvárizmus Éjszakája","ez egy spell",sportSzelet,5,4,"spell",GachaPHSpell,"sportSzeletCard",gachaPHAudio)
+    export const taktikaiTekergesCard = new spellCards("taktikai tekergés","ez egy spell",sportSzelet,5,4,"spell",GachaPHSpell,"sportSzeletCard",gachaPHAudio)
+    export const saraToborzasCard = new spellCards("SÁRA toborzás","ez egy spell",sportSzelet,5,4,"spell",GachaPHSpell,"sportSzeletCard",gachaPHAudio)
+    export const saraSzurkolotaborCard = new spellCards("SÁRA szurkolótábor","ez egy spell",sportSzelet,5,4,"spell",GachaPHSpell,"sportSzeletCard",gachaPHAudio)
+    export const falanxCard = new spellCards("falanx","ez egy spell",sportSzelet,5,4,"spell",GachaPHSpell,"sportSzeletCard",gachaPHAudio)
+    export const kiteresCard = new spellCards("kitérés","ez egy spell",sportSzelet,5,4,"spell",GachaPHSpell,"sportSzeletCard",gachaPHAudio)
 
     //TANAROK
     export const BizsoCard = new tanarCards("Bizsó", "Kedvence egy jó python feladat. Ha szépen kéred, kienged a hátsó kijáraton. Szexi apuka.", 9, 5, Bizso, 4, 2, "character", BizsoGacha, "BizsoCard", BizsoA); 

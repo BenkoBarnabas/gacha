@@ -77,6 +77,25 @@
         voicelines[name].play();
         
     }
+
+    function handleSpellClick(source,name,cost,rarity,desc) {
+        curCardInView.source = source
+        curCardInView.name = name
+        curCardInView.atk = atk
+        curCardInView.hp = hp
+        curCardInView.cost = cost
+        curCardInView.rarity = rarity
+        starSizeTop = starSizeTop
+        curCardInView.desc = desc
+
+        starSizeArray = []
+        for (let i = 0; i < curCardInView.rarity; i++){
+            CalcStarSize(i)
+        }
+
+        voicelines[name].play();
+        
+    }
     
     function CalcStarSize(i){
         var starSize = 0
