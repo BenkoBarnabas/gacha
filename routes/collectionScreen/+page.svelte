@@ -6,6 +6,9 @@
     import cardForeground from "../../lib/assets/global/cardV1Top.png"
     import cardV2Background from "../../lib/assets/global/cardV2BG.png"
 
+    import spellBackground from "../../lib/assets/global/spellV1Top.png"
+    import spellForeground from "../../lib/assets/global/spellV2Top.png"
+
     import ph from "../../lib/assets/collection/tanar/Bizso.png"
 
 
@@ -42,6 +45,7 @@
     let selectedCollection = 1
     let refTanarDeck = Array.from(Cards.tanarCardsArr)
     let curCardInView = {
+        type: "",
         source: "",
         name: "",
         atk: "",
@@ -49,7 +53,8 @@
         cost: "",
         rarity: "",
         desc: "",
-        color: ""
+        color: "",
+        quote: ""
     }
 
     var starSizeArray = [] //for some reason it didnt work with a normal return so i had to put them into an array ,im throwing up
@@ -59,7 +64,8 @@
     
     
     let voicelines = {}
-    function handleClick(source,name,atk,hp,cost,rarity,desc) {
+    function handleClick(source,name,atk,hp,cost,rarity,desc,quote) {
+        curCardInView.type = "character"
         curCardInView.source = source
         curCardInView.name = name
         curCardInView.atk = atk
@@ -68,6 +74,7 @@
         curCardInView.rarity = rarity
         starSizeTop = starSizeTop
         curCardInView.desc = desc
+        curCardInView.quote = quote
 
         starSizeArray = []
         for (let i = 0; i < curCardInView.rarity; i++){
@@ -78,15 +85,15 @@
         
     }
 
-    function handleSpellClick(source,name,cost,rarity,desc) {
+    function handleSpellClick(source,name,cost,rarity,desc,quote) {
+        curCardInView.type = "spell"
         curCardInView.source = source
         curCardInView.name = name
-        curCardInView.atk = atk
-        curCardInView.hp = hp
         curCardInView.cost = cost
         curCardInView.rarity = rarity
         starSizeTop = starSizeTop
         curCardInView.desc = desc
+        curCardInView.quote = quote
 
         starSizeArray = []
         for (let i = 0; i < curCardInView.rarity; i++){
@@ -321,7 +328,7 @@
             <img style="width: 12.5vw; position:absolute" src={cardV2Background} alt="cardBg">
             <div id="rarityBGList" style="background: {backgroundColorByCost[(card.stars)-3]}; "></div>
             <img class = "cardButton" src={card.source} alt="preview"/>
-            <button class="cardListFrame" alt="cardBg" on:click={() => handleClick(card.source,card.name,card.cost,card.stars,card.description)}></button>
+            <button class="cardListFrame" alt="cardBg" on:click={() => handleSpellClick(card.source,card.name,card.cost,card.stars,card.description,card.quote)}></button>
 
             <div class="curCardCostList">{card.cost}</div>
             <div class="curCardNameList">{card.name}</div>
@@ -336,8 +343,9 @@
     </div>
 {/if}
 
+{#if curCardInView.type == "character"}
 <div id="cardPreview" >
-    <div id="curCardQuote" class="noScrollers"><i>"{curCardInView.desc}"</i></div>
+    <div id="curCardQuote" class="noScrollers"><i>"{curCardInView.quote}"</i></div>
     <div style="position:relative">
         <img class="cardTemplate" src={cardBackground} alt="cardBg">
         <div id="rarityBG" style="background: {backgroundColorByCost[(curCardInView.rarity)-3]}; "></div>
@@ -354,9 +362,30 @@
                 <span style="font-size: {starSizeArray[index]}vw;">★</span>
             {/each}
         </div>
+    </div>
+</div>
+{:else if curCardInView.type == "spell"}
+<div id="cardPreview" >
+    <div id="curCardQuote" class="noScrollers"><i>"{curCardInView.quote}"</i></div>
+    <div style="position:relative">
+        <img class="cardTemplate" src={spellBackground} alt="cardBg">
+        <div id="rarityBG" style="background: {backgroundColorByCost[(curCardInView.rarity)-3]}; "></div>
+        <img id="curCardInView" src={curCardInView.source} alt="">
+        <img class="cardTemplate" src={spellForeground} alt="cardBg">
+        <div id="curCardDesc" class="noScrollers">{curCardInView.desc}</div>
+        <div class="curCardCost">{curCardInView.cost}</div>
+        <div class="curCardName">{curCardInView.name}</div>
+        
+        <div id="curCardRarity" style="{starsColorByCost[(curCardInView.rarity)-3]}; top: {starSizeTop[(curCardInView.rarity)-3]}vw;">
+            {#each Array(Number(curCardInView.rarity)) as card,index}
+                <span style="font-size: {starSizeArray[index]}vw;">★</span>
+            {/each}
+        </div>
 
     </div>
 </div>
+{/if}
+
 
 <div style="margin-right: 14vw;">
     <button style="float: right;" on:click={()=> GoToPage("../gachaScreen")}>=></button>
