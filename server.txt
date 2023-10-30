@@ -20,7 +20,7 @@ app.use(bodyParser.json());
 // connect to us client
 // connect to us client
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + 'C:/Users/Eszti/Svelte/src/client.js');
+  res.sendFile(__dirname + 'C:/Users/Család/svelte/src/routes/+page.svelte');
 });
 
 

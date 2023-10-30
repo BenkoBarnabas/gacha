@@ -213,7 +213,20 @@ export function verifyCode(email,code,password,username) {
 }
 
 
-
+export function setProfilePicture(formData){
+  console.log("formDAta: ",formData);
+  fetch(`http://${ip}:3000/upload-profile-picture`, {
+        method: 'POST',
+        body: {file: formData, id: userData.id}
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data); // Handle the response from the server
+      })
+      .catch(error => {
+        console.error(error);
+      });
+}
 
 
 

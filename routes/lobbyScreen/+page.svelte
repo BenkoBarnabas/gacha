@@ -1,10 +1,30 @@
 <script>
-	import { goto } from "$app/navigation";
-    import {lobby, LoadLobby, ReloadLobby, clientID,userData} from "../../client"
+    import {lobby, LoadLobby, ReloadLobby, clientID,userData, getUserDataFromLocalStorage} from "../../client"
     import {currentOpponentId, sendMatchRequest} from "../../matchHandler"
 
+
+    let localUserData = userData
+    let pageLoaded = false
+    let username
+    
+    import { onMount } from 'svelte';
+    onMount(() => {
+        localUserData = JSON.parse(localStorage.getItem("userData"))
+        if (localUserData) {
+            //localUserData = JSON.parse(localStorage.getItem("userData"))
+            getUserDataFromLocalStorage(localUserData, "userData")
+        } else {
+            console.log("Username not found in local storage.");
+        }
+        username = localUserData.username
+
+        pageLoaded = true
+        pageLoaded = pageLoaded
+    });
+
+
     let loginScreen = true
-    let username = userData.username
+    
     
     let usersInLobby= []
     function LoadCurrentLobby(){
@@ -43,7 +63,6 @@
         requestAnimationFrame(update)
     }
 
-    import { onMount } from 'svelte';
     onMount(() => {
         update()
     });
