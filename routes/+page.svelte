@@ -1,7 +1,7 @@
 <script >
 
 
-  import {sendData, getData, DeleteAll, AddEmptyRow, sendSocketValue,  DeleteRow, getAccountData,makeNewAccount, userData, verifyEmail, verifyCode, clientID, getUserDataFromLocalStorage} from "../client.js" //we import all the functions
+  import {sendData, getData, DeleteAll, AddEmptyRow, sendSocketValue,  DeleteRow, getAccountData,makeNewAccount, userData, verifyEmail, verifyCode, clientID, getUserDataFromLocalStorage, setProfilePicture} from "../client.js" //we import all the functions
 
   let dataToSend = ""
   let selectedColumn = "username"
@@ -19,6 +19,7 @@
       } else {
         console.log("Username not found in local storage.");
       }
+
     });
 
 
@@ -67,11 +68,6 @@
     verifyCode(email,code,password,username)
     console.log(code);
   }
-
-  
-
-
-
 
 </script>
 {#if isAuthenticationUp}
@@ -127,6 +123,12 @@ your email: {userData.email}<br>
   </main>
 {/if}
 
+
+<form id="uploadForm" enctype="multipart/form-data">
+  <input type="file" id="profilePicture" name="profilePicture" accept="image/*">
+  <button type="submit">Upload Profile Picture</button>
+</form>
+
 <div class = "links">
   <a href="/mainmenuScreen">actual game menu</a><br>
   <a href="/gachaScreen">itt fizess</a><br>
@@ -136,6 +138,8 @@ your email: {userData.email}<br>
   <a href="/test">testGround</a><br>
   <a href="/lobbyScreen" style="color: black; text-align:center;font-size:larger; ">JÁTTSZ JÁTTSZ JÁTTSZ!!! JÁTSZ TE ITT MOST</a>
 </div>
+
+
 
 
 <style>

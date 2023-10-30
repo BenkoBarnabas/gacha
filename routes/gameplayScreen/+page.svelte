@@ -1,5 +1,17 @@
 <script>
     import * as Cards from "../../card"
+    let enemyStartingHand = [Cards.BarniCard, Cards.FarkasCard, Cards.BizsoCard, Cards.BencusCard, Cards.ZenoCard]
+    let enemyGameParameters = { //ph
+        selectedDeck: Cards.allCardsArr,
+        username: Client.userData.username,
+        hp: 50,
+        currentHand: enemyStartingHand,
+        remaningDeck: Cards.allCardsArr.filter((element) => !array2.includes(element)) ,
+        mana: 2,
+        spellMana: 0,
+        ko: 8,
+        yourBoard: "",
+    }
 
     import cardBackground from "../../lib/assets/global/cardV1BG.png"
     import cardForeground from "../../lib/assets/global/cardV1Top.png"
@@ -38,8 +50,8 @@
         } 
     
     
-    let yourBoard = Array(12).fill("")
-    let yourBoardPhs = Array(12).fill("")
+    let yourBoard = Array(10).fill("")
+    let yourBoardPhs = Array(10).fill("")
 
     let isCardInYourHandInPlacingMode= false
 
@@ -168,6 +180,7 @@
 <div id="background"></div>
 
 <div id="gamePlayFiledCont">
+    <div id="enemyHand"></div>
     <div id="playField">
         <table class="gameFiledSides" id="yourSide">
             <tr class="tierOne">
@@ -314,8 +327,10 @@
         height: 100vh;
         position: fixed;
         z-index: -1;
-        background-image: url("../../lib/assets/gameplay/PHBG.jpg");
+        background-image: url("../../lib/assets/gameplay/GameUI.png");
         background-size: 100% 100%;
+        top: 0;
+        left: 0;
     }
 
     #gamePlayFiledCont{
