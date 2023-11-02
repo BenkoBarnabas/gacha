@@ -1,7 +1,7 @@
 <script >
 
 
-  import {sendData, getData, DeleteAll, AddEmptyRow, sendSocketValue,  DeleteRow, getAccountData,makeNewAccount, userData, verifyEmail, verifyCode, clientID, getUserDataFromLocalStorage, setProfilePicture} from "../client.js" //we import all the functions
+  import {sendData, getData, DeleteAll, AddEmptyRow, sendSocketValue,  DeleteRow, getAccountData,makeNewAccount, userData, verifyEmail, verifyCode, clientID, getUserDataFromLocalStorage, setProfilePicture, requestFullScreen} from "../client.js" //we import all the functions
 
   let dataToSend = ""
   let selectedColumn = "username"
@@ -19,6 +19,7 @@
       } else {
         console.log("Username not found in local storage.");
       }
+
 
     });
 

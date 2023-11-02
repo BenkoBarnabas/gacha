@@ -23,7 +23,7 @@
     import infoBox from "../../lib/assets/gacha/infoBox.png"
 
     //server functions, db control
-    import {sendData, getData, responsData, Cpity4S, Cpity5S, CpityUR, sendSocketValue,userData,pullData,getUserDataFromLocalStorage,getAccountData} from "../../client"
+    import {sendData, getData, responsData, Cpity4S, Cpity5S, CpityUR, sendSocketValue,userData,pullData,getUserDataFromLocalStorage,getAccountData, requestFullScreen} from "../../client"
     //console.log(userData);
     //console.log(pullData);
 
@@ -508,6 +508,7 @@
                     </td>
                     <td>
                         <button class="closeButton" on:click={() => GoToPage("../mainmenuScreen")}></button>
+                        <button style="z-index: 100; position:absolute" id="fullScreenButton" on:click={requestFullScreen}>[]</button>
                     </td>
                 </div>
             </td>

@@ -1,21 +1,26 @@
 <script>
+    import loadingScreen from "../../lib/assets/global/loadingScreen.gif"
+
     import * as Cards from "../../card"
-    let enemyStartingHand = [Cards.BarniCard, Cards.FarkasCard, Cards.BizsoCard, Cards.BencusCard, Cards.ZenoCard]
+    let enemyStartingHand = [Cards.BarniCard,Cards.BarniCard, Cards.FarkasCard, Cards.BizsoCard, Cards.BencusCard, Cards.ZenoCard]
     let enemyGameParameters = { //ph
         selectedDeck: Cards.allCardsArr,
-        username: Client.userData.username,
+        username: "barnix",
         hp: 50,
         currentHand: enemyStartingHand,
-        remaningDeck: Cards.allCardsArr.filter((element) => !array2.includes(element)) ,
+        remaningDeck: Cards.allCardsArr.filter((element) => !enemyStartingHand.includes(element)),
         mana: 2,
         spellMana: 0,
         ko: 8,
         yourBoard: "",
     }
 
+    import cardBack from "../../lib/assets/global/cardBack.png"
+
     import cardBackground from "../../lib/assets/global/cardV1BG.png"
     import cardForeground from "../../lib/assets/global/cardV1Top.png"
     import cardV2Background from "../../lib/assets/global/cardV2BG.png"
+
     var starSizeArray = [] //for some reason it didnt work with a normal return so i had to put them into an array ,im throwing up
     var starSizeTop = [0,0,0,0]
     var backgroundColorByCost = ["#2672ed","#8626ed","#ed7c26","linear-gradient(180deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235))"]
@@ -57,23 +62,27 @@
 
 
     import { onMount } from 'svelte';
-    let targetArea
+	import { requestFullScreen } from "../../client";
+    let targetArea = []
     let draggables;
     let dragged = undefined
 
-
+    let pageLoaded = false
     onMount(() => {
         targetArea = document.getElementsByClassName("target")
 
         for(draggables of document.getElementsByClassName("move")){
             draggables.addEventListener("dragstart", dragStart)
         }
-        for(let i = 0;i<(yourBoard.length)+1;i++){
+        for(let i = 0;i<(yourBoard.length);i++){
             targetArea[i].addEventListener("drop", drop)
             targetArea[i].addEventListener("dragover", dragOver)
             targetArea[i].addEventListener("dragleave", dragLeave)
         }
-        
+
+        pageLoaded = true
+        pageLoaded = pageLoaded
+
     });
 
     function drop(event) {
@@ -176,135 +185,165 @@
     }
 
 </script>
+{#if !pageLoaded}
+<div id="loadingScreen">
+  <img src={loadingScreen} alt="loading..." style="width: 15vw; display: block; margin-top:15%; margin-left:auto; margin-right:auto;">
+  <h1 style="font-family: cursive; display: block; text-align:center;">LOADING...</h1>
+</div>
+{/if}
 
 <div id="background"></div>
 
 <div id="gamePlayFiledCont">
-    <div id="enemyHand"></div>
-    <div id="playField">
-        <table class="gameFiledSides" id="yourSide">
-            <tr class="tierOne">
-                {#each Array((yourBoard.length)/2) as cell,i}
-                    <td class="target boardsCells" id="td{i}">
-                    {#if yourBoardPhs[i] != ""}
-                    <div on:click={() => PlaceByClick(yourBoardPhs[i],i)} id="cardPreviewListCont" class:isPlacingModePh={isCardInYourHandInPlacingMode} style="filter: grayscale(0.5) contrast(50%);opacity: 0.7;" on:keydown role="button" tabindex="">
-                        <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute" src={cardV2Background} alt="cardBg">
-                        <div id="rarityBGList" style="background: {backgroundColorByCost[( yourBoardPhs[i].stars)-3]}; "></div>
-                        <img draggable="false" class = "cardButton" src={ yourBoardPhs[i].source} alt="preview"/>
-                        <button class="cardListFrame" alt="cardBg"></button>
-                        <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*2.68);">{ yourBoardPhs[i].attack}</div>
-                        <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*9.65);">{ yourBoardPhs[i].health}</div>
-                        <div class="curCardCostList">{ yourBoardPhs[i].cost}</div>
-                        <div class="curCardNameList">{ yourBoardPhs[i].name}</div>
-            
-                        <div class="curCardRarityList" style="{starsColorByCost[( yourBoardPhs[i].stars)-3]}">
-                            {#each Array(Number( yourBoardPhs[i].stars)) as card,index}
-                                <span style="font-size: calc(var(--cardOnBoardScale)*1vw*1);">★</span>
-                            {/each}
+    <div id="board">
+        <div id="enemyHand" class="handCont">
+            {#each enemyGameParameters.currentHand as card,i}
+                <div id="enemyHandCardCont" style="--enemyCardNum: {enemyGameParameters.currentHand.length};transform: rotate({-22.5+(45/enemyGameParameters.currentHand.length)*(i+1)}deg);top:{(enemyGameParameters.currentHand.length-(i))/3}vw;">
+                    <img class="cardTemplate" src={cardBack} alt="enemy Card">
+                </div>
+            {/each}
+        </div>
+        <div id="playField">
+            <table class="gameFiledSides" id="enemySide">
+                <tr class="tierTwo">
+                    <td>2</td>
+                    <td>2</td>
+                    <td>2</td>
+                    <td>2</td>
+                    <td>2</td>
+                </tr>
+                <tr class="tierOne">
+                    <td>1</td>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>1</td>
+                </tr>
+            </table>
+            <div class="gameFiledSides" id="yourSide">
+                <tr class="tierOne boardRows">
+                    {#each Array((yourBoard.length)/2) as cell,i}
+                        <td class="target boardsCells" id="td{i}">
+                        {#if yourBoardPhs[i] != ""}
+                        <div on:click={() => PlaceByClick(yourBoardPhs[i],i)} id="cardPreviewListCont" class:isPlacingModePh={isCardInYourHandInPlacingMode} style="filter: grayscale(0.5) contrast(50%);opacity: 0.7;" on:keydown role="button" tabindex="">
+                            <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute" src={cardV2Background} alt="cardBg">
+                            <div id="rarityBGList" style="background: {backgroundColorByCost[( yourBoardPhs[i].stars)-3]}; "></div>
+                            <img draggable="false" class = "cardButton" src={ yourBoardPhs[i].source} alt="preview"/>
+                            <button class="cardListFrame" alt="cardBg"></button>
+                            <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*2.68);">{ yourBoardPhs[i].attack}</div>
+                            <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*9.65);">{ yourBoardPhs[i].health}</div>
+                            <div class="curCardCostList">{ yourBoardPhs[i].cost}</div>
+                            <div class="curCardNameList">{ yourBoardPhs[i].name}</div>
+                
+                            <div class="curCardRarityList" style="{starsColorByCost[( yourBoardPhs[i].stars)-3]}">
+                                {#each Array(Number( yourBoardPhs[i].stars)) as card,index}
+                                    <span style="font-size: calc(var(--cardOnBoardScale)*1vw*1);">★</span>
+                                {/each}
+                            </div>
                         </div>
-                    </div>
-                    {:else if yourBoard[i] != ""}
-                    <div id="cardPreviewListCont">
-                        <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute" src={cardV2Background} alt="cardBg">
-                        <div id="rarityBGList" style="background: {backgroundColorByCost[(yourBoard[i].stars)-3]}; "></div>
-                        <img draggable="false" class = "cardButton" src={yourBoard[i].source} alt="preview"/>
-                        <button class="cardListFrame" alt="cardBg"></button>
-                        <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*2.68);">{yourBoard[i].attack}</div>
-                        <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*9.65);">{yourBoard[i].health}</div>
-                        <div class="curCardCostList">{yourBoard[i].cost}</div>
-                        <div class="curCardNameList">{yourBoard[i].name}</div>
-            
-                        <div class="curCardRarityList" style="{starsColorByCost[(yourBoard[i].stars)-3]}">
-                            {#each Array(Number(yourBoard[i].stars)) as card,index}
-                                <span style="font-size: calc(var(--cardOnBoardScale)*1vw*1);">★</span>
-                            {/each}
+                        {:else if yourBoard[i] != ""}
+                        <div id="cardPreviewListCont">
+                            <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute" src={cardV2Background} alt="cardBg">
+                            <div id="rarityBGList" style="background: {backgroundColorByCost[(yourBoard[i].stars)-3]}; "></div>
+                            <img draggable="false" class = "cardButton" src={yourBoard[i].source} alt="preview"/>
+                            <button class="cardListFrame" alt="cardBg"></button>
+                            <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*2.68);">{yourBoard[i].attack}</div>
+                            <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*9.65);">{yourBoard[i].health}</div>
+                            <div class="curCardCostList">{yourBoard[i].cost}</div>
+                            <div class="curCardNameList">{yourBoard[i].name}</div>
+                
+                            <div class="curCardRarityList" style="{starsColorByCost[(yourBoard[i].stars)-3]}">
+                                {#each Array(Number(yourBoard[i].stars)) as card,index}
+                                    <span style="font-size: calc(var(--cardOnBoardScale)*1vw*1);">★</span>
+                                {/each}
+                            </div>
                         </div>
-                    </div>
-                    {/if}
-                </td>
-                {/each}
-            </tr>
-            <tr class="tierTwo">
-                {#each Array((yourBoard.length)/2) as cell,i}
-                    <td class="target boardsCells" id="td{i+(yourBoard.length)/2}">
-                    {#if yourBoardPhs[i+(yourBoardPhs.length)/2] != ""}
-                    <div on:click={() => PlaceByClick(yourBoardPhs[i+(yourBoard.length)/2],i+(yourBoard.length)/2)} id="cardPreviewListCont" class:isPlacingModePh={isCardInYourHandInPlacingMode} style="filter: grayscale(0.5) contrast(50%);opacity: 0.7;" on:keydown role="button" tabindex="">
-                        <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute" src={cardV2Background} alt="cardBg">
-                        <div id="rarityBGList" style="background: {backgroundColorByCost[yourBoardPhs[i+(yourBoardPhs.length)/2]]}; "></div>
-                        <img draggable="false" class = "cardButton" src={yourBoardPhs[i+(yourBoardPhs.length)/2].source} alt="preview"/>
-                        <button class="cardListFrame" alt="cardBg"></button>
-                        <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*2.68);">{yourBoardPhs[i+(yourBoardPhs.length)/2].attack}</div>
-                        <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*9.65);">{yourBoardPhs[i+(yourBoardPhs.length)/2].health}</div>
-                        <div class="curCardCostList">{yourBoardPhs[i+(yourBoardPhs.length)/2].cost}</div>
-                        <div class="curCardNameList">{yourBoardPhs[i+(yourBoardPhs.length)/2].name}</div>
-            
-                        <div class="curCardRarityList" style="{starsColorByCost[(yourBoardPhs[i+(yourBoardPhs.length)/2].stars)-3]}">
-                            {#each Array(Number(yourBoardPhs[i+(yourBoardPhs.length)/2].stars)) as card,index}
-                                <span style="font-size: calc(var(--cardOnBoardScale)*1vw*1);">★</span>
-                            {/each}
+                        {/if}
+                    </td>
+                    {/each}
+                </tr>
+                <tr class="tierTwo boardRows">
+                    {#each Array((yourBoard.length)/2) as cell,i}
+                        <td class="yourBoardTierTwo target boardsCells" id="td{i+(yourBoard.length)/2}">
+                        {#if yourBoardPhs[i+(yourBoardPhs.length)/2] != ""}
+                        <div on:click={() => PlaceByClick(yourBoardPhs[i+(yourBoard.length)/2],i+(yourBoard.length)/2)} id="cardPreviewListCont" class:isPlacingModePh={isCardInYourHandInPlacingMode} style="filter: grayscale(0.5) contrast(50%);opacity: 0.7;" on:keydown role="button" tabindex="">
+                            <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute" src={cardV2Background} alt="cardBg">
+                            <div id="rarityBGList" style="background: {backgroundColorByCost[yourBoardPhs[i+(yourBoardPhs.length)/2]]}; "></div>
+                            <img draggable="false" class = "cardButton" src={yourBoardPhs[i+(yourBoardPhs.length)/2].source} alt="preview"/>
+                            <button class="cardListFrame" alt="cardBg"></button>
+                            <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*2.68);">{yourBoardPhs[i+(yourBoardPhs.length)/2].attack}</div>
+                            <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*9.65);">{yourBoardPhs[i+(yourBoardPhs.length)/2].health}</div>
+                            <div class="curCardCostList">{yourBoardPhs[i+(yourBoardPhs.length)/2].cost}</div>
+                            <div class="curCardNameList">{yourBoardPhs[i+(yourBoardPhs.length)/2].name}</div>
+                
+                            <div class="curCardRarityList" style="{starsColorByCost[(yourBoardPhs[i+(yourBoardPhs.length)/2].stars)-3]}">
+                                {#each Array(Number(yourBoardPhs[i+(yourBoardPhs.length)/2].stars)) as card,index}
+                                    <span style="font-size: calc(var(--cardOnBoardScale)*1vw*1);">★</span>
+                                {/each}
+                            </div>
                         </div>
-                    </div>
-                    {:else if yourBoard[i+(yourBoard.length)/2] != ""}
-                    <div id="cardPreviewListCont">
-                        <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute" src={cardV2Background} alt="cardBg">
-                        <div id="rarityBGList" style="background: {backgroundColorByCost[(yourBoard[i+(yourBoard.length)/2].stars)-3]}; "></div>
-                        <img draggable="false" class = "cardButton" src={yourBoard[i+(yourBoard.length)/2].source} alt="preview"/>
-                        <button class="cardListFrame" alt="cardBg"></button>
-                        <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*2.68);">{yourBoard[i+(yourBoard.length)/2].attack}</div>
-                        <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*9.65);">{yourBoard[i+(yourBoard.length)/2].health}</div>
-                        <div class="curCardCostList">{yourBoard[i+(yourBoard.length)/2].cost}</div>
-                        <div class="curCardNameList">{yourBoard[i+(yourBoard.length)/2].name}</div>
-            
-                        <div class="curCardRarityList" style="{starsColorByCost[(yourBoard[i+(yourBoard.length)/2].stars)-3]}">
-                            {#each Array(Number(yourBoard[i+(yourBoard.length)/2].stars)) as card,index}
-                                <span style="font-size: calc(var(--cardOnBoardScale)*1vw*1);">★</span>
-                            {/each}
+                        {:else if yourBoard[i+(yourBoard.length)/2] != ""}
+                        <div id="cardPreviewListCont">
+                            <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute" src={cardV2Background} alt="cardBg">
+                            <div id="rarityBGList" style="background: {backgroundColorByCost[(yourBoard[i+(yourBoard.length)/2].stars)-3]}; "></div>
+                            <img draggable="false" class = "cardButton" src={yourBoard[i+(yourBoard.length)/2].source} alt="preview"/>
+                            <button class="cardListFrame" alt="cardBg"></button>
+                            <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*2.68);">{yourBoard[i+(yourBoard.length)/2].attack}</div>
+                            <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*9.65);">{yourBoard[i+(yourBoard.length)/2].health}</div>
+                            <div class="curCardCostList">{yourBoard[i+(yourBoard.length)/2].cost}</div>
+                            <div class="curCardNameList">{yourBoard[i+(yourBoard.length)/2].name}</div>
+                
+                            <div class="curCardRarityList" style="{starsColorByCost[(yourBoard[i+(yourBoard.length)/2].stars)-3]}">
+                                {#each Array(Number(yourBoard[i+(yourBoard.length)/2].stars)) as card,index}
+                                    <span style="font-size: calc(var(--cardOnBoardScale)*1vw*1);">★</span>
+                                {/each}
+                            </div>
                         </div>
-                    </div>
-                    {/if}
-                </td>
-                {/each}
-            </tr>
-        </table>
-        <table class="gameFiledSides" id="enemySide">
-            <tr class="tierTwo">
-                <td>2</td>
-                <td>2</td>
-                <td>2</td>
-                <td>2</td>
-            </tr>
-            <tr class="tierOne">
-                <td>1</td>
-                <td>1</td>
-                <td>1</td>
-                <td>1</td>
-            </tr>
-        </table>
-    </div>
-    <div bind:this={cardsInHandDoms} class="handCont" id="yourHand">
-        {#each yourHand as card,i}
-        <div bind:this={newCard} id={i} on:click={() => PlacingMode(card,i)} draggable="true" class="previewInHand move" style="--cardNum: {yourHand.length};transform: rotate({-22.5+(45/yourHand.length)*(i+1)}deg);top:{(yourHand.length-(i))/3}vw;" on:keydown role="button" tabindex="">
-            <img draggable="false" class={cardsInYourHandClass[i]} id="cardBackground" src={cardBackground} style="--colorr: {backgroundColorByCost[(card.stars)-3]}; --colorr2: #{(parseInt((backgroundColorByCost[(card.stars)-3].replace("#","")), 16)+663552).toString(16)};" alt="cardBg">
-            <div id="rarityBG" style="background: {backgroundColorByCost[(card.stars)-3]}; "></div>
-            <img draggable="false" id="curCardInView" src={card.source} alt="">
-            <img draggable="false" class="cardTemplate" src={cardForeground} alt="cardBg">
-            <div id="curCardDesc" class="noScrollers">{card.description}</div>
-            <div class="curCardStats" style="left: calc(var(--cardsScale)*1vw*7.4);">{card.attack}</div>
-            <div class="curCardStats" style="left: calc(var(--cardsScale)*1vw*21.5)">{card.health}</div>
-            <div class="curCardCost">{card.cost}</div>
-            <div class="curCardName">{card.name}</div>
-            
-            <div id="curCardRarity" style="{starsColorByCost[(card.stars)-3]}; top: {starSizeTop[(card.stars)-3]}vw;">
-                {#each Array(Number(card.stars)) as card,index}
-                    <span style="font-size: {starSizeArray[index]}vw;">★</span>
-                {/each}
+                        {/if}
+                    </td>
+                    {/each}
+                </tr>
             </div>
         </div>
-        {/each}
-        
+        <div id="yourHand" class="handCont" bind:this={cardsInHandDoms}>
+            {#each yourHand as card,i}
+            <div bind:this={newCard} id={i} on:click={() => PlacingMode(card,i)} draggable="true" class="previewInHand move" style="--cardNum: {yourHand.length};transform: rotate({-22.5+(45/yourHand.length)*(i+1)}deg);top:{(yourHand.length-(i))/3}vw;" on:keydown role="button" tabindex="">
+                <img draggable="false" class={cardsInYourHandClass[i]} id="cardBackground" src={cardBackground} style="--colorr: {backgroundColorByCost[(card.stars)-3]}; --colorr2: #{(parseInt((backgroundColorByCost[(card.stars)-3].replace("#","")), 16)+663552).toString(16)};" alt="cardBg">
+                <div id="rarityBG" style="background: {backgroundColorByCost[(card.stars)-3]}; "></div>
+                <img draggable="false" id="curCardInView" src={card.source} alt="">
+                <img draggable="false" class="cardTemplate" src={cardForeground} alt="cardBg">
+                <div id="curCardDesc" class="noScrollers">{card.description}</div>
+                <div class="curCardStats" style="left: calc(var(--cardsScale)*1vw*7.4);">{card.attack}</div>
+                <div class="curCardStats" style="left: calc(var(--cardsScale)*1vw*21.5)">{card.health}</div>
+                <div class="curCardCost">{card.cost}</div>
+                <div class="curCardName">{card.name}</div>
+                
+                <div id="curCardRarity" style="{starsColorByCost[(card.stars)-3]}; top: 0">
+                    {#each Array(Number(card.stars)) as card,index}
+                        <span style="font-size: calc(var(--cardsScale)*2.4vw">★</span>
+                    {/each}
+                </div>
+            </div>
+            {/each}
+            
+        </div>
     </div>
+    <div id="mana">
+        <div class="manaCont" id="enemyManaCont">
+            <div class="normalMana" style="margin-bottom: 2.5%;"></div>
+            <div class="spellMana"></div>
+        </div>
+        <div class="manaCont" id="yourManaCont">
+            <div class="spellMana"  style="margin-bottom: 2.5%;"></div>
+            <div class="normalMana"></div>
+            
+        </div>
+    </div>
+    
 </div>
-<button on:click={() => DrawOne()}>KÁRTYÁT IDE A KEZEMBEEE</button>
+
+<button style="z-index: 100; position:absolute" on:click={() => DrawOne()} >KÁRTYÁT IDE A KEZEMBEEE</button>
+<button style="z-index: 100; position:absolute" id="fullScreenButton" on:click={requestFullScreen}>[]</button>
 
 <style>
     @font-face {
@@ -315,13 +354,15 @@
         font-family: 'ShadowLight';
         src: url('../../lib/assets/fonts/ShadowsIntoLight-Regular.ttf');
     }
-    :root {
-        --cardsScale: 0.4;
-        --cardOnBoardScale: 0.5;
+    #loadingScreen {
+    z-index: 9999;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgb(228, 231, 242);
     }
-
-
-
     #background{
         width: 100vw;
         height: 100vh;
@@ -333,75 +374,180 @@
         left: 0;
     }
 
+
+    .manaCont{
+        background-color: rgba(238, 130, 238, 0.74);
+        width: 22vw;
+        height: 11vh;
+        
+
+        position: absolute;
+    }
+    @media screen and (min-width: 836px) {
+        .manaCont{
+            left: 71.5vw;
+        }
+    }
+    @media screen and (max-width: 836px) {
+        .manaCont{
+            left: 68.5vw;
+        }
+    }
+    #enemyManaCont{
+        top: 2vh;
+    }
+    #yourManaCont{
+        top: 86vh;
+    }
+    .normalMana{
+        width: 100%;
+        height: 45%;
+        background-color: blue;
+
+        margin: 0;
+        padding: 0;
+    }
+    .spellMana{
+        width: 40%;
+        height: 45%;
+        background-color: cadetblue;
+
+        margin: 0;
+        margin-left:2vw;
+        padding: 0;
+    }
+
+
+
+
+
     #gamePlayFiledCont{
-        background-color: rgba(0, 0, 0, 0.05);
-        position: relative;
+        background-color: rgba(0, 0, 0, 0.432);
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
     }
     #playField{
         background-color: aqua;
-        width: 70vw;
-        height: 35vw;
+        width: 74vw;
+        height: 65vh;
 
         position: absolute;
-        left: 15vw;
-        top: 0vw;
+        left: 13vw;
+        top: 15vh;
     }
-    #yourHand{
-        background-color: blue;
-        top: 35vw;
+    @media screen and (min-width: 836px) {
+        :root {
+        --cardsScale: 0.4;
+        --cardOnBoardScale: 0.5;
+    
+        }
+        #yourHand{
+        background-color: rgba(0, 0, 255, 0.726);
+        bottom: 5vh;
     }
-    #enemyHand{
-        background-color: red;
-        top: 0vw;
+    .previewInHand{
+        margin-right: calc(35/var(--cardNum)*1vw*0.99);
+        position: relative;
+
+        border: none;
+        padding-bottom: 30vh;
+        margin: none;
+        background: none;
     }
-    .handCont{
-        width: 50vw;
-        height: 10vw;
+    }
+    @media screen and (max-width: 836px) {
+        :root {
+        --cardsScale: 0.3;
+        --cardOnBoardScale: 0.5;
+    
+        }
+        #yourHand{
+        background-color: rgba(0, 0, 255, 0.726);
+        bottom: 5vh;
+
+        width: 30vw;
+        height: 15vh;
 
         position: absolute;
-        left: 25vw;
+        left: 0vw;
 
         display: flex;
-    }
+        padding-bottom: 7vh;
 
+        --cardsScale: 0.3;
+    }
+    .previewInHand{
+        margin-right: calc(25/var(--cardNum)*1vw*0.99);
+        position: relative;
+
+        border: none;
+        padding-bottom: 30vh;
+        margin: none;
+        background: none;
+    }
+    }
+    
+    #enemyHand{
+        background-color: rgba(255, 0, 0, 0.616);
+        left: 25vw;
+        
+    }
+    #enemyHandCardCont{
+        width: calc(var(--cardsScale)*1vw*30);
+
+    }
+    .handCont{
+        width: 40vw;
+        height: 15vh;
+
+        position: absolute;
+        left: 28vw;
+
+        display: flex;
+        padding-bottom: 6vh;
+    }
     #yourSide{
         background-color: rgba(0, 0, 255, 0.504);
-        top: 17.5vw;
     }
     #enemySide{
         background-color: rgba(255, 0, 0, 0.507);
-        top: 1.5vw;
     }
-    .gameFiledSides{
-        width: 68vw;
-        height: 16vw;
 
+
+    .gameFiledSides{
+        width: 74vw;
+        height: 32.5vh; 
+        position: relative;
+    }
+    .boardRows{
+        width: 74vw;
+        height: 16.25vh;
         position: absolute;
-        left: 1vw;   
     }
     .boardsCells{
         border: 0.1vw solid black;
         padding:0;
         margin: 0;
 
-        width: 9vw;
-        height: 9vw;
+        width: 14.8vw; /*wanna kill myself*/
+        height: 16.25vh;
 
         z-index: 11;
     }
-
-
-    .previewInHand{
-        margin-right: calc(50/var(--cardNum)*1vw);
-        margin-top: 0;
-
-        position: relative;
-
-        border: none;
-        padding: none;
-        margin: none;
-        background: none;
+    .tierOne{
+        top: 0;
+        background-color: rgba(172, 255, 47, 0.438);
     }
+    .tierTwo{
+        top: 11vh;
+    }
+    .yourBoardTierTwo{
+        padding-left: 7.4vw;
+    }
+    
     .previewInHand:hover{
         animation: scaleUp 0.3s forwards;
         z-index: 10;
@@ -526,7 +672,7 @@
         font-family: Arial, Helvetica, sans-serif;
         color: rgba(0, 0, 0, 0.778);
         font-weight: bold;
-        font-size: calc(var(--cardsScale)*1vw*1.2);
+        font-size: calc(var(--cardsScale)*1vw*1.6);
 
         position: absolute;
         top: calc(var(--cardsScale)*1vw*23);

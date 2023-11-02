@@ -18,6 +18,19 @@
 
     import {userData,getUserDataFromLocalStorage} from "../../client"
 
+    function requestFullScreen() {
+        const elem = document.documentElement; // Whole document
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+        } else if (elem.mozRequestFullScreen) {
+            elem.mozRequestFullScreen(); // Firefox
+        } else if (elem.webkitRequestFullscreen) {
+            elem.webkitRequestFullscreen(); // Chrome, Safari, and Opera
+        } else if (elem.msRequestFullscreen) {
+            elem.msRequestFullscreen(); // IE/Edge
+        }
+    }
+
     let localUserData = userData
     let pageLoaded = false
     import { onMount } from 'svelte';
@@ -203,6 +216,7 @@
                     <div id="levelText">{localUserData.level}</div>
                     <p style="margin-top:1.2vw;">{localUserData.username}</p>
                 </div>
+                <button id="fullScreenButton" on:click={requestFullScreen}>[]</button>
             </td>
         </tr>
     </table>

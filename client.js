@@ -1,5 +1,35 @@
 //let ip = "10.7.147.201";
-let ip = "localhost";
+//let ip = "localhost";
+let ip = "192.168.0.20";
+
+let isFullScreen = false
+export function requestFullScreen() {
+  if(!isFullScreen){
+      const elem = document.documentElement; // Whole document
+      if (elem.requestFullscreen) {
+          elem.requestFullscreen();
+      } else if (elem.mozRequestFullScreen) {
+          elem.mozRequestFullScreen(); // Firefox
+      } else if (elem.webkitRequestFullscreen) {
+          elem.webkitRequestFullscreen(); // Chrome, Safari, and Opera
+      } else if (elem.msRequestFullscreen) {
+          elem.msRequestFullscreen(); // IE/Edge
+      }
+      isFullScreen = true
+  }
+  else{
+      if (document.exitFullscreen) {
+          document.exitFullscreen();
+      } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen(); // Firefox
+      } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen(); // Chrome, Safari, and Opera
+      } else if (document.msExitFullscreen) {
+          document.msExitFullscreen(); // IE/Edge
+      }
+      isFullScreen = false
+  }
+}
 
 
 export let userData = {

@@ -6,12 +6,15 @@
     import tag from "../../lib//assets/mainmenu/tag.png"
     import tag2 from "../../lib//assets/mainmenu/tag2.png"
 
-    import {userData,getUserDataFromLocalStorage} from "../../client"
+    import {userData,getUserDataFromLocalStorage, requestFullScreen} from "../../client"
 
     let localUserData = userData
     let pageLoaded = false
+
+
     import { onMount } from 'svelte';
     onMount(() => {
+
         localUserData = JSON.parse(localStorage.getItem("userData"))
         if (localUserData) {
             //localUserData = JSON.parse(localStorage.getItem("userData"))
@@ -26,8 +29,6 @@
     function GoToPage(filePath) {
         window.location = filePath; // Navigate to the parent directory
     }
-
-
 
     let optionButtons = Array(4)
     function OptionButtonClick(element){
@@ -70,7 +71,6 @@
     }
     function CloseProfile(){isProfile = false; isProfile = isProfile}
 
-
 </script>
 
 {#if !pageLoaded}
@@ -105,6 +105,7 @@
                     <div id="levelText">{localUserData.level}</div>
                     <p style="margin-top:1.2vw;">{localUserData.username}</p>
                 </div>
+                <button id="fullScreenButton" on:click={requestFullScreen}>[]</button>
             </td>
         </tr>
     </table>
