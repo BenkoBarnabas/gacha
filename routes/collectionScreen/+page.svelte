@@ -293,8 +293,8 @@
 
 
 
-
-{#if selectedCollection == 1}
+<div id="list">
+    {#if selectedCollection == 1}
     <div class = "cardcollection" id = "tanarcollection">
         {#each refTanarDeck as card}
         <div id="cardPreviewListCont">
@@ -315,7 +315,7 @@
         </div>
         {/each}
     </div>
-{:else if selectedCollection == 2}
+    {:else if selectedCollection == 2}
     <div class = "cardcollection" id = "diakcollection">
         {#each Cards.diakCardsArr as card}
         <div id="cardPreviewListCont">
@@ -336,29 +336,31 @@
         </div>
         {/each}
     </div>
-{:else}
-    <div class = "cardcollection" id = "spellcollection">
-        {#each Cards.spellCardsArr as card}
-        <div id="cardPreviewListCont">
-            <img style="width: 12.5vw; position:absolute" src={cardV2Background} alt="cardBg">
-            <div id="rarityBGList" style="background: {backgroundColorByCost[(card.stars)-3]}; "></div>
-            <img class = "cardButton" src={card.source} alt="preview"/>
-            <button class="cardListFrame" alt="cardBg" on:click={() => handleSpellClick(card.source,card.name,card.cost,card.stars,card.description,card.quote)}></button>
+    {:else}
+        <div class = "cardcollection" id = "spellcollection">
+            {#each Cards.spellCardsArr as card}
+            <div id="cardPreviewListCont">
+                <img style="width: 12.5vw; position:absolute" src={cardV2Background} alt="cardBg">
+                <div id="rarityBGList" style="background: {backgroundColorByCost[(card.stars)-3]}; "></div>
+                <img class = "cardButton" src={card.source} alt="preview"/>
+                <button class="spellListFrame" alt="cardBg" on:click={() => handleSpellClick(card.source,card.name,card.cost,card.stars,card.description,card.quote)}></button>
 
-            <div class="curCardCostList">{card.cost}</div>
-            <div class="curCardNameList">{card.name}</div>
+                <div class="curCardCostList">{card.cost}</div>
+                <div class="curCardNameList">{card.name}</div>
 
-            <div class="curCardRarityList" style="{starsColorByCost[(card.stars)-3]}">
-                {#each Array(Number(card.stars)) as card}
-                    <span style="font-size: 1vw;">★</span>
-                {/each}
+                <div class="curCardRarityList" style="{starsColorByCost[(card.stars)-3]}">
+                    {#each Array(Number(card.stars)) as card}
+                        <span style="font-size: 1vw;">★</span>
+                    {/each}
+                </div>
             </div>
+            {/each}
         </div>
-        {/each}
-    </div>
-{/if}
+    {/if}
+</div>
 
-{#if curCardInView.type == "character"}
+<div id="preview">
+    {#if curCardInView.type == "character"}
 <div id="cardPreview" >
     <div id="curCardQuote" class="noScrollers"><i>"{curCardInView.quote}"</i></div>
     <div style="position:relative">
@@ -379,7 +381,7 @@
         </div>
     </div>
 </div>
-{:else if curCardInView.type == "spell"}
+    {:else if curCardInView.type == "spell"}
 <div id="cardPreview" >
     <div id="curCardQuote" class="noScrollers"><i>"{curCardInView.quote}"</i></div>
     <div style="position:relative">
@@ -399,7 +401,9 @@
 
     </div>
 </div>
-{/if}
+    {/if}
+</div>
+
 
 
 <div style="margin-right: 14vw;">
@@ -630,6 +634,16 @@
         height: 15.8754vw;
         position:absolute;
         background-image: url("../../lib/assets/global/cardV2Top.png");
+        background-size: cover;
+        background-position: center;
+        background-color: transparent;
+        border: none;
+    }
+    .spellListFrame{
+        width: 12.5vw;
+        height: 15.8754vw;
+        position:absolute;
+        background-image: url("../../lib/assets/global/spellV2Top.png");
         background-size: cover;
         background-position: center;
         background-color: transparent;

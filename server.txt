@@ -209,8 +209,7 @@ function makeNewAccount(email,password,username,Cid){
 }
 let usersInLobby = []
 let connectedClients = [];
-
-
+let currentGameIDs = []
 
 //SSERVER ON CONNECT
 io.on('connection', (socket) => {
@@ -221,10 +220,15 @@ io.on('connection', (socket) => {
   //MATCH
   socket.on("makeMatchSocket", msg => {
     console.log(msg);
-    io.emit(msg, `got it: ${msg}`)
     io.emit("makeMatchSocket",msg)
+    currentGameIDs.push(msg)
   })
-
+  for (let i = 0; i<currentGameIDs.length; i++){
+    socket.on(currentGameIDs[i], msg => {
+      console.log("got game info: ",msg);
+      io.emit(currentGameIDs[i],msg)
+    })
+  }
 
 
   //DATABASE SOCKETS
@@ -291,9 +295,6 @@ io.on('connection', (socket) => {
   });
 
 });
-
-
-
 
 
 //NODE.JS---------------------------------------
