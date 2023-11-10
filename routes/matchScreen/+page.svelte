@@ -3,7 +3,8 @@
   import {onMount} from "svelte"
 
   import {clientID,userData, getUserDataFromLocalStorage, deckData} from "../../client"
-  import {GetGameIDs, PlayerReady, SveltePageLoaded, currentOpponentId, yourGameParameters} from "../../matchHandler"
+  import {GetGameIDs, PlayerReady, SendGameData, currentOpponentId} from "../../matchHandler"
+  import * as Cards from "../../card"
 
 
   let yourGameID
@@ -11,15 +12,32 @@
   let gameKey
 
   let localDeckData = deckData
+  let localUserData
 
-
-  function update() {
-        SenseOpponentPresence()
-        requestAnimationFrame(update)
-  }
-  function SenseOpponentReadiness(){
-
-  }
+  let yourGameParameters = {
+        gameId: yourGameID,
+        username: "esztix",
+        hp: 50,
+        currentHand: "",
+        remaningDeck: [],
+        mana: 2,
+        spellMana: 0,
+        ko: 8,
+        yourBoard: "",
+        yourBoardStatus: ""
+    }
+  let enemyGameParameters = {
+        gameId: "",
+        username: "",
+        hp: 50,
+        currentHand: "",
+        remaningDeck: [],
+        mana: 2,
+        spellMana: 0,
+        ko: 8,
+        yourBoard: "",
+        yourBoardStatus: ""
+    }
 
 
   let pageLoaded = false
@@ -27,30 +45,51 @@
 
     yourGameID = JSON.parse(localStorage.getItem("yourGameID"))
     opponentGameID = JSON.parse(localStorage.getItem("opponentGameID"))
+
+    yourGameParameters.gameId = yourGameID
+    enemyGameParameters.gameId = opponentGameID
     gameKey = JSON.parse(localStorage.getItem("gameKey"))
 
     localDeckData = JSON.parse(localStorage.getItem("deckData"))
+    localUserData = JSON.parse(localStorage.getItem("userData"))
     console.log("fasz3: logcaPulDa: ",localDeckData);
     if (localDeckData) {
         //localPullData = JSON.parse(localStorage.getItem("userData"))
         getUserDataFromLocalStorage(localDeckData, "deckData")
+        getUserDataFromLocalStorage(localUserData, "userData")
     } else {
         console.log("Username not found in local storage.");
     }
+    yourGameParameters.username = localUserData.username
     GetGameIDs(yourGameID,opponentGameID,gameKey)
       pageLoaded = true
       pageLoaded = pageLoaded
 
     console.log("u: ",yourGameID,"enemy: ",opponentGameID);
 
-    SveltePageLoaded()
+    //SveltePageLoaded()
   });
     
 
 
 
     function ChooseDeck(n){
-      yourGameParameters.selectedDeck = localDeckData[`deckarray${{n}}`]
+      var chosenDeck = localDeckData[`deckarray${n}`]
+      console.log(chosenDeck);
+
+      Cards.allCardsArr.forEach(element => {
+        if(chosenDeck.includes(element.name)){
+          yourGameParameters.remaningDeck.push(element)
+
+        }
+      });
+      console.log(yourGameParameters.remaningDeck);
+      
+
+      localStorage.setItem("yourGameParams", JSON.stringify(yourGameParameters));
+      console.log("your and enemy params: ", yourGameParameters,enemyGameParameters);
+      SendGameData(yourGameParameters)
+
     }
 
 

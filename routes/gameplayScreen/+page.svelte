@@ -3,17 +3,8 @@
 
     import * as Cards from "../../card"
     let enemyStartingHand = [Cards.BarniCard,Cards.BarniCard, Cards.FarkasCard, Cards.BizsoCard, Cards.BencusCard, Cards.ZenoCard]
-    let enemyGameParameters = { //ph
-        selectedDeck: Cards.allCardsArr,
-        username: "barnix",
-        hp: 50,
-        currentHand: enemyStartingHand,
-        remaningDeck: Cards.allCardsArr.filter((element) => !enemyStartingHand.includes(element)),
-        mana: 2,
-        spellMana: 0,
-        ko: 8,
-        yourBoard: "",
-    }
+
+    import {SendGameData} from "../../matchHandler"
 
     import cardBack from "../../lib/assets/global/cardBack.png"
 
@@ -21,34 +12,44 @@
     import cardForeground from "../../lib/assets/global/cardV1Top.png"
     import cardV2Background from "../../lib/assets/global/cardV2BG.png"
 
-    var starSizeArray = [] //for some reason it didnt work with a normal return so i had to put them into an array ,im throwing up
-    var starSizeTop = [0,0,0,0]
+    import { onMount } from 'svelte';
+	import { requestFullScreen} from "../../client";
+
     var backgroundColorByCost = ["#2672ed","#8626ed","#ed7c26","linear-gradient(180deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235))"]
     var starsColorByCost = ["color: #2672ed;","color: #8626ed;","color: #ed7c26;","background-image: linear-gradient(90deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235));-webkit-background-clip: text;background-clip: text;color: transparent;"]
 
+    
+    let yourGameID
+    let opponentGameID
+    let gameKey
+
+    
     let startingHandNum = 5
     let yourHand = []
-    let cardsInYourHandClass = Array(yourHand.length).fill("cardTemplate")
+    let cardsInYourHandClass = Array(startingHandNum).fill("cardTemplate")
     let newCard
     let cardsInHandDoms
     function DrawStartingHand(n){
-        for (let i = 0; i<n;i++){
+        for(let i = 0; i<n; i++){
+            var random = Math.floor(Math.random() * yourGameParameters.remaningDeck.length)
+            yourHand[i] = yourGameParameters.remaningDeck[random]
             
-            yourHand.push(Cards.allCardsArr[Math.floor(Math.random() * Cards.allCardsArr.length)])
-            cardsInYourHandClass.push("cardTemplate")
+            yourGameParameters.remaningDeck.splice(random,1)
+            console.log(yourHand);
+            console.log(yourGameParameters);
+            yourHand = yourHand
         }
-        //console.log(newCard);
-        yourHand = yourHand
-        //newCard.addEventListener("dragstart", dragStart)
+        yourGameParameters.currentHand = Array.from(yourHand)
+        //UpdateLocalStorage()
+        SendGameData(yourGameParameters)
     }
+
     function DrawOne(){
-        yourHand.push(Cards.allCardsArr[Math.floor(Math.random() * Cards.allCardsArr.length)])
+        yourHand.push(yourGameParameters.remaningDeck[Math.floor(Math.random() * yourGameParameters.remaningDeck.length)])
         cardsInYourHandClass.push("cardTemplate")
         yourHand = yourHand
 
     }
-    DrawStartingHand(startingHandNum)
-
     $:  if (newCard) {
             newCard.addEventListener("dragstart", dragStart)
             console.log("added event listenr");
@@ -60,30 +61,57 @@
 
     let isCardInYourHandInPlacingMode= false
 
-
-    import { onMount } from 'svelte';
-	import { requestFullScreen } from "../../client";
     let targetArea = []
     let draggables;
     let dragged = undefined
 
+
+    let yourGameParameters = {currentHand: []}
+    let enemyGameParameters = {currentHand: []}
+
+    function UpdateLocalStorage(){
+        localStorage.setItem("yourGameParams", JSON.stringify(yourGameParameters));
+        localStorage.setItem("opponentGameParams", JSON.stringify(enemyGameParameters));
+
+        console.log("updated paramteres: ", yourGameParameters,enemyGameParameters);
+    }
+
+
+
+    
+    
+
     let pageLoaded = false
     onMount(() => {
-        targetArea = document.getElementsByClassName("target")
+            targetArea = document.getElementsByClassName("target")
 
-        for(draggables of document.getElementsByClassName("move")){
-            draggables.addEventListener("dragstart", dragStart)
-        }
-        for(let i = 0;i<(yourBoard.length);i++){
-            targetArea[i].addEventListener("drop", drop)
-            targetArea[i].addEventListener("dragover", dragOver)
-            targetArea[i].addEventListener("dragleave", dragLeave)
-        }
+            for(draggables of document.getElementsByClassName("move")){
+                draggables.addEventListener("dragstart", dragStart)
+            }
+            for(let i = 0;i<(yourBoard.length);i++){
+                targetArea[i].addEventListener("drop", drop)
+                targetArea[i].addEventListener("dragover", dragOver)
+                targetArea[i].addEventListener("dragleave", dragLeave)
+            }
 
-        pageLoaded = true
-        pageLoaded = pageLoaded
+            yourGameParameters = JSON.parse(localStorage.getItem("yourGameParams"))
+            enemyGameParameters = JSON.parse(localStorage.getItem("opponentGameParams"))
+            console.log("your and enemy params: ", yourGameParameters,enemyGameParameters);
 
+            yourGameID = JSON.parse(localStorage.getItem("yourGameID"))
+            opponentGameID = JSON.parse(localStorage.getItem("opponentGameID"))
+            gameKey = JSON.parse(localStorage.getItem("gameKey"))
+
+            DrawStartingHand(5)
+
+
+            pageLoaded = true
+            pageLoaded = pageLoaded
+        
     });
+
+
+
 
     function drop(event) {
         event.preventDefault()
@@ -339,6 +367,26 @@
             
         </div>
     </div>
+    <div id="ko">
+        <div id="enemyKo" class="koCont">
+
+        </div>
+        <div id="yourKo" class="koCont"></div>
+    </div>
+    <div id="matchConsole">
+        <div id="matchConsoleCont">
+            <div id="enemyBattleStateIndicator" class="battleStateIndicatorCont">
+
+            </div>
+            <button>
+                END TURN 
+            </button>
+            <div id="yourBattleStateIndicator" class="battleStateIndicatorCont">
+
+            </div>
+        </div>
+
+    </div>
     
 </div>
 
@@ -372,6 +420,34 @@
         background-size: 100% 100%;
         top: 0;
         left: 0;
+    }
+
+
+    .koCont{
+        width: 7vw;
+        height: 12vh;
+        background-color: rgba(137, 43, 226, 0.764);
+
+        position: absolute
+    }
+    #yourKo{
+        bottom: 13vh;
+        left: 80.5vw;
+    }
+    #enemyKo{
+        top: 8vh;
+        left: 82vw;
+    }
+
+    #matchConsoleCont{
+        background-color: rgba(255, 166, 0, 0.742);
+        width: 7vw;
+        height: 50vh;
+
+        position: absolute;
+        left: 86.5vw;
+        top: 22.5vh;
+
     }
 
 

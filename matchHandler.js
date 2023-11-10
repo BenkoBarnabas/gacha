@@ -1,4 +1,5 @@
 import * as Client from "./client"
+import * as Cards from "./card"
 
 import "./routes/matchScreen/+page.svelte"
 
@@ -44,22 +45,10 @@ Client.socket.on("makeMatchSocket", msg => {
 })
 
 
-export let yourGameParameters = {
-    selectedDeck: "",
-    username: Client.userData.username,
-    hp: 50,
-    currentHand: "",
-    remaningDeck: "",
-    mana: 2,
-    spellMana: 0,
-    ko: 8,
-    yourBoard: "",
-}
-
 export let youAreReady = false
 export let opponentIsReady = false
 export function PlayerReady(){
-    Client.socket.emit(gameKey,`${yourGameID}trueReady`)
+    Client.socket.emit(gameKey,JSON.stringify(`${yourGameID}trueReady`))
     youAreReady = true
     console.log("ready vagy te");
 
@@ -69,17 +58,42 @@ export function PlayerReady(){
     }
 }
 
-export function SveltePageLoaded(){
+
+Client.socket.on('connect', () => {
+    console.log(`Connected with ID: ${Client.socket.id}`);
+    console.log("loaded");
+
+
     Client.socket.on(gameKey, msg => {
-        console.log("game msg got: ",msg);
-        if(msg.includes("Ready") && msg.includes(opponentGameID)){
+        console.log("msg");
+        if(msg.includes("Ready")){
+            if(msg.includes(opponentGameID)){
+                console.log("game msg got: ",msg);
             opponentIsReady = true
             console.log(youAreReady, opponentIsReady);
             if(youAreReady && opponentIsReady){
+                
                 console.log("LETS GOOOOOOOOOOOOOOOOOOOOOOOOO");
                 window.location.href = "./gameplayScreen"
             }
+            }
         }
+        else{
+            msg = JSON.parse(msg)
+            if(msg.gameId != yourGameID){
+                //enemyGameParameters = msg
+                console.log("from server, enemyGameParamters: ",msg);
+                localStorage.setItem("opponentGameParams", JSON.stringify(msg));
+            }
+        }
+        
     })
+});
+
+
+export function SendGameData(data){
+    Client.socket.emit(gameKey, JSON.stringify(data))
 }
+
+
 
