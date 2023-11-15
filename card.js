@@ -130,6 +130,17 @@
     import lyukasora from "./lib/assets/collection/spell/lyukasora.png"
     import palacsintaFesz from "./lib/assets/collection/spell/palacsintsFesz.png"
     import sportSzelet from "./lib/assets/collection/spell/sportSzelet.png"
+    import nemKeszultem from "./lib/assets/collection/spell/nemKeszultem.png"
+    import keszultem from "./lib/assets/collection/spell/keszultem.png"
+    import tuzgolyo from "./lib/assets/collection/spell/tuzgolyo.png"
+    import tuzsarkanyLangja from "./lib/assets/collection/spell/tuzsarkanyLangja.png"
+    import lanchegyseg from "./lib/assets/collection/spell/lanchegyseg.png"
+    import kiteres from "./lib/assets/collection/spell/kiteres.png"
+    import falanx from "./lib/assets/collection/spell/falanx.png"
+    import taktikaiTekerges from "./lib/assets/collection/spell/taktikaiTekerges.png"
+    import sagvarizmusEjszakaja from "./lib/assets/collection/spell/sagvarizmusEjszakaja.png"
+    import ideAManaddal from "./lib/assets/collection/spell/ideAManaddal.png"
+
 
     import GachaPHSpell from "./lib/assets/collection/spell/GachaPHSpell.png"
     import gachaPHAudio from "./lib/assets/voicelines/Weisz.aac"
@@ -189,18 +200,18 @@
     export const lyukasoraCard = new spellCards("lyukasóra","ez egy spell",lyukasora,5,4,"spell",GachaPHSpell,"lyukasoraCard",gachaPHAudio, "45 perc nyugalom.")
     export const palacsintaFeszCard = new spellCards("palacsinta fesztivál","ez egy spell",palacsintaFesz,5,4,"spell",GachaPHSpell,"palacsintaFeszCard",gachaPHAudio, "Nem lett csocsóasztal, de legalább jól szórakoztunk.")
     export const sportSzeletCard = new spellCards("sport szelet a futónapon","ez egy spell",sportSzelet,5,4,"spell",GachaPHSpell,"sportSzeletCard",gachaPHAudio, "Bármikor lefutnék 2000 métert ilyen ajándékért.")
-    export const keszultemCard = new spellCards("készültem","ez egy spell",sportSzelet,5,4,"spell",GachaPHSpell,"keszultemCard",gachaPHAudio, "Ilyenkor se akarsz felelni, de legalább nem húznak meg.")
-    export const nemKeszultemCard = new spellCards("nem készültem","ez egy spell",sportSzelet,5,4,"spell",GachaPHSpell,"nemKeszultemCard",gachaPHAudio, "Ilyenkor főleg nem akarsz felelni és még meg is húznak.")
-    export const ideAManaddalCard = new spellCards("Ide a manáddal!","ez egy spell",sportSzelet,5,4,"spell",GachaPHSpell,"ideAManaddalCard",gachaPHAudio, "Lopni amúgy nem szép dolog.")
-    export const tuzgolyoCard = new spellCards("tűzgolyó","ez egy spell",sportSzelet,5,4,"spell",GachaPHSpell,"tuzgolyoCard",gachaPHAudio, "Kedvenc Pitbull számom")
-    export const tuzsarkanyLangjaCard = new spellCards("tűzsárkány lángja","ez egy spell",sportSzelet,5,4,"spell",GachaPHSpell,"tuzsarkanyLangjaCard",gachaPHAudio, "Ami fent csíp, az előbb-utóbb alul is fog.")
-    export const lanchegysegCard = new spellCards("lánchegység","ez egy spell",sportSzelet,5,4,"spell",GachaPHSpell,"lanchegysegCard",gachaPHAudio, "A kép nem méretarányos.")
-    export const sagvarizmusEjszakajaCard = new spellCards("Ságvárizmus Éjszakája","ez egy spell",sportSzelet,5,4,"spell",GachaPHSpell,"sagvarizmusEjszakajaCard",gachaPHAudio, "Nem lehet alkoholt bevinni. Papíron.")
-    export const taktikaiTekergesCard = new spellCards("taktikai tekergés","ez egy spell",sportSzelet,5,4,"spell",GachaPHSpell,"taktikaiTekergesCard",gachaPHAudio, "A röplabdacsapat jóvoltából.")
+    export const keszultemCard = new spellCards("készültem","ez egy spell",keszultem,5,4,"spell",GachaPHSpell,"keszultemCard",gachaPHAudio, "Ilyenkor se akarsz felelni, de legalább nem húznak meg.")
+    export const nemKeszultemCard = new spellCards("nem készültem","ez egy spell",nemKeszultem,5,4,"spell",GachaPHSpell,"nemKeszultemCard",gachaPHAudio, "Ilyenkor főleg nem akarsz felelni és még meg is húznak.")
+    export const ideAManaddalCard = new spellCards("Ide a manáddal!","ez egy spell",ideAManaddal,5,4,"spell",GachaPHSpell,"ideAManaddalCard",gachaPHAudio, "Lopni amúgy nem szép dolog.")
+    export const tuzgolyoCard = new spellCards("tűzgolyó","ez egy spell",tuzgolyo,5,4,"spell",GachaPHSpell,"tuzgolyoCard",gachaPHAudio, "Kedvenc Pitbull számom")
+    export const tuzsarkanyLangjaCard = new spellCards("tűzsárkány lángja","ez egy spell",tuzsarkanyLangja,5,4,"spell",GachaPHSpell,"tuzsarkanyLangjaCard",gachaPHAudio, "Ami fent csíp, az előbb-utóbb alul is fog.")
+    export const lanchegysegCard = new spellCards("lánchegység","ez egy spell",lanchegyseg,5,4,"spell",GachaPHSpell,"lanchegysegCard",gachaPHAudio, "A kép nem méretarányos.")
+    export const sagvarizmusEjszakajaCard = new spellCards("Ságvárizmus Éjszakája","ez egy spell",sagvarizmusEjszakaja,5,4,"spell",GachaPHSpell,"sagvarizmusEjszakajaCard",gachaPHAudio, "Nem lehet alkoholt bevinni. Papíron.")
+    export const taktikaiTekergesCard = new spellCards("taktikai tekergés","ez egy spell",taktikaiTekerges,5,4,"spell",GachaPHSpell,"taktikaiTekergesCard",gachaPHAudio, "A röplabdacsapat jóvoltából.")
     export const saraToborzasCard = new spellCards("SÁRA toborzás","ez egy spell",sportSzelet,5,4,"spell",GachaPHSpell,"saraToborzasCard",gachaPHAudio, "A legügyesebbeket besorozzák. Egy fokkal jobb, mint a hadsereg.")
     export const saraSzurkolotaborCard = new spellCards("SÁRA szurkolótábor","ez egy spell",sportSzelet,5,4,"spell",GachaPHSpell,"saraSzurkolotaborCard",gachaPHAudio, "Versenyszellem garantált.")
-    export const falanxCard = new spellCards("falanx","ez egy spell",sportSzelet,5,4,"spell",GachaPHSpell,"falanxCard",gachaPHAudio, "Nagy Sándor tiszteletére.")
-    export const kiteresCard = new spellCards("kitérés","ez egy spell",sportSzelet,5,4,"spell",GachaPHSpell,"kiteresCard",gachaPHAudio, "Nem talált!")
+    export const falanxCard = new spellCards("falanx","ez egy spell",falanx,5,4,"spell",GachaPHSpell,"falanxCard",gachaPHAudio, "Nagy Sándor tiszteletére.")
+    export const kiteresCard = new spellCards("kitérés","ez egy spell",kiteres,5,4,"spell",GachaPHSpell,"kiteresCard",gachaPHAudio, "Nem talált!")
 
     //TANAROK
     export const BizsoCard = new tanarCards("Bizsó", "", 9, 5, Bizso, 4, 2, "character", BizsoGacha, "BizsoCard", BizsoA, "Kedvence egy jó python feladat. Ha szépen kéred, kienged a hátsó kijáraton. Szexi apuka."); 
