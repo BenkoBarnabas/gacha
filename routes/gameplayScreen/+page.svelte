@@ -3,8 +3,8 @@
 
     import * as Cards from "../../card"
     let enemyStartingHand = [Cards.BarniCard,Cards.BarniCard, Cards.FarkasCard, Cards.BizsoCard, Cards.BencusCard, Cards.ZenoCard]
-
-    import {SendGameData} from "../../matchHandler"
+    
+    import {SendGameData,connectedToSocket, yourGameParametersClient, enemyGameParametersClient, DomLoaded, SveltePageLoaded, currentOpponentId} from "../../matchHandler"
 
     import cardBack from "../../lib/assets/global/cardBack.png"
 
@@ -14,6 +14,7 @@
 
     import { onMount } from 'svelte';
 	import { requestFullScreen} from "../../client";
+	import { blur } from "svelte/transition";
 
     var backgroundColorByCost = ["#2672ed","#8626ed","#ed7c26","linear-gradient(180deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235))"]
     var starsColorByCost = ["color: #2672ed;","color: #8626ed;","color: #ed7c26;","background-image: linear-gradient(90deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235));-webkit-background-clip: text;background-clip: text;color: transparent;"]
@@ -23,20 +24,23 @@
     let opponentGameID
     let gameKey
 
+    let yourGameParameters = yourGameParametersClient
+    let enemyGameParameters = enemyGameParametersClient
+
     
     let startingHandNum = 5
     let yourHand = []
+    let enemyHand = []
     let cardsInYourHandClass = Array(startingHandNum).fill("cardTemplate")
     let newCard
     let cardsInHandDoms
+
     function DrawStartingHand(n){
         for(let i = 0; i<n; i++){
             var random = Math.floor(Math.random() * yourGameParameters.remaningDeck.length)
             yourHand[i] = yourGameParameters.remaningDeck[random]
             
             yourGameParameters.remaningDeck.splice(random,1)
-            console.log(yourHand);
-            console.log(yourGameParameters);
             yourHand = yourHand
         }
         yourGameParameters.currentHand = Array.from(yourHand)
@@ -52,12 +56,14 @@
     }
     $:  if (newCard) {
             newCard.addEventListener("dragstart", dragStart)
-            console.log("added event listenr");
         } 
     
     
     let yourBoard = Array(10).fill("")
     let yourBoardPhs = Array(10).fill("")
+    let enemyBoard = Array(10).fill("")
+    enemyBoard[1] = Cards.BarniCard
+    enemyBoard[4] = Cards.DobiCard
 
     let isCardInYourHandInPlacingMode= false
 
@@ -65,9 +71,6 @@
     let draggables;
     let dragged = undefined
 
-
-    let yourGameParameters = {currentHand: []}
-    let enemyGameParameters = {currentHand: []}
 
     function UpdateLocalStorage(){
         localStorage.setItem("yourGameParams", JSON.stringify(yourGameParameters));
@@ -78,10 +81,24 @@
 
 
 
-    
-    
-
     let pageLoaded = false
+    
+    function ServerDependingCode(){
+        console.log(`${Date.now()}: server depended code ran`);
+        yourGameParameters = JSON.parse(localStorage.getItem("yourGameParams"))
+        enemyGameParameters = JSON.parse(localStorage.getItem("opponentGameParams"))
+        console.log("your and enemy params: ", yourGameParameters,enemyGameParameters);
+
+        yourGameID = JSON.parse(localStorage.getItem("yourGameID"))
+        opponentGameID = JSON.parse(localStorage.getItem("opponentGameID"))
+        gameKey = JSON.parse(localStorage.getItem("gameKey"))
+
+        DrawStartingHand(5)
+
+        update()
+        pageLoaded = true
+        pageLoaded = pageLoaded
+    }
     onMount(() => {
             targetArea = document.getElementsByClassName("target")
 
@@ -93,22 +110,14 @@
                 targetArea[i].addEventListener("dragover", dragOver)
                 targetArea[i].addEventListener("dragleave", dragLeave)
             }
+            SveltePageLoaded()
 
-            yourGameParameters = JSON.parse(localStorage.getItem("yourGameParams"))
-            enemyGameParameters = JSON.parse(localStorage.getItem("opponentGameParams"))
-            console.log("your and enemy params: ", yourGameParameters,enemyGameParameters);
+            DomLoaded()
+            document.addEventListener('socketConnected', ServerDependingCode)
 
-            yourGameID = JSON.parse(localStorage.getItem("yourGameID"))
-            opponentGameID = JSON.parse(localStorage.getItem("opponentGameID"))
-            gameKey = JSON.parse(localStorage.getItem("gameKey"))
-
-            DrawStartingHand(5)
-
-
-            pageLoaded = true
-            pageLoaded = pageLoaded
         
     });
+    
 
 
 
@@ -212,6 +221,17 @@
         
     }
 
+    function update() {
+        yourGameParameters = yourGameParametersClient
+        enemyGameParameters = enemyGameParametersClient
+        yourGameParameters = yourGameParameters
+        enemyGameParameters = enemyGameParameters
+
+        enemyGameParameters.currentHand = enemyGameParameters.currentHand
+
+        requestAnimationFrame(update)
+    }
+
 </script>
 {#if !pageLoaded}
 <div id="loadingScreen">
@@ -233,19 +253,15 @@
         </div>
         <div id="playField">
             <table class="gameFiledSides" id="enemySide">
-                <tr class="tierTwo">
-                    <td>2</td>
-                    <td>2</td>
-                    <td>2</td>
-                    <td>2</td>
-                    <td>2</td>
+                <tr class="tierTwo boardRows">
+                    {#each Array(5) as card}
+                        <td class="boardsCells">1</td>
+                    {/each}
                 </tr>
-                <tr class="tierOne">
-                    <td>1</td>
-                    <td>1</td>
-                    <td>1</td>
-                    <td>1</td>
-                    <td>1</td>
+                <tr class="tierOne boardRows">
+                    {#each Array(5) as card}
+                        <td class="boardsCells">1</td>
+                    {/each}
                 </tr>
             </table>
             <div class="gameFiledSides" id="yourSide">

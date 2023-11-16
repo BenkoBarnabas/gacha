@@ -1,6 +1,6 @@
 <script>
     import {lobby, LoadLobby, ReloadLobby, clientID,userData, getUserDataFromLocalStorage} from "../../client"
-    import {currentOpponentId, sendMatchRequest} from "../../matchHandler"
+    import {SveltePageLoaded, currentOpponentId, sendMatchRequest} from "../../matchHandler"
 
 
     let localUserData = userData
@@ -17,6 +17,8 @@
             console.log("Username not found in local storage.");
         }
         username = localUserData.username
+
+        SveltePageLoaded()
 
         pageLoaded = true
         pageLoaded = pageLoaded
