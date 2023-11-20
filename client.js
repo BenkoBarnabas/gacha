@@ -1,5 +1,5 @@
-//let ip = "10.7.147.201";
-let ip = "localhost";
+let ip = "10.7.147.201";
+//let ip = "localhost";
 //let ip = "192.168.0.20";
 
 let isFullScreen = false

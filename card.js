@@ -130,8 +130,8 @@
     import lyukasora from "./lib/assets/collection/spell/lyukasora.png"
     import palacsintaFesz from "./lib/assets/collection/spell/palacsintsFesz.png"
     import sportSzelet from "./lib/assets/collection/spell/sportSzelet.png"
-    import nemKeszultem from "./lib/assets/collection/spell/nemKeszultem.png"
-    import keszultem from "./lib/assets/collection/spell/keszultem.png"
+    import nemKeszultel from "./lib/assets/collection/spell/nemKeszultel.png"
+    import keszultel from "./lib/assets/collection/spell/keszultel.png"
     import tuzgolyo from "./lib/assets/collection/spell/tuzgolyo.png"
     import tuzsarkanyLangja from "./lib/assets/collection/spell/tuzsarkanyLangja.png"
     import lanchegyseg from "./lib/assets/collection/spell/lanchegyseg.png"
@@ -140,6 +140,13 @@
     import taktikaiTekerges from "./lib/assets/collection/spell/taktikaiTekerges.png"
     import sagvarizmusEjszakaja from "./lib/assets/collection/spell/sagvarizmusEjszakaja.png"
     import ideAManaddal from "./lib/assets/collection/spell/ideAManaddal.png"
+    import agyhalal from "./lib/assets/collection/spell/agyhalal.png"
+    import javitoDolgozat from "./lib/assets/collection/spell/javitoDolgozat.png"
+    import mezeskalacs from "./lib/assets/collection/spell/mezeskalacs.png"
+    import osztalytalalkozo from "./lib/assets/collection/spell/osztalytalalkozo.png"
+    import puskazas from "./lib/assets/collection/spell/puskazas.png"
+
+
 
 
     import GachaPHSpell from "./lib/assets/collection/spell/GachaPHSpell.png"
@@ -193,74 +200,79 @@
         }
     }
 
-    export const ebedCard = new spellCards("ebéd","ez egy spell",ebed,5,4,"spell",GachaPHSpell,"ebedCard",gachaPHAudio, "Ebédszünet! A diákok a diáktanyára vonulnak.")
-    export const felelesCard = new spellCards("felelés","ez egy spell",feleles,5,4,"spell",GachaPHSpell,"felelesCard",gachaPHAudio, "Készültél?")
-    export const instantMerevedesCard = new spellCards("instant merevedés","ez egy spell",instantMerevedes,5,4,"spell",GachaPHSpell,"instantMerevedesCard",gachaPHAudio, "Az osztály előtt kell megszólalnod és még fel is áll!")
-    export const jegkremCard = new spellCards("ingyen jégkrém az udvaron","ez egy spell",jegkrem,5,4,"spell",GachaPHSpell,"jegkremCard",gachaPHAudio, "Cukros víz Ukrajnából. Összehozza a diákokat.")
-    export const lyukasoraCard = new spellCards("lyukasóra","ez egy spell",lyukasora,5,4,"spell",GachaPHSpell,"lyukasoraCard",gachaPHAudio, "45 perc nyugalom.")
-    export const palacsintaFeszCard = new spellCards("palacsinta fesztivál","ez egy spell",palacsintaFesz,5,4,"spell",GachaPHSpell,"palacsintaFeszCard",gachaPHAudio, "Nem lett csocsóasztal, de legalább jól szórakoztunk.")
-    export const sportSzeletCard = new spellCards("sport szelet a futónapon","ez egy spell",sportSzelet,5,4,"spell",GachaPHSpell,"sportSzeletCard",gachaPHAudio, "Bármikor lefutnék 2000 métert ilyen ajándékért.")
-    export const keszultemCard = new spellCards("készültem","ez egy spell",keszultem,5,4,"spell",GachaPHSpell,"keszultemCard",gachaPHAudio, "Ilyenkor se akarsz felelni, de legalább nem húznak meg.")
-    export const nemKeszultemCard = new spellCards("nem készültem","ez egy spell",nemKeszultem,5,4,"spell",GachaPHSpell,"nemKeszultemCard",gachaPHAudio, "Ilyenkor főleg nem akarsz felelni és még meg is húznak.")
-    export const ideAManaddalCard = new spellCards("Ide a manáddal!","ez egy spell",ideAManaddal,5,4,"spell",GachaPHSpell,"ideAManaddalCard",gachaPHAudio, "Lopni amúgy nem szép dolog.")
-    export const tuzgolyoCard = new spellCards("tűzgolyó","ez egy spell",tuzgolyo,5,4,"spell",GachaPHSpell,"tuzgolyoCard",gachaPHAudio, "Kedvenc Pitbull számom")
-    export const tuzsarkanyLangjaCard = new spellCards("tűzsárkány lángja","ez egy spell",tuzsarkanyLangja,5,4,"spell",GachaPHSpell,"tuzsarkanyLangjaCard",gachaPHAudio, "Ami fent csíp, az előbb-utóbb alul is fog.")
-    export const lanchegysegCard = new spellCards("lánchegység","ez egy spell",lanchegyseg,5,4,"spell",GachaPHSpell,"lanchegysegCard",gachaPHAudio, "A kép nem méretarányos.")
-    export const sagvarizmusEjszakajaCard = new spellCards("Ságvárizmus Éjszakája","ez egy spell",sagvarizmusEjszakaja,5,4,"spell",GachaPHSpell,"sagvarizmusEjszakajaCard",gachaPHAudio, "Nem lehet alkoholt bevinni. Papíron.")
-    export const taktikaiTekergesCard = new spellCards("taktikai tekergés","ez egy spell",taktikaiTekerges,5,4,"spell",GachaPHSpell,"taktikaiTekergesCard",gachaPHAudio, "A röplabdacsapat jóvoltából.")
-    export const saraToborzasCard = new spellCards("SÁRA toborzás","ez egy spell",sportSzelet,5,4,"spell",GachaPHSpell,"saraToborzasCard",gachaPHAudio, "A legügyesebbeket besorozzák. Egy fokkal jobb, mint a hadsereg.")
-    export const saraSzurkolotaborCard = new spellCards("SÁRA szurkolótábor","ez egy spell",sportSzelet,5,4,"spell",GachaPHSpell,"saraSzurkolotaborCard",gachaPHAudio, "Versenyszellem garantált.")
-    export const falanxCard = new spellCards("falanx","ez egy spell",falanx,5,4,"spell",GachaPHSpell,"falanxCard",gachaPHAudio, "Nagy Sándor tiszteletére.")
-    export const kiteresCard = new spellCards("kitérés","ez egy spell",kiteres,5,4,"spell",GachaPHSpell,"kiteresCard",gachaPHAudio, "Nem talált!")
+    export let ebedCard = new spellCards("ebéd","A <b>diák</b> kártyák <b>ledermednek</b> <b>1</b> körre.",ebed,5,4,"spell",GachaPHSpell,"ebedCard",gachaPHAudio, "Ebédszünet! A diákok a diáktanyára vonulnak.")
+    export let felelesCard = new spellCards("felelés","<b>Sebezz 3</b>-mat egy általad kiválasztott ellenséges <b>karakterkártyába</b>!",feleles,3,3,"spell",GachaPHSpell,"felelesCard",gachaPHAudio, "Készültél?")
+    export let instantMerevedesCard = new spellCards("instant merevedés","ez egy spell",instantMerevedes,5,4,"spell",GachaPHSpell,"instantMerevedesCard",gachaPHAudio, "Az osztály előtt kell megszólalnod és még fel is áll!")
+    export let jegkremCard = new spellCards("ingyen jégkrém az udvaron","ez egy spell",jegkrem,4,1,"spell",GachaPHSpell,"jegkremCard",gachaPHAudio, "Cukros víz Ukrajnából. Összehozza a diákokat.")
+    export let lyukasoraCard = new spellCards("lyukasóra","ez egy spell",lyukasora,3,3,"spell",GachaPHSpell,"lyukasoraCard",gachaPHAudio, "45 perc nyugalom.")
+    export let palacsintaFeszCard = new spellCards("palacsinta fesztivál","ez egy spell",palacsintaFesz,4,2,"spell",GachaPHSpell,"palacsintaFeszCard",gachaPHAudio, "Nem lett csocsóasztal, de legalább jól szórakoztunk.")
+    export let sportSzeletCard = new spellCards("sport szelet a futónapon","ez egy spell",sportSzelet,3,1,"spell",GachaPHSpell,"sportSzeletCard",gachaPHAudio, "Bármikor lefutnék 2000 métert ilyen ajándékért.")
+    export let keszultelCard = new spellCards("készültél","ez egy spell",keszultel,5,0,"spell",GachaPHSpell,"keszultelCard",gachaPHAudio, "Ilyenkor se akarsz felelni, de legalább nem húznak meg.")
+    export let nemKeszultelCard = new spellCards("nem készültél","ez egy spell",nemKeszultel,5,1,"spell",GachaPHSpell,"nemKeszultelCard",gachaPHAudio, "Ilyenkor főleg nem akarsz felelni és még meg is húznak.")
+    export let ideAManaddalCard = new spellCards("Ide a manáddal!","ez egy spell",ideAManaddal,4,2,"spell",GachaPHSpell,"ideAManaddalCard",gachaPHAudio, "Lopni amúgy nem szép dolog.")
+    export let tuzgolyoCard = new spellCards("tűzgolyó","ez egy spell",tuzgolyo,3,3,"spell",GachaPHSpell,"tuzgolyoCard",gachaPHAudio, "Kedvenc Pitbull számom")
+    export let tuzsarkanyLangjaCard = new spellCards("tűzsárkány lángja","ez egy spell",tuzsarkanyLangja,4,5,"spell",GachaPHSpell,"tuzsarkanyLangjaCard",gachaPHAudio, "Ami fent csíp, az előbb-utóbb alul is fog.")
+    export let lanchegysegCard = new spellCards("lánchegység","ez egy spell",lanchegyseg,5,3,"spell",GachaPHSpell,"lanchegysegCard",gachaPHAudio, "A kép nem méretarányos.")
+    export let sagvarizmusEjszakajaCard = new spellCards("Ságvárizmus Éjszakája","ez egy spell",sagvarizmusEjszakaja,4,4,"spell",GachaPHSpell,"sagvarizmusEjszakajaCard",gachaPHAudio, "Nem lehet alkoholt bevinni. Papíron.")
+    export let taktikaiTekergesCard = new spellCards("taktikai tekergés","ez egy spell",taktikaiTekerges,5,4,"spell",GachaPHSpell,"taktikaiTekergesCard",gachaPHAudio, "A röplabdacsapat jóvoltából.")
+    export let saraToborzasCard = new spellCards("SÁRA toborzás","ez egy spell",sportSzelet,4,1,"spell",GachaPHSpell,"saraToborzasCard",gachaPHAudio, "A legügyesebbeket besorozzák. Egy fokkal jobb, mint a hadsereg.")
+    export let saraSzurkolotaborCard = new spellCards("SÁRA szurkolótábor","ez egy spell",sportSzelet,3,2,"spell",GachaPHSpell,"saraSzurkolotaborCard",gachaPHAudio, "Versenyszellem garantált.")
+    export let falanxCard = new spellCards("falanx","ez egy spell",falanx,4,3,"spell",GachaPHSpell,"falanxCard",gachaPHAudio, "Nagy Sándor tiszteletére.")
+    export let kiteresCard = new spellCards("kitérés","ez egy spell",kiteres,3,1,"spell",GachaPHSpell,"kiteresCard",gachaPHAudio, "Nem talált!")
+    export let agyhalalCard = new spellCards("agyhalál","ez egy spell",agyhalal,3,1,"spell",GachaPHSpell,"agyhalalCard",gachaPHAudio, "Az agyi funkciók leállnak. Káros az egészségre.")
+    export let javitoDolgozatCard = new spellCards("javító dolgozat","ez egy spell",javitoDolgozat,3,1,"spell",GachaPHSpell,"javitoDolgozatCard",gachaPHAudio, "Hiszek a második esélyben.")
+    export let mezeskalacsCard = new spellCards("kitérés","ez egy spell",mezeskalacs,3,1,"spell",GachaPHSpell,"mezeskalacsCard",gachaPHAudio, "Hasznos az, amit meg lehet enni vagy házat lehet belőle készíteni. -Kristóf filozófia szakkörről")
+    export let osztalytalalkozoCard = new spellCards("osztálytalálkozó","ez egy spell",osztalytalalkozo,3,1,"spell",GachaPHSpell,"osztalytalalkozoCard",gachaPHAudio, "Felejtsünk el mindent, osztálytalálkozóóóóóóóóóóóóó!")
+    export let puskazasCard = new spellCards("puskázás","ez egy spell",puskazas,3,1,"spell",GachaPHSpell,"puskazasCard",gachaPHAudio, "Nyugi, a padtársad se tudja a választ.")
 
     //TANAROK
-    export const BizsoCard = new tanarCards("Bizsó", "", 9, 5, Bizso, 4, 2, "character", BizsoGacha, "BizsoCard", BizsoA, "Kedvence egy jó python feladat. Ha szépen kéred, kienged a hátsó kijáraton. Szexi apuka."); 
-    export const FarkasCard = new tanarCards("Dr. Farkas", "", 17, 8, Farkas, 5, 4, "character", FarkasGacha, "FarkasCard", FarkasA, "Filozófusszakállát évente vágja. Ennek ellenére mindig visszanő. Nem kell félni tőle.");
-    export const MoniCard = new tanarCards("Móni", "", 8, 6, Moni, 4, 2, "character", MoniGacha, "MoniCard", MoniA, "Hobbifilozófus. Képes 45 percig elemezni egy 10 soros lírai alkotást. Lenyűgöző!");
-    export const NagyoraCard = new tanarCards("Big D", "", 30, 4, Nagyora, 3, 5, "character", NagyoraGacha, "NagyoraCard", NagyoraA, "Average tank build. Not much to say.");
-    export const RozgonyiCard = new tanarCards("Rozgonyi", "", 17, 3, Rozgonyi, 3, 3, "character", RozgonyiGacha, "RozgonyiCard", RoziA, "Szeret sütni. Szeret még legózni és gombócot enni is. A fiát láthatólag annyira nem.");
-    export const TabiCard = new tanarCards("Tábi", "", 6, 7, Tabi, 3, 2, "character", TabiGacha, "TabiCard", TabiA, "Tesitanár és röplabdaedző. Epic gamer szabadidejében. Sose hagyja ki az alkalmat, hogy politizáljon.");
-    export const BencusCard = new tanarCards("Bencus", "", 7, 4, Bencus, 4, 1, "character", BencusGacha, "BencusCard", BencusA, "Másodállásban professzionális diáktanya dolgozó.");
-    export const DobiCard = new tanarCards("Dobby", "", 8, 7, Dobi, 6, 2, "character", DobiGacha, "DobiCard", DobbyA, "Dob");
-    export const IvanEvaCard = new tanarCards("Iván Éva", "", 5, 5, IvanEva, 3, 2, "character", IvanEvaGacha, "IvanEvaCard", IvanEvaA, "Average Edward Allen Poe fan, nem egy szakbarbár. Irigylésre méltó!");
-    export const KocsiAndiCard = new tanarCards("KocsiAndi", "", 12, 9, KocsiAndi, 3, 4, "character", KocsiAndiGacha, "KocsiAndiCard", KocsiAndiA, "Senki se tudja, hogy pontosan mit csinál. A sárga könyvvel kapcsolatban őt keresd!");
-    export const KoPaszCard = new tanarCards("Kopaszka", "", 10, 6, KoPasz, 5, 3, "character", KoPaszGacha, "KoPaszCard", KopaszkaA, "Gyakran látom a ligetben sétálni. Az Edaq530 ott is a zsebében van.");
-    export const KutiCard = new tanarCards("Kúti", "", 12, 5, Kuti, 5, 3, "character", KutiGacha, "KutiCard", KutiA, "Irodalom, nyelvtan, matematika, tesi szakos, síoktató, asztronauta és agysebész.");
-    export const MatosCard = new tanarCards("Matos", "", 14, 4, Matos, 4, 3, "character", MatosGacha, "MatosCard", MatosA, "Társasjátékfüggő. Néha egyedül is játszik. A 2020I még mindig sír, hogy nem őt kapta faktos tanárnak.");
-    export const MartiCard = new tanarCards("Márti", "", 3, 6, Marti, 4, 1, "character", MartiGacha, "MartiCard", MartiA, "Az ing, nem azing. Hetest kér.");
-    export const MeszarosCard = new tanarCards("Mészaros", "", 21, 2, Meszaros, 3, 3, "character", MeszarosGacha, "MeszarosCard", MeszarosA, "Médiatanár. A diákok gyakran jobban tudják az anyagot.");
-    export const JeffCard = new tanarCards("Jeff", "", 16, 5, Jeff, 6, 3, "character", JeffGacha, "JeffCard", JeffA, "Plays golf with you on the weekends. Loves his wife, kids and family dog.");
-    export const TomiCard = new tanarCards("Dr. Tamás", "", 20, 20, Tomi, 5, 6, "character", TomiGacha, "TomiCard", TomiA, "Fogorvos és táncvilágbajnok. Unatkozott, ezért elment tanárnak.");
+    export let BizsoCard = new tanarCards("Bizsó", "", 9, 5, Bizso, 4, 2, "character", BizsoGacha, "BizsoCard", BizsoA, "Kedvence egy jó python feladat. Ha szépen kéred, kienged a hátsó kijáraton. Szexi apuka."); 
+    export let FarkasCard = new tanarCards("Dr. Farkas", "", 17, 8, Farkas, 5, 4, "character", FarkasGacha, "FarkasCard", FarkasA, "Filozófusszakállát évente vágja. Ennek ellenére mindig visszanő. Nem kell félni tőle.");
+    export let MoniCard = new tanarCards("Móni", "", 8, 6, Moni, 4, 2, "character", MoniGacha, "MoniCard", MoniA, "Hobbifilozófus. Képes 45 percig elemezni egy 10 soros lírai alkotást. Lenyűgöző!");
+    export let NagyoraCard = new tanarCards("Big D", "", 30, 4, Nagyora, 3, 5, "character", NagyoraGacha, "NagyoraCard", NagyoraA, "Average tank build. Not much to say.");
+    export let RozgonyiCard = new tanarCards("Rozgonyi", "", 17, 3, Rozgonyi, 3, 3, "character", RozgonyiGacha, "RozgonyiCard", RoziA, "Szeret sütni. Szeret még legózni és gombócot enni is. A fiát láthatólag annyira nem.");
+    export let TabiCard = new tanarCards("Tábi", "", 6, 7, Tabi, 3, 2, "character", TabiGacha, "TabiCard", TabiA, "Tesitanár és röplabdaedző. Epic gamer szabadidejében. Sose hagyja ki az alkalmat, hogy politizáljon.");
+    export let BencusCard = new tanarCards("Bencus", "", 7, 4, Bencus, 4, 1, "character", BencusGacha, "BencusCard", BencusA, "Másodállásban professzionális diáktanya dolgozó.");
+    export let DobiCard = new tanarCards("Dobby", "", 8, 7, Dobi, 6, 2, "character", DobiGacha, "DobiCard", DobbyA, "Dob");
+    export let IvanEvaCard = new tanarCards("Iván Éva", "", 5, 5, IvanEva, 3, 2, "character", IvanEvaGacha, "IvanEvaCard", IvanEvaA, "Average Edward Allen Poe fan, nem egy szakbarbár. Irigylésre méltó!");
+    export let KocsiAndiCard = new tanarCards("KocsiAndi", "", 12, 9, KocsiAndi, 3, 4, "character", KocsiAndiGacha, "KocsiAndiCard", KocsiAndiA, "Senki se tudja, hogy pontosan mit csinál. A sárga könyvvel kapcsolatban őt keresd!");
+    export let KoPaszCard = new tanarCards("Kopaszka", "", 10, 6, KoPasz, 5, 3, "character", KoPaszGacha, "KoPaszCard", KopaszkaA, "Gyakran látom a ligetben sétálni. Az Edaq530 ott is a zsebében van.");
+    export let KutiCard = new tanarCards("Kúti", "", 12, 5, Kuti, 5, 3, "character", KutiGacha, "KutiCard", KutiA, "Irodalom, nyelvtan, matematika, tesi szakos, síoktató, asztronauta és agysebész.");
+    export let MatosCard = new tanarCards("Matos", "", 14, 4, Matos, 4, 3, "character", MatosGacha, "MatosCard", MatosA, "Társasjátékfüggő. Néha egyedül is játszik. A 2020I még mindig sír, hogy nem őt kapta faktos tanárnak.");
+    export let MartiCard = new tanarCards("Márti", "", 3, 6, Marti, 4, 1, "character", MartiGacha, "MartiCard", MartiA, "Az ing, nem azing. Hetest kér.");
+    export let MeszarosCard = new tanarCards("Mészaros", "", 21, 2, Meszaros, 3, 3, "character", MeszarosGacha, "MeszarosCard", MeszarosA, "Médiatanár. A diákok gyakran jobban tudják az anyagot.");
+    export let JeffCard = new tanarCards("Jeff", "", 16, 5, Jeff, 6, 3, "character", JeffGacha, "JeffCard", JeffA, "Plays golf with you on the weekends. Loves his wife, kids and family dog.");
+    export let TomiCard = new tanarCards("Dr. Tamás", "", 20, 20, Tomi, 5, 6, "character", TomiGacha, "TomiCard", TomiA, "Fogorvos és táncvilágbajnok. Unatkozott, ezért elment tanárnak.");
 
     //not yet detailed
-    export const FiloRekaCard = new tanarCards("Filó Réka", "", 0, 0, FiloReka, 3, 0, "character", GachaPH, "FiloRekaCard",FiloA, "Sajnos családi életét az érettségiben nem kérdezik.");
-    export const IzigCard = new tanarCards("Ízig Máté", "", 0, 0, Izig, 4, 0, "character", GachaPH, "IzigCard", IzigA, "Szeret utazni. Báló Dávidot is szereti.");
-    export const KinyoCard = new tanarCards("Kinyó", "", 0, 0, Kinyo, 3, 0, "character", GachaPH, "KinyoCard", KinyoA, "Megrendeli a ságváris merch-öt(?)");
-    export const LaciNeniCard = new tanarCards("Laci néni", "", 0, 0, LaciNeni, 3, 0, "character", GachaPH, "LaciNeniCard", LaciNeniA, "Qu'est-ce que les schtroumpfs");
-    export const MsFarkasCard = new tanarCards("Mrs Farkas", "", 0, 0, MsFarkas, 4, 0, "character", GachaPH, "MsFarkasCard", MrsFarkasA, "Csak 2 embernek hinném el, hogy zöld az ég és kék a fű. Anyám és Farkas Judit.");
-    export const NagyTCard = new tanarCards("Nagy T", "", 0, 0, NagyT, 5, 0, "character", GachaPH, "NagyTCard", NagyTA, "T");
-    export const ParagiCard = new tanarCards("Paragi", "", 0, 0, Paragi, 4, 0, "character", GachaPH, "ParagiCard", ParagiA, "Pontok, vonalak, foltok. Baguette zene a kedvence.");
-    export const RixerCard = new tanarCards("Rixer Márta", "", 0, 0, Rixer, 3, 0, "character", GachaPH, "RixerCard", RixerA, "Tanított fél évet...papíron.");
-    export const SisakCard = new tanarCards("Sisák", "", 0, 0, Sisak, 3, 0, "character", GachaPH, "SisakCard", SisakA, "Nem is olyan régen lett nagypapa. Gratulálunk!");
-    export const SzaszakCard = new tanarCards("Szaszi", "", 0, 0, Szaszak, 5, 0, "character", GachaPH, "SzaszakCard", SzasziA, "Bács-Kiskun, Baranya, Békés, Borsod-Abaúj-Zemplén, Csongrád-Csanád, Fejér, Győr-Moson-Sopron, Hajdú-Bihar, Heves, Jász-Nagykun-Szolnok, Komárom-Esztergom, Nógrád, Pest, Somogy, Szabolcs-Szatmár-Bereg, Tolna, Vas, Veszprém, Zala");
-    export const TothKareszCard = new tanarCards("Karesz", "", 0, 0, TothKaresz, 3, 0, "character", GachaPH, "TothKareszCard", KareszA, "Gurulási súrlódási együtthatója 0,7.");
-    export const VeronikaCard = new tanarCards("Németh Veronika", "", 0, 0, Veronika, 3, 0, "character", GachaPH, "VeronikaCard", VeronikaA, "Vigyorog, mint a tejbetök. Nagyon cuki.");
-    export const WeiszCard = new tanarCards("Weisz", "", 0, 7, Weisz, 4, 0, "character", GachaPH, "WeiszCard", WeiszA, "Teljességgel kiszámíthatatlan. Támogatja, hogy órán Cards Against Humanity-t játsszunk.");
-    export const TritzCard = new tanarCards("Tritzy", "", 0, 0, Tritz, 4, 0, "character", GachaPH, "TritzCard", TritzyA, "😄   -->   😈");
+    export let FiloRekaCard = new tanarCards("Filó Réka", "", 0, 0, FiloReka, 3, 0, "character", GachaPH, "FiloRekaCard",FiloA, "Sajnos családi életét az érettségiben nem kérdezik.");
+    export let IzigCard = new tanarCards("Ízig Máté", "", 0, 0, Izig, 4, 0, "character", GachaPH, "IzigCard", IzigA, "Szeret utazni. Báló Dávidot is szereti.");
+    export let KinyoCard = new tanarCards("Kinyó", "", 0, 0, Kinyo, 3, 0, "character", GachaPH, "KinyoCard", KinyoA, "Megrendeli a ságváris merch-öt(?)");
+    export let LaciNeniCard = new tanarCards("Laci néni", "", 0, 0, LaciNeni, 3, 0, "character", GachaPH, "LaciNeniCard", LaciNeniA, "Qu'est-ce que les schtroumpfs");
+    export let MsFarkasCard = new tanarCards("Mrs Farkas", "", 0, 0, MsFarkas, 4, 0, "character", GachaPH, "MsFarkasCard", MrsFarkasA, "Csak 2 embernek hinném el, hogy zöld az ég és kék a fű. Anyám és Farkas Judit.");
+    export let NagyTCard = new tanarCards("Nagy T", "", 0, 0, NagyT, 5, 0, "character", GachaPH, "NagyTCard", NagyTA, "T");
+    export let ParagiCard = new tanarCards("Paragi", "", 0, 0, Paragi, 4, 0, "character", GachaPH, "ParagiCard", ParagiA, "Pontok, vonalak, foltok. Baguette zene a kedvence.");
+    export let RixerCard = new tanarCards("Rixer Márta", "", 0, 0, Rixer, 3, 0, "character", GachaPH, "RixerCard", RixerA, "Tanított fél évet...papíron.");
+    export let SisakCard = new tanarCards("Sisák", "", 0, 0, Sisak, 3, 0, "character", GachaPH, "SisakCard", SisakA, "Nem is olyan régen lett nagypapa. Gratulálunk!");
+    export let SzaszakCard = new tanarCards("Szaszi", "", 0, 0, Szaszak, 5, 0, "character", GachaPH, "SzaszakCard", SzasziA, "Bács-Kiskun, Baranya, Békés, Borsod-Abaúj-Zemplén, Csongrád-Csanád, Fejér, Győr-Moson-Sopron, Hajdú-Bihar, Heves, Jász-Nagykun-Szolnok, Komárom-Esztergom, Nógrád, Pest, Somogy, Szabolcs-Szatmár-Bereg, Tolna, Vas, Veszprém, Zala");
+    export let TothKareszCard = new tanarCards("Karesz", "", 0, 0, TothKaresz, 3, 0, "character", GachaPH, "TothKareszCard", KareszA, "Gurulási súrlódási együtthatója 0,7.");
+    export let VeronikaCard = new tanarCards("Németh Veronika", "", 0, 0, Veronika, 3, 0, "character", GachaPH, "VeronikaCard", VeronikaA, "Vigyorog, mint a tejbetök. Nagyon cuki.");
+    export let WeiszCard = new tanarCards("Weisz", "", 0, 7, Weisz, 4, 0, "character", GachaPH, "WeiszCard", WeiszA, "Teljességgel kiszámíthatatlan. Támogatja, hogy órán Cards Against Humanity-t játsszunk.");
+    export let TritzCard = new tanarCards("Tritzy", "", 0, 0, Tritz, 4, 0, "character", GachaPH, "TritzCard", TritzyA, "😄   -->   😈");
 
     //DIAKOK
-    export const ArhoCard = new diakCards("Arho", "", 12, 6, Arho, 4, 3, "character", ArhoGacha, "ArhoCard", ArhoA, "7 évesen megfejtette a tudományt. Hisz a szabad akaratban."); 
-    export const BarniCard = new diakCards("Barni", "", 18, 7, Barni, 3, 4, "character", BarniGacha, "BarniCard", BarniA, "Szeretik a lányok, szeretik a fiúk, ő pedig a krumplis tésztát szereti.");
-    export const EszterCard = new diakCards("Eszter", "", 5, 5, Eszter, 3, 1, "character", EszterGacha, "EszterCard", EszterA, "Nem tart otthon tyúkokat, de nagyon szeretne. Este 9-kor kizavarják a kollégium gépterméből.");
-    export const OliviaCard = new diakCards("Olívia", "", 12, 4, Olivia, 4, 3, "character", OliviaGacha, "OliviaCard", OliviaA, "Lehelt már számtalanszon visszautasította. Oliver ikertestvére. Lehel ezt még nem tudja.");
-    export const ZalanCard = new diakCards("Zalán", "", 10, 5, Zalan, 5, 3, "character", ZalanGacha, "ZalanCard", ZalanA, "Mindenki kedvenc DÖK elnöke. Volt. Fasza bőrdzseki!");
-    export const ZenoCard = new diakCards("Zénó", "", 10, 6, Zeno, 6, 7, "character", ZenoGacha, "ZenoCard", ZenoA, "SG DÖK elnök. Ha a terem hátsó sarkában valaki fulladozik a nevetéstől, ő az.");
-    export const AproNoCard = new diakCards("Apró Fehér Nő", "", 2, 2, AproNo, 4, 2, "character", AproNoGacha, "AproNoCard", AproNoA, "Egy apró fehér nő. Gyenge, a férfiak alatt áll, nincsennek jogai.");
-    export const ReginaCard = new diakCards("Redzsina", "", 6, 2, Regina, 4, 3, "character", GachaPH, "ReginaCard", RedzsinaA, "Ötcsillagos akart lenni. Közhiedelem ellenére nem meleg.");
+    export let ArhoCard = new diakCards("Arho", "", 12, 6, Arho, 4, 3, "character", ArhoGacha, "ArhoCard", ArhoA, "7 évesen megfejtette a tudományt. Hisz a szabad akaratban."); 
+    export let BarniCard = new diakCards("Barni", "", 18, 7, Barni, 3, 4, "character", BarniGacha, "BarniCard", BarniA, "Szeretik a lányok, szeretik a fiúk, ő pedig a krumplis tésztát szereti.");
+    export let EszterCard = new diakCards("Eszter", "", 5, 5, Eszter, 3, 1, "character", EszterGacha, "EszterCard", EszterA, "Nem tart otthon tyúkokat, de nagyon szeretne. Este 9-kor kizavarják a kollégium gépterméből.");
+    export let OliviaCard = new diakCards("Olívia", "", 12, 4, Olivia, 4, 3, "character", OliviaGacha, "OliviaCard", OliviaA, "Lehelt már számtalanszon visszautasította. Oliver ikertestvére. Lehel ezt még nem tudja.");
+    export let ZalanCard = new diakCards("Zalán", "", 10, 5, Zalan, 5, 3, "character", ZalanGacha, "ZalanCard", ZalanA, "Mindenki kedvenc DÖK elnöke. Volt. Fasza bőrdzseki!");
+    export let ZenoCard = new diakCards("Zénó", "", 10, 6, Zeno, 6, 7, "character", ZenoGacha, "ZenoCard", ZenoA, "SG DÖK elnök. Ha a terem hátsó sarkában valaki fulladozik a nevetéstől, ő az.");
+    export let AproNoCard = new diakCards("Apró Fehér Nő", "", 2, 2, AproNo, 4, 2, "character", AproNoGacha, "AproNoCard", AproNoA, "Egy apró fehér nő. Gyenge, a férfiak alatt áll, nincsennek jogai.");
+    export let ReginaCard = new diakCards("Redzsina", "", 6, 2, Regina, 4, 3, "character", GachaPH, "ReginaCard", RedzsinaA, "Ötcsillagos akart lenni. Közhiedelem ellenére nem meleg.");
 
     export let tanarCardsArr = [BizsoCard, FarkasCard,MartiCard, MoniCard, NagyoraCard, RozgonyiCard, TabiCard,BencusCard,DobiCard,IvanEvaCard,TomiCard,KocsiAndiCard,KoPaszCard,KutiCard,MatosCard,MeszarosCard,JeffCard,FiloRekaCard,IzigCard,KinyoCard, LaciNeniCard, MsFarkasCard,NagyTCard,ParagiCard,RixerCard,SisakCard,SzaszakCard,TothKareszCard,VeronikaCard,WeiszCard,TritzCard]
     export let diakCardsArr = [ArhoCard, BarniCard, EszterCard, OliviaCard, ZalanCard, ZenoCard,AproNoCard,ReginaCard]
-    export let spellCardsArr = [ebedCard,felelesCard,instantMerevedesCard,jegkremCard,lyukasoraCard,palacsintaFeszCard,sportSzeletCard,keszultemCard,nemKeszultemCard,ideAManaddalCard,tuzgolyoCard,tuzsarkanyLangjaCard,lanchegysegCard,sagvarizmusEjszakajaCard,taktikaiTekergesCard,saraToborzasCard,saraSzurkolotaborCard,falanxCard,kiteresCard]
+    export let spellCardsArr = [ebedCard,felelesCard,instantMerevedesCard,jegkremCard,lyukasoraCard,palacsintaFeszCard,sportSzeletCard,keszultelCard,nemKeszultelCard,ideAManaddalCard,tuzgolyoCard,tuzsarkanyLangjaCard,lanchegysegCard,sagvarizmusEjszakajaCard,taktikaiTekergesCard,saraToborzasCard,saraSzurkolotaborCard,falanxCard,kiteresCard,agyhalalCard,javitoDolgozatCard,mezeskalacsCard,osztalytalalkozoCard,puskazasCard]
     export let allCardsArr = tanarCardsArr.concat(diakCardsArr)
     allCardsArr = allCardsArr.concat(spellCardsArr)
 
