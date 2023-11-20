@@ -3,7 +3,7 @@
   import {onMount} from "svelte"
 
   import {clientID,userData, getUserDataFromLocalStorage, deckData} from "../../client"
-  import {GetGameIDs, PlayerReady, SendGameData, currentOpponentId} from "../../matchHandler"
+  import {GetGameIDs, PlayerReady, SendGameData, SveltePageLoaded, currentOpponentId} from "../../matchHandler"
   import * as Cards from "../../card"
 
 
@@ -67,7 +67,7 @@
 
     console.log("u: ",yourGameID,"enemy: ",opponentGameID);
 
-    //SveltePageLoaded()
+    SveltePageLoaded()
   });
     
 
