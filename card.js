@@ -38,6 +38,10 @@
     import Zeno from "./lib/assets/collection/diak/Zeno.png"
     import AproNo from "./lib/assets/collection/diak/AproNo.png"
     import Regina from "./lib/assets/collection/diak/Regina.png"
+    import Emma from "./lib/assets/collection/diak/Emma.png"
+    import Reka from "./lib/assets/collection/diak/Reka.png"
+    import Juli from "./lib/assets/collection/diak/Juli.png"
+
 
     //gacha SRC
     import GachaPH from "./lib/assets/collection/tanar/GachaPH.png"
@@ -82,6 +86,7 @@
     import AproNoGacha from "./lib/assets/collection/diak/AproNoGacha.png"
 
 
+
     import NagyoraA from "./lib/assets/voicelines/Big_D.aac"
     import AproNoA from "./lib/assets/voicelines/Apro_Feher_No.aac"
     import ArhoA from "./lib/assets/voicelines/Arho.aac"
@@ -122,6 +127,7 @@
     import ZalanA from "./lib/assets/voicelines/Zalan.aac"
     import ZenoA from "./lib/assets/voicelines/Zeno.aac"
 
+
     //spell
     import ebed from "./lib/assets/collection/spell/ebed.png"
     import feleles from "./lib/assets/collection/spell/feleles.png"
@@ -146,12 +152,8 @@
     import osztalytalalkozo from "./lib/assets/collection/spell/osztalytalalkozo.png"
     import puskazas from "./lib/assets/collection/spell/puskazas.png"
 
-
-
-
     import GachaPHSpell from "./lib/assets/collection/spell/GachaPHSpell.png"
     import gachaPHAudio from "./lib/assets/voicelines/Weisz.aac"
-    
 
     export class diakCards {
         constructor(name, description, health, attack, source, stars, cost, type, gachaSRC, cardSRCText,audio,quote) {
@@ -269,9 +271,12 @@
     export let ZenoCard = new diakCards("Zénó", "", 10, 6, Zeno, 6, 7, "character", ZenoGacha, "ZenoCard", ZenoA, "SG DÖK elnök. Ha a terem hátsó sarkában valaki fulladozik a nevetéstől, ő az.");
     export let AproNoCard = new diakCards("Apró Fehér Nő", "", 2, 2, AproNo, 4, 2, "character", AproNoGacha, "AproNoCard", AproNoA, "Egy apró fehér nő. Gyenge, a férfiak alatt áll, nincsennek jogai.");
     export let ReginaCard = new diakCards("Redzsina", "", 6, 2, Regina, 4, 3, "character", GachaPH, "ReginaCard", RedzsinaA, "Ötcsillagos akart lenni. Közhiedelem ellenére nem meleg.");
+    export let EmmaCard = new diakCards("Emma", "", 6, 2, Emma, 4, 3, "character", GachaPH, "EmmaCard", gachaPHAudio, "Beépített tégla volt a Radnótiban, de jó útra tért. Árjafaj.");
+    export let RekaCard = new diakCards("Réka", "", 6, 2, Reka, 4, 3, "character", GachaPH, "RekaCard", gachaPHAudio, "Pedofil hobbizsiráf. Nem szereti a tejberizst. A cicákat szereti.");
+    export let JuliCard = new diakCards("Juli", "", 6, 2, Juli, 4, 3, "character", GachaPH, "JuliCard", gachaPHAudio, "A manórúd óta Csillag Patrik.");
 
     export let tanarCardsArr = [BizsoCard, FarkasCard,MartiCard, MoniCard, NagyoraCard, RozgonyiCard, TabiCard,BencusCard,DobiCard,IvanEvaCard,TomiCard,KocsiAndiCard,KoPaszCard,KutiCard,MatosCard,MeszarosCard,JeffCard,FiloRekaCard,IzigCard,KinyoCard, LaciNeniCard, MsFarkasCard,NagyTCard,ParagiCard,RixerCard,SisakCard,SzaszakCard,TothKareszCard,VeronikaCard,WeiszCard,TritzCard]
-    export let diakCardsArr = [ArhoCard, BarniCard, EszterCard, OliviaCard, ZalanCard, ZenoCard,AproNoCard,ReginaCard]
+    export let diakCardsArr = [ArhoCard, BarniCard, EszterCard, OliviaCard, ZalanCard, ZenoCard,AproNoCard,ReginaCard,EmmaCard,RekaCard,JuliCard]
     export let spellCardsArr = [ebedCard,felelesCard,instantMerevedesCard,jegkremCard,lyukasoraCard,palacsintaFeszCard,sportSzeletCard,keszultelCard,nemKeszultelCard,ideAManaddalCard,tuzgolyoCard,tuzsarkanyLangjaCard,lanchegysegCard,sagvarizmusEjszakajaCard,taktikaiTekergesCard,saraToborzasCard,saraSzurkolotaborCard,falanxCard,kiteresCard,agyhalalCard,javitoDolgozatCard,mezeskalacsCard,osztalytalalkozoCard,puskazasCard]
     export let allCardsArr = tanarCardsArr.concat(diakCardsArr)
     allCardsArr = allCardsArr.concat(spellCardsArr)
