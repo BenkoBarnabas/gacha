@@ -368,7 +368,7 @@
         <div id="rarityBG" style="background: {backgroundColorByCost[(curCardInView.rarity)-3]}; "></div>
         <img id="curCardInView" src={curCardInView.source} alt="">
         <img class="cardTemplate" src={cardForeground} alt="cardBg">
-        <div id="curCardDesc" class="noScrollers">{curCardInView.desc}</div>
+        <div id="curCardDesc" class="noScrollers">{@html curCardInView.desc}</div>
         <div class="curCardStats" style="left: 7.4vw;">{curCardInView.atk}</div>
         <div class="curCardStats" style="left: 21.5vw;">{curCardInView.hp}</div>
         <div class="curCardCost">{curCardInView.cost}</div>
@@ -389,7 +389,7 @@
         <div id="rarityBG" style="background: {backgroundColorByCost[(curCardInView.rarity)-3]}; "></div>
         <img id="curCardInView" src={curCardInView.source} alt="">
         <img class="cardTemplate" src={spellForeground} alt="cardBg">
-        <div id="curCardDesc" class="noScrollers">{curCardInView.desc}</div>
+        <div id="curCardDesc" class="noScrollers">{@html curCardInView.desc}</div>
         <div class="curCardCost">{curCardInView.cost}</div>
         <div class="curCardName">{curCardInView.name}</div>
         
