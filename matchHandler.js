@@ -1,6 +1,8 @@
 import * as Client from "./client"
 import * as Cards from "./card"
 
+
+
 import "./routes/matchScreen/+page.svelte"
 
 let domLoaded = false
@@ -17,13 +19,14 @@ let yourGameID = ""
 let opponentGameID = ""
 let gameKey = ""
 
-export let yourGameParametersClient = {currentHand: []}
-export let enemyGameParametersClient = {currentHand: []}
+export let yourGameParametersClient = {currentHand: [], yourBoard: Array(10).fill("")}
+export let enemyGameParametersClient = {currentHand: [], yourBoard: Array(10).fill("")}
 
 
 export function DomLoaded(){
     yourGameParametersClient = JSON.parse(localStorage.getItem("yourGameParams"))
     enemyGameParametersClient = JSON.parse(localStorage.getItem("opponentGameParams"))
+    console.log("enemy and your game paramts, clinet: ",yourGameParametersClient);
 }
 
 
@@ -42,9 +45,6 @@ export function sendMatchRequest(id){
       console.log(msg);
     })
 }
-
-
-
 Client.socket.on("makeMatchSocket", msg => {
     console.log("socket on makeMatch: ",msg);
     if(msg.includes(Client.clientID)){
@@ -64,7 +64,8 @@ Client.socket.on("makeMatchSocket", msg => {
 export let youAreReady = false
 export let opponentIsReady = false
 export function PlayerReady(){
-    Client.socket.emit(gameKey,JSON.stringify(`${yourGameID}trueReady`))
+    var msg = yourGameID + "trueReady"
+    Client.socket.emit(gameKey,JSON.stringify(msg))
     youAreReady = true
     console.log("ready vagy te");
 
@@ -87,7 +88,12 @@ Client.socket.on('connect', () => {
 export function SveltePageLoaded(){
     domLoaded = true
 }
+//events (for communication)
 let socketConnectedEvent
+let nextTurnEvent
+
+
+
 function WaitForDomPage(){
     if(!domLoaded && !connectedToSocket){
         setTimeout(() => {
@@ -96,6 +102,7 @@ function WaitForDomPage(){
     }
     else{
         socketConnectedEvent = new Event('socketConnected');
+        nextTurnEvent = new Event("nextTurn")
         ServerCode()
     }
 }
@@ -132,6 +139,27 @@ function ServerCode(){
             }
             
         }
+        else if(msg.includes("isFirst")){
+            console.log(msg);
+            var u = JSON.parse(localStorage.getItem("yourGameParams"))
+            var notU = JSON.parse(localStorage.getItem("opponentGameParams"))
+            
+            if(msg.includes(yourGameID)){
+                u.isYourTurn = true
+                notU.isYourTurn = false
+            }
+            else{
+                u.isYourTurn = false
+                notU.isYourTurn = true
+                
+            }
+            localStorage.setItem("yourGameParams", JSON.stringify(u));
+            localStorage.setItem("opponentGameParams", JSON.stringify(notU));
+        }
+        else if(msg.includes("TurnEnded")){
+            enemyGameParametersClient.isYourTurn = !enemyGameParametersClient.isYourTurn
+            document.dispatchEvent(nextTurnEvent);
+        }
         else{
             msg = JSON.parse(msg)
             if(msg.gameId != yourGameID){
@@ -139,6 +167,12 @@ function ServerCode(){
                 console.log("from server, enemyGameParamters: ",msg);
                 localStorage.setItem("opponentGameParams", JSON.stringify(msg));
                 enemyGameParametersClient = msg
+                console.log(msg);
+                if(enemyGameParametersClient.yourBoard.length == 0){
+                    console.log("üres vót");
+                    enemyGameParametersClient.yourBoard = Array(10).fill("")
+                }
+                console.log(enemyGameParametersClient.yourBoard);
             }
         }
         
@@ -150,13 +184,36 @@ Client.socket.on('disconnect', () => {
 });
 
 export function SendGameData(data){
-    Client.socket.emit(gameKey, JSON.stringify(data))
+    Client.socket.emit(gameKey, data)
     console.log(`${Date.now()}: game data sent: `,yourGameID);
 }
 
 
+
+
+//GAMEPLAY------------------------------------------
+//-------------------------------------------------------------------------------------------
+export function EndTurn(){
+    Client.socket.emit(gameKey,"TurnEnded")
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //MAIN
 WaitForDomPage()
+
+
 
 
 

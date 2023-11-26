@@ -4,7 +4,7 @@
     import * as Cards from "../../card"
     let enemyStartingHand = [Cards.BarniCard,Cards.BarniCard, Cards.FarkasCard, Cards.BizsoCard, Cards.BencusCard, Cards.ZenoCard]
     
-    import {SendGameData,connectedToSocket, yourGameParametersClient, enemyGameParametersClient, DomLoaded, SveltePageLoaded, currentOpponentId} from "../../matchHandler"
+    import {SendGameData,connectedToSocket, yourGameParametersClient, enemyGameParametersClient, DomLoaded, SveltePageLoaded, currentOpponentId, EndTurn} from "../../matchHandler"
 
     import cardBack from "../../lib/assets/global/cardBack.png"
 
@@ -24,8 +24,8 @@
     let opponentGameID
     let gameKey
 
-    let yourGameParameters = yourGameParametersClient
-    let enemyGameParameters = enemyGameParametersClient
+    let yourGameParameters = JSON.parse(JSON.stringify(yourGameParametersClient))
+    let enemyGameParameters = JSON.parse(JSON.stringify(enemyGameParametersClient))
 
     
     let startingHandNum = 5
@@ -33,19 +33,51 @@
     let enemyHand = []
     let cardsInYourHandClass = Array(startingHandNum).fill("cardTemplate")
     let newCard
-    let cardsInHandDoms
+    let cardsInHandDoms = []
 
+    let yourKo = 8
+
+    let targetArea = []
+    let koTargetArea = []
+    let kovek = []
+    let dragged = undefined
+    $:  {if (cardsInHandDoms[yourHand.length-1]) {
+        cardsInHandDoms[yourHand.length-1].addEventListener("dragstart", dragStart)
+        }
+        if (cardsInHandDoms[0]) {
+        cardsInHandDoms[0].addEventListener("dragstart", dragStart)
+        }
+        if (cardsInHandDoms[1]) {
+        cardsInHandDoms[1].addEventListener("dragstart", dragStart)
+        }
+        if (cardsInHandDoms[2]) {
+        cardsInHandDoms[2].addEventListener("dragstart", dragStart)
+        }
+        if (cardsInHandDoms[3]) {
+        cardsInHandDoms[3].addEventListener("dragstart", dragStart)
+        }
+        if (cardsInHandDoms[4]) {
+        cardsInHandDoms[4].addEventListener("dragstart", dragStart)
+        }}
+
+    
     function DrawStartingHand(n){
+        var a = Array(5)
         for(let i = 0; i<n; i++){
             var random = Math.floor(Math.random() * yourGameParameters.remaningDeck.length)
-            yourHand[i] = yourGameParameters.remaningDeck[random]
-            
+            yourHand.push(yourGameParameters.remaningDeck[random])
+
             yourGameParameters.remaningDeck.splice(random,1)
+            cardsInYourHandClass.push("cardTemplate")
             yourHand = yourHand
+
         }
+        
+        
         yourGameParameters.currentHand = Array.from(yourHand)
         //UpdateLocalStorage()
-        SendGameData(yourGameParameters)
+        
+        SendGameData(JSON.stringify(yourGameParameters))
     }
 
     function DrawOne(){
@@ -54,71 +86,74 @@
         yourHand = yourHand
 
     }
-    $:  if (newCard) {
-            newCard.addEventListener("dragstart", dragStart)
-        } 
-    
     
     let yourBoard = Array(10).fill("")
     let yourBoardPhs = Array(10).fill("")
     let enemyBoard = Array(10).fill("")
-    enemyBoard[1] = Cards.BarniCard
-    enemyBoard[4] = Cards.DobiCard
+    let enemyBoardPhs = Array(10).fill("")
 
     let isCardInYourHandInPlacingMode= false
 
-    let targetArea = []
-    let draggables;
-    let dragged = undefined
-
-
-    function UpdateLocalStorage(){
-        localStorage.setItem("yourGameParams", JSON.stringify(yourGameParameters));
-        localStorage.setItem("opponentGameParams", JSON.stringify(enemyGameParameters));
-
-        console.log("updated paramteres: ", yourGameParameters,enemyGameParameters);
-    }
-
+    let turnCount = 1
+    let isYourTurn = false
+    let isYourRally = false
+    let gameFase = 1
 
 
     let pageLoaded = false
     
     function ServerDependingCode(){
-        console.log(`${Date.now()}: server depended code ran`);
-        yourGameParameters = JSON.parse(localStorage.getItem("yourGameParams"))
-        enemyGameParameters = JSON.parse(localStorage.getItem("opponentGameParams"))
-        console.log("your and enemy params: ", yourGameParameters,enemyGameParameters);
+        update()
+
+        console.log("your and enemy params: ", yourGameParameters,enemyGameParameters,);
+        isYourTurn = yourGameParameters.isYourTurn
+        console.log("IS IT MINE TURN????",isYourTurn);
+        isYourTurn = isYourTurn
+        isYourTurn == true ? isYourRally = true : isYourRally = false
 
         yourGameID = JSON.parse(localStorage.getItem("yourGameID"))
         opponentGameID = JSON.parse(localStorage.getItem("opponentGameID"))
         gameKey = JSON.parse(localStorage.getItem("gameKey"))
 
         DrawStartingHand(5)
-
-        update()
-        pageLoaded = true
-        pageLoaded = pageLoaded
+        
     }
     onMount(() => {
             targetArea = document.getElementsByClassName("target")
+            koTargetArea = document.getElementsByClassName("kotarget")
+            kovek = document.getElementsByClassName("ko")
 
-            for(draggables of document.getElementsByClassName("move")){
-                draggables.addEventListener("dragstart", dragStart)
-            }
+            
             for(let i = 0;i<(yourBoard.length);i++){
                 targetArea[i].addEventListener("drop", drop)
                 targetArea[i].addEventListener("dragover", dragOver)
                 targetArea[i].addEventListener("dragleave", dragLeave)
             }
+            for(let i = 0;i<(yourBoard.length);i++){
+                koTargetArea[i].addEventListener("drop", koDrop)
+                koTargetArea[i].addEventListener("dragover", koDragOver)
+                koTargetArea[i].addEventListener("dragleave", koDragLeave)
+                console.log(getEventListeners(koTargetArea[i]));
+            }
+            for (let i = 0; i<kovek.length; i++){
+                kovek[i].addEventListener("dragstart",koDragStart)
+                console.log("added ko listener");
+            }
+           
+
             SveltePageLoaded()
-
             DomLoaded()
-            document.addEventListener('socketConnected', ServerDependingCode)
 
+            //events for communicating with clinet.js
+            document.addEventListener('socketConnected', ServerDependingCode)
+            document.addEventListener('nextTurn',NextTurn)
+
+
+
+            pageLoaded = true
+            pageLoaded = pageLoaded
         
     });
-    
-
 
 
 
@@ -126,10 +161,9 @@
         event.preventDefault()
 
         yourBoardPhs[Number(event.target.id.replace("td",""))] = ""
-        yourBoard[Number(event.target.id.replace("td",""))] = yourHand[dragged.id]
+        yourBoard[Number(event.target.id.replace("td",""))] = dragged
 
-        yourHand.splice(dragged.id, 1);
-        
+       
 
         console.log("your board: ",yourBoard);
         event.target.removeEventListener("drop", drop)
@@ -138,67 +172,134 @@
         console.log("dropped to this cell: ",event.target);
         console.log("the thing u dropped: ",dragged);
 
-        cardsInYourHandClass = Array(yourHand.length).fill("cardTemplate")
+        
+        if(dragged.type == "character"){
+            yourHand.splice(yourHand.indexOf(dragged), 1);
+        
+            yourHand = yourHand
+            cardsInYourHandClass = Array(yourHand.length).fill("cardTemplate")
+            yourGameParameters.yourHand = Array.from(yourHand)
+        }
+        else if(dragged.type == "ko"){
+            yourKo -= 1
+            yourGameParameters.ko -= 1
+            yourKo = yourKo
+        }
+        dragged = ""
 
-        yourHand = yourHand
         yourBoard = yourBoard
+        yourGameParameters.yourBoard = Array.from(yourBoard)
+        SendGameData(JSON.stringify(yourGameParameters))
+    }
+    function koDrop(event){
+        event.preventDefault()
+        enemyBoardPhs[Number(event.target.id.replace("etd",""))] = ""
+        enemyBoard[Number(event.target.id.replace("etd",""))] = dragged
+        enemyBoard = enemyBoard
+
+        event.target.removeEventListener("drop", koDrop)
+        event.target.removeEventListener("dragover", koDragOver)
+        event.target.removeEventListener("dragleave", koDragLeave)
+
+
+        yourKo -= 1
+
+        yourGameParameters.ko -= 1
+        enemyGameParameters.yourBoard = Array.from(enemyBoard)
+        console.log(enemyBoard);
+        console.log("hey bb u dropped this :^ ", event.target);
+        SendGameData(JSON.stringify(yourGameParameters))
     }
     function dragStart(event) {
-        dragged = event.target
+        console.log(event);
+        console.log(event.target);
+        dragged = yourHand[event.target.id]
         
         yourBoardPhs.fill("")
         yourBoardPhs = yourBoardPhs
         
     }
+    function koDragStart(event){
+        var ko = {
+            attack: 0,
+            health: Math.ceil(2*turnCount/3),
+            type: "ko"
+        }
+        console.log(event);
+        console.log(event.target);
+        dragged = ko
+        
+        yourBoardPhs.fill("")
+        yourBoardPhs = yourBoardPhs
+        enemyBoardPhs.fill("")
+        enemyBoardPhs = enemyBoardPhs
+
+    }
+
     function dragOver(event){
         event.preventDefault()
-        
-        yourBoardPhs[Number(event.target.id.replace("td",""))] = yourHand[dragged.id]
+        yourBoardPhs[Number(event.target.id.replace("td",""))] = dragged
         yourBoardPhs = yourBoardPhs
+    }
+    function koDragOver(event){
+        event.preventDefault()
+        enemyBoardPhs[Number(event.target.id.replace("etd",""))] = dragged
+        enemyBoardPhs = enemyBoardPhs
+        console.log(enemyBoardPhs);
     }
     function dragLeave(event){
         event.preventDefault()
-        
         yourBoardPhs[Number(event.target.id.replace("td",""))] = ""
         yourBoardPhs = yourBoardPhs
     }
+    function koDragLeave(event){
+        event.preventDefault()
+        enemyBoardPhs[Number(event.target.id.replace("etd",""))] = "dragged"
+        enemyBoardPhs = enemyBoardPhs
+        console.log(enemyBoardPhs);
+    }
+
 
 
     function PlacingMode(card, domId){
+        if(isYourTurn){
+            dragged = card
+            console.log(card);
+            console.log(domId);
+            Array(yourHand.length).fill("cardTemplate")
+            for (let i=0;i<(yourHand.length);i++){
+                cardsInYourHandClass[i] = "cardTemplate"
+                yourHand = yourHand;
+            }
 
-        Array(yourHand.length).fill("cardTemplate")
-        for (let i=0;i<(yourHand.length);i++){
-            cardsInYourHandClass[i] = "cardTemplate"
+            if(!isCardInYourHandInPlacingMode || !yourBoardPhs.includes(card)){
+                yourBoardPhs.fill("")
+
+                for (let i = 0; i<yourBoardPhs.length+1;i++){
+                    if(yourBoard[i] == ""){
+                        yourBoardPhs[i] = card
+                    }
+                }
+
+                if (card.stars < 6){
+                    cardsInYourHandClass[domId] = "cardTemplate cardInHandHighlighted"
+                }
+                else {
+                    cardsInYourHandClass[domId] = "cardTemplate cardInHandRainbowHighlighted"
+                }
+                yourBoardPhs = yourBoardPhs
+
+                isCardInYourHandInPlacingMode = true
+            }
+            else{
+                isCardInYourHandInPlacingMode = false
+                yourBoardPhs.fill("")
+                cardsInYourHandClass[domId] = "cardTemplate"
+                yourBoardPhs = yourBoardPhs
+            }
+
             yourHand = yourHand;
         }
-
-        if(!isCardInYourHandInPlacingMode || !yourBoardPhs.includes(card)){
-            yourBoardPhs.fill("")
-
-            for (let i = 0; i<yourBoardPhs.length+1;i++){
-                if(yourBoard[i] == ""){
-                    yourBoardPhs[i] = card
-                }
-            }
-
-            if (card.stars < 6){
-                cardsInYourHandClass[domId] = "cardTemplate cardInHandHighlighted"
-            }
-            else {
-                cardsInYourHandClass[domId] = "cardTemplate cardInHandRainbowHighlighted"
-            }
-            yourBoardPhs = yourBoardPhs
-
-            isCardInYourHandInPlacingMode = true
-        }
-        else{
-            isCardInYourHandInPlacingMode = false
-            yourBoardPhs.fill("")
-            cardsInYourHandClass[domId] = "cardTemplate"
-            yourBoardPhs = yourBoardPhs
-        }
-
-        yourHand = yourHand;
     }
     function PlaceByClick(card,i){
         yourBoard[i] = card;
@@ -221,17 +322,49 @@
         
     }
 
+    function NextTurn(){
+        if(gameFase < 3){
+            isYourTurn = !isYourTurn
+            yourGameParameters.isYourTurn = isYourTurn
+           
+            gameFase++
+            }
+            else if(gameFase == 3){
+                isYourRally = !isYourRally
+                isYourTurn = !isYourTurn
+                yourGameParameters.isYourTurn = isYourTurn
+                gameFase = 1
+                turnCount++
+                DrawOne()
+            }
+            console.log("turn: ",turnCount," gameFaze: ",gameFase, " rally: ",isYourRally," u cum?: ",isYourTurn);
+        
+        isYourTurn = isYourTurn
+        isYourRally = isYourRally
+    }
+    function ClickEndTurn(){
+        if(!isYourTurn){
+            console.log("nem a te köröd");
+            return;
+        }
+        EndTurn()
+    }
+
+    
+
     function update() {
         yourGameParameters = yourGameParametersClient
         enemyGameParameters = enemyGameParametersClient
+        
         yourGameParameters = yourGameParameters
         enemyGameParameters = enemyGameParameters
 
         enemyGameParameters.currentHand = enemyGameParameters.currentHand
+        enemyBoard = enemyGameParameters.yourBoard
+        enemyBoard = enemyBoard
 
         requestAnimationFrame(update)
     }
-
 </script>
 {#if !pageLoaded}
 <div id="loadingScreen">
@@ -241,6 +374,7 @@
 {/if}
 
 <div id="background"></div>
+
 
 <div id="gamePlayFiledCont">
     <div id="board">
@@ -252,52 +386,23 @@
             {/each}
         </div>
         <div id="playField">
-            <table class="gameFiledSides" id="enemySide">
+            <div class="gameFiledSides" id="enemySide">
                 <tr class="tierTwo boardRows">
-                    {#each Array(5) as card}
-                        <td class="boardsCells">1</td>
-                    {/each}
-                </tr>
-                <tr class="tierOne boardRows">
-                    {#each Array(5) as card}
-                        <td class="boardsCells">1</td>
-                    {/each}
-                </tr>
-            </table>
-            <div class="gameFiledSides" id="yourSide">
-                <tr class="tierOne boardRows">
-                    {#each Array((yourBoard.length)/2) as cell,i}
-                        <td class="target boardsCells" id="td{i}">
-                        {#if yourBoardPhs[i] != ""}
-                        <div on:click={() => PlaceByClick(yourBoardPhs[i],i)} id="cardPreviewListCont" class:isPlacingModePh={isCardInYourHandInPlacingMode} style="filter: grayscale(0.5) contrast(50%);opacity: 0.7;" on:keydown role="button" tabindex="">
-                            <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute" src={cardV2Background} alt="cardBg">
-                            <div id="rarityBGList" style="background: {backgroundColorByCost[( yourBoardPhs[i].stars)-3]}; "></div>
-                            <img draggable="false" class = "cardButton" src={ yourBoardPhs[i].source} alt="preview"/>
-                            <button class="cardListFrame" alt="cardBg"></button>
-                            <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*2.68);">{ yourBoardPhs[i].attack}</div>
-                            <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*9.65);">{ yourBoardPhs[i].health}</div>
-                            <div class="curCardCostList">{ yourBoardPhs[i].cost}</div>
-                            <div class="curCardNameList">{ yourBoardPhs[i].name}</div>
-                
-                            <div class="curCardRarityList" style="{starsColorByCost[( yourBoardPhs[i].stars)-3]}">
-                                {#each Array(Number( yourBoardPhs[i].stars)) as card,index}
-                                    <span style="font-size: calc(var(--cardOnBoardScale)*1vw*1);">★</span>
-                                {/each}
-                            </div>
-                        </div>
-                        {:else if yourBoard[i] != ""}
+                    {#each Array(enemyBoard.length/2) as card,i}
+                    <td class="boardsCells kotarget" id="etd{i}">
+                        {#if enemyBoard[i] != ""}
                         <div id="cardPreviewListCont">
                             <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute" src={cardV2Background} alt="cardBg">
-                            <div id="rarityBGList" style="background: {backgroundColorByCost[(yourBoard[i].stars)-3]}; "></div>
-                            <img draggable="false" class = "cardButton" src={yourBoard[i].source} alt="preview"/>
+                            <div id="rarityBGList" style="background: {backgroundColorByCost[(enemyBoard[i].stars)-3]}; "></div>
+                            <img draggable="false" class = "cardButton" src={enemyBoard[i].source} alt="preview"/>
                             <button class="cardListFrame" alt="cardBg"></button>
-                            <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*2.68);">{yourBoard[i].attack}</div>
-                            <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*9.65);">{yourBoard[i].health}</div>
-                            <div class="curCardCostList">{yourBoard[i].cost}</div>
-                            <div class="curCardNameList">{yourBoard[i].name}</div>
+                            <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*2.68);">{enemyBoard[i].attack}</div>
+                            <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*9.65);">{enemyBoard[i].health}</div>
+                            <div class="curCardCostList">{enemyBoard[i].cost}</div>
+                            <div class="curCardNameList">{enemyBoard[i].name}</div>
                 
-                            <div class="curCardRarityList" style="{starsColorByCost[(yourBoard[i].stars)-3]}">
-                                {#each Array(Number(yourBoard[i].stars)) as card,index}
+                            <div class="curCardRarityList" style="{starsColorByCost[(enemyBoard[i].stars)-3]}">
+                                {#each Array(Number(enemyBoard[i].stars)) as card,index}
                                     <span style="font-size: calc(var(--cardOnBoardScale)*1vw*1);">★</span>
                                 {/each}
                             </div>
@@ -306,39 +411,22 @@
                     </td>
                     {/each}
                 </tr>
-                <tr class="tierTwo boardRows">
-                    {#each Array((yourBoard.length)/2) as cell,i}
-                        <td class="yourBoardTierTwo target boardsCells" id="td{i+(yourBoard.length)/2}">
-                        {#if yourBoardPhs[i+(yourBoardPhs.length)/2] != ""}
-                        <div on:click={() => PlaceByClick(yourBoardPhs[i+(yourBoard.length)/2],i+(yourBoard.length)/2)} id="cardPreviewListCont" class:isPlacingModePh={isCardInYourHandInPlacingMode} style="filter: grayscale(0.5) contrast(50%);opacity: 0.7;" on:keydown role="button" tabindex="">
-                            <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute" src={cardV2Background} alt="cardBg">
-                            <div id="rarityBGList" style="background: {backgroundColorByCost[yourBoardPhs[i+(yourBoardPhs.length)/2]]}; "></div>
-                            <img draggable="false" class = "cardButton" src={yourBoardPhs[i+(yourBoardPhs.length)/2].source} alt="preview"/>
-                            <button class="cardListFrame" alt="cardBg"></button>
-                            <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*2.68);">{yourBoardPhs[i+(yourBoardPhs.length)/2].attack}</div>
-                            <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*9.65);">{yourBoardPhs[i+(yourBoardPhs.length)/2].health}</div>
-                            <div class="curCardCostList">{yourBoardPhs[i+(yourBoardPhs.length)/2].cost}</div>
-                            <div class="curCardNameList">{yourBoardPhs[i+(yourBoardPhs.length)/2].name}</div>
-                
-                            <div class="curCardRarityList" style="{starsColorByCost[(yourBoardPhs[i+(yourBoardPhs.length)/2].stars)-3]}">
-                                {#each Array(Number(yourBoardPhs[i+(yourBoardPhs.length)/2].stars)) as card,index}
-                                    <span style="font-size: calc(var(--cardOnBoardScale)*1vw*1);">★</span>
-                                {/each}
-                            </div>
-                        </div>
-                        {:else if yourBoard[i+(yourBoard.length)/2] != ""}
+                <tr class="tierOne boardRows">
+                    {#each Array((enemyBoard.length)/2) as cell,i}
+                    <td class="boardsCells kotarget" id="etd{(enemyBoard.length)/2+i}">
+                        {#if enemyBoard[(enemyBoard.length)/2+i] != ""}
                         <div id="cardPreviewListCont">
                             <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute" src={cardV2Background} alt="cardBg">
-                            <div id="rarityBGList" style="background: {backgroundColorByCost[(yourBoard[i+(yourBoard.length)/2].stars)-3]}; "></div>
-                            <img draggable="false" class = "cardButton" src={yourBoard[i+(yourBoard.length)/2].source} alt="preview"/>
+                            <div id="rarityBGList" style="background: {backgroundColorByCost[(enemyBoard[i+(enemyBoard.length)/2].stars)-3]}; "></div>
+                            <img draggable="false" class = "cardButton" src={enemyBoard[i+(enemyBoard.length)/2].source} alt="preview"/>
                             <button class="cardListFrame" alt="cardBg"></button>
-                            <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*2.68);">{yourBoard[i+(yourBoard.length)/2].attack}</div>
-                            <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*9.65);">{yourBoard[i+(yourBoard.length)/2].health}</div>
-                            <div class="curCardCostList">{yourBoard[i+(yourBoard.length)/2].cost}</div>
-                            <div class="curCardNameList">{yourBoard[i+(yourBoard.length)/2].name}</div>
+                            <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*2.68);">{enemyBoard[i+(enemyBoard.length)/2].attack}</div>
+                            <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*9.65);">{enemyBoard[i+(enemyBoard.length)/2].health}</div>
+                            <div class="curCardCostList">{enemyBoard[i+(enemyBoard.length)/2].cost}</div>
+                            <div class="curCardNameList">{enemyBoard[i+(enemyBoard.length)/2].name}</div>
                 
-                            <div class="curCardRarityList" style="{starsColorByCost[(yourBoard[i+(yourBoard.length)/2].stars)-3]}">
-                                {#each Array(Number(yourBoard[i+(yourBoard.length)/2].stars)) as card,index}
+                            <div class="curCardRarityList" style="{starsColorByCost[(enemyBoard[i+(enemyBoard.length)/2].stars)-3]}">
+                                {#each Array(Number(enemyBoard[i+(enemyBoard.length)/2].stars)) as card,index}
                                     <span style="font-size: calc(var(--cardOnBoardScale)*1vw*1);">★</span>
                                 {/each}
                             </div>
@@ -348,10 +436,116 @@
                     {/each}
                 </tr>
             </div>
+            <div class="gameFiledSides" id="yourSide">
+                <tr class="tierOne boardRows">
+                    {#each Array((yourBoard.length)/2) as cell,i}
+                        <td class="target boardsCells" id="td{i}">
+                        {#if yourBoardPhs[i].type == "character"}
+                            {#if yourBoardPhs[i] != ""}
+                            <div on:click={() => PlaceByClick(yourBoardPhs[i],i)} id="cardPreviewListCont" class:isPlacingModePh={isCardInYourHandInPlacingMode} style="filter: grayscale(0.5) contrast(50%);opacity: 0.7;" on:keydown role="button" tabindex="">
+                                <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute" src={cardV2Background} alt="cardBg">
+                                <div id="rarityBGList" style="background: {backgroundColorByCost[( yourBoardPhs[i].stars)-3]}; "></div>
+                                <img draggable="false" class = "cardButton" src={yourBoardPhs[i].source} alt="preview"/>
+                                <button class="cardListFrame" alt="cardBg"></button>
+                                <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*2.68);">{ yourBoardPhs[i].attack}</div>
+                                <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*9.65);">{ yourBoardPhs[i].health}</div>
+                                <div class="curCardCostList">{ yourBoardPhs[i].cost}</div>
+                                <div class="curCardNameList">{ yourBoardPhs[i].name}</div>
+                    
+                                <div class="curCardRarityList" style="{starsColorByCost[( yourBoardPhs[i].stars)-3]}">
+                                    {#each Array(Number( yourBoardPhs[i].stars)) as card,index}
+                                        <span style="font-size: calc(var(--cardOnBoardScale)*1vw*1);">★</span>
+                                    {/each}
+                                </div>
+                            </div>
+                            {/if}
+                        {:else if yourBoardPhs[i].type == "ko"}
+                            <div class="ko">{yourBoard[i].health}</div>
+                        {/if}
+
+                        {#if yourBoard[i].type == "character"}
+                            {#if yourBoard[i] != ""}
+                            <div id="cardPreviewListCont">
+                                <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute" src={cardV2Background} alt="cardBg">
+                                <div id="rarityBGList" style="background: {backgroundColorByCost[(yourBoard[i].stars)-3]}; "></div>
+                                <img draggable="false" class = "cardButton" src={yourBoard[i].source} alt="preview"/>
+                                <button class="cardListFrame" alt="cardBg"></button>
+                                <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*2.68);">{yourBoard[i].attack}</div>
+                                <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*9.65);">{yourBoard[i].health}</div>
+                                <div class="curCardCostList">{yourBoard[i].cost}</div>
+                                <div class="curCardNameList">{yourBoard[i].name}</div>
+                    
+                                <div class="curCardRarityList" style="{starsColorByCost[(yourBoard[i].stars)-3]}">
+                                    {#each Array(Number(yourBoard[i].stars)) as card,index}
+                                        <span style="font-size: calc(var(--cardOnBoardScale)*1vw*1);">★</span>
+                                    {/each}
+                                </div>
+                            </div>
+                            {/if}
+                        {:else if yourBoard[i].type == "ko"}
+                            <div class="ko">{yourBoard[i].health}</div>
+                        {/if}
+                        
+                    </td>
+                    {/each}
+                </tr>
+                <tr class="tierTwo boardRows">
+                    {#each Array((yourBoard.length)/2) as cell,i}
+                        <td class="yourBoardTierTwo target boardsCells" id="td{i+(yourBoard.length)/2}">
+                        {#if yourBoardPhs[i+(yourBoardPhs.length)/2].type == "character"}
+                            {#if yourBoardPhs[i+(yourBoardPhs.length)/2] != ""}
+                            <div on:click={() => PlaceByClick(yourBoardPhs[i+(yourBoard.length)/2],i+(yourBoard.length)/2)} id="cardPreviewListCont" class:isPlacingModePh={isCardInYourHandInPlacingMode} style="filter: grayscale(0.5) contrast(50%);opacity: 0.7;" on:keydown role="button" tabindex="">
+                                <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute" src={cardV2Background} alt="cardBg">
+                                <div id="rarityBGList" style="background: {backgroundColorByCost[yourBoardPhs[i+(yourBoardPhs.length)/2]]}; "></div>
+                                <img draggable="false" class = "cardButton" src={yourBoardPhs[i+(yourBoardPhs.length)/2].source} alt="preview"/>
+                                <button class="cardListFrame" alt="cardBg"></button>
+                                <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*2.68);">{yourBoardPhs[i+(yourBoardPhs.length)/2].attack}</div>
+                                <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*9.65);">{yourBoardPhs[i+(yourBoardPhs.length)/2].health}</div>
+                                <div class="curCardCostList">{yourBoardPhs[i+(yourBoardPhs.length)/2].cost}</div>
+                                <div class="curCardNameList">{yourBoardPhs[i+(yourBoardPhs.length)/2].name}</div>
+                    
+                                <div class="curCardRarityList" style="{starsColorByCost[(yourBoardPhs[i+(yourBoardPhs.length)/2].stars)-3]}">
+                                    {#each Array(Number(yourBoardPhs[i+(yourBoardPhs.length)/2].stars)) as card,index}
+                                        <span style="font-size: calc(var(--cardOnBoardScale)*1vw*1);">★</span>
+                                    {/each}
+                                </div>
+                            </div>
+                            {/if}
+                        {:else if yourBoardPhs[i+(yourBoardPhs.length)/2].type == "ko"}
+                            <div class="ko">{yourBoard[i+(yourBoardPhs.length)/2].health}</div>
+                        {/if}
+
+                        {#if yourBoard[i+(yourBoard.length)/2].type == "character"}
+                            {#if yourBoard[i+(yourBoard.length)/2] != ""}
+                            <div id="cardPreviewListCont">
+                                <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute" src={cardV2Background} alt="cardBg">
+                                <div id="rarityBGList" style="background: {backgroundColorByCost[(yourBoard[i+(yourBoard.length)/2].stars)-3]}; "></div>
+                                <img draggable="false" class = "cardButton" src={yourBoard[i+(yourBoard.length)/2].source} alt="preview"/>
+                                <button class="cardListFrame" alt="cardBg"></button>
+                                <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*2.68);">{yourBoard[i+(yourBoard.length)/2].attack}</div>
+                                <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*9.65);">{yourBoard[i+(yourBoard.length)/2].health}</div>
+                                <div class="curCardCostList">{yourBoard[i+(yourBoard.length)/2].cost}</div>
+                                <div class="curCardNameList">{yourBoard[i+(yourBoard.length)/2].name}</div>
+                    
+                                <div class="curCardRarityList" style="{starsColorByCost[(yourBoard[i+(yourBoard.length)/2].stars)-3]}">
+                                    {#each Array(Number(yourBoard[i+(yourBoard.length)/2].stars)) as card,index}
+                                        <span style="font-size: calc(var(--cardOnBoardScale)*1vw*1);">★</span>
+                                    {/each}
+                                </div>
+                            </div>
+                            {/if}
+                        {:else if yourBoard[i+(yourBoard.length)/2].type == "ko"}
+                            <div class="ko">{yourBoard[i+(yourBoardPhs.length)/2].health}</div>
+                        {/if}
+                        
+                    </td>
+                    {/each}
+                </tr>
+            </div>
         </div>
-        <div id="yourHand" class="handCont" bind:this={cardsInHandDoms}>
+        <div id="yourHand" class="handCont" >
             {#each yourHand as card,i}
-            <div bind:this={newCard} id={i} on:click={() => PlacingMode(card,i)} draggable="true" class="previewInHand move" style="--cardNum: {yourHand.length};transform: rotate({-22.5+(45/yourHand.length)*(i+1)}deg);top:{(yourHand.length-(i))/3}vw;" on:keydown role="button" tabindex="">
+            <div bind:this={cardsInHandDoms[i]} id={i} on:click={() => PlacingMode(card,i)} draggable={isYourTurn} class="previewInHand move" style="--cardNum: {yourHand.length};transform: rotate({-22.5+(45/yourHand.length)*(i+1)}deg);top:{(yourHand.length-(i))/3}vw;" on:keydown role="button" tabindex="">
                 <img draggable="false" class={cardsInYourHandClass[i]} id="cardBackground" src={cardBackground} style="--colorr: {backgroundColorByCost[(card.stars)-3]}; --colorr2: #{(parseInt((backgroundColorByCost[(card.stars)-3].replace("#","")), 16)+663552).toString(16)};" alt="cardBg">
                 <div id="rarityBG" style="background: {backgroundColorByCost[(card.stars)-3]}; "></div>
                 <img draggable="false" id="curCardInView" src={card.source} alt="">
@@ -387,17 +581,22 @@
         <div id="enemyKo" class="koCont">
 
         </div>
-        <div id="yourKo" class="koCont"></div>
+        <div id="yourKo" class="koCont">
+            {#each Array(yourKo) as ko}
+                <div draggable={isYourTurn} class="ko">ko</div>
+            {/each}
+        </div>
     </div>
     <div id="matchConsole">
         <div id="matchConsoleCont">
-            <div id="enemyBattleStateIndicator" class="battleStateIndicatorCont">
+            <div style="top:0;" id="enemyBattleStateIndicator" class="battleStateIndicatorCont" class:notYourTurnBattleIndicator={!enemyGameParameters.isYourTurn} class:rallyTurn={!isYourRally} class:defendTurn={isYourRally}>
 
             </div>
-            <button>
+            
+            <button on:click={ClickEndTurn} id="endTurnButton" class:notYourTurnBattleIndicator={!isYourTurn}>
                 END TURN 
             </button>
-            <div id="yourBattleStateIndicator" class="battleStateIndicatorCont">
+            <div style="bottom:0;" id="yourBattleStateIndicator" class="battleStateIndicatorCont" class:notYourTurnBattleIndicator={!isYourTurn} class:rallyTurn={isYourRally} class:defendTurn={!isYourRally}>
 
             </div>
         </div>
@@ -454,6 +653,13 @@
         top: 8vh;
         left: 82vw;
     }
+    .ko{
+        width: 6vw;
+        height: 6vw;
+        background-image: url(../../lib/assets/gameplay/ko.png);
+        background-size: 100% 100%;
+        position: absolute;
+    }
 
     #matchConsoleCont{
         background-color: rgba(255, 166, 0, 0.742);
@@ -464,6 +670,36 @@
         left: 86.5vw;
         top: 22.5vh;
 
+    }
+    .battleStateIndicatorCont{
+        border:2px solid black;
+        width: 7vw;
+        height: 7vw;
+        position: absolute;
+    }
+    .rallyTurn{
+        background: url(../../lib/assets/gameplay/rallyIcon.png) no-repeat;
+        background-size: 100% 100%;
+
+    }
+    .defendTurn{
+        background: url(../../lib/assets/gameplay/defendIcon.png) no-repeat;
+        background-size: 100% 100%;
+    }
+    .notYourTurnBattleIndicator{
+        filter:grayscale(0.8);
+        cursor: default;
+    }
+    #endTurnButton{
+        width: 100%;
+        height: 10%;
+        position: absolute;
+        top: 50%;
+        background-color: rgb(238, 134, 59);
+        font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+        bottom: 2px solid rgb(131, 70, 27);
+
+        cursor: pointer;
     }
 
 

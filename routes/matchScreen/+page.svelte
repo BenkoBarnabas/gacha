@@ -23,8 +23,9 @@
         mana: 2,
         spellMana: 0,
         ko: 8,
-        yourBoard: "",
-        yourBoardStatus: ""
+        yourBoard: [],
+        yourBoardStatus: "",
+        isYourTurn: ""
     }
   let enemyGameParameters = {
         gameId: "",
@@ -36,7 +37,8 @@
         spellMana: 0,
         ko: 8,
         yourBoard: "",
-        yourBoardStatus: ""
+        yourBoardStatus: "",
+        isYourTurn: ""
     }
 
 
@@ -88,7 +90,7 @@
 
       localStorage.setItem("yourGameParams", JSON.stringify(yourGameParameters));
       console.log("your and enemy params: ", yourGameParameters,enemyGameParameters);
-      SendGameData(yourGameParameters)
+      SendGameData(JSON.stringify(yourGameParameters))
 
     }
 
