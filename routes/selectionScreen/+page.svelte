@@ -12,7 +12,6 @@
     for(let i = 0; i < Cards.allCardsArr.length; i++){
         allcardnames.push((Cards.allCardsArr[i]).name)
     }
-    console.log(allcardnames);
 
     let selectedDeck = 0
     let selectedList = [[],[],[],[]]
@@ -92,8 +91,10 @@
     }
 
     function deleteCard(cardname, i){
-        currDeckArray.splice(currDeckArray.indexOf(cardname), 1)
+        currDeckArray = currDeckArray.splice(currDeckArray[i], 1)
         currDeckArray = currDeckArray
+
+        console.log(currDeckArray);
 
         selectedList[selectedDeck] = String(currDeckArray)
         sendData(`deckarray${selectedDeck}`, selectedList[selectedDeck], localUserData.id, "deck")
@@ -120,15 +121,13 @@
 
         if(currDeckArray != []){
             for (let i = 0; i<currDeckArray.length;i++){
-            console.log(allcardnames);
-            console.log(currDeckArray[i]);
-            var index = allcardnames.indexOf(currDeckArray[i])
-            console.log(index);
-            cardsClassName[index] = "cardPreviewListCont"
+                console.log(currDeckArray[i]);
+                var index = allcardnames.indexOf(currDeckArray[i])
+                console.log(index);
+                cardsClassName[index] = "cardPreviewListCont"
             }
         }
 
-        console.log(cardsClassName);
         selectedList = selectedList
 
         isSelectingDeck = false
@@ -173,7 +172,6 @@
     {:else}
         <input type="text" bind:value={curDeckName} placeholder="Nevezd el a paklid" style="width:80%;">
         <button style="width: 15%;" on:click={() => SaveDeckName(curDeckName)}>Mentés</button>
-        <br><br><br><br>
         
         <button style="float: right;" on:click={()=> ChangeDeck()}>Change Deck</button>
 
