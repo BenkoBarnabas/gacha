@@ -201,7 +201,7 @@ your email: {userData.email}<br>
     color: rgb(37, 36, 39);
   }
   :global(body){  /*body styling format of svelte */ 
-        background: url("../lib/assets/global/diszterem.png") no-repeat;
+        background: url("../lib/assets/global/bg.jpeg") no-repeat;
         background-size: 100% 100%;
         /*animation: backgroundLoop 120s linear infinite;*/
         background-size: var(--bgWidth);
