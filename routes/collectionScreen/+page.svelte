@@ -9,6 +9,22 @@
     import spellForeground from "../../lib/assets/global/spellV1Top.png"
     import spellV2Foreground from "../../lib/assets/global/spellV2Top.png"
 
+    import qucikAtk from "../../lib/assets/global/quickAtk.png"
+    import doubleAtk from "../../lib/assets/global/doubleAtk.png"
+    import blastAtk from "../../lib/assets/global/blastAtk.png"
+    import lifeSteal from "../../lib/assets/global/lifeSteal.png"
+    import thorns from "../../lib/assets/global/thorns.png"
+    import challanger from "../../lib/assets/global/challanger.png"
+
+    let talentIcons = {
+        kihívó: challanger,
+        kettőstámadás: doubleAtk,
+        tövisesbőr: thorns,
+        fürgetámadás: qucikAtk,
+        robbanótámadás: blastAtk,
+        életelszívás: lifeSteal
+    }
+
 
     import ph from "../../lib/assets/collection/tanar/Bizso.png"
 
@@ -68,7 +84,8 @@
         rarity: "",
         desc: "",
         color: "",
-        quote: ""
+        quote: "",
+        talent:""
     }
 
     var starSizeArray = [] //for some reason it didnt work with a normal return so i had to put them into an array ,im throwing up
@@ -78,7 +95,7 @@
     
     
     let voicelines = {}
-    function handleClick(source,name,atk,hp,cost,rarity,desc,quote) {
+    function handleClick(source,name,atk,hp,cost,rarity,desc,quote,talent) {
         curCardInView.type = "character"
         curCardInView.source = source
         curCardInView.name = name
@@ -89,6 +106,7 @@
         starSizeTop = starSizeTop
         curCardInView.desc = desc
         curCardInView.quote = quote
+        curCardInView.talent = talent
 
         starSizeArray = []
         for (let i = 0; i < curCardInView.rarity; i++){
@@ -301,11 +319,15 @@
             <img style="width: 12.5vw; position:absolute" src={cardV2Background} alt="cardBg">
             <div id="rarityBGList" style="background: {backgroundColorByCost[(card.stars)-3]}; "></div>
             <img class = "cardButton" src={card.source} alt="preview"/>
-            <button class="cardListFrame" alt="cardBg" on:click={() => handleClick(card.source,card.name,card.attack,card.health,card.cost,card.stars,card.description,card.quote)}></button>
+            <button class="cardListFrame" alt="cardBg" on:click={() => handleClick(card.source,card.name,card.attack,card.health,card.cost,card.stars,card.description,card.quote,card.talent)}></button>
             <div class="curCardStatsList" style="left: 2.68vw;">{card.attack}</div>
             <div class="curCardStatsList" style="left: 9.65vw;">{card.health}</div>
             <div class="curCardCostList">{card.cost}</div>
             <div class="curCardNameList">{card.name}</div>
+            {#if card.talent != ""}
+            <div class="curCardTalentList">{card.talent.replace("támadás","")}</div>
+            <img class="curCardTalentIconList" src={talentIcons[card.talent.replace(" ","")]} alt="talent">
+            {/if}
 
             <div class="curCardRarityList" style="{starsColorByCost[(card.stars)-3]}">
                 {#each Array(Number(card.stars)) as card,index}
@@ -373,6 +395,10 @@
         <div class="curCardStats" style="left: 21.5vw;">{curCardInView.hp}</div>
         <div class="curCardCost">{curCardInView.cost}</div>
         <div class="curCardName">{curCardInView.name}</div>
+        {#if curCardInView.talent != ""}
+        <div class="curCardTalent">{curCardInView.talent.replace("támadás","")}</div>
+        <img class="curCardTalentIcon" src={talentIcons[curCardInView.talent.replace(" ","")]} alt="talent">
+        {/if}
         
         <div id="curCardRarity" style="{starsColorByCost[(curCardInView.rarity)-3]}; top: {starSizeTop[(curCardInView.rarity)-3]}vw;">
             {#each Array(Number(curCardInView.rarity)) as card,index}
@@ -429,6 +455,10 @@
     @font-face {
       font-family: 'mainFont';
       src: url('../../lib/assets/fonts/zh-cn.ttf');
+    }
+    @font-face{
+        font-family: "talentFont";
+        src: url('../../lib/assets/fonts/CenturyGothic.ttf');
     }
 
     #loadingScreen {
@@ -703,7 +733,7 @@
         text-shadow: 0 0 1vw rgba(0, 0, 0, 0.536);
 
         position: absolute;
-        top: 13.2vw;
+        top: 12.8vw;
         left: 2vw;
 
         text-align: center;
@@ -731,10 +761,42 @@
         overflow: auto;
         font-size: 0.89vw;
     }
+    .curCardTalentIconList{
+        position: absolute;
+        width: 1.4vw;
+        top: 13.6vw;
+        left: 3.8vw;
+    }
+    .curCardTalentList{
+        position: absolute;
+        font-family: "talentFont";
+        color: antiquewhite;
+        font-size: 0.7vw;
+        top: 14vw;
+        left: 5.5vw;
+        width: 4.8vw;
+        height: 1vw;
+    }
 
 
 
-
+    .curCardTalentIcon{
+        position: absolute;
+        width: 3.1vw;
+        top: 19.6vw;
+        left: 10.3vw;
+    }
+    .curCardTalent{
+        position: absolute;
+        font-family: "talentFont";
+        color: antiquewhite;
+        font-size: 1.2vw;
+        top: 21.4vw;
+        left: 13.5vw;
+        width: 6vw;
+        height: 1.7vw;
+        text-align: center;
+    }
     #cardPreview{
         width: 32vw;
         height: 40vw;
@@ -796,7 +858,7 @@
         text-shadow: 0 0 1vw rgba(0, 0, 0, 0.536);
 
         position: absolute;
-        top: 19.2vw;
+        top: 18.6vw;
         left: 5.5vw;
 
         text-align: center;

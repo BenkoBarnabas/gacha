@@ -536,81 +536,84 @@
         attackableCardsDoms = attackableCardsDoms
     }
     function CardInAttackMode(attackingCard){
-        ClearBoardPhs()
+        var canAttack = isYourTurn && isYourRally && gameFase == 3
+        var quickAttackable = isYourTurn && isYourRally && attackingCard.talent.includes("fürgetámadás")
+        if(canAttack || quickAttackable){
+            ClearBoardPhs()
 
-        attackableCards = []
-        attackableCardsDoms = []
-        console.log("yourCard: ",attackingCard);
-
-        if(!isCardOnBoardInAttackingMode && cardInAttackingMode != attackingCard){
-            cardInAttackingMode = attackingCard
-
-
-            for (let i = 0; i < enemyBoard.length/2; i++){
-                if(enemyBoard[i] != ""){
-                    attackableCards.push(enemyBoard[i])
-
-                    var dom = document.getElementById(`etd${i}`)
-                    attackableCardsDoms.push(dom)
-                    //dom.children[0].children[0].style = "transform: scale(1.1); width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute; filter: drop-shadow(calc(var(--cardOnBoardScale)*1vw*0.6) calc(var(--cardOnBoardScale)*1vw*0.6) 3px red) drop-shadow(calc(var(--cardOnBoardScale)*1vw*-0.6) calc(var(--cardOnBoardScale)*1vw*-0.6) 3px red);"
-                }
-                else{
-                    if(enemyBoard[i+(enemyBoard.length/2)] != ""){
-                        attackableCards.push(enemyBoard[i+(enemyBoard.length/2)])
-
-                        var dom = document.getElementById(`etd${i+(enemyBoard.length/2)}`)
-                        attackableCardsDoms.push(dom)
-                        //dom.children[0].children[0].style = "transform: scale(1.1); width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute; filter: drop-shadow(calc(var(--cardOnBoardScale)*1vw*0.6) calc(var(--cardOnBoardScale)*1vw*0.6) 3px red) drop-shadow(calc(var(--cardOnBoardScale)*1vw*-0.6) calc(var(--cardOnBoardScale)*1vw*-0.6) 3px red);"
-
-                    }
-                }
-            }
-            console.log("you can attack these cards: ",attackableCards);
-            console.log("thier doms: ",attackableCardsDoms);
-
-            isCardOnBoardInAttackingMode = true
-        }
-        else if (isCardOnBoardInAttackingMode && cardInAttackingMode == attackingCard){
-            isCardOnBoardInAttackingMode = false
             attackableCards = []
             attackableCardsDoms = []
+            console.log("yourCard: ",attackingCard);
 
-            cardInAttackingMode = ""
-        }
-        else if(cardInAttackingMode != attackingCard){
-            cardInAttackingMode = attackingCard
+            if(!isCardOnBoardInAttackingMode && cardInAttackingMode != attackingCard){
+                cardInAttackingMode = attackingCard
 
 
-            for (let i = 0; i < enemyBoard.length/2; i++){
-                if(enemyBoard[i] != ""){
-                    attackableCards.push(enemyBoard[i])
+                for (let i = 0; i < enemyBoard.length/2; i++){
+                    if(enemyBoard[i] != ""){
+                        attackableCards.push(enemyBoard[i])
 
-                    var dom = document.getElementById(`etd${i}`)
-                    attackableCardsDoms.push(dom)
-                    //dom.children[0].children[0].style = "transform: scale(1.1); width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute; filter: drop-shadow(calc(var(--cardOnBoardScale)*1vw*0.6) calc(var(--cardOnBoardScale)*1vw*0.6) 3px red) drop-shadow(calc(var(--cardOnBoardScale)*1vw*-0.6) calc(var(--cardOnBoardScale)*1vw*-0.6) 3px red);"
-                }
-                else{
-                    if(enemyBoard[i+(enemyBoard.length/2)] != ""){
-                        attackableCards.push(enemyBoard[i+(enemyBoard.length/2)])
-
-                        var dom = document.getElementById(`etd${i+(enemyBoard.length/2)}`)
+                        var dom = document.getElementById(`etd${i}`)
                         attackableCardsDoms.push(dom)
                         //dom.children[0].children[0].style = "transform: scale(1.1); width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute; filter: drop-shadow(calc(var(--cardOnBoardScale)*1vw*0.6) calc(var(--cardOnBoardScale)*1vw*0.6) 3px red) drop-shadow(calc(var(--cardOnBoardScale)*1vw*-0.6) calc(var(--cardOnBoardScale)*1vw*-0.6) 3px red);"
+                    }
+                    else{
+                        if(enemyBoard[i+(enemyBoard.length/2)] != ""){
+                            attackableCards.push(enemyBoard[i+(enemyBoard.length/2)])
 
+                            var dom = document.getElementById(`etd${i+(enemyBoard.length/2)}`)
+                            attackableCardsDoms.push(dom)
+                            //dom.children[0].children[0].style = "transform: scale(1.1); width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute; filter: drop-shadow(calc(var(--cardOnBoardScale)*1vw*0.6) calc(var(--cardOnBoardScale)*1vw*0.6) 3px red) drop-shadow(calc(var(--cardOnBoardScale)*1vw*-0.6) calc(var(--cardOnBoardScale)*1vw*-0.6) 3px red);"
+
+                        }
                     }
                 }
+                console.log("you can attack these cards: ",attackableCards);
+                console.log("thier doms: ",attackableCardsDoms);
+
+                isCardOnBoardInAttackingMode = true
             }
-            console.log("you can attack these cards: ",attackableCards);
-            console.log("thier doms: ",attackableCardsDoms);
+            else if (isCardOnBoardInAttackingMode && cardInAttackingMode == attackingCard){
+                isCardOnBoardInAttackingMode = false
+                attackableCards = []
+                attackableCardsDoms = []
 
-            isCardOnBoardInAttackingMode = true
+                cardInAttackingMode = ""
+            }
+            else if(cardInAttackingMode != attackingCard){
+                cardInAttackingMode = attackingCard
+
+
+                for (let i = 0; i < enemyBoard.length/2; i++){
+                    if(enemyBoard[i] != ""){
+                        attackableCards.push(enemyBoard[i])
+
+                        var dom = document.getElementById(`etd${i}`)
+                        attackableCardsDoms.push(dom)
+                        //dom.children[0].children[0].style = "transform: scale(1.1); width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute; filter: drop-shadow(calc(var(--cardOnBoardScale)*1vw*0.6) calc(var(--cardOnBoardScale)*1vw*0.6) 3px red) drop-shadow(calc(var(--cardOnBoardScale)*1vw*-0.6) calc(var(--cardOnBoardScale)*1vw*-0.6) 3px red);"
+                    }
+                    else{
+                        if(enemyBoard[i+(enemyBoard.length/2)] != ""){
+                            attackableCards.push(enemyBoard[i+(enemyBoard.length/2)])
+
+                            var dom = document.getElementById(`etd${i+(enemyBoard.length/2)}`)
+                            attackableCardsDoms.push(dom)
+                            //dom.children[0].children[0].style = "transform: scale(1.1); width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute; filter: drop-shadow(calc(var(--cardOnBoardScale)*1vw*0.6) calc(var(--cardOnBoardScale)*1vw*0.6) 3px red) drop-shadow(calc(var(--cardOnBoardScale)*1vw*-0.6) calc(var(--cardOnBoardScale)*1vw*-0.6) 3px red);"
+
+                        }
+                    }
+                }
+                console.log("you can attack these cards: ",attackableCards);
+                console.log("thier doms: ",attackableCardsDoms);
+
+                isCardOnBoardInAttackingMode = true
+            }
+            attackableCards = attackableCards
+            attackableCardsDoms = attackableCardsDoms
+            cardInAttackingMode = cardInAttackingMode
+
+            enemyBoard = enemyBoard
         }
-        
-        attackableCards = attackableCards
-        attackableCardsDoms = attackableCardsDoms
-        cardInAttackingMode = cardInAttackingMode
-
-        enemyBoard = enemyBoard
     }
     function CardDmgAnimation(dom,dmg){
         dom.children[0].children[0].src = cardV2BackgroundRed
