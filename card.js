@@ -161,8 +161,8 @@
             this.aligment = aligment;
             this.talent = talent;
             this.description = description;
-            this.health = health;
             this.attack = attack;
+            this.health = health;
             this.source = source;
             this.stars = stars;
             this.cost = cost;
@@ -180,8 +180,8 @@
             this.aligment = aligment;
             this.talent = talent;
             this.description = description;
-            this.health = health;
             this.attack = attack;
+            this.health = health;
             this.source = source;
             this.stars = stars;
             this.cost = cost;
