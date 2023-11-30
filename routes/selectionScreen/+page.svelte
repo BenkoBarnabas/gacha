@@ -3,7 +3,7 @@
 
     import * as Cards from "../../card"
     import cardV2Background from "../../lib/assets/global/cardV2BG.png"
-    import {sendSocketValue, sendData, userData, deckData, getUserDataFromLocalStorage} from "../../client"
+    import {sendData, userData, deckData, getUserDataFromLocalStorage} from "../../client"
     let backgroundColorByCost = ["#2672ed","#8626ed","#ed7c26","linear-gradient(180deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235))"]
     let starsColorByCost = ["color: #2672ed;","color: #8626ed;","color: #ed7c26;","background-image: linear-gradient(90deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235));-webkit-background-clip: text;background-clip: text;color: transparent;"]
 
@@ -12,11 +12,11 @@
     for(let i = 0; i < Cards.allCardsArr.length; i++){
         allcardnames.push((Cards.allCardsArr[i]).name)
     }
-    console.log(allcardnames);
 
     let selectedDeck = 0
     let selectedList = [[],[],[],[]]
 
+    let currDeckArray = []
 
     let localUserData = userData
     let localDeckData = deckData
@@ -61,14 +61,14 @@
     let cardsClassName = Array(Cards.allCardsArr.length).fill("cardPreviewListCont filtergrayscale")
 
     function selectByClick(card, i){
-        if(!selectedList[selectedDeck].includes(card.name)){
-            console.log(selectedList[selectedDeck]);
-            selectedList[selectedDeck].push(card.name)
-            selectedList = selectedList
+        currDeckArray = selectedList[selectedDeck].split(",")
+        if(!currDeckArray.includes(card.name)){
+            currDeckArray.push(card.name)
+            currDeckArray = currDeckArray
+            selectedList[selectedDeck] = String(currDeckArray)
             console.log(selectedList);
-
-            console.log(String(selectedList[selectedDeck]));
-            sendData(`deckarray${selectedDeck}`, String(selectedList[selectedDeck]), localUserData.id, "deck")
+            console.log(currDeckArray)
+            sendData(`deckarray${selectedDeck}`, selectedList[selectedDeck], localUserData.id, "deck")
 
             localDeckData[`deckarray${selectedDeck}`] = selectedList[selectedDeck]
             localStorage.setItem("deckData", JSON.stringify(localDeckData));
@@ -76,23 +76,28 @@
 
             cardsClassName[i] = "cardPreviewListCont"
         }else{
-            selectedList[selectedDeck].splice(selectedList[selectedDeck].indexOf(card.name), 1)
-            console.log(selectedList);
-            //selectedList[selectedDeck] = String(selectedList[selectedDeck])
-            sendData(`deckarray${selectedDeck}`, String(selectedList[selectedDeck]), localUserData.id, "deck")
+            currDeckArray.splice(currDeckArray.indexOf(card.name), 1)
+            console.log(currDeckArray);
+            selectedList[selectedDeck] = String(currDeckArray)
+            sendData(`deckarray${selectedDeck}`, selectedList[selectedDeck], localUserData.id, "deck")
 
             localDeckData[`deckarray${selectedDeck}`] = selectedList[selectedDeck]
             localStorage.setItem("deckData", JSON.stringify(localDeckData));
 
             cardsClassName[i] = "cardPreviewListCont filtergrayscale"
         }
+        currDeckArray = currDeckArray
         selectedList = selectedList
     }
 
     function deleteCard(cardname, i){
-        selectedList[selectedDeck].splice(selectedList[selectedDeck].indexOf(cardname), 1)
-        selectedList = selectedList
-        sendData(`deckarray${selectedDeck}`, String(selectedList[selectedDeck]), localUserData.id, "deck")
+        currDeckArray = currDeckArray.splice(currDeckArray[i], 1)
+        currDeckArray = currDeckArray
+
+        console.log(currDeckArray);
+
+        selectedList[selectedDeck] = String(currDeckArray)
+        sendData(`deckarray${selectedDeck}`, selectedList[selectedDeck], localUserData.id, "deck")
 
         localDeckData[`deckarray${selectedDeck}`] = selectedList[selectedDeck]
         localStorage.setItem("deckData", JSON.stringify(localDeckData));
@@ -104,23 +109,25 @@
     function ChangeDeck(){
         isSelectingDeck = true
         isSelectingDeck = isSelectingDeck
+        currDeckArray = []
     }
     function selectDeck(n){
         selectedDeck = n
 
+        currDeckArray = selectedList[selectedDeck].split(",")
+
         cardsClassName.fill("cardPreviewListCont filtergrayscale")
         console.log(selectedList[selectedDeck]);
-        if(selectedList[selectedDeck] != []){
-            for (let i = 0; i<selectedList[selectedDeck].length;i++){
-            console.log(allcardnames);
-            console.log(selectedList[selectedDeck][i]);
-            var index = allcardnames.indexOf(selectedList[selectedDeck][i])
-            console.log(index);
-            cardsClassName[index] = "cardPreviewListCont"
+
+        if(currDeckArray != []){
+            for (let i = 0; i<currDeckArray.length;i++){
+                console.log(currDeckArray[i]);
+                var index = allcardnames.indexOf(currDeckArray[i])
+                console.log(index);
+                cardsClassName[index] = "cardPreviewListCont"
             }
         }
 
-        console.log(cardsClassName);
         selectedList = selectedList
 
         isSelectingDeck = false
@@ -165,11 +172,10 @@
     {:else}
         <input type="text" bind:value={curDeckName} placeholder="Nevezd el a paklid" style="width:80%;">
         <button style="width: 15%;" on:click={() => SaveDeckName(curDeckName)}>Mentés</button>
-        <br><br><br><br>
         
         <button style="float: right;" on:click={()=> ChangeDeck()}>Change Deck</button>
 
-        {#each selectedList[selectedDeck] as cardname, i}
+        {#each currDeckArray as cardname, i}
             <button style="display:block;" id={cardname} on:click={() => deleteCard(cardname, i)}>{cardname}</button>
         {/each}
     {/if}
