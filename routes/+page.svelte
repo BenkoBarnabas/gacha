@@ -148,7 +148,7 @@ your email: {userData.email}<br>
   #authenticationBox{
   border: 2px solid black;
   height: 25vw;
-  background-color: rgba(255, 127, 80, 0.705);
+  background-color: rgba(196, 172, 164, 0.377);
   position: relative;
   }
   .login{
