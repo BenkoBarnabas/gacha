@@ -144,6 +144,12 @@ your email: {userData.email}<br>
 
 
 <style>
+  :root{
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+  }
   
   #authenticationBox{
   border: 2px solid black;

@@ -19,8 +19,8 @@ let yourGameID = ""
 let opponentGameID = ""
 let gameKey = ""
 
-export let yourGameParametersClient = {currentHand: [], yourBoard: Array(10).fill("")}
-export let enemyGameParametersClient = {currentHand: [], yourBoard: Array(10).fill("")}
+export let yourGameParametersClient = {currentHand: [], yourBoard: Array(10).fill(""), mana: 0, spellMana: 0, username: "", hp: 0}
+export let enemyGameParametersClient = {currentHand: [], yourBoard: Array(10).fill(""), mana: 0, spellMana: 0, username: "", hp: 0}
 
 
 export function DomLoaded(){
@@ -165,14 +165,23 @@ function ServerCode(){
             if(msg.gameId != yourGameID){
                 //enemyGameParameters = msg
                 console.log("from server, enemyGameParamters: ",msg);
-                localStorage.setItem("opponentGameParams", JSON.stringify(msg));
+                //localStorage.setItem("opponentGameParams", JSON.stringify(msg));
                 enemyGameParametersClient = msg
-                console.log(msg);
+
                 if(enemyGameParametersClient.yourBoard.length == 0){
                     console.log("üres vót");
                     enemyGameParametersClient.yourBoard = Array(10).fill("")
                 }
-                console.log(enemyGameParametersClient.yourBoard);
+            }
+            else if(msg.gameId == yourGameID){
+                console.log("from server, yourGameParamters: ",msg);
+                //localStorage.setItem("yourGameParams", JSON.stringify(msg));
+                yourGameParametersClient = msg
+
+                if(yourGameParametersClient.yourBoard.length == 0){
+                    console.log("üres vót");
+                    yourGameParametersClient.yourBoard = Array(10).fill("")
+                }
             }
         }
         
