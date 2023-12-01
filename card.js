@@ -156,13 +156,13 @@
     import gachaPHAudio from "./lib/assets/voicelines/Weisz.aac"
 
     export class diakCards {
-        constructor(name,aligment,talent, description, health, attack, source, stars, cost, type, gachaSRC, cardSRCText,audio,quote) {
+        constructor(name,aligment,talent, description, attack, health, source, stars, cost, type, gachaSRC, cardSRCText,audio,quote) {
             this.name = name;
             this.aligment = aligment;
             this.talent = talent;
             this.description = description;
-            this.health = health;
             this.attack = attack;
+            this.health = health; 
             this.source = source;
             this.stars = stars;
             this.cost = cost;
@@ -175,13 +175,13 @@
         }
     }
     export class tanarCards {
-        constructor(name,aligment,talent, description, health, attack, source, stars, cost, type, gachaSRC, cardSRCText,audio,quote) {
+        constructor(name,aligment,talent, description, attack, health, source, stars, cost, type, gachaSRC, cardSRCText,audio,quote) {
             this.name = name;
             this.aligment = aligment;
             this.talent = talent;
             this.description = description;
-            this.health = health;
             this.attack = attack;
+            this.health = health;
             this.source = source;
             this.stars = stars;
             this.cost = cost;
