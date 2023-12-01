@@ -22,7 +22,9 @@
         tövisesbőr: thorns,
         fürgetámadás: qucikAtk,
         robbanótámadás: blastAtk,
-        életelszívás: lifeSteal
+        életelszívás_1: lifeSteal,
+        életelszívás_2: lifeSteal,
+        életelszívás_3: lifeSteal
     }
 
 
@@ -325,8 +327,18 @@
             <div class="curCardCostList">{card.cost}</div>
             <div class="curCardNameList">{card.name}</div>
             {#if card.talent != ""}
-            <div class="curCardTalentList">{card.talent.replace("támadás","")}</div>
-            <img class="curCardTalentIconList" src={talentIcons[card.talent.replace(" ","")]} alt="talent">
+                {#if card.talent.includes(",")}
+                <div class="curCardMultipleIconsContainer">
+                    {#each card.talent.split(",") as icon, i}
+                    <div style="width:{5.2/card.talent.split(",").length}vw; margin:auto">
+                        <img style="width:1.4vw" src={talentIcons[icon.replace(" ","")]} alt="talent">
+                    </div>
+                    {/each}
+                </div>
+                {:else}
+                <div class="curCardTalentList">{card.talent.replace("támadás","")}</div>
+                <img style="left: 3.8vw;" class="curCardTalentIconList" src={talentIcons[card.talent.replace(" ","")]} alt="talent">
+                {/if}
             {/if}
 
             <div class="curCardRarityList" style="{starsColorByCost[(card.stars)-3]}">
@@ -765,7 +777,6 @@
         position: absolute;
         width: 1.4vw;
         top: 13.6vw;
-        left: 3.8vw;
     }
     .curCardTalentList{
         position: absolute;
@@ -773,12 +784,22 @@
         color: antiquewhite;
         font-size: 0.7vw;
         top: 14vw;
-        left: 5.5vw;
-        width: 4.8vw;
+        left: 3.9vw;
+        width: 3.6vw;
         height: 1vw;
+        padding-left:1.6vw;
+        background-color: rgba(238, 130, 238, 0.288);
     }
-
-
+.curCardMultipleIconsContainer{
+        position: absolute;
+        top: 13.5vw;
+        left: 3.9vw;
+        width: 5.2vw;
+        height: 2vw;
+        display:flex;
+        flex-wrap:nowrap;
+        align-content:space-around;
+}
 
     .curCardTalentIcon{
         position: absolute;
