@@ -25,13 +25,15 @@ app.get('/', (req, res) => {
 
 
 const nodemailer = require("nodemailer");
+const { connected } = require('process');
+const { log } = require('console');
 // Create a transporter using Gmail's SMTP server
 const transporter = nodemailer.createTransport({
   service: "Gmail",
   auth: {
     user: "sagvarigacha.tetms@gmail.com",
     pass: "grlz mrwf qiau cjvi",
-  },
+  }, 
 });
 
 
@@ -210,6 +212,8 @@ function makeNewAccount(email,password,username,Cid){
 let usersInLobby = []
 let connectedClients = [];
 let currentGameIDs = []
+let connectedToGameClients = []
+let whoComesFirst = {}
 
 //SSERVER ON CONNECT
 io.on('connection', (socket) => {
@@ -225,8 +229,32 @@ io.on('connection', (socket) => {
   })
   for (let i = 0; i<currentGameIDs.length; i++){
     socket.on(currentGameIDs[i], msg => {
-      console.log("got game info: ",msg);
-      io.emit(currentGameIDs[i],msg)
+      //console.log("got game info: ",msg);
+      if(msg.includes("SocketConnectionEstablished")){
+        if(!connectedToGameClients.includes(msg)){
+          connectedToGameClients.push(msg)
+          console.log("got game info: ",msg);
+          console.log(connectedToGameClients);
+        }
+        
+        io.emit(currentGameIDs[i],JSON.stringify(connectedToGameClients))
+      }
+      else{
+        msg = String(msg)
+        if(msg.includes("trueReady")){
+          console.log(msg);
+            var ids = [msg.replace("trueReady",""), currentGameIDs[i].slice(20)]
+            var random = Math.random()
+            console.log(currentGameIDs[i]);
+            console.log(ids[0]);
+            console.log(ids[1]);
+            random < 0.5 ? whoComesFirst[currentGameIDs[i]] = ids[0] : whoComesFirst[currentGameIDs[i]] = ids[1]
+            console.log(`${whoComesFirst[currentGameIDs[i]]}isFirst`);
+            io.emit(currentGameIDs[i],`${whoComesFirst[currentGameIDs[i]]}isFirst`)
+        }
+        io.emit(currentGameIDs[i],msg)
+      }
+      
     })
   }
 
@@ -277,16 +305,40 @@ io.on('connection', (socket) => {
     console.log("új account: ",info)
   })
 
-
+  //DISCONNECTIONS
+  socket.on("newPage", msg => {
+    console.log("new page: ", msg)
+    msg = msg.replace("DisconnectedWithSocket","")
+    var indexToSplice 
+    for (let i = 0; i< connectedToGameClients.length; i++){
+      if(connectedToGameClients[i].includes(msg)){
+        
+        indexToSplice = i
+      }
+    }
+    connectedToGameClients.splice(indexToSplice,1)
+      console.log(connectedToGameClients);
+  })
   // Handle disconnection
-  socket.on('disconnect', () => {
-    console.log(`User with ID ${socket.id} disconnected`);
-
+  socket.on('disconnect', msg => {
     for (let i = 0; i < usersInLobby.length; i++){
       if(usersInLobby[i].id == socket.id){
         usersInLobby.splice(i,1)
       }
     }
+    console.log("new page: ", msg)
+    msg = msg.replace("DisconnectedWithSocket","")
+    var indexToSplice 
+    for (let i = 0; i< connectedToGameClients.length; i++){
+      if(connectedToGameClients[i].includes(msg)){
+        
+        indexToSplice = i
+      }
+    }
+    delete whoComesFirst[connectedToGameClients[indexToSplice]]
+    console.log(whoComesFirst);
+    connectedToGameClients.splice(indexToSplice,1)
+      console.log(connectedToGameClients);
     //console.log(usersInLobby);
 
     // Remove the client from the connectedClients object
@@ -390,6 +442,6 @@ app.post('/delRow', (req, res) => {
 });
 
 server.listen(3000, () => {
-  //console.log("Server listening on http://10.7.147.201:3000");
-  console.log("Server listening on http://localhost:3000");
+  console.log("Server listening on http://10.7.147.201:3000");
+ // console.log("Server listening on http://192.168.0.20:3000");
 });
