@@ -171,7 +171,7 @@
             this.cardSRCText = cardSRCText;
             this.audio = audio;
             this.quote = quote;
-            ;
+            
         }
     }
     export class tanarCards {
