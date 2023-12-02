@@ -25,6 +25,23 @@
         életelszívás: lifeSteal
     }
 
+    import tunya from "../../lib/assets/gameplay/tunya.png"
+    import lelkiismeretes from "../../lib/assets/gameplay/lelkiismeretes.png"
+    import vérszomjas from "../../lib/assets/gameplay/vérszomjas.png"
+    import veszett from "../../lib/assets/gameplay/veszett.png"
+
+    let aligmentIcons = {
+        tunya: tunya,
+        lelkiismeretes: lelkiismeretes,
+        vérszomjas: vérszomjas,
+        veszett: veszett
+    }
+    let aligmentBackgroundColors = {
+        tunya: "rgba(113, 166, 117, 0.6)",
+        lelkiismeretes: "rgba(113, 145, 166, 0.6)",
+        vérszomjas: "rgba(166, 113, 118, 0.6)",
+        veszett: "rgba(133, 113, 166, 0.6)"
+    }
 
     import ph from "../../lib/assets/collection/tanar/Bizso.png"
 
@@ -85,7 +102,8 @@
         desc: "",
         color: "",
         quote: "",
-        talent:""
+        talent:"",
+        aligment: ""
     }
 
     var starSizeArray = [] //for some reason it didnt work with a normal return so i had to put them into an array ,im throwing up
@@ -93,9 +111,8 @@
     var backgroundColorByCost = ["#2672ed","#8626ed","#ed7c26","linear-gradient(180deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235))"]
     var starsColorByCost = ["color: #2672ed;","color: #8626ed;","color: #ed7c26;","background-image: linear-gradient(90deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235));-webkit-background-clip: text;background-clip: text;color: transparent;"]
     
-    
     let voicelines = {}
-    function handleClick(source,name,atk,hp,cost,rarity,desc,quote,talent) {
+    function handleClick(source,name,atk,hp,cost,rarity,desc,quote,talent,aligment) {
         curCardInView.type = "character"
         curCardInView.source = source
         curCardInView.name = name
@@ -107,6 +124,7 @@
         curCardInView.desc = desc
         curCardInView.quote = quote
         curCardInView.talent = talent
+        curCardInView.aligment = aligment
 
         starSizeArray = []
         for (let i = 0; i < curCardInView.rarity; i++){
@@ -319,15 +337,21 @@
             <img style="width: 12.5vw; position:absolute" src={cardV2Background} alt="cardBg">
             <div id="rarityBGList" style="background: {backgroundColorByCost[(card.stars)-3]}; "></div>
             <img class = "cardButton" src={card.source} alt="preview"/>
-            <button class="cardListFrame" alt="cardBg" on:click={() => handleClick(card.source,card.name,card.attack,card.health,card.cost,card.stars,card.description,card.quote,card.talent)}></button>
+            <button class="cardListFrame" alt="cardBg" on:click={() => handleClick(card.source,card.name,card.attack,card.health,card.cost,card.stars,card.description,card.quote,card.talent,card.aligment)}></button>
             <div class="curCardStatsList" style="left: 2.68vw;">{card.attack}</div>
             <div class="curCardStatsList" style="left: 9.65vw;">{card.health}</div>
             <div class="curCardCostList">{card.cost}</div>
             <div class="curCardNameList">{card.name}</div>
+
             {#if card.talent != ""}
             <div class="curCardTalentList">{card.talent.replace("támadás","")}</div>
             <img class="curCardTalentIconList" src={talentIcons[card.talent.replace(" ","")]} alt="talent">
             {/if}
+
+            <img style="background-color: {aligmentBackgroundColors[card.aligment]}; border-radius: 0.5vw;" class="curCardAligList" src={aligmentIcons[card.aligment]} alt="aligment">
+            
+            
+            
 
             <div class="curCardRarityList" style="{starsColorByCost[(card.stars)-3]}">
                 {#each Array(Number(card.stars)) as card,index}
@@ -344,11 +368,17 @@
             <img style="width: 12.5vw; position:absolute" src={cardV2Background} alt="cardBg">
             <div id="rarityBGList" style="background: {backgroundColorByCost[(card.stars)-3]}; "></div>
             <img class = "cardButton" src={card.source} alt="preview"/>
-            <button class="cardListFrame" alt="cardBg" on:click={() => handleClick(card.source,card.name,card.attack,card.health,card.cost,card.stars,card.description,card.quote)}></button>
+            <button class="cardListFrame" alt="cardBg" on:click={() => handleClick(card.source,card.name,card.attack,card.health,card.cost,card.stars,card.description,card.quote.card.talent,card.aligment)}></button>
             <div class="curCardStatsList" style="left: 2.68vw;">{card.attack}</div>
             <div class="curCardStatsList" style="left: 9.65vw;">{card.health}</div>
             <div class="curCardCostList">{card.cost}</div>
             <div class="curCardNameList">{card.name}</div>
+
+            {#if card.talent != ""}
+            <div class="curCardTalentList">{card.talent.replace("támadás","")}</div>
+            <img class="curCardTalentIconList" src={talentIcons[card.talent.replace(" ","")]} alt="talent">
+            {/if}
+            <img style="background-color: {aligmentBackgroundColors[card.aligment]}; border-radius: 0.5vw;" class="curCardAligList" src={aligmentIcons[card.aligment]} alt="aligment">
 
             <div class="curCardRarityList" style="{starsColorByCost[(card.stars)-3]}">
                 {#each Array(Number(card.stars)) as card}
@@ -399,6 +429,8 @@
         <div class="curCardTalent">{curCardInView.talent.replace("támadás","")}</div>
         <img class="curCardTalentIcon" src={talentIcons[curCardInView.talent.replace(" ","")]} alt="talent">
         {/if}
+
+        <img style="background-color: {aligmentBackgroundColors[curCardInView.aligment]}; border-radius: 0.5vw;" class="curCardAlig" src={aligmentIcons[curCardInView.aligment]} alt="aligment">
         
         <div id="curCardRarity" style="{starsColorByCost[(curCardInView.rarity)-3]}; top: {starSizeTop[(curCardInView.rarity)-3]}vw;">
             {#each Array(Number(curCardInView.rarity)) as card,index}
@@ -777,6 +809,12 @@
         width: 4.8vw;
         height: 1vw;
     }
+    .curCardAligList{
+        position: absolute;
+        width: 2.2vw;
+        left: 1.8vw;
+        top: 4.8vw;
+    }
 
 
 
@@ -889,6 +927,12 @@
         width: 13.8vw;
         text-align: center;
         mix-blend-mode: screen;
+    }
+    .curCardAlig{
+        position: absolute;
+        width: 4vw;
+        left: 5.8vw;
+        top: 10vw;
     }
 
 
