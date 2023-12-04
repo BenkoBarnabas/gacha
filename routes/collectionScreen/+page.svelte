@@ -350,7 +350,7 @@
                 <div class="curCardMultipleIconsContainer">
                     {#each card.talent.split(",") as icon, i}
                     <div style="width:{5.2/card.talent.split(",").length}vw; margin:auto">
-                        <img style="width:1.4vw" src={talentIcons[icon.replace(" ","")]} alt="talent">
+                        <img style="width:1.4vw; margin:auto; display:block" src={talentIcons[icon.replace(" ","")]} alt="talent">
                     </div>
                     {/each}
                 </div>
