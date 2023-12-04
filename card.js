@@ -236,25 +236,23 @@
     //TANAROK
     export let BizsoCard = new tanarCards("Bizsó","lelkiismeretes","", "", 4, 6, Bizso, 4, 3, "character", BizsoGacha, "BizsoCard", BizsoA, "Kedvence egy jó python feladat. Ha szépen kéred, kienged a hátsó kijáraton. Szexi apuka."); 
     export let FarkasCard = new tanarCards("Dr. Farkas","lelkiismeretes","robbanó támadás", "", 4, 8, Farkas, 5, 4, "character", FarkasGacha, "FarkasCard", FarkasA, "Filozófusszakállát évente vágja. Ennek ellenére mindig visszanő. Nem kell félni tőle.");
-    export let MoniCard = new tanarCards("Móni","lelkiismeretes","életelszívás_1", "", 2, 3, Moni, 4, 2, "character", MoniGacha, "MoniCard", MoniA, "Hobbifilozófus. Képes 45 percig elemezni egy 10 soros lírai alkotást. Lenyűgöző!");
-    export let NagyoraCard = new tanarCards("Big D","veszett","kihívó", "", 6, 9, Nagyora, 3, 6, "character", NagyoraGacha, "NagyoraCard", NagyoraA, "Average tank build. Not much to say.");
+    export let MoniCard = new tanarCards("Szalay Mónika","lelkiismeretes","életelszívás_1", "", 2, 3, Moni, 4, 2, "character", MoniGacha, "MoniCard", MoniA, "Hobbifilozófus. Képes 45 percig elemezni egy 10 soros lírai alkotást. Lenyűgöző!");
+    export let NagyoraCard = new tanarCards("Nagy 'óra","veszett","kihívó", "", 6, 9, Nagyora, 3, 6, "character", NagyoraGacha, "NagyoraCard", NagyoraA, "Télen is szoknyában jár. Számára a stílus az első.");
     export let RozgonyiCard = new tanarCards("Rozgonyi","vérszomjas","tövisesbőr", "", 2, 9, Rozgonyi, 3, 5, "character", RozgonyiGacha, "RozgonyiCard", RoziA, "Szeret sütni. Szeret még legózni és gombócot enni is. A fiát láthatólag annyira nem.");
     export let TabiCard = new tanarCards("Tábi", "vérszomjas","fürge támadás","", 1, 4, Tabi, 3, 2, "character", TabiGacha, "TabiCard", TabiA, "Tesitanár és röplabdaedző. Epic gamer szabadidejében. Sose hagyja ki az alkalmat, hogy politizáljon.");
-    export let BencusCard = new tanarCards("Bencus","tunya","", "", 2, 2, Bencus, 4, 1, "character", BencusGacha, "BencusCard", BencusA, "Másodállásban professzionális diáktanya dolgozó.");
-    export let DobiCard = new tanarCards("Dobby","veszett","kettős támadás", "", 1, 3, Dobi, 6, 2, "character", DobiGacha, "DobiCard", DobbyA, "Dob");
+    export let BencusCard = new tanarCards("Illés Bence","tunya","", "", 2, 2, Bencus, 4, 1, "character", BencusGacha, "BencusCard", BencusA, "Másodállásban professzionális diáktanya dolgozó.");
+    export let DobiCard = new tanarCards("Dobi","veszett","kettős támadás", "", 1, 3, Dobi, 6, 2, "character", DobiGacha, "DobiCard", DobbyA, "Dob");
     export let IvanEvaCard = new tanarCards("Iván Éva","tunya","tövisesbőr", "", 2, 4, IvanEva, 3, 2, "character", IvanEvaGacha, "IvanEvaCard", IvanEvaA, "Average Edward Allen Poe fan, nem egy szakbarbár. Irigylésre méltó!");
-    export let KocsiAndiCard = new tanarCards("KocsiAndi","lelkiismeretes","", "", 6, 8, KocsiAndi, 3, 4, "character", KocsiAndiGacha, "KocsiAndiCard", KocsiAndiA, "Senki se tudja, hogy pontosan mit csinál. A sárga könyvvel kapcsolatban őt keresd!");
+    export let KocsiAndiCard = new tanarCards("Kocsondi Andrea","lelkiismeretes","", "", 6, 8, KocsiAndi, 3, 4, "character", KocsiAndiGacha, "KocsiAndiCard", KocsiAndiA, "Senki se tudja, hogy pontosan mit csinál. A sárga könyvvel kapcsolatban őt keresd!");
     export let KoPaszCard = new tanarCards("Kopaszka","vérszomjas","robbanó támadás", "", 2, 5, KoPasz, 5, 3, "character", KoPaszGacha, "KoPaszCard", KopaszkaA, "Gyakran látom a ligetben sétálni. Az Edaq530 ott is a zsebében van.");
     export let KutiCard = new tanarCards("Kúti","veszett","kettős támadás", "", 3, 2, Kuti, 5, 3, "character", KutiGacha, "KutiCard", KutiA, "Irodalom, nyelvtan, matematika, tesi szakos, síoktató, asztronauta és agysebész.");
     export let MatosCard = new tanarCards("Matos","tunya","", "", 5, 5, Matos, 4, 3, "character", MatosGacha, "MatosCard", MatosA, "Társasjátékfüggő. Néha egyedül is játszik. A 2020I még mindig sír, hogy nem őt kapta faktos tanárnak.");
-    export let MartiCard = new tanarCards("Márti","veszett","életelszívás_1", "", 1, 1, Marti, 4, 1, "character", MartiGacha, "MartiCard", MartiA, "Az ing, nem azing. Hetest kér.");
+    export let MartiCard = new tanarCards("Fehér Márta","veszett","életelszívás_1", "", 1, 1, Marti, 4, 1, "character", MartiGacha, "MartiCard", MartiA, "Az ing, nem azing. Hetest kér.");
     export let MeszarosCard = new tanarCards("Mészaros","vérszomjas","", "", 2, 5, Meszaros, 3, 3, "character", MeszarosGacha, "MeszarosCard", MeszarosA, "Médiatanár. A diákok gyakran jobban tudják az anyagot.");
     export let JeffCard = new tanarCards("Jeff","lelkiismeretes","", "", 5, 5, Jeff, 6, 3, "character", JeffGacha, "JeffCard", JeffA, "Plays golf with you on the weekends. Loves his wife, kids and family dog.");
     export let TomiCard = new tanarCards("Dr. Tamás","vérszomjas,veszett","kettős támadás,fürge támadás,robbanó támadás,életelszívás_3", "", 5, 5, Tomi, 6, 10, "character", TomiGacha, "TomiCard", TomiA, "Fogorvos és táncvilágbajnok. Unatkozott, ezért elment tanárnak.");
-
-    //not yet detailed
     export let FiloRekaCard = new tanarCards("Filó Réka","tunya","", "", 6, 8, FiloReka, 3, 5, "character", GachaPH, "FiloRekaCard",FiloA, "Sajnos családi életét az érettségiben nem kérdezik.");
-    export let IzigCard = new tanarCards("Ízig Máté","tunya","kettős támadás", "", 4, 6, Izig, 4, 4, "character", GachaPH, "IzigCard", IzigA, "Szeret utazni. Báló Dávidot is szereti.");
+    export let IzigCard = new tanarCards("Izing Máté","tunya","kettős támadás", "", 4, 6, Izig, 4, 4, "character", GachaPH, "IzigCard", IzigA, "Szeret utazni. Báló Dávidot is szereti.");
     export let KinyoCard = new tanarCards("Kinyó","veszett","", "", 9, 6, Kinyo, 3, 6, "character", GachaPH, "KinyoCard", KinyoA, "Megrendeli a ságváris merch-öt(?)");
     export let LaciNeniCard = new tanarCards("Laci néni","lelkiismeretes","", "", 7, 10, LaciNeni, 3, 5, "character", GachaPH, "LaciNeniCard", LaciNeniA, "Qu'est-ce que les schtroumpfs");
     export let MsFarkasCard = new tanarCards("Mrs Farkas","lelkiismeretes","életelszívás_2", "", 4, 4, MsFarkas, 4, 3, "character", GachaPH, "MsFarkasCard", MrsFarkasA, "Csak 2 embernek hinném el, hogy zöld az ég és kék a fű. Anyám és Farkas Judit.");
