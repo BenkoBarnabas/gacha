@@ -22,6 +22,43 @@
 	import { requestFullScreen} from "../../client";
 	import { blur } from "svelte/transition";
 
+    import qucikAtk from "../../lib/assets/global/quickAtk.png"
+    import doubleAtk from "../../lib/assets/global/doubleAtk.png"
+    import blastAtk from "../../lib/assets/global/blastAtk.png"
+    import lifeSteal from "../../lib/assets/global/lifeSteal.png"
+    import thorns from "../../lib/assets/global/thorns.png"
+    import challanger from "../../lib/assets/global/challanger.png"
+
+    let talentIcons = {
+        kihívó: challanger,
+        kettőstámadás: doubleAtk,
+        tövisesbőr: thorns,
+        fürgetámadás: qucikAtk,
+        robbanótámadás: blastAtk,
+        életelszívás_1: lifeSteal,
+        életelszívás_2: lifeSteal,
+        életelszívás_3: lifeSteal
+    }
+
+    import tunya from "../../lib/assets/gameplay/tunya.png"
+    import lelkiismeretes from "../../lib/assets/gameplay/lelkiismeretes.png"
+    import vérszomjas from "../../lib/assets/gameplay/vérszomjas.png"
+    import veszett from "../../lib/assets/gameplay/veszett.png"
+
+    let aligmentIcons = {
+        tunya: tunya,
+        lelkiismeretes: lelkiismeretes,
+        vérszomjas: vérszomjas,
+        veszett: veszett
+    }
+    let aligmentBackgroundColors = {
+        tunya: "rgba(113, 166, 117, 0.6)",
+        lelkiismeretes: "rgba(113, 145, 166, 0.6)",
+        vérszomjas: "rgba(166, 113, 118, 0.6)",
+        veszett: "rgba(133, 113, 166, 0.6)"
+    }
+
+
     var backgroundColorByCost = ["#2672ed","#8626ed","#ed7c26","linear-gradient(180deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235))"]
     var starsColorByCost = ["color: #2672ed;","color: #8626ed;","color: #ed7c26;","background-image: linear-gradient(90deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235));-webkit-background-clip: text;background-clip: text;color: transparent;"]
 
@@ -30,8 +67,8 @@
     let opponentGameID
     let gameKey
 
-    let yourGameParameters = JSON.parse(JSON.stringify(yourGameParametersClient))
-    let enemyGameParameters = JSON.parse(JSON.stringify(enemyGameParametersClient))
+    let yourGameParameters = {currentHand: [], yourBoard: Array(10).fill(""), mana: 0, spellMana: 0, username: "", hp: 0}
+    let enemyGameParameters = {currentHand: [], yourBoard: Array(10).fill(""), mana: 0, spellMana: 0, username: "", hp: 0}
 
     
     let startingHandNum = 5
@@ -150,6 +187,7 @@
             //events for communicating with clinet.js
             document.addEventListener('socketConnected', ServerDependingCode)
             document.addEventListener('nextTurn',NextTurn)
+            document.addEventListener('updateParams', update)
         
     });
 
@@ -701,8 +739,11 @@
 
     //MAIN ---------------------------------------------
     function update() {
+        console.log("updated");
         yourGameParameters = yourGameParametersClient
         enemyGameParameters = enemyGameParametersClient
+        console.log(yourGameParametersClient);
+        console.log(enemyGameParametersClient);
         
         yourGameParameters = yourGameParameters
         enemyGameParameters = enemyGameParameters
@@ -713,8 +754,6 @@
 
         yourBoard = yourGameParameters.yourBoard
         yourBoard = yourBoard
-        
-        requestAnimationFrame(update)
     }
 </script>
 {#if !pageLoaded}
@@ -725,6 +764,7 @@
 {/if}
 
 <div id="background"></div>
+<div id="backgroundOverlay"></div>
 
 
 <div id="gamePlayFiledCont">
@@ -854,6 +894,28 @@
                                     <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*9.65);">{yourBoard[i].health}</div>
                                     <div class="curCardCostList">{yourBoard[i].cost}</div>
                                     <div class="curCardNameList">{yourBoard[i].name}</div>
+                                    {#if yourBoard[i].talent != ""}
+                                        {#if yourBoard[i].talent.includes(",")}
+                                            <div class="curCardMultipleIconsContainer">
+                                                {#each yourBoard[i].talent.split(",") as icon, i}
+                                                <div style="width:{5.2/yourBoard[i].talent.split(",").length}vw; margin:auto">
+                                                    <img style="calc(var(--cardOnBoardScale)*1vw*1.4);" src={talentIcons[icon.replace(" ","")]} alt="talent">
+                                                </div>
+                                                {/each}
+                                            </div>
+                                            {:else}
+                                            <div class="curCardTalentList">{yourBoard[i].talent.replace("támadás","")}</div>
+                                            <img style="left: calc(var(--cardOnBoardScale)*1vw*4);" class="curCardTalentIconList" src={talentIcons[yourBoard[i].talent.replace(" ","")]} alt="talent">
+                                            {/if}
+                                        {/if}
+                                        
+                                    {#if yourBoard[i].aligment.includes(",")}
+                                        {#each yourBoard[i].aligment.split(",") as aligment,i}
+                                        <img style="top: calc(var(--cardOnBoardScale)*1vw*{4.8 + i* 2.55}); background-color: {aligmentBackgroundColors[aligment]}; border-radius: 0.5vw;" class="curCardAligList" src={aligmentIcons[aligment]} alt="aligment">
+                                        {/each}
+                                    {:else}
+                                        <img style="background-color: {aligmentBackgroundColors[yourBoard[i].aligment]}; border-radius: 0.5vw;" class="curCardAligList" src={aligmentIcons[yourBoard[i].aligment]} alt="aligment">
+                                    {/if}
                         
                                     <div class="curCardRarityList" style="{starsColorByCost[(yourBoard[i].stars)-3]}">
                                         {#each Array(Number(yourBoard[i].stars)) as card,index}
@@ -905,6 +967,29 @@
                                     <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*9.65);">{yourBoard[i+(yourBoard.length)/2].health}</div>
                                     <div class="curCardCostList">{yourBoard[i+(yourBoard.length)/2].cost}</div>
                                     <div class="curCardNameList">{yourBoard[i+(yourBoard.length)/2].name}</div>
+
+                                    {#if yourBoard[i+(yourBoard.length)/2].talent != ""}
+                                        {#if yourBoard[i+(yourBoard.length)/2].talent.includes(",")}
+                                            <div class="curyourBoard[i+(yourBoard.length)/2]MultipleIconsContainer">
+                                                {#each yourBoard[i+(yourBoard.length)/2].talent.split(",") as icon, i}
+                                                <div style="width:{5.2/yourBoard[i+(yourBoard.length)/2].talent.split(",").length}vw; margin:auto">
+                                                    <img style="width:1.4vw" src={talentIcons[icon.replace(" ","")]} alt="talent">
+                                                </div>
+                                                {/each}
+                                            </div>
+                                            {:else}
+                                            <div class="curCardTalentList">{yourBoard[i+(yourBoard.length)/2].talent.replace("támadás","")}</div>
+                                            <img style="left: 3.8vw;" class="curCardTalentIconList" src={talentIcons[yourBoard[i+(yourBoard.length)/2].talent.replace(" ","")]} alt="talent">
+                                            {/if}
+                                        {/if}
+                                        
+                                    {#if yourBoard[i+(yourBoard.length)/2].aligment.includes(",")}
+                                        {#each yourBoard[i+(yourBoard.length)/2].aligment.split(",") as aligment,i}
+                                        <img style="top: {4.8 + i* 2.55}vw; background-color: {aligmentBackgroundColors[aligment]}; border-radius: 0.5vw;" class="curCardAligList" src={aligmentIcons[aligment]} alt="aligment">
+                                        {/each}
+                                    {:else}
+                                        <img style="background-color: {aligmentBackgroundColors[yourBoard[i+(yourBoard.length)/2].aligment]}; border-radius: 0.5vw;" class="curCardAligList" src={aligmentIcons[yourBoard[i+(yourBoard.length)/2].aligment]} alt="aligment">
+                                    {/if}
                         
                                     <div class="curCardRarityList" style="{starsColorByCost[(yourBoard[i+(yourBoard.length)/2].stars)-3]}">
                                         {#each Array(Number(yourBoard[i+(yourBoard.length)/2].stars)) as card,index}
@@ -1025,12 +1110,23 @@
     right: 0;
     background-color: rgb(228, 231, 242);
     }
+    #backgroundOverlay{
+        width: 100vw;
+        height: 100vh;
+        position: fixed;
+        z-index: 999;
+        background-image: url("../../lib/assets/gameplay/GameUI.png");
+        background-size: 100% 100%;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+    }
     #background{
         width: 100vw;
         height: 100vh;
         position: fixed;
         z-index: -1;
-        background-image: url("../../lib/assets/gameplay/GameUI.png");
+        background-image: url("../../lib/assets/gameplay/notebook.png");
         background-size: 100% 100%;
         top: 0;
         left: 0;
@@ -1105,7 +1201,6 @@
 
 
     #playerHps{
-        border: 2px solid black;
         position: absolute;
 
         height: 50vh;
@@ -1115,7 +1210,6 @@
         left: 1.5vw;
     }
     .playerNameCont{
-        background-color: red;
         height: 15%;
         width: 100%;
 
@@ -1128,7 +1222,6 @@
     #enemyPlayerName{top:0;}
     #yourPlayerName{bottom:0;}
     .playerHpCont{
-        background-color: rgba(75, 102, 130, 0.88);
 
         position: absolute;
 
@@ -1146,7 +1239,6 @@
     .koCont{
         width: 7vw;
         height: 12vh;
-        background-color: rgba(137, 43, 226, 0.764);
 
         position: absolute
     }
@@ -1170,7 +1262,6 @@
     }
 
     #matchConsoleCont{
-        background-color: rgba(255, 166, 0, 0.742);
         width: 7vw;
         height: 50vh;
 
@@ -1180,7 +1271,6 @@
 
     }
     .battleStateIndicatorCont{
-        border:2px solid black;
         width: 7vw;
         height: 7vw;
         position: absolute;
@@ -1203,7 +1293,6 @@
         height: 10%;
         position: absolute;
         top: 50%;
-        background-color: rgb(238, 134, 59);
         font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
         bottom: 2px solid rgb(131, 70, 27);
 
@@ -1212,7 +1301,6 @@
 
 
     .manaCont{
-        background-color: rgba(238, 130, 238, 0.74);
         width: 22vw;
         height: 11vh;
         
@@ -1238,7 +1326,6 @@
     .normalMana{
         width: 100%;
         height: 45%;
-        background-color: blue;
 
         margin: 0;
         padding: 0;
@@ -1246,8 +1333,6 @@
     .spellMana{
         width: 40%;
         height: 45%;
-        background-color: cadetblue;
-
         margin: 0;
         margin-left:2vw;
         padding: 0;
@@ -1287,7 +1372,6 @@
 
 
     #gamePlayFiledCont{
-        background-color: rgba(0, 0, 0, 0.432);
         position: fixed;
         top: 0;
         left: 0;
@@ -1311,7 +1395,6 @@
     
         }
         #yourHand{
-        background-color: rgba(0, 0, 255, 0.726);
         bottom: 5vh;
     }
     .previewInHand{
@@ -1331,7 +1414,6 @@
     
         }
         #yourHand{
-        background-color: rgba(0, 0, 255, 0.726);
         bottom: 5vh;
 
         width: 30vw;
@@ -1357,7 +1439,6 @@
     }
     
     #enemyHand{
-        background-color: rgba(255, 0, 0, 0.616);
         left: 25vw;
         
     }
@@ -1376,10 +1457,8 @@
         padding-bottom: 6vh;
     }
     #yourSide{
-        background-color: rgba(0, 0, 255, 0.052);
     }
     #enemySide{
-        background-color: rgba(255, 0, 0, 0.06);
     }
 
 
@@ -1394,7 +1473,6 @@
         position: absolute;
     }
     .boardsCells{
-        border: 0.1vw solid black;
         padding:0;
         margin: 0;
 
@@ -1430,7 +1508,7 @@
             transform: scale(1);
         }
         100%{
-            transform: scale(1.5);
+            transform: scale(2);
         }
     }
     .cardTemplate{
@@ -1635,7 +1713,7 @@
         text-shadow: 0 0 calc(var(--cardOnBoardScale)*1vw*1) rgba(0, 0, 0, 0.536);
 
         position: absolute;
-        top: calc(var(--cardOnBoardScale)*1vw*13.2);
+        top: calc(var(--cardOnBoardScale)*1vw*12.6);
         left: calc(var(--cardOnBoardScale)*1vw*2);
 
         text-align: center;
@@ -1649,5 +1727,27 @@
         position: absolute;
         left: calc(var(--cardOnBoardScale)*1vw*3.7);
         top: 0;
+    }
+    .curCardTalentIconList{
+        position: absolute;
+        width: calc(var(--cardOnBoardScale)*1vw*1.4);
+        top: calc(var(--cardOnBoardScale)*1vw*13.4);
+    }
+    .curCardTalentList{
+        position: absolute;
+        font-family: "talentFont";
+        color: antiquewhite;
+        font-size: calc(var(--cardOnBoardScale)*1vw*0.7);
+        top: calc(var(--cardOnBoardScale)*1vw*14);
+        left: calc(var(--cardOnBoardScale)*1vw*3.9);
+        width: calc(var(--cardOnBoardScale)*1vw*3.6);
+        height: calc(var(--cardOnBoardScale)*1vw*1);
+        padding-left:calc(var(--cardOnBoardScale)*1vw*1.9);
+    }
+    .curCardAligList{
+        position: absolute;
+        width: calc(var(--cardOnBoardScale)*1vw*2.2);
+        left: calc(var(--cardOnBoardScale)*1vw*1.8);
+        top: calc(var(--cardOnBoardScale)*1vw*4.8);
     }
 </style>

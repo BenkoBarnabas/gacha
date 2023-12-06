@@ -1,6 +1,7 @@
 <script>
     let particleContainer
     import { onMount } from 'svelte';
+    import * as Cards from "../../card"
     onMount(() => {
         particleContainer = document.getElementById("particle-container");
 
@@ -13,7 +14,51 @@
             createParticle(event.clientX, event.clientY);
         });
     });
-    
+
+    import cardBackground from "../../lib/assets/global/cardV1BG.png"
+    import cardForeground from "../../lib/assets/global/cardV1Top.png"
+    import cardV2Background from "../../lib/assets/global/cardV2BG.png"
+    import cardV2BackgroundRed from "../../lib/assets/global/cardV2BGRed.png"
+
+    import spellForeground from "../../lib/assets/global/spellV1Top.png"
+    import spellV2Foreground from "../../lib/assets/global/spellV2Top.png"
+
+    var backgroundColorByCost = ["#2672ed","#8626ed","#ed7c26","linear-gradient(180deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235))"]
+    var starsColorByCost = ["color: #2672ed;","color: #8626ed;","color: #ed7c26;","background-image: linear-gradient(90deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235));-webkit-background-clip: text;background-clip: text;color: transparent;"]
+    import qucikAtk from "../../lib/assets/global/quickAtk.png"
+    import doubleAtk from "../../lib/assets/global/doubleAtk.png"
+    import blastAtk from "../../lib/assets/global/blastAtk.png"
+    import lifeSteal from "../../lib/assets/global/lifeSteal.png"
+    import thorns from "../../lib/assets/global/thorns.png"
+    import challanger from "../../lib/assets/global/challanger.png"
+    let talentIcons = {
+        kihívó: challanger,
+        kettőstámadás: doubleAtk,
+        tövisesbőr: thorns,
+        fürgetámadás: qucikAtk,
+        robbanótámadás: blastAtk,
+        életelszívás_1: lifeSteal,
+        életelszívás_2: lifeSteal,
+        életelszívás_3: lifeSteal
+    }
+
+    import tunya from "../../lib/assets/gameplay/tunya.png"
+    import lelkiismeretes from "../../lib/assets/gameplay/lelkiismeretes.png"
+    import vérszomjas from "../../lib/assets/gameplay/vérszomjas.png"
+    import veszett from "../../lib/assets/gameplay/veszett.png"
+
+    let aligmentIcons = {
+        tunya: tunya,
+        lelkiismeretes: lelkiismeretes,
+        vérszomjas: vérszomjas,
+        veszett: veszett
+    }
+    let aligmentBackgroundColors = {
+        tunya: "rgba(113, 166, 117, 0.6)",
+        lelkiismeretes: "rgba(113, 145, 166, 0.6)",
+        vérszomjas: "rgba(166, 113, 118, 0.6)",
+        veszett: "rgba(133, 113, 166, 0.6)"
+    }
 
 // Function to create a new particle at the specified coordinates
 function createParticle(x, y) {
@@ -82,9 +127,26 @@ function moveParticle(particle,left,top,dirx,diry,i,op){
 
 
 <div id="particle-container"></div>
-uwu uwu
 
+<div class = "cardcollection" id = "spellcollection">
 
+    <div id="cardPreviewListCont">
+        <img style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute" src={cardV2Background} alt="cardBg">
+        <div id="rarityBGList" style="background: {backgroundColorByCost[(Cards.falanxCard.stars)-3]}; "></div>
+        <img class = "cardButton" src={Cards.falanxCard.source} alt="preview"/>
+        <button class="spellListFrame" alt="cardBg" on:click={() => handleSpellClick(Cards.falanxCard.source,Cards.falanxCard.name,Cards.falanxCard.cost,Cards.falanxCard.stars,Cards.falanxCard.description,Cards.falanxCard.quote)}></button>
+
+        <div class="curCardCostList">{Cards.falanxCard.cost}</div>
+        <div style="top: calc(var(--cardOnBoardScale)*1vw*13.2)" class="curCardNameList">{Cards.falanxCard.name}</div>
+
+        <div class="curCardRarityList" style="{starsColorByCost[(Cards.falanxCard.stars)-3]}">
+            {#each Array(Number(Cards.falanxCard.stars)) as card}
+                <span style="font-size: calc(var(--cardOnBoardScale)*1vw*1);">★</span>
+            {/each}
+        </div>
+    </div>
+
+</div>
 
 <style>
 
@@ -96,4 +158,154 @@ uwu uwu
     height: 100%;
 }
 
+    @font-face {
+            font-family: 'SevenSwords';
+            src: url('../../lib/assets/fonts/SEVESBRG.ttf');
+    }
+    @font-face {
+        font-family: 'ShadowLight';
+        src: url('../../lib/assets/fonts/ShadowsIntoLight-Regular.ttf');
+    }
+    @font-face {
+      font-family: 'mainFont';
+      src: url('../../lib/assets/fonts/zh-cn.ttf');
+    }
+
+    :root {
+        --cardsScale: 0.4;
+        --cardOnBoardScale: 3;
+    
+    }
+    
+    .spellListFrame{
+        width: calc(var(--cardOnBoardScale)*1vw*12.5);
+        height: calc(var(--cardOnBoardScale)*1vw*15.8754);
+        position:absolute;
+        background-image: url("../../lib/assets/global/spellV2Top.png");
+        background-size: cover;
+        background-position: center;
+        background-color: transparent;
+        border: none;
+    }
+    .curCardMultipleIconsContainer{
+        position: absolute;
+        top: calc(var(--cardOnBoardScale)*1vw*13.5);
+        left: calc(var(--cardOnBoardScale)*1vw*3.9);
+        width: calc(var(--cardOnBoardScale)*1vw*5.2);
+        height: calc(var(--cardOnBoardScale)*1vw*2);
+        display:flex;
+        flex-wrap:nowrap;
+        align-content:space-around;
+}
+    #cardPreviewListCont{
+        position: relative;
+        width:calc(var(--cardOnBoardScale)*1vw*14.3);
+        height: calc(var(--cardOnBoardScale)*1vw*17);
+        display:inline-block;
+        padding: 0;
+        margin: 0;
+        
+    }
+    .cardListFrame{
+        width: calc(var(--cardOnBoardScale)*1vw*12.5);
+        height: calc(var(--cardOnBoardScale)*1vw*15.8754);
+        position:absolute;
+        background-image: url("../../lib/assets/global/cardV2Top.png");
+        background-size: cover;
+        background-position: center;
+        background-color: transparent;
+        border: none;
+    }
+    #rarityBGList{
+        position: absolute;
+        width: calc(var(--cardOnBoardScale)*1vw*10);
+        height: calc(var(--cardOnBoardScale)*1vw*13);
+        left: calc(var(--cardOnBoardScale)*1vw*1);
+        top: calc(var(--cardOnBoardScale)*1vw*1);
+
+        opacity: 0.35;
+        background-blend-mode:saturation;
+    }
+    .cardButton{
+        width:calc(var(--cardOnBoardScale)*1vw*7.5);
+
+        border: none;
+
+        background-size:cover;
+        box-shadow: 0 0 1.3vw rgba(0, 0, 0, 0.735);
+
+        position: absolute;
+
+        left: calc(var(--cardOnBoardScale)*1vw*2.97);
+        top: calc(var(--cardOnBoardScale)*1vw*2.5);
+    }
+    .curCardStatsList{
+        font-size: calc(var(--cardOnBoardScale)*1vw*1.9);
+        font-family: 'SevenSwords';
+        color: white;
+        text-shadow:
+                -0.08vw -0.08vw 0 #000, /* Top-left shadow */
+                0.08vw -0.08vw 0 #000, /* Top-right shadow */
+                -0.08vw 0.08vw 0 #000, /* Bottom-left shadow */
+                0.08vw 0.08vw 0 #000; /* Bottom-right shadow */
+
+        position: absolute;
+        top: calc(var(--cardOnBoardScale)*1vw*13.3);
+    }
+    .curCardCostList{
+        font-size: calc(var(--cardOnBoardScale)*1vw*3);
+        font-weight: bold;
+        font: italic;
+        font-family: 'ShadowLight';
+        color: rgb(184, 11, 11);
+
+        position: absolute;
+        top: calc(var(--cardOnBoardScale)*1vw*1);
+        left: calc(var(--cardOnBoardScale)*1vw*2.5);
+    }
+    .curCardNameList{
+        font-size: calc(var(--cardOnBoardScale)*1vw*1);
+        font-family: Impact;
+        color: rgba(247, 240, 221, 0.778);
+        text-shadow: 0 0 calc(var(--cardOnBoardScale)*1vw*1) rgba(0, 0, 0, 0.536);
+
+        position: absolute;
+        top: calc(var(--cardOnBoardScale)*1vw*12.8);
+        left: calc(var(--cardOnBoardScale)*1vw*2);
+
+        text-align: center;
+        width: calc(var(--cardOnBoardScale)*1vw*9.5);
+    }
+    .curCardRarityList{
+        width: calc(var(--cardOnBoardScale)*1vw*6);
+        text-align: center;
+        mix-blend-mode: screen;
+
+        position: absolute;
+        left: calc(var(--cardOnBoardScale)*1vw*3.7);
+        top: 0;
+    }
+    .curCardTalentIconList{
+        position: absolute;
+        width: calc(var(--cardOnBoardScale)*1vw*1.4);
+        top: calc(var(--cardOnBoardScale)*1vw*13.4);
+    }
+    .curCardTalentList{
+        position: absolute;
+        font-family: "talentFont";
+        color: antiquewhite;
+        font-size: calc(var(--cardOnBoardScale)*1vw*0.7);
+        top: calc(var(--cardOnBoardScale)*1vw*14);
+        left: calc(var(--cardOnBoardScale)*1vw*3.9);
+        width: calc(var(--cardOnBoardScale)*1vw*3.6);
+        height: calc(var(--cardOnBoardScale)*1vw*1);
+        padding-left:calc(var(--cardOnBoardScale)*1vw*1.9);
+    }
+    .curCardAligList{
+        position: absolute;
+        width: calc(var(--cardOnBoardScale)*1vw*2.2);
+        left: calc(var(--cardOnBoardScale)*1vw*1.8);
+        top: calc(var(--cardOnBoardScale)*1vw*4.8);
+    }
 </style>
+

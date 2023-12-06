@@ -112,7 +112,7 @@
 </div>
 
 <div id="main">
-    <div id="settingsMenu" style="width: 16vw; background:azure;">
+    <div id="settingsMenu" style="width: 16vw;">
 
                 <div class="optionButtonCont" style="top:7%; filter:hue-rotate(90deg);">
                     <button class="optionButtonShadow"></button>
@@ -334,7 +334,6 @@
 
         width: 68vw;
         height: 70vh;
-        background-color: violet;
     }
     .contentPicsDiv { 
         background-size: cover;
@@ -385,7 +384,6 @@
 
     #header{
         
-        background-color: rgba(137, 43, 226, 0.623);
         margin: auto;
 
         width: 90vw;
@@ -394,7 +392,6 @@
         font-family: "sgGachaFont";
     }
     #headerTable{
-        background-color: rgba(0, 255, 255, 0.573);
 
         width: 90vw;
         height: 12vh;

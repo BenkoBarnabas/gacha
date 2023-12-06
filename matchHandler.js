@@ -6,6 +6,7 @@ import * as Cards from "./card"
 import "./routes/matchScreen/+page.svelte"
 
 let domLoaded = false
+let gameplayScreenLoaded = false
 
 //MATCH HANDLING
 export let currentMatch = {
@@ -26,7 +27,9 @@ export let enemyGameParametersClient = {currentHand: [], yourBoard: Array(10).fi
 export function DomLoaded(){
     yourGameParametersClient = JSON.parse(localStorage.getItem("yourGameParams"))
     enemyGameParametersClient = JSON.parse(localStorage.getItem("opponentGameParams"))
-    console.log("enemy and your game paramts, clinet: ",yourGameParametersClient);
+    console.log("enemy and your game paramts, clinet: ",yourGameParametersClient, enemyGameParametersClient);
+    gameplayScreenLoaded = true
+    yourGameParametersClient.mana = 9
 }
 
 
@@ -91,6 +94,7 @@ export function SveltePageLoaded(){
 //events (for communication)
 let socketConnectedEvent
 let nextTurnEvent
+let updateEvent
 
 
 
@@ -103,6 +107,7 @@ function WaitForDomPage(){
     else{
         socketConnectedEvent = new Event('socketConnected');
         nextTurnEvent = new Event("nextTurn")
+        updateEvent = new Event("updateParams")
         ServerCode()
     }
 }
@@ -159,6 +164,7 @@ function ServerCode(){
         else if(msg.includes("TurnEnded")){
             enemyGameParametersClient.isYourTurn = !enemyGameParametersClient.isYourTurn
             document.dispatchEvent(nextTurnEvent);
+            document.dispatchEvent(updateEvent)
         }
         else{
             msg = JSON.parse(msg)
@@ -183,6 +189,8 @@ function ServerCode(){
                     yourGameParametersClient.yourBoard = Array(10).fill("")
                 }
             }
+            document.dispatchEvent(updateEvent)
+            
         }
         
     })

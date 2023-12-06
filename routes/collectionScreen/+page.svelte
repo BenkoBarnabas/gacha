@@ -270,7 +270,7 @@
 <div id = "background"></div>
 
 <div id="header">
-    <div id="logo"><h1 style="margin-top:2vh; font-size:2.5vw; text-align:center; color:white;">Decathlon</h1></div>
+    <div id="logo"><h1 style="margin-top:2vh; font-size:2.5vw; text-align:center; color:white;">Gyüjtemény</h1></div>
     <table id="headerTable">
         <tr>
             <td class="headerTd"><button id="homeButton" on:click={() => GoToPage("../mainmenuScreen")} ></button></td>
@@ -359,8 +359,14 @@
                 <img style="left: 3.8vw;" class="curCardTalentIconList" src={talentIcons[card.talent.replace(" ","")]} alt="talent">
                 {/if}
             {/if}
-
-            <img style="background-color: {aligmentBackgroundColors[card.aligment]}; border-radius: 0.5vw;" class="curCardAligList" src={aligmentIcons[card.aligment]} alt="aligment">
+            
+            {#if card.aligment.includes(",")}
+                {#each card.aligment.split(",") as aligment,i}
+                <img style="top: {4.8 + i* 2.55}vw; background-color: {aligmentBackgroundColors[aligment]}; border-radius: 0.5vw;" class="curCardAligList" src={aligmentIcons[aligment]} alt="aligment">
+                {/each}
+            {:else}
+                <img style="background-color: {aligmentBackgroundColors[card.aligment]}; border-radius: 0.5vw;" class="curCardAligList" src={aligmentIcons[card.aligment]} alt="aligment">
+            {/if}
             
             
             
@@ -380,17 +386,35 @@
             <img style="width: 12.5vw; position:absolute" src={cardV2Background} alt="cardBg">
             <div id="rarityBGList" style="background: {backgroundColorByCost[(card.stars)-3]}; "></div>
             <img class = "cardButton" src={card.source} alt="preview"/>
-            <button class="cardListFrame" alt="cardBg" on:click={() => handleClick(card.source,card.name,card.attack,card.health,card.cost,card.stars,card.description,card.quote.card.talent,card.aligment)}></button>
+            <button class="cardListFrame" alt="cardBg" on:click={() => handleClick(card.source,card.name,card.attack,card.health,card.cost,card.stars,card.description,card.quote,card.talent,card.aligment)}></button>
             <div class="curCardStatsList" style="left: 2.68vw;">{card.attack}</div>
             <div class="curCardStatsList" style="left: 9.65vw;">{card.health}</div>
             <div class="curCardCostList">{card.cost}</div>
             <div class="curCardNameList">{card.name}</div>
 
             {#if card.talent != ""}
-            <div class="curCardTalentList">{card.talent.replace("támadás","")}</div>
-            <img class="curCardTalentIconList" src={talentIcons[card.talent.replace(" ","")]} alt="talent">
+                {#if card.talent.includes(",")}
+                <div class="curCardMultipleIconsContainer">
+                    {#each card.talent.split(",") as icon, i}
+                    <div style="width:{5.2/card.talent.split(",").length}vw; margin:auto">
+                        <img style="width:1.4vw" src={talentIcons[icon.replace(" ","")]} alt="talent">
+                    </div>
+                    {/each}
+                </div>
+                {:else}
+                <div class="curCardTalentList">{card.talent.replace("támadás","")}</div>
+                <img style="left: 3.8vw;" class="curCardTalentIconList" src={talentIcons[card.talent.replace(" ","")]} alt="talent">
+                {/if}
             {/if}
-            <img style="background-color: {aligmentBackgroundColors[card.aligment]}; border-radius: 0.5vw;" class="curCardAligList" src={aligmentIcons[card.aligment]} alt="aligment">
+
+
+            {#if card.aligment.includes(",")}
+            {#each card.aligment.split(",") as aligment,i}
+                <img style="top: {4.8 + i* 2.55}vw; background-color: {aligmentBackgroundColors[aligment]}; border-radius: 0.5vw;" class="curCardAligList" src={aligmentIcons[aligment]} alt="aligment">
+            {/each}
+            {:else}
+                <img style="background-color: {aligmentBackgroundColors[card.aligment]}; border-radius: 0.5vw;" class="curCardAligList" src={aligmentIcons[card.aligment]} alt="aligment">
+            {/if}
 
             <div class="curCardRarityList" style="{starsColorByCost[(card.stars)-3]}">
                 {#each Array(Number(card.stars)) as card}
@@ -410,7 +434,7 @@
                 <button class="spellListFrame" alt="cardBg" on:click={() => handleSpellClick(card.source,card.name,card.cost,card.stars,card.description,card.quote)}></button>
 
                 <div class="curCardCostList">{card.cost}</div>
-                <div class="curCardNameList">{card.name}</div>
+                <div style="top: 13.2vw" class="curCardNameList">{card.name}</div>
 
                 <div class="curCardRarityList" style="{starsColorByCost[(card.stars)-3]}">
                     {#each Array(Number(card.stars)) as card}
@@ -442,8 +466,13 @@
         <img class="curCardTalentIcon" src={talentIcons[curCardInView.talent.replace(" ","")]} alt="talent">
         {/if}
 
-        <img style="background-color: {aligmentBackgroundColors[curCardInView.aligment]}; border-radius: 0.5vw;" class="curCardAlig" src={aligmentIcons[curCardInView.aligment]} alt="aligment">
-        
+            {#if curCardInView.aligment.includes(",")}
+                {#each curCardInView.aligment.split(",") as aligment,i}
+                <img style="top: {9.8 + i* 4.5}vw; background-color: {aligmentBackgroundColors[aligment]}; border-radius: 0.5vw;" class="curCardAlig" src={aligmentIcons[aligment]} alt="aligment">
+                {/each}
+            {:else}
+                <img style="background-color: {aligmentBackgroundColors[curCardInView.aligment]}; border-radius: 0.5vw;" class="curCardAlig" src={aligmentIcons[curCardInView.aligment]} alt="aligment">
+            {/if}        
         <div id="curCardRarity" style="{starsColorByCost[(curCardInView.rarity)-3]}; top: {starSizeTop[(curCardInView.rarity)-3]}vw;">
             {#each Array(Number(curCardInView.rarity)) as card,index}
                 <span style="font-size: {starSizeArray[index]}vw;">★</span>
@@ -461,7 +490,7 @@
         <img class="cardTemplate" src={spellForeground} alt="cardBg">
         <div id="curCardDesc" class="noScrollers">{@html curCardInView.desc}</div>
         <div class="curCardCost">{curCardInView.cost}</div>
-        <div class="curCardName">{curCardInView.name}</div>
+        <div style="top: 19.4vw" class="curCardName">{curCardInView.name}</div>
         
         <div id="curCardRarity" style="{starsColorByCost[(curCardInView.rarity)-3]}; top: {starSizeTop[(curCardInView.rarity)-3]}vw;">
             {#each Array(Number(curCardInView.rarity)) as card,index}
@@ -504,6 +533,20 @@
         font-family: "talentFont";
         src: url('../../lib/assets/fonts/CenturyGothic.ttf');
     }
+    #background {
+        background: url("../../lib/assets/collection/bg.png");
+        overflow: hidden;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background-size: cover; /* Adjust as needed: cover, contain, etc. */
+        background-repeat: no-repeat;
+        background-position: center center;
+        z-index: -3;
+    }
+
 
     #loadingScreen {
     z-index: 9999;
@@ -516,7 +559,6 @@
     }
     #header{
         
-        background-color: rgba(137, 43, 226, 0.623);
         margin: auto;
 
         width: 90vw;
@@ -527,7 +569,7 @@
         margin-bottom: 2vh;
     }
     #headerTable{
-        background-color: rgba(0, 255, 255, 0.573);
+
 
         width: 90vw;
         height: 10vh;
@@ -565,6 +607,12 @@
         width: 9vw;
         height: 3.5vw;
         display: inline-block;
+        text-shadow:
+                -0.01vw -0.01vw 0 rgb(255, 255, 255), /* Top-left shadow */
+                0.01vw -0.01vw 0 rgb(255, 255, 255), /* Top-right shadow */
+                -0.01vw 0.01vw 0 rgb(255, 255, 255), /* Bottom-left shadow */
+                0.01vw 0.01vw 0 rgb(255, 255, 255); /* Bottom-right shadow */
+        
  
     }
     #gachaCurrency{
@@ -820,7 +868,6 @@
         width: 3.6vw;
         height: 1vw;
         padding-left:1.6vw;
-        background-color: rgba(238, 130, 238, 0.288);
     }
     .curCardAligList{
         position: absolute;
@@ -964,18 +1011,6 @@
         transform: scale(1.1);
     }
 
-    #background {
-        background-image: url("../../lib/assets/collection/bg.png");
-        overflow: hidden;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100vh;
-        background-size: cover; /* Adjust as needed: cover, contain, etc. */
-        background-repeat: no-repeat;
-        background-position: center center;
-        z-index: -3;
-    }
+    
 
 </style>
