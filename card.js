@@ -274,7 +274,7 @@
     export let ZalanCard = new diakCards("Zalán","tunya","kihívó", "", 2, 6, Zalan, 5, 3, "character", ZalanGacha, "ZalanCard", ZalanA, "Mindenki kedvenc DÖK elnöke. Volt. Fasza bőrdzseki!");
     export let ZenoCard = new diakCards("Zénó","lelkiismeretes,tunya","kettős támadás", "", 5, 13, Zeno, 6, 7, "character", ZenoGacha, "ZenoCard", ZenoA, "SG DÖK elnök. Ha a terem hátsó sarkában valaki fulladozik a nevetéstől, ő az.");
     export let AproNoCard = new diakCards("Apró Fehér Nő","veszett","fürge támadás", "", 1, 2, AproNo, 4, 2, "character", AproNoGacha, "AproNoCard", AproNoA, "Egy apró fehér nő. Gyenge, a férfiak alatt áll, nincsennek jogai.");
-    export let ReginaCard = new diakCards("Redzsina","veszett","tüskés bőr", "", 3, 3, Regina, 4, 3, "character", GachaPH, "ReginaCard", RedzsinaA, "Ötcsillagos akart lenni. Közhiedelem ellenére nem meleg.");
+    export let ReginaCard = new diakCards("Redzsina","veszett","tövisesbőr", "", 3, 3, Regina, 4, 3, "character", GachaPH, "ReginaCard", RedzsinaA, "Ötcsillagos akart lenni. Közhiedelem ellenére nem meleg.");
     export let EmmaCard = new diakCards("Emma","lelkiismeretes","kihívó,robbanó", "", 4, 10, Emma, 5, 5, "character", GachaPH, "EmmaCard", gachaPHAudio, "Beépített tégla volt a Radnótiban, de jó útra tért. Árjafaj. Szereti a zsidókat.");
     export let RekaCard = new diakCards("Réka","veszett","kettős támadás", "", 1, 3, Reka, 3, 2, "character", GachaPH, "RekaCard", gachaPHAudio, "Pedofil hobbizsiráf. Nem szereti a tejberizst. A cicákat szereti.");
     export let JuliCard = new diakCards("Juli","vérszomjas","kihívó", "", 1, 2, Juli, 3, 1, "character", GachaPH, "JuliCard", gachaPHAudio, "A manórúd óta Csillag Patrik.");
