@@ -61,7 +61,13 @@
     let cardsClassName = Array(Cards.allCardsArr.length).fill("cardPreviewListCont filtergrayscale")
 
     function selectByClick(card, i){
-        currDeckArray = selectedList[selectedDeck].split(",")
+        if(selectedList[selectedDeck] == []){
+            currDeckArray = []
+        }else if(selectedList[selectedDeck] == ""){
+            currDeckArray = []
+        }else{
+            currDeckArray = selectedList[selectedDeck].split(",")
+        }
         if(!currDeckArray.includes(card.name)){
             currDeckArray.push(card.name)
             currDeckArray = currDeckArray
@@ -91,18 +97,18 @@
     }
 
     function deleteCard(cardname, i){
-        currDeckArray = currDeckArray.splice(currDeckArray[i], 1)
-        currDeckArray = currDeckArray
-
+        currDeckArray.splice(currDeckArray.indexOf(cardname), 1)
         console.log(currDeckArray);
-
         selectedList[selectedDeck] = String(currDeckArray)
+
+        document.getElementById(cardname).remove()
+
+        cardsClassName[i] = "cardPreviewListCont filtergrayscale"
+
         sendData(`deckarray${selectedDeck}`, selectedList[selectedDeck], localUserData.id, "deck")
 
         localDeckData[`deckarray${selectedDeck}`] = selectedList[selectedDeck]
         localStorage.setItem("deckData", JSON.stringify(localDeckData));
-
-        cardsClassName[i] = "cardPreviewListCont filtergrayscale"
     }
 
     let isSelectingDeck = true
@@ -114,7 +120,13 @@
     function selectDeck(n){
         selectedDeck = n
 
-        currDeckArray = selectedList[selectedDeck].split(",")
+        if(selectedList[selectedDeck] == []){
+            currDeckArray = []
+        }else if(selectedList[selectedDeck] == ""){
+            currDeckArray = []
+        }else{
+            currDeckArray = selectedList[selectedDeck].split(",")
+        }
 
         cardsClassName.fill("cardPreviewListCont filtergrayscale")
         console.log(selectedList[selectedDeck]);
@@ -176,7 +188,7 @@
         <button style="float: right;" on:click={()=> ChangeDeck()}>Change Deck</button>
 
         {#each currDeckArray as cardname, i}
-            <button style="display:block;" id={cardname} on:click={() => deleteCard(cardname, i)}>{cardname}</button>
+            <button style="display:block;" id={cardname} on:click={() => deleteCard(cardname, i)}>{cardname} {i}</button>
         {/each}
     {/if}
 
