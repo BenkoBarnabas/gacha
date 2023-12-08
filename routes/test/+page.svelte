@@ -59,6 +59,19 @@
         vérszomjas: "rgba(166, 113, 118, 0.6)",
         veszett: "rgba(133, 113, 166, 0.6)"
     }
+    let root
+    let Atop
+    let Aleft
+
+
+    function move(card){
+        console.log(card);
+        Atop = "50vw"
+        Aleft = "20vw"
+        card.style.animation = "none"
+        card.offsetHeight;
+        card.style.animation = "move 2s"
+    }
 
 // Function to create a new particle at the specified coordinates
 function createParticle(x, y) {
@@ -119,34 +132,13 @@ function moveParticle(particle,left,top,dirx,diry,i,op){
         particle.remove();
     }
 }
-
-// Event listener for mouse click
-
-
 </script>
 
-
+<div id="root" bind:this={root}></div>
 <div id="particle-container"></div>
 
-<div class = "cardcollection" id = "spellcollection">
-
-    <div id="cardPreviewListCont">
-        <img style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute" src={cardV2Background} alt="cardBg">
-        <div id="rarityBGList" style="background: {backgroundColorByCost[(Cards.falanxCard.stars)-3]}; "></div>
-        <img class = "cardButton" src={Cards.falanxCard.source} alt="preview"/>
-        <button class="spellListFrame" alt="cardBg" on:click={() => handleSpellClick(Cards.falanxCard.source,Cards.falanxCard.name,Cards.falanxCard.cost,Cards.falanxCard.stars,Cards.falanxCard.description,Cards.falanxCard.quote)}></button>
-
-        <div class="curCardCostList">{Cards.falanxCard.cost}</div>
-        <div style="top: calc(var(--cardOnBoardScale)*1vw*13.2)" class="curCardNameList">{Cards.falanxCard.name}</div>
-
-        <div class="curCardRarityList" style="{starsColorByCost[(Cards.falanxCard.stars)-3]}">
-            {#each Array(Number(Cards.falanxCard.stars)) as card}
-                <span style="font-size: calc(var(--cardOnBoardScale)*1vw*1);">★</span>
-            {/each}
-        </div>
-    </div>
-
-</div>
+<button on:click={()=> move(document.getElementById("cont"))}>moe</button>
+<div  id="cont" style="--top: {Atop}; --left: {Aleft};position: absolute; width:10vw; height:10vw; background-color:aquamarine"></div>
 
 <style>
 
@@ -156,7 +148,31 @@ function moveParticle(particle,left,top,dirx,diry,i,op){
     position: absolute;
     width: 100%;
     height: 100%;
+    pointer-events: none;
 }
+:root {
+        --cardsScale: 0.4;
+        --cardOnBoardScale: 2;
+    }
+
+
+@keyframes -global-move {
+    0%{
+        top: 0;
+        left: 0;
+    }
+    100%{
+        top: var(--top);
+        left: var(--left);
+    }
+}
+
+
+
+
+
+
+
 
     @font-face {
             font-family: 'SevenSwords';
@@ -171,11 +187,6 @@ function moveParticle(particle,left,top,dirx,diry,i,op){
       src: url('../../lib/assets/fonts/zh-cn.ttf');
     }
 
-    :root {
-        --cardsScale: 0.4;
-        --cardOnBoardScale: 3;
-    
-    }
     
     .spellListFrame{
         width: calc(var(--cardOnBoardScale)*1vw*12.5);

@@ -58,6 +58,8 @@
         veszett: "rgba(133, 113, 166, 0.6)"
     }
 
+    let voicelines = {}
+
 
     var backgroundColorByCost = ["#2672ed","#8626ed","#ed7c26","linear-gradient(180deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235))"]
     var starsColorByCost = ["color: #2672ed;","color: #8626ed;","color: #ed7c26;","background-image: linear-gradient(90deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235));-webkit-background-clip: text;background-clip: text;color: transparent;"]
@@ -67,10 +69,11 @@
     let opponentGameID
     let gameKey
 
-    let yourGameParameters = {currentHand: [], yourBoard: Array(10).fill(""), mana: 0, spellMana: 0, username: "", hp: 0}
-    let enemyGameParameters = {currentHand: [], yourBoard: Array(10).fill(""), mana: 0, spellMana: 0, username: "", hp: 0}
+    let yourGameParameters = {currentHand: [],remaningDeck: [], yourBoard: Array(10).fill(""), mana: 0, spellMana: 0, username: "", hp: 0}
+    let enemyGameParameters = {currentHand: [],remaningDeck: [], yourBoard: Array(10).fill(""), mana: 0, spellMana: 0, username: "", hp: 0}
 
-    
+    let allCardsInGame = []
+
     let startingHandNum = 5
     let yourHand = []
     let enemyHand = []
@@ -161,6 +164,8 @@
         isYourTurn = isYourTurn
         isYourTurn == true ? isYourRally = true : isYourRally = false
 
+        allCardsInGame = Array.from(yourGameParameters.remaningDeck.concat(enemyGameParameters.remaningDeck))
+
         yourGameID = JSON.parse(localStorage.getItem("yourGameID"))
         opponentGameID = JSON.parse(localStorage.getItem("opponentGameID"))
         gameKey = JSON.parse(localStorage.getItem("gameKey"))
@@ -228,6 +233,10 @@
             yourBoardPhs[Number(event.target.id.replace("td",""))] = ""
             yourBoard[Number(event.target.id.replace("td",""))] = dragged
 
+            if(!dragged.talent.includes("fürge támadás")){
+                yourBoard[Number(event.target.id.replace("td",""))].fieldEffects.push("asleep")
+            }
+            
 
             console.log("your board: ",yourBoard);
             console.log("dropped to this cell: ",event.target);
@@ -239,6 +248,10 @@
                 yourHand = yourHand
                 cardsInYourHandClass = Array(yourHand.length).fill("cardTemplate")
                 yourGameParameters.yourHand = Array.from(yourHand)
+
+                console.log(voicelines);
+                voicelines[dragged.name].play();
+
             }
             else if(dragged.type == "ko"){
                 yourKo -= 1
@@ -252,6 +265,7 @@
 
             yourBoard = yourBoard
             yourGameParameters.yourBoard = Array.from(yourBoard)
+
             SendGameData(JSON.stringify(yourGameParameters))
         }
         else{
@@ -413,6 +427,9 @@
     }
     function PlaceByClick(card,i){
         yourBoard[i] = card;
+        if(!card.talent.includes("fürge támadás")){
+            yourBoard[i].fieldEffects.push("asleep")
+        }
     
         yourBoardPhs.fill("")
         yourHand.splice(yourHand.indexOf(card), 1);
@@ -432,6 +449,9 @@
 
         yourGameParameters.yourBoard = Array.from(yourBoard)
         SendGameData(JSON.stringify(yourGameParameters))
+
+        console.log(voicelines[card.name]);
+        voicelines[card.name].play();
     }
         
 
@@ -513,33 +533,61 @@
             yourGameParameters.isYourTurn = isYourTurn
            
             gameFase++
+            if(gameFase == 3 && isYourRally){ //ha az tuolsó rallyd van
+                yourBoard.forEach(element => {
+                    console.log(element,yourBoard);
+                    if(element != ""){
+                        if(element.fieldEffects.includes("asleep")){
+                            element.fieldEffects.splice(element.fieldEffects.indexOf("asleep"),1)
+                        }
+                    }
+                });
             }
-            else if(gameFase == 3){
-                isYourRally = !isYourRally
-                isYourTurn = !isYourTurn
-                yourGameParameters.isYourTurn = isYourTurn
-                gameFase = 1
+        }
+        else if(gameFase == 3){
+            isYourRally = !isYourRally
+            isYourTurn = !isYourTurn
+            yourGameParameters.isYourTurn = isYourTurn
+            gameFase = 1
 
-                //mana számolás
-                console.log(yourGameParameters.spellMana + yourGameParameters.mana);
-                yourGameParameters.spellMana + yourGameParameters.mana <= 3 ? yourGameParameters.spellMana = yourGameParameters.spellMana + yourGameParameters.mana : yourGameParameters.spellMana = 3
+            //mana számolás
+            console.log(yourGameParameters.spellMana + yourGameParameters.mana);
+            yourGameParameters.spellMana + yourGameParameters.mana <= 3 ? yourGameParameters.spellMana = yourGameParameters.spellMana + yourGameParameters.mana : yourGameParameters.spellMana = 3
 
-                yourGameParameters.mana <= 9 ? yourGameParameters.mana = turnCount + 2 : yourGameParameters.mana = 10
-                enemyGameParameters.mana <= 9 ? enemyGameParameters.mana = turnCount + 2 : enemyGameParameters.mana = 10
-                console.log("mana: ",yourGameParameters.mana," spellMana: ",yourGameParameters.spellMana);
+            yourGameParameters.mana <= 9 ? yourGameParameters.mana = turnCount + 2 : yourGameParameters.mana = 10
+            enemyGameParameters.mana <= 9 ? enemyGameParameters.mana = turnCount + 2 : enemyGameParameters.mana = 10
+            console.log("mana: ",yourGameParameters.mana," spellMana: ",yourGameParameters.spellMana);
 
-                isKoHasBeenPutDownThisTurn = false
-                turnCount++
-                DrawOne()
-                
-                enemyGameParameters.currentHand = []
-                SendGameData(JSON.stringify(yourGameParameters))
-            }
-            console.log("turn: ",turnCount," gameFaze: ",gameFase, " rally: ",isYourRally," u cum?: ",isYourTurn);
+            isKoHasBeenPutDownThisTurn = false
+            turnCount++
+            DrawOne()
+
+
+            yourBoard.forEach(element => {
+                if(element != ""){
+                    if(!element.fieldEffects.includes("asleep"))
+                    element.fieldEffects.push("asleep")
+                    if(element.talent.includes("kettős támadás")){
+                        yourBoard[yourBoard.indexOf(element)].fieldEffects[0] = "kettős:0"
+                    }
+                }
+            });
+
+            
+            enemyGameParameters.currentHand = []
+            yourGameParameters.yourBoard = Array.from(yourBoard)
+            SendGameData(JSON.stringify(yourGameParameters))
+        }
+        console.log("turn: ",turnCount," gameFaze: ",gameFase, " rally: ",isYourRally," u cum?: ",isYourTurn);
         
 
         isYourTurn = isYourTurn
         isYourRally = isYourRally
+
+        var endTurnButton = document.getElementById("endTurnButton")
+        endTurnButton.style.animation = "none"
+        endTurnButton.offsetHeight;
+        endTurnButton.style.animation = "endTurnAnim 1s"
 
         ClearBoardPhs()
         ClearAttackModes()
@@ -557,9 +605,15 @@
     //GAMEPLAY----------------------------------
     //-----------------------------------------------------------------------------------------------------------
 
+    //filed effects
+    let cardsAwake = []
+
+
+    //attacking
     let attackableCards = [] //kicsit csúnyi de kell a funkción kívül is :((
     let attackableCardsDoms = []
     let cardInAttackingMode = ""
+    let cardDomInAttackingMode = ""
 
 
     function ClearAttackModes(){
@@ -568,16 +622,20 @@
 
         cardInAttackingMode = ""
         cardInAttackingMode = cardInAttackingMode
+        cardDomInAttackingMode = ""
+        cardDomInAttackingMode = cardDomInAttackingMode
         attackableCards = []
         attackableCards = attackableCards
         attackableCardsDoms = []
         attackableCardsDoms = attackableCardsDoms
     }
     function CardInAttackMode(attackingCard){
-        var canAttack = isYourTurn && isYourRally && gameFase == 3
-        var quickAttackable = isYourTurn && isYourRally && attackingCard.talent.includes("fürgetámadás")
-        if(canAttack || quickAttackable){
+        var canAttack = isYourTurn && isYourRally && !attackingCard.fieldEffects.includes("asleep")
+        var cardHasQuickAttack = isYourTurn && !attackingCard.fieldEffects.includes("asleep")
+        if(canAttack || cardHasQuickAttack){
             ClearBoardPhs()
+            cardDomInAttackingMode = document.getElementById(`td${yourBoard.indexOf(attackingCard)}`).children[0]
+            console.log(cardDomInAttackingMode);
 
             attackableCards = []
             attackableCardsDoms = []
@@ -653,42 +711,137 @@
             enemyBoard = enemyBoard
         }
     }
-    function CardDmgAnimation(dom,dmg){
-        dom.children[0].children[0].src = cardV2BackgroundRed
-        console.log(dom.children[0].children[0]);
-        dom.children[0].children[3].style.background = '../../lib/assets/global/cardV2TopRed.png'
+
+
+    let AnimTargetTop
+    let AnimTargetLeft
+    let AnimAttackerTop
+    let AnimAttackerLeft
+    let AnimAttackerYRot
+    function CardDmgAnimation(dom,dmg,side){
+        
+        setTimeout(() => {
+            dom.children[0].children[0].src = cardV2BackgroundRed
+            console.log(dom.children[0].children[0]);
+            dom.children[0].children[3].style.background = '../../lib/assets/global/cardV2TopRed.png'
+        }, 600);
+
+        dom.children[0].style.animation = "none"
+        dom.children[0].offsetHeight;
         if(dmg == "sebzés"){
-            dom.children[0].style.animation = "cardDmg 1.5s ease-in"
+            dom.children[0].style.animation = "cardDmg 1.5s 0.6s ease-in"
         }
         else if(dmg == "halál"){
-            dom.children[0].style.animation = "cardDeath 1.5s ease-in"
-            
-            enemyBoard[Number(dom.id.replace("etd",""))].source = despair
-            //dom.children[0].children[2].src = despair
-            
-
+            dom.children[0].style.animation = "cardDeath 1.5s 0.6s ease-in"
             setTimeout(() => {
-                enemyBoard[Number(dom.id.replace("etd",""))] = ""
-            }, 1500);
+                if(side == "enemy"){
+                    enemyBoard[Number(dom.id.replace("etd",""))].source = despair
+                }
+                else if(side == "your"){
+                    yourBoard[Number(dom.id.replace("td",""))].source = despair
+                }
+            }, 600);
+            setTimeout(() => {
+                if(side == "enemy"){
+                    enemyBoard[Number(dom.id.replace("etd",""))] = ""
+                }
+                else if(side == "your"){
+                    yourBoard[Number(dom.id.replace("td",""))] = ""
+                }
+            }, 2100);
         }  
     }
+    function CardAttackAnimation(enemyi){
+        //ANIM----------
+        var attackeri = yourBoard.indexOf(cardInAttackingMode)
+        console.log(attackeri);
+        var row = enemyi
+        row < 5 ? row = 1 : row = 0
+        var attackerRow = attackeri
+        attackerRow < 5 ? attackerRow = 0 : attackerRow = 1
+
+        var cardHeight = window.innerHeight/window.innerWidth * 12.5*0.57 * (3/2)
+        console.log(window.innerWidth/window.innerHeight);
+        console.log("AnimLog cardH: ",cardHeight);
+
+        AnimAttackerYRot = `${((enemyi%5)-(attackeri%5))*10}deg`
+
+        AnimAttackerTop = 15 + 32.5 + attackerRow*(16.25-11)
+        //margó + az enemy sávja + ahanyadik row-ba van annyiszor a row magassága - ha a másodikba van mert ők feljebb vannak a row-ban
+        var targetTop = 15 + row*16.25 - row*11 + cardHeight
+        //margó + ahanyadik row* raw magassága - ha a másodikba van mert az feljebb + egy kártya magasága
+        AnimTargetTop = `${-32.5+ row*11 +cardHeight -attackerRow*(11)}vh`
+
+        AnimAttackerLeft = 13+(attackeri%5+1)*14.8 
+        var targetLeft = 13+(enemyi%5+1)*14.8
+        AnimTargetLeft = `${targetLeft-AnimAttackerLeft}vw`
+
+        console.log("AnimLogTop: ",AnimAttackerTop,targetTop,AnimTargetTop);
+        console.log("AnimLogLeft: ",AnimAttackerLeft,targetLeft,AnimTargetLeft);
+
+        cardDomInAttackingMode.style.animation = "none"
+        cardDomInAttackingMode.offsetHeight;
+        cardDomInAttackingMode.style.animation = "attackAnim 0.7s"
+
+        ClearAttackModes()
+
+        enemyBoard = enemyBoard
+        enemyGameParameters = enemyGameParameters
+        console.log(enemyBoard, enemyGameParameters.hp);
+
+        enemyGameParameters.yourBoard = Array.from(enemyBoard)
+        SendGameData(JSON.stringify(enemyGameParameters))
+    }
+    
     function AttackCard(target,i){
         console.log("target: ", target, " i: ", i);
 
         var dmg = cardInAttackingMode.attack
-        ClearAttackModes()
 
         if(target.health - dmg >= 0){ //1 kezdés, 1 megáll
             target.health -= dmg
             console.log("1 kezdés, 1 megáll");
 
-            CardDmgAnimation(enemyBoardDoms[i],"sebzés")
+            
+            if(target.health == 0){
+                CardDmgAnimation(enemyBoardDoms[i],"halál","enemy")
+            }
+            else{
+                CardDmgAnimation(enemyBoardDoms[i],"sebzés","enemy")
+            }
+
+            //BLAST TÁMADÁS
+            if(cardInAttackingMode.talent.includes("robbanó támadás")){
+                if((i%5 != 0 || i%5 != 4) && enemyBoard[i+1] != "" && enemyBoard[i-1] != ""){
+                    enemyBoard[i-1].health -= Math.ceil(dmg*(1/3))
+                    enemyBoard[i+1].health -= Math.ceil(dmg*(1/3))
+                }
+                else if(i%5 == 0 && enemyBoard[i+1] != ""){
+                    enemyBoard[i+1].health -= Math.ceil(dmg*(1/3))
+                }
+                else if(i%5 == 4 && enemyBoard[i-1] != ""){
+                    enemyBoard[i-1].health -= Math.ceil(dmg*(1/3))
+                }
+
+                if(enemyBoard[i-1].health > 0 && enemyBoard[i-1] != ""){
+                    CardDmgAnimation(enemyBoardDoms[i-1],"sebzés","enemy")
+                }
+                else if(enemyBoard[i-1] != ""){
+                    CardDmgAnimation(enemyBoardDoms[i-1],"halál","enemy")
+                }
+                if(enemyBoard[i+1].health > 0 && enemyBoard[i+1] != ""){
+                    CardDmgAnimation(enemyBoardDoms[i+1],"sebzés","enemy")
+                }
+                else if(enemyBoard[i+1] != ""){
+                    CardDmgAnimation(enemyBoardDoms[i+1],"halál","enemy")
+                }
+            }
         }
         else{ //1 kezdés, tovább
             
             dmg -= target.health
             target.health = 0 //első dead
-            CardDmgAnimation(enemyBoardDoms[i],"halál")
+            CardDmgAnimation(enemyBoardDoms[i],"halál","enemy")
 
 
 
@@ -701,7 +854,12 @@
 
                         console.log("1 kezdés, 2 megáll");
 
-                        CardDmgAnimation(enemyBoardDoms[i+5],"sebzés")
+                        if(enemyBoardDoms[i+5].health == 0){
+                            CardDmgAnimation(enemyBoardDoms[i+5],"halál","enemy")
+                        }
+                        else{
+                            CardDmgAnimation(enemyBoardDoms[i+5],"sebzés","enemy")
+                        }
                     }
                     else{ //1 kezdés, 2 tovább, 3 megáll
                         
@@ -709,7 +867,7 @@
                         dmg -= enemyBoard[i+5].health
                         enemyBoard[i+5].health = 0
                         
-                        CardDmgAnimation(enemyBoardDoms[i+5],"halál")
+                        CardDmgAnimation(enemyBoardDoms[i+5],"halál","enemy")
                         
 
                         enemyGameParameters.hp -= dmg
@@ -726,12 +884,33 @@
                 enemyGameParameters.hp -= dmg
                 console.log("2 kezdés, 3 megáll")
             }
-            
         }
 
-        enemyBoard = enemyBoard
-        enemyGameParameters = enemyGameParameters
-        console.log(enemyBoard, enemyGameParameters.hp);
+        //KETTŐS TÁMADÁS
+        if(!yourBoard[yourBoard.indexOf(cardInAttackingMode)].talent.includes("kettős támadás")){
+            yourBoard[yourBoard.indexOf(cardInAttackingMode)].fieldEffects.push("asleep")
+            yourGameParameters.yourBoard = Array.from(yourBoard)
+            SendGameData(JSON.stringify(yourGameParameters))
+        }
+        else{
+            var whichAttack = Number(yourBoard[yourBoard.indexOf(cardInAttackingMode)].fieldEffects[0].replace("kettős:",""))
+            console.log("KETTŐSLOG: ",yourBoard[yourBoard.indexOf(cardInAttackingMode)],whichAttack);
+            
+            if(whichAttack < 2){
+                whichAttack++
+                yourBoard[yourBoard.indexOf(cardInAttackingMode)].fieldEffects[0] = `kettős:${whichAttack}`
+                console.log("KETTŐSLOG: after ++",yourBoard[yourBoard.indexOf(cardInAttackingMode)].fieldEffects[0]);
+                
+                if(whichAttack == 2){
+                yourBoard[yourBoard.indexOf(cardInAttackingMode)].fieldEffects[0] = "kettős:0"
+                yourBoard[yourBoard.indexOf(cardInAttackingMode)].fieldEffects.push("asleep")
+                }
+            }
+        }
+
+
+        console.log("dom that attacked: ",cardDomInAttackingMode);
+        CardAttackAnimation(i)
     }
 
     
@@ -752,6 +931,18 @@
         enemyBoard = enemyGameParameters.yourBoard
         enemyBoard = enemyBoard
 
+        for(let i = 0; i<yourBoard.length;i++){
+            if(yourBoard[i] != ""){
+                if(yourBoard[i].health != yourGameParameters.yourBoard[i].health){
+                    if(yourGameParameters.yourBoard[i].health > 0){
+                        CardDmgAnimation(yourBoardDoms[i],"sebzés","your")
+                    }
+                    else{
+                        CardDmgAnimation(yourBoardDoms[i],"halál","your")
+                    }
+                }
+            }
+        }
         yourBoard = yourGameParameters.yourBoard
         yourBoard = yourBoard
     }
@@ -764,8 +955,9 @@
 {/if}
 
 <div id="background"></div>
-<div id="backgroundOverlay"></div>
-
+{#each allCardsInGame as card,i}
+<audio controls id="music" style="display: none;"  src={card.audio}   bind:this={voicelines[card.name]}></audio>
+{/each}
 
 <div id="gamePlayFiledCont">
     <div id="playerHps">
@@ -885,7 +1077,7 @@
 
                         {#if yourBoard[i] != ""}
                             {#if yourBoard[i].type == "character"}
-                                <div on:click={() => CardInAttackMode(yourBoard[i])}  class:cardInAttackingMode={cardInAttackingMode == yourBoard[i]}  id="cardPreviewListCont" on:keydown role="button" tabindex="">
+                                <div on:click={() => CardInAttackMode(yourBoard[i])} class:cardAwake={!yourBoard[i].fieldEffects.includes("asleep") && isYourTurn} style="--AnimTargetTop: {AnimTargetTop}; --AnimTargetLeft: {AnimTargetLeft}; --AnimAttackerYRot: {AnimAttackerYRot};"  class:cardInAttackingMode={cardInAttackingMode == yourBoard[i]}  id="cardPreviewListCont" on:keydown role="button" tabindex="">
                                     <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute" src={cardV2Background} alt="cardBg">
                                     <div id="rarityBGList" style="background: {backgroundColorByCost[(yourBoard[i].stars)-3]}; "></div>
                                     <img draggable="false" class = "cardButton" src={yourBoard[i].source} alt="preview"/>
@@ -958,7 +1150,7 @@
 
                         {#if yourBoard[i+(yourBoard.length)/2] != ""}
                             {#if yourBoard[i+(yourBoard.length)/2].type == "character"}
-                                <div class="BoardTierTwo" on:click={() => CardInAttackMode(yourBoard[i+(yourBoard.length)/2])} class:cardInAttackingMode={cardInAttackingMode == yourBoard[i+(yourBoard.length/2)]}  id="cardPreviewListCont" on:keydown role="button" tabindex="">
+                                <div class="BoardTierTwo" on:click={() => CardInAttackMode(yourBoard[i+(yourBoard.length)/2])} class:cardAwake={!yourBoard[i+(yourBoard.length)/2].fieldEffects.includes("asleep") && isYourTurn} style="--AnimTargetTop: {AnimTargetTop}; --AnimTargetLeft: {AnimTargetLeft}; --AnimAttackerYRot: {AnimAttackerYRot};" class:cardInAttackingMode={cardInAttackingMode == yourBoard[i+(yourBoard.length/2)]}  id="cardPreviewListCont" on:keydown role="button" tabindex="">
                                     <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute" src={cardV2Background} alt="cardBg">
                                     <div id="rarityBGList" style="background: {backgroundColorByCost[(yourBoard[i+(yourBoard.length)/2].stars)-3]}; "></div>
                                     <img draggable="false" class = "cardButton" src={yourBoard[i+(yourBoard.length)/2].source} alt="preview"/>
@@ -1110,17 +1302,6 @@
     right: 0;
     background-color: rgb(228, 231, 242);
     }
-    #backgroundOverlay{
-        width: 100vw;
-        height: 100vh;
-        position: fixed;
-        z-index: 999;
-        background-image: url("../../lib/assets/gameplay/GameUI.png");
-        background-size: 100% 100%;
-        top: 0;
-        left: 0;
-        pointer-events: none;
-    }
     #background{
         width: 100vw;
         height: 100vh;
@@ -1177,10 +1358,38 @@
             padding: 0
         }
     }
+    @keyframes -global-attackAnim{
+        0%{
+            position: absolute;
+            transform: rotateX(0deg) rotateZ(0deg) rotateY(0deg);
+            top:0;
+            left: auto;
+        }
+        20%{
+            transform: rotateX(0deg) rotateZ(0deg) rotateY(0deg);
+        }
+        40%{
+            transform: rotateX(10deg) rotateZ(var(--AnimAttackerYRot)) rotateY(var(--AnimAttackerYRot));
+            top: 8vh;
+        }
+        60%{
+            transform: rotateX(10deg) rotateZ(var(--AnimAttackerYRot)) rotateY(var(--AnimAttackerYRot));
+            top: 8vh;
+            left: auto;
+        }
+        100%{
+            position: absolute;
+            transform: rotateX(0deg) rotateZ(0deg) rotateY(0deg);
+            top: var(--AnimTargetTop);
+            left: var(--AnimTargetLeft);
+        }
+    }
 
 
 
-
+    .cardAwake{
+        filter:drop-shadow(0.5vw 0.5vw 2px rgb(0, 205, 0));
+    }
     .cardInAttackingMode{
         transform: scale(1.1);
         filter:drop-shadow(0.5vw 0.5vw 2px rgba(44, 75, 200, 0.722));
@@ -1295,9 +1504,21 @@
         top: 50%;
         font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
         bottom: 2px solid rgb(131, 70, 27);
-
+        background-color: rgb(255, 98, 0);
         cursor: pointer;
     }
+    @keyframes -global-endTurnAnim {
+        0%{
+            transform: rotateX(0deg) scale(1);
+        }
+        30%{
+            transform: rotateX(180deg) scale(1.5);
+        }
+        100%{
+            transform: rotateX(360deg) scale(1);
+        }
+    }
+
 
 
     .manaCont{
@@ -1480,6 +1701,10 @@
         height: 16.25vh;
 
         z-index: 11;
+        perspective: 10vw; /* Adjust the perspective value as needed */
+        perspective-origin: 50% 50%;
+
+        border: 2px solid black;
     }
     .tierOne{
         top: 0;
@@ -1508,7 +1733,7 @@
             transform: scale(1);
         }
         100%{
-            transform: scale(2);
+            transform: scale(1.5);
         }
     }
     .cardTemplate{

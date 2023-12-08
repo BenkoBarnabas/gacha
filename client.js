@@ -1,6 +1,6 @@
 //let ip = "10.7.147.201";
-//let ip = "localhost";
-let ip = "192.168.0.16//";
+let ip = "localhost";
+//let ip = "192.168.0.16//";
 
 let isFullScreen = false
 export function requestFullScreen() {
@@ -154,9 +154,7 @@ export function getAccountData(email){
       userData = data["account"]
       pullData = data["rolls"]
       deckData = data["deck"]
-
-
-  
+    
       if (pullData.history == ""){
         pullData.history = []
       }
