@@ -100,10 +100,14 @@
         currDeckArray.splice(currDeckArray.indexOf(cardname), 1)
         console.log(currDeckArray);
         selectedList[selectedDeck] = String(currDeckArray)
+        allcardnames = allcardnames
+
+        console.log(cardsClassName[i]);
+        cardsClassName[i] = "cardPreviewListCont filtergrayscale"
+        console.log(cardsClassName[i]);
+
 
         document.getElementById(cardname).remove()
-
-        cardsClassName[i] = "cardPreviewListCont filtergrayscale"
 
         sendData(`deckarray${selectedDeck}`, selectedList[selectedDeck], localUserData.id, "deck")
 
@@ -187,8 +191,10 @@
         
         <button style="float: right;" on:click={()=> ChangeDeck()}>Change Deck</button>
 
-        {#each currDeckArray as cardname, i}
-            <button style="display:block;" id={cardname} on:click={() => deleteCard(cardname, i)}>{cardname} {i}</button>
+        {#each allcardnames as cardname, i}
+            {#if currDeckArray.includes(cardname)}
+                <button style="display:block;" id={cardname} on:click={() => deleteCard(cardname, i)}>{cardname} {i}</button>
+            {/if}
         {/each}
     {/if}
 
