@@ -326,7 +326,7 @@
 </div>
 
 {#each Cards.allCardsArr as card,i}
-<audio controls id="music" style="display: none;"  src={card.audio}   bind:this={voicelines[card.name]}>  </audio>
+<audio controls id="music" style="display: none;"  src={card.audio}   bind:this={voicelines[card.name]}></audio>
 {/each}
 
 
