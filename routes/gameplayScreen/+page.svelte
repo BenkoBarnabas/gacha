@@ -12,6 +12,8 @@
     import cardForeground from "../../lib/assets/global/cardV1Top.png"
     import cardV2Background from "../../lib/assets/global/cardV2BG.png"
     import cardV2BackgroundRed from "../../lib/assets/global/cardV2BGRed.png"
+    import spellForeground from "../../lib/assets/global/spellV1Top.png"
+    import spellBackground from "../../lib/assets/global/spellV1BG.png"
     import despair from "../../lib/assets/gameplay/despair.gif"
 
     import manaCrystal from "../../lib/assets/gameplay/manaCrystal.png"
@@ -89,6 +91,7 @@
     let kovek = []
     let dragged = undefined
     $:  {if (cardsInHandDoms[yourHand.length-1]) {
+
         cardsInHandDoms[yourHand.length-1].addEventListener("dragstart", dragStart)
         }
         if (cardsInHandDoms[0]) {
@@ -294,20 +297,21 @@
         SendGameData(JSON.stringify(enemyGameParameters))
     }
     function dragStart(event) {
-        ClearAttackModes()
+        if(yourHand[event.target.id].type == "character"){
+            ClearAttackModes()
 
-        RemoveEventListenersFromCells()
-        console.log(event);
-        console.log(event.target);
-        dragged = yourHand[event.target.id]
-        
-        yourBoardPhs.fill("")
-        enemyBoardPhs.fill("")
-        yourBoardPhs = yourBoardPhs
-        enemyBoardPhs = enemyBoardPhs
+            RemoveEventListenersFromCells()
+            console.log(event);
+            console.log(event.target);
+            dragged = yourHand[event.target.id]
+            
+            yourBoardPhs.fill("")
+            enemyBoardPhs.fill("")
+            yourBoardPhs = yourBoardPhs
+            enemyBoardPhs = enemyBoardPhs
 
-        AddEventListenerToCells("character")
-        
+            AddEventListenerToCells("character")
+        }
     }
     function koDragStart(event){
         if(!isKoHasBeenPutDownThisTurn){
@@ -843,8 +847,6 @@
             target.health = 0 //első dead
             CardDmgAnimation(enemyBoardDoms[i],"halál","enemy")
 
-
-
             if(i < 5){ //1 kezdés, tovább
                 console.log(enemyBoard[i+5]);
                 if(enemyBoard[i+5] != "") {//1 kezdés, 2 tovább
@@ -887,10 +889,8 @@
         }
 
         //KETTŐS TÁMADÁS
-        if(!yourBoard[yourBoard.indexOf(cardInAttackingMode)].talent.includes("kettős támadás")){
+        if(!cardInAttackingMode.talent.includes("kettős támadás")){
             yourBoard[yourBoard.indexOf(cardInAttackingMode)].fieldEffects.push("asleep")
-            yourGameParameters.yourBoard = Array.from(yourBoard)
-            SendGameData(JSON.stringify(yourGameParameters))
         }
         else{
             var whichAttack = Number(yourBoard[yourBoard.indexOf(cardInAttackingMode)].fieldEffects[0].replace("kettős:",""))
@@ -907,7 +907,17 @@
                 }
             }
         }
+        //ÉLETELSZÍVÁS
+        if(cardInAttackingMode.talent.includes("életelszívás")){
+            var healAmount = Number(cardInAttackingMode.talent[(cardInAttackingMode.talent.indexOf("_"))+1])
+            console.log("ÉLETLOG: amount:", healAmount);
 
+            yourBoard[yourBoard.indexOf(cardInAttackingMode)].health += healAmount
+        }
+
+
+        yourGameParameters.yourBoard = Array.from(yourBoard)
+        SendGameData(JSON.stringify(yourGameParameters))
 
         console.log("dom that attacked: ",cardDomInAttackingMode);
         CardAttackAnimation(i)
@@ -933,7 +943,7 @@
 
         for(let i = 0; i<yourBoard.length;i++){
             if(yourBoard[i] != ""){
-                if(yourBoard[i].health != yourGameParameters.yourBoard[i].health){
+                if(yourBoard[i].health > yourGameParameters.yourBoard[i].health){
                     if(yourGameParameters.yourBoard[i].health > 0){
                         CardDmgAnimation(yourBoardDoms[i],"sebzés","your")
                     }
@@ -1201,23 +1211,41 @@
         </div>
         <div id="yourHand" class="handCont" >
             {#each yourHand as card,i}
-            <div bind:this={cardsInHandDoms[i]} id={i} on:click={() => PlacingMode(card,i)} draggable={isYourTurn} class="previewInHand move" style="--cardNum: {yourHand.length};transform: rotate({-22.5+(45/yourHand.length)*(i+1)}deg);top:{(yourHand.length-(i))/3}vw;" on:keydown role="button" tabindex="">
-                <img draggable="false" class={cardsInYourHandClass[i]} id="cardBackground" src={cardBackground} style="--colorr: {backgroundColorByCost[(card.stars)-3]}; --colorr2: #{(parseInt((backgroundColorByCost[(card.stars)-3].replace("#","")), 16)+663552).toString(16)};" alt="cardBg">
-                <div id="rarityBG" style="background: {backgroundColorByCost[(card.stars)-3]}; "></div>
-                <img draggable="false" id="curCardInView" src={card.source} alt="">
-                <img draggable="false" class="cardTemplate" src={cardForeground} alt="cardBg">
-                <div id="curCardDesc" class="noScrollers">{card.description}</div>
-                <div class="curCardStats" style="left: calc(var(--cardsScale)*1vw*7.4);">{card.attack}</div>
-                <div class="curCardStats" style="left: calc(var(--cardsScale)*1vw*21.5)">{card.health}</div>
-                <div class="curCardCost">{card.cost}</div>
-                <div class="curCardName">{card.name}</div>
-                
-                <div id="curCardRarity" style="{starsColorByCost[(card.stars)-3]}; top: 0">
-                    {#each Array(Number(card.stars)) as card,index}
-                        <span style="font-size: calc(var(--cardsScale)*2.4vw">★</span>
-                    {/each}
+            {#if card.type == "character"}
+                <div bind:this={cardsInHandDoms[i]} id={i} on:click={() => PlacingMode(card,i)} draggable={isYourTurn} class="previewInHand move" style="--cardNum: {yourHand.length};transform: rotate({-22.5+(45/yourHand.length)*(i+1)}deg);top:{(yourHand.length-(i))/3}vw;" on:keydown role="button" tabindex="">
+                    <img draggable="false" class={cardsInYourHandClass[i]} id="cardBackground" src={cardBackground} style="--colorr: {backgroundColorByCost[(card.stars)-3]}; --colorr2: #{(parseInt((backgroundColorByCost[(card.stars)-3].replace("#","")), 16)+663552).toString(16)};" alt="cardBg">
+                    <div id="rarityBG" style="background: {backgroundColorByCost[(card.stars)-3]}; "></div>
+                    <img draggable="false" id="curCardInView" src={card.source} alt="">
+                    <img draggable="false" class="cardTemplate" src={cardForeground} alt="cardBg">
+                    <div id="curCardDesc" class="noScrollers">{card.description}</div>
+                    <div class="curCardStats" style="left: calc(var(--cardsScale)*1vw*7.4);">{card.attack}</div>
+                    <div class="curCardStats" style="left: calc(var(--cardsScale)*1vw*21.5)">{card.health}</div>
+                    <div class="curCardCost">{card.cost}</div>
+                    <div class="curCardName">{card.name}</div>
+                    
+                    <div id="curCardRarity" style="{starsColorByCost[(card.stars)-3]}; top: 0">
+                        {#each Array(Number(card.stars)) as card,index}
+                            <span style="font-size: calc(var(--cardsScale)*2.4vw">★</span>
+                        {/each}
+                    </div>
                 </div>
-            </div>
+            {:else if card.type == "spell"}
+                <div bind:this={cardsInHandDoms[i]} id={i} draggable={isYourTurn} class="previewInHand move" style="--cardNum: {yourHand.length};transform: rotate({-22.5+(45/yourHand.length)*(i+1)}deg);top:{(yourHand.length-(i))/3}vw;" on:keydown role="button" tabindex="">
+                    <img draggable="false" class={cardsInYourHandClass[i]} id="cardBackground" src={spellBackground} style="--colorr: {backgroundColorByCost[(card.stars)-3]}; --colorr2: #{(parseInt((backgroundColorByCost[(card.stars)-3].replace("#","")), 16)+663552).toString(16)};" alt="cardBg">
+                    <div id="rarityBG" style="background: {backgroundColorByCost[(card.stars)-3]}; "></div>
+                    <img draggable="false" id="curCardInView" src={card.source} alt="">
+                    <img draggable="false" class="cardTemplate" src={spellForeground} alt="cardBg">
+                    <div id="curCardDesc" class="noScrollers">{card.description}</div>
+                    <div class="curCardCost" style="top: calc(var(--cardsScale)*1vw*4);">{card.cost}</div>
+                    <div class="curCardName">{card.name}</div>
+                    
+                    <div id="curCardRarity" style="{starsColorByCost[(card.stars)-3]}; top: calc(var(--cardsScale)*1vw*1);">
+                        {#each Array(Number(card.stars)) as card,index}
+                            <span style="font-size: calc(var(--cardsScale)*2.4vw">★</span>
+                        {/each}
+                    </div>
+                </div>
+            {/if}
             {/each}
             
         </div>
@@ -1273,6 +1301,9 @@
 
             </div>
         </div>
+
+    </div>
+    <div id="actionLog">
 
     </div>
     
@@ -1409,41 +1440,51 @@
 
 
 
-    #playerHps{
+    #actionLog{
         position: absolute;
 
-        height: 50vh;
-        width: 10vw;
+        background-color: rgba(19, 216, 19, 0.521);
+        width: 16vw;
+        height: 44vh;
 
-        top: 20vh;
-        left: 1.5vw;
+        top: 26vh;
+        left: 4vw;
     }
+
+
     .playerNameCont{
-        height: 15%;
-        width: 100%;
+        height: 7vh;
+        width: 10vw;
 
         font-size: 3vw;
         font-family: "mainFont";
         text-align: center;
 
         position: absolute;
+        background-color: red;
     }
-    #enemyPlayerName{top:0;}
-    #yourPlayerName{bottom:0;}
     .playerHpCont{
 
         position: absolute;
 
-        width: 100%;
-        height: 25%;
+        width: 10vw;
+        height: 15vh;
 
         font-size: 4.5vw;
         font-family: "ShadowLight";
         text-align: center;
+        background-color: blue;
+    }   
+    #enemyPlayerName{top:2vh;left: 2vw;}
+    #enemyPlayerHp{top: 8vh;left: 2vw;}
+    @media screen and (min-width: 836px) {
+        #yourPlayerName{bottom:4vh;left: 2vw;}
+        #yourPlayerHp{bottom: 8vh;left: 2vw;}
     }
-    #enemyPlayerHp{top: 20%;}
-    #yourPlayerHp{bottom: 20%;}
-
+    @media screen and (max-width: 836px) {
+        #yourPlayerName{bottom:4vh;left: 45vw;}
+        #yourPlayerHp{bottom: 8vh;left: 45vw;}
+    }
 
     .koCont{
         width: 7vw;
@@ -1641,7 +1682,7 @@
         height: 15vh;
 
         position: absolute;
-        left: 0vw;
+        left: 1vw;
 
         display: flex;
         padding-bottom: 7vh;
@@ -1703,8 +1744,6 @@
         z-index: 11;
         perspective: 10vw; /* Adjust the perspective value as needed */
         perspective-origin: 50% 50%;
-
-        border: 2px solid black;
     }
     .tierOne{
         top: 0;
