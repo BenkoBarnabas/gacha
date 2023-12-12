@@ -1010,7 +1010,7 @@
         if(target.talent.includes("tövisesbőr")){
             yourBoard[yourBoard.indexOf(cardInAttackingMode)].health -= 1
         }
-        //BLAST TÁMADÁS
+        //BLAST TÁMADÁS l
         if(cardInAttackingMode.talent.includes("robbanó támadás")){
                 if((i%5 != 0 || i%5 != 4) && enemyBoard[i+1] != "" && enemyBoard[i-1] != ""){
                     enemyBoard[i-1].health -= Math.ceil(dmg*(1/3))
