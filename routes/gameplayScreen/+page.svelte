@@ -59,10 +59,9 @@
         vérszomjas: "rgba(166, 113, 118, 0.6)",
         veszett: "rgba(133, 113, 166, 0.6)"
     }
-
     let voicelines = {}
 
-
+    //#region SEGÁDVÁLTOZÓK
     var backgroundColorByCost = ["#2672ed","#8626ed","#ed7c26","linear-gradient(180deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235))"]
     var starsColorByCost = ["color: #2672ed;","color: #8626ed;","color: #ed7c26;","background-image: linear-gradient(90deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235));-webkit-background-clip: text;background-clip: text;color: transparent;"]
 
@@ -131,7 +130,7 @@
             dragged = ""
         })
         }}
-
+        // #endregion
     
     function DrawStartingHand(n){
         var a = Array(5)
@@ -151,7 +150,6 @@
         
         SendGameData(JSON.stringify(yourGameParameters))
     }
-
     function DrawOne(){
         yourHand.push(yourGameParameters.remaningDeck[Math.floor(Math.random() * yourGameParameters.remaningDeck.length)])
         cardsInYourHandClass.push("cardTemplate")
@@ -160,6 +158,7 @@
 
     }
     
+    //#region VARS FOR GAMEPLAY
     let yourBoard = Array(10).fill("")
     let yourBoardPhs = Array(10).fill("")
     let yourBoardDoms = Array(10)
@@ -176,7 +175,7 @@
     let isYourTurn = false
     let isYourRally = false
     let gameFase = 1
-
+    // #endregion
 
     let pageLoaded = false
     
@@ -223,7 +222,7 @@
         
     });
 
-
+    //#region DRAG AND DROP LOGIC
     function RemoveEventListenersFromCells(){
         for(let i = 0; i< yourBoard.length;i++){
             targetArea[i].removeEventListener("drop", drop)
@@ -452,7 +451,7 @@
         }
     }
 
-
+    //playing mode with clicks
     function ClearBoardPhs(){
         yourBoardPhs.fill("")
         yourBoardPhs = yourBoardPhs
@@ -544,8 +543,6 @@
 
         LastActionLog(card)
     }
-        
-
     function KoPlacingMode(){
         if(isYourTurn && !isKoHasBeenPutDownThisTurn){
             isCardInYourHandInPlacingMode = false
@@ -615,9 +612,9 @@
             
         } 
     }
+    // #endregion
 
-
-
+    //#region QUALITY OF LIFE LOGIC
     function NextTurn(){
         if(gameFase < 3){
             isYourTurn = !isYourTurn
@@ -721,15 +718,98 @@
             logCard.style.animation = "none"
         }, 4000);
     }
-
+    // #endregion
 
     //GAMEPLAY----------------------------------
     //-----------------------------------------------------------------------------------------------------------
+   
+   
+    //#region ANIMS
+    let AnimTargetTop
+    let AnimTargetLeft
+    let AnimAttackerTop
+    let AnimAttackerLeft
+    let AnimAttackerYRot
+    function CardDmgAnimation(dom,dmg,side){
+        
+        setTimeout(() => {
+            dom.children[0].children[0].src = cardV2BackgroundRed
+            dom.children[0].children[3].style.background = '../../lib/assets/global/cardV2TopRed.png'
+        }, 600);
 
-    //filed effects
-    let cardsAwake = []
+        dom.children[0].style.animation = "none"
+        dom.children[0].offsetHeight;
+        if(dmg == "sebzés"){
+            dom.children[0].style.animation = "cardDmg 1.5s 0.6s ease-in"
+            setTimeout(() => {
+                dom.children[0].children[0].src = cardV2Background
+                dom.children[0].children[3].style.background = '../../lib/assets/global/cardV2Top.png'
+            }, 1350);
+        }
+        else if(dmg == "halál"){
+            dom.children[0].style.animation = "cardDeath 1.5s 0.6s ease-in"
+            setTimeout(() => {
+                if(side == "enemy"){
+                    enemyBoard[Number(dom.id.replace("etd",""))].source = despair
+                }
+                else if(side == "your"){
+                    yourBoard[Number(dom.id.replace("td",""))].source = despair
+                }
+            }, 600);
+            setTimeout(() => {
+                if(side == "enemy"){
+                    enemyBoard[Number(dom.id.replace("etd",""))] = ""
+                }
+                else if(side == "your"){
+                    yourBoard[Number(dom.id.replace("td",""))] = ""
+                }
+            }, 2100);
+        }  
+    }
+    function CardAttackAnimation(enemyi){
+        //ANIM----------
+        var attackeri = yourBoard.indexOf(cardInAttackingMode)
+        console.log(attackeri);
+        var row = enemyi
+        row < 5 ? row = 1 : row = 0
+        var attackerRow = attackeri
+        attackerRow < 5 ? attackerRow = 0 : attackerRow = 1
 
-    //attacking
+        var cardHeight = window.innerHeight/window.innerWidth * 12.5*0.57 * (3/2)
+        console.log(window.innerWidth/window.innerHeight);
+        console.log("AnimLog cardH: ",cardHeight);
+
+        AnimAttackerYRot = `${((enemyi%5)-(attackeri%5))*10}deg`
+
+        AnimAttackerTop = 15 + 32.5 + attackerRow*(16.25-11)
+        //margó + az enemy sávja + ahanyadik row-ba van annyiszor a row magassága - ha a másodikba van mert ők feljebb vannak a row-ban
+        var targetTop = 15 + row*16.25 - row*11 + cardHeight
+        //margó + ahanyadik row* raw magassága - ha a másodikba van mert az feljebb + egy kártya magasága
+        AnimTargetTop = `${-32.5+ row*11 +cardHeight -attackerRow*(11)}vh`
+
+        AnimAttackerLeft = 13+(attackeri%5+1)*14.8 
+        var targetLeft = 13+(enemyi%5+1)*14.8
+        AnimTargetLeft = `${targetLeft-AnimAttackerLeft}vw`
+
+        console.log("AnimLogTop: ",AnimAttackerTop,targetTop,AnimTargetTop);
+        console.log("AnimLogLeft: ",AnimAttackerLeft,targetLeft,AnimTargetLeft);
+
+        cardDomInAttackingMode.style.animation = "none"
+        cardDomInAttackingMode.offsetHeight;
+        cardDomInAttackingMode.style.animation = "attackAnim 0.7s"
+
+        ClearAttackModes()
+
+        enemyBoard = enemyBoard
+        enemyGameParameters = enemyGameParameters
+        console.log(enemyBoard, enemyGameParameters.hp);
+
+        enemyGameParameters.yourBoard = Array.from(enemyBoard)
+        SendGameData(JSON.stringify(enemyGameParameters))
+    }
+    //#endregion
+    
+    //#region ATTACK CALCULATION
     let attackableCards = [] //kicsit csúnyi de kell a funkción kívül is :((
     let attackableCardsDoms = []
     let cardInAttackingMode = ""
@@ -831,96 +911,12 @@
             enemyBoard = enemyBoard
         }
     }
-
-
-    let AnimTargetTop
-    let AnimTargetLeft
-    let AnimAttackerTop
-    let AnimAttackerLeft
-    let AnimAttackerYRot
-    function CardDmgAnimation(dom,dmg,side){
-        
-        setTimeout(() => {
-            dom.children[0].children[0].src = cardV2BackgroundRed
-            dom.children[0].children[3].style.background = '../../lib/assets/global/cardV2TopRed.png'
-        }, 600);
-
-        dom.children[0].style.animation = "none"
-        dom.children[0].offsetHeight;
-        if(dmg == "sebzés"){
-            dom.children[0].style.animation = "cardDmg 1.5s 0.6s ease-in"
-            setTimeout(() => {
-                dom.children[0].children[0].src = cardV2Background
-                dom.children[0].children[3].style.background = '../../lib/assets/global/cardV2Top.png'
-            }, 1350);
-        }
-        else if(dmg == "halál"){
-            dom.children[0].style.animation = "cardDeath 1.5s 0.6s ease-in"
-            setTimeout(() => {
-                if(side == "enemy"){
-                    enemyBoard[Number(dom.id.replace("etd",""))].source = despair
-                }
-                else if(side == "your"){
-                    yourBoard[Number(dom.id.replace("td",""))].source = despair
-                }
-            }, 600);
-            setTimeout(() => {
-                if(side == "enemy"){
-                    enemyBoard[Number(dom.id.replace("etd",""))] = ""
-                }
-                else if(side == "your"){
-                    yourBoard[Number(dom.id.replace("td",""))] = ""
-                }
-            }, 2100);
-        }  
-    }
-    function CardAttackAnimation(enemyi){
-        //ANIM----------
-        var attackeri = yourBoard.indexOf(cardInAttackingMode)
-        console.log(attackeri);
-        var row = enemyi
-        row < 5 ? row = 1 : row = 0
-        var attackerRow = attackeri
-        attackerRow < 5 ? attackerRow = 0 : attackerRow = 1
-
-        var cardHeight = window.innerHeight/window.innerWidth * 12.5*0.57 * (3/2)
-        console.log(window.innerWidth/window.innerHeight);
-        console.log("AnimLog cardH: ",cardHeight);
-
-        AnimAttackerYRot = `${((enemyi%5)-(attackeri%5))*10}deg`
-
-        AnimAttackerTop = 15 + 32.5 + attackerRow*(16.25-11)
-        //margó + az enemy sávja + ahanyadik row-ba van annyiszor a row magassága - ha a másodikba van mert ők feljebb vannak a row-ban
-        var targetTop = 15 + row*16.25 - row*11 + cardHeight
-        //margó + ahanyadik row* raw magassága - ha a másodikba van mert az feljebb + egy kártya magasága
-        AnimTargetTop = `${-32.5+ row*11 +cardHeight -attackerRow*(11)}vh`
-
-        AnimAttackerLeft = 13+(attackeri%5+1)*14.8 
-        var targetLeft = 13+(enemyi%5+1)*14.8
-        AnimTargetLeft = `${targetLeft-AnimAttackerLeft}vw`
-
-        console.log("AnimLogTop: ",AnimAttackerTop,targetTop,AnimTargetTop);
-        console.log("AnimLogLeft: ",AnimAttackerLeft,targetLeft,AnimTargetLeft);
-
-        cardDomInAttackingMode.style.animation = "none"
-        cardDomInAttackingMode.offsetHeight;
-        cardDomInAttackingMode.style.animation = "attackAnim 0.7s"
-
-        ClearAttackModes()
-
-        enemyBoard = enemyBoard
-        enemyGameParameters = enemyGameParameters
-        console.log(enemyBoard, enemyGameParameters.hp);
-
-        enemyGameParameters.yourBoard = Array.from(enemyBoard)
-        SendGameData(JSON.stringify(enemyGameParameters))
-    }
-    
     function AttackCard(target,i){
         console.log("target: ", target, " i: ", i);
 
         var dmg = cardInAttackingMode.attack
 
+        //DMG CALCULATION
         if(target.health - dmg >= 0){ //1 kezdés, 1 megáll
             target.health -= dmg
             console.log("1 kezdés, 1 megáll");
@@ -980,9 +976,11 @@
             }
         }
 
+        //TALENTS--------------------------------------------------------------------
+        // #region TALENTS
         //KETTŐS TÁMADÁS
         if(!cardInAttackingMode.talent.includes("kettős támadás")){
-            yourBoard[yourBoard.indexOf(cardInAttackingMode)].fieldEffects.push("asleep")
+            //yourBoard[yourBoard.indexOf(cardInAttackingMode)].fieldEffects.push("asleep")
         }
         else{
             var whichAttack = Number(yourBoard[yourBoard.indexOf(cardInAttackingMode)].fieldEffects[0].replace("kettős:",""))
@@ -1012,30 +1010,36 @@
         }
         //BLAST TÁMADÁS l
         if(cardInAttackingMode.talent.includes("robbanó támadás")){
-                if((i%5 != 0 || i%5 != 4) && enemyBoard[i+1] != "" && enemyBoard[i-1] != ""){
-                    enemyBoard[i-1].health -= Math.ceil(dmg*(1/3))
-                    enemyBoard[i+1].health -= Math.ceil(dmg*(1/3))
+                if(i%5 != 4){ //ha a szélén van akkor ne menjen tovább, jobbral + balról is if
+                    //SEBZÉS
+                    if(enemyBoard[i+1] != ""){
+                        enemyBoard[i+1].health -= Math.ceil(dmg*(1/3))
+                        console.log("BLASTLOG: jobbrú");
+                    }
+                    //ANIM
+                    if(enemyBoard[i+1].health > 0 && enemyBoard[i+1] != ""){
+                        CardDmgAnimation(enemyBoardDoms[i+1],"sebzés","enemy")
+                    }
+                    else if(enemyBoard[i+1].health <= 0 && enemyBoard[i+1] != ""){
+                        CardDmgAnimation(enemyBoardDoms[i+1],"halál","enemy")
+                    }
                 }
-                else if(i%5 == 0 && enemyBoard[i+1] != ""){
-                    enemyBoard[i+1].health -= Math.ceil(dmg*(1/3))
+                if(i%5 != 0){
+                    //SEBZÉS
+                    if(enemyBoard[i-1] != ""){
+                        enemyBoard[i-1].health -= Math.ceil(dmg*(1/3))
+                        console.log("BLASTLOG: barró");
+                    }
+                    //ANIM
+                    if(enemyBoard[i-1].health > 0 && enemyBoard[i-1] != ""){
+                        CardDmgAnimation(enemyBoardDoms[i-1],"sebzés","enemy")
+                    }
+                    else if(enemyBoard[i-1].health <= 0 && enemyBoard[i-1] != ""){
+                        CardDmgAnimation(enemyBoardDoms[i-1],"halál","enemy")
+                    }
                 }
-                else if(i%5 == 4 && enemyBoard[i-1] != ""){
-                    enemyBoard[i-1].health -= Math.ceil(dmg*(1/3))
-                }
-
-                if(enemyBoard[i-1].health > 0 && enemyBoard[i-1] != ""){
-                    CardDmgAnimation(enemyBoardDoms[i-1],"sebzés","enemy")
-                }
-                else if(enemyBoard[i-1].health <= 0 && enemyBoard[i-1] != ""){
-                    CardDmgAnimation(enemyBoardDoms[i-1],"halál","enemy")
-                }
-                if(enemyBoard[i+1].health > 0 && enemyBoard[i+1] != ""){
-                    CardDmgAnimation(enemyBoardDoms[i+1],"sebzés","enemy")
-                }
-                else if(enemyBoard[i+1].health <= 0 && enemyBoard[i+1] != ""){
-                    CardDmgAnimation(enemyBoardDoms[i+1],"halál","enemy")
-                }
-            }
+        }
+        // #endregion
 
 
         yourGameParameters.yourBoard = Array.from(yourBoard)
@@ -1044,7 +1048,7 @@
         console.log("dom that attacked: ",cardDomInAttackingMode);
         CardAttackAnimation(i)
     }
-
+    //#endregion
     
 
 
@@ -1629,7 +1633,6 @@
         transform: scale(1.1);
         cursor: pointer;
     }
-
 
 
 
