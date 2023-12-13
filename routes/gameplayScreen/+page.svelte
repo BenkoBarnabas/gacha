@@ -4,7 +4,7 @@
     import * as Cards from "../../card"
     let enemyStartingHand = [Cards.BarniCard,Cards.BarniCard, Cards.FarkasCard, Cards.BizsoCard, Cards.BencusCard, Cards.ZenoCard]
     
-    import {SendGameData,connectedToSocket, yourGameParametersClient, enemyGameParametersClient, DomLoaded, SveltePageLoaded, currentOpponentId, EndTurn} from "../../matchHandler"
+    import {SendGameData,connectedToSocket, yourGameParametersClient, enemyGameParametersClient, DomLoaded, SveltePageLoaded, currentOpponentId, EndTurn, lastCardPlayedClient,LastActionLog} from "../../matchHandler"
 
     import cardBack from "../../lib/assets/global/cardBack.png"
 
@@ -12,6 +12,8 @@
     import cardForeground from "../../lib/assets/global/cardV1Top.png"
     import cardV2Background from "../../lib/assets/global/cardV2BG.png"
     import cardV2BackgroundRed from "../../lib/assets/global/cardV2BGRed.png"
+    import spellForeground from "../../lib/assets/global/spellV1Top.png"
+    import spellBackground from "../../lib/assets/global/spellV1BG.png"
     import despair from "../../lib/assets/gameplay/despair.gif"
 
     import manaCrystal from "../../lib/assets/gameplay/manaCrystal.png"
@@ -57,10 +59,9 @@
         vérszomjas: "rgba(166, 113, 118, 0.6)",
         veszett: "rgba(133, 113, 166, 0.6)"
     }
-
     let voicelines = {}
 
-
+    //#region SEGÁDVÁLTOZÓK
     var backgroundColorByCost = ["#2672ed","#8626ed","#ed7c26","linear-gradient(180deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235))"]
     var starsColorByCost = ["color: #2672ed;","color: #8626ed;","color: #ed7c26;","background-image: linear-gradient(90deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235));-webkit-background-clip: text;background-clip: text;color: transparent;"]
 
@@ -86,27 +87,50 @@
 
     let targetArea = []
     let koTargetArea = []
+    let spellTargetArea
+
     let kovek = []
-    let dragged = undefined
+    let dragged = ""
+
+    let lastCardPlayed = ""
+
     $:  {if (cardsInHandDoms[yourHand.length-1]) {
         cardsInHandDoms[yourHand.length-1].addEventListener("dragstart", dragStart)
+        cardsInHandDoms[yourHand.length-1].addEventListener("dragend", () => {
+            dragged = ""
+        })
         }
         if (cardsInHandDoms[0]) {
         cardsInHandDoms[0].addEventListener("dragstart", dragStart)
+        cardsInHandDoms[0].addEventListener("dragend", () => {
+            dragged = ""
+        })
         }
         if (cardsInHandDoms[1]) {
         cardsInHandDoms[1].addEventListener("dragstart", dragStart)
+        cardsInHandDoms[1].addEventListener("dragend", () => {
+            dragged = ""
+        })
         }
         if (cardsInHandDoms[2]) {
         cardsInHandDoms[2].addEventListener("dragstart", dragStart)
+        cardsInHandDoms[2].addEventListener("dragend", () => {
+            dragged = ""
+        })
         }
         if (cardsInHandDoms[3]) {
         cardsInHandDoms[3].addEventListener("dragstart", dragStart)
+        cardsInHandDoms[3].addEventListener("dragend", () => {
+            dragged = ""
+        })
         }
         if (cardsInHandDoms[4]) {
         cardsInHandDoms[4].addEventListener("dragstart", dragStart)
+        cardsInHandDoms[4].addEventListener("dragend", () => {
+            dragged = ""
+        })
         }}
-
+        // #endregion
     
     function DrawStartingHand(n){
         var a = Array(5)
@@ -126,7 +150,6 @@
         
         SendGameData(JSON.stringify(yourGameParameters))
     }
-
     function DrawOne(){
         yourHand.push(yourGameParameters.remaningDeck[Math.floor(Math.random() * yourGameParameters.remaningDeck.length)])
         cardsInYourHandClass.push("cardTemplate")
@@ -135,6 +158,7 @@
 
     }
     
+    //#region VARS FOR GAMEPLAY
     let yourBoard = Array(10).fill("")
     let yourBoardPhs = Array(10).fill("")
     let yourBoardDoms = Array(10)
@@ -151,7 +175,7 @@
     let isYourTurn = false
     let isYourRally = false
     let gameFase = 1
-
+    // #endregion
 
     let pageLoaded = false
     
@@ -179,6 +203,7 @@
     onMount(() => {
             targetArea = document.getElementsByClassName("target")
             koTargetArea = document.getElementsByClassName("kotarget")
+            spellTargetArea = document.getElementById("spellTargetDiv")
             kovek = document.getElementsByClassName("ko")
             
             for (let i = 0; i<kovek.length; i++){
@@ -193,10 +218,11 @@
             document.addEventListener('socketConnected', ServerDependingCode)
             document.addEventListener('nextTurn',NextTurn)
             document.addEventListener('updateParams', update)
+            document.addEventListener('actionLog', ActionLogEvent)
         
     });
 
-
+    //#region DRAG AND DROP LOGIC
     function RemoveEventListenersFromCells(){
         for(let i = 0; i< yourBoard.length;i++){
             targetArea[i].removeEventListener("drop", drop)
@@ -219,12 +245,19 @@
                 }
             }
         }
-        for(let i = 0;i<(yourBoard.length);i++){
+        if(cellType == "spell"){
+            spellTargetArea.addEventListener("drop",spellDrop)
+            spellTargetArea.addEventListener("dragover",spellDragOver)
+            spellTargetArea.addEventListener("dragleave",spellDragLeave)
+        }
+        else{
+            for(let i = 0;i<(yourBoard.length);i++){
             if(yourBoard[i] == ""){ //ha még nem raktak rá cucclikat
                 targetArea[i].addEventListener("drop", drop)
                 targetArea[i].addEventListener("dragover", dragOver)
                 targetArea[i].addEventListener("dragleave", dragLeave)
             } 
+        }
         }
     }
     function drop(event) {
@@ -251,6 +284,8 @@
 
                 console.log(voicelines);
                 voicelines[dragged.name].play();
+
+                LastActionLog(dragged)
 
             }
             else if(dragged.type == "ko"){
@@ -293,21 +328,56 @@
         SendGameData(JSON.stringify(yourGameParameters))
         SendGameData(JSON.stringify(enemyGameParameters))
     }
+    function spellDrop(event){
+        event.preventDefault()
+        if(dragged.cost <= (yourGameParameters.mana+yourGameParameters.spellMana)){
+            event.preventDefault()
+
+            yourHand.splice(yourHand.indexOf(dragged), 1);
+            yourHand = yourHand
+            cardsInYourHandClass = Array(yourHand.length).fill("cardTemplate")
+            yourGameParameters.yourHand = Array.from(yourHand)
+            console.log(yourGameParameters.spellMana,yourGameParameters.mana,dragged.cost);
+            if(yourGameParameters.spellMana >= dragged.cost){
+                yourGameParameters.spellMana -= dragged.cost
+            }
+            else{
+                yourGameParameters.mana = dragged.cost-yourGameParameters.spellMana
+                yourGameParameters.spellMana = 0
+            }
+            console.log(yourGameParameters.spellMana,yourGameParameters.mana,dragged.cost);
+
+            LastActionLog(dragged)
+
+            dragged = ""
+            dragged = dragged
+
+            spellTargetArea.style.boxShadow = "inset 1vw 1vw 1.5vw #3e7ee6ba, inset -1vw -1vw 1.5vw #3e7ee6ba"
+            spellTargetArea.style.fontSize = "1.5vw"
+            spellTargetArea.children[0].innerHtml = "play spell"
+
+            SendGameData(JSON.stringify(yourGameParameters))
+
+        }
+
+    }
     function dragStart(event) {
-        ClearAttackModes()
+        if(yourHand[event.target.id].type == "character" || yourHand[event.target.id].type == "spell"){
+            ClearAttackModes()
 
-        RemoveEventListenersFromCells()
-        console.log(event);
-        console.log(event.target);
-        dragged = yourHand[event.target.id]
-        
-        yourBoardPhs.fill("")
-        enemyBoardPhs.fill("")
-        yourBoardPhs = yourBoardPhs
-        enemyBoardPhs = enemyBoardPhs
+            RemoveEventListenersFromCells()
+            console.log(event);
+            console.log(event.target);
 
-        AddEventListenerToCells("character")
-        
+            dragged = yourHand[event.target.id]
+            
+            yourBoardPhs.fill("")
+            enemyBoardPhs.fill("")
+            yourBoardPhs = yourBoardPhs
+            enemyBoardPhs = enemyBoardPhs
+
+            AddEventListenerToCells(yourHand[event.target.id].type)
+        }
     }
     function koDragStart(event){
         if(!isKoHasBeenPutDownThisTurn){
@@ -352,6 +422,15 @@
         enemyBoardPhs[Number(event.target.id.replace("etd",""))] = dragged
         enemyBoardPhs = enemyBoardPhs
     }
+    function spellDragOver(event){
+        event.preventDefault()
+        if(dragged.type == "spell" && dragged.cost <= (yourGameParameters.mana+yourGameParameters.spellMana))
+        {
+            spellTargetArea.style.boxShadow = "inset 1vw 1vw 1.5vw #3ee63eba, inset -1vw -1vw 1.5vw #3ee63eba"
+            spellTargetArea.style.fontSize = "2vw"
+            spellTargetArea.children[0].innerHtml = `play spell <br> ${dragged.name}`
+        }
+    }
     function dragLeave(event){
         event.preventDefault()
         yourBoardPhs[Number(event.target.id.replace("td",""))] = ""
@@ -362,8 +441,17 @@
         enemyBoardPhs[Number(event.target.id.replace("etd",""))] = ""
         enemyBoardPhs = enemyBoardPhs
     }
+    function spellDragLeave(event){
+        event.preventDefault()
+        if(dragged.type == "spell")
+        {
+            spellTargetArea.style.boxShadow = "inset 1vw 1vw 1.5vw #3e7ee6ba, inset -1vw -1vw 1.5vw #3e7ee6ba"
+            spellTargetArea.style.fontSize = "1.5vw"
+            spellTargetArea.children[0].innerHtml = "play spellk"
+        }
+    }
 
-
+    //playing mode with clicks
     function ClearBoardPhs(){
         yourBoardPhs.fill("")
         yourBoardPhs = yourBoardPhs
@@ -452,9 +540,9 @@
 
         console.log(voicelines[card.name]);
         voicelines[card.name].play();
-    }
-        
 
+        LastActionLog(card)
+    }
     function KoPlacingMode(){
         if(isYourTurn && !isKoHasBeenPutDownThisTurn){
             isCardInYourHandInPlacingMode = false
@@ -524,9 +612,9 @@
             
         } 
     }
+    // #endregion
 
-
-
+    //#region QUALITY OF LIFE LOGIC
     function NextTurn(){
         if(gameFase < 3){
             isYourTurn = !isYourTurn
@@ -601,15 +689,127 @@
         EndTurn()
     }
 
+    let logOpen = false
+    let logCard
+    function OpenBattleLog(){
+        logOpen = !logOpen
+        logOpen = logOpen
+    }
+    function ActionLogEvent(){
+        logOpen = false
+        logOpen = logOpen
+        logOpen = true
+        logOpen = logOpen
+
+        lastCardPlayed = lastCardPlayedClient
+        lastCardPlayed = lastCardPlayed
+
+        setTimeout(() => {
+            logCard.style.animation = "none"
+            logCard.offsetHeight
+            logCard.style.animation = "actionLogCard 1.3s forwards" 
+        }, 10);
+        
+
+        setTimeout(() => {
+            logOpen = false
+            logOpen = logOpen
+            logCard.offsetHeight
+            logCard.style.animation = "none"
+        }, 4000);
+    }
+    // #endregion
 
     //GAMEPLAY----------------------------------
     //-----------------------------------------------------------------------------------------------------------
+   
+   
+    //#region ANIMS
+    let AnimTargetTop
+    let AnimTargetLeft
+    let AnimAttackerTop
+    let AnimAttackerLeft
+    let AnimAttackerYRot
+    function CardDmgAnimation(dom,dmg,side){
+        
+        setTimeout(() => {
+            dom.children[0].children[0].src = cardV2BackgroundRed
+            dom.children[0].children[3].style.background = '../../lib/assets/global/cardV2TopRed.png'
+        }, 600);
 
-    //filed effects
-    let cardsAwake = []
+        dom.children[0].style.animation = "none"
+        dom.children[0].offsetHeight;
+        if(dmg == "sebzés"){
+            dom.children[0].style.animation = "cardDmg 1.5s 0.6s ease-in"
+            setTimeout(() => {
+                dom.children[0].children[0].src = cardV2Background
+                dom.children[0].children[3].style.background = '../../lib/assets/global/cardV2Top.png'
+            }, 1350);
+        }
+        else if(dmg == "halál"){
+            dom.children[0].style.animation = "cardDeath 1.5s 0.6s ease-in"
+            setTimeout(() => {
+                if(side == "enemy"){
+                    enemyBoard[Number(dom.id.replace("etd",""))].source = despair
+                }
+                else if(side == "your"){
+                    yourBoard[Number(dom.id.replace("td",""))].source = despair
+                }
+            }, 600);
+            setTimeout(() => {
+                if(side == "enemy"){
+                    enemyBoard[Number(dom.id.replace("etd",""))] = ""
+                }
+                else if(side == "your"){
+                    yourBoard[Number(dom.id.replace("td",""))] = ""
+                }
+            }, 2100);
+        }  
+    }
+    function CardAttackAnimation(enemyi){
+        //ANIM----------
+        var attackeri = yourBoard.indexOf(cardInAttackingMode)
+        console.log(attackeri);
+        var row = enemyi
+        row < 5 ? row = 1 : row = 0
+        var attackerRow = attackeri
+        attackerRow < 5 ? attackerRow = 0 : attackerRow = 1
 
+        var cardHeight = window.innerHeight/window.innerWidth * 12.5*0.57 * (3/2)
+        console.log(window.innerWidth/window.innerHeight);
+        console.log("AnimLog cardH: ",cardHeight);
 
-    //attacking
+        AnimAttackerYRot = `${((enemyi%5)-(attackeri%5))*10}deg`
+
+        AnimAttackerTop = 15 + 32.5 + attackerRow*(16.25-11)
+        //margó + az enemy sávja + ahanyadik row-ba van annyiszor a row magassága - ha a másodikba van mert ők feljebb vannak a row-ban
+        var targetTop = 15 + row*16.25 - row*11 + cardHeight
+        //margó + ahanyadik row* raw magassága - ha a másodikba van mert az feljebb + egy kártya magasága
+        AnimTargetTop = `${-32.5+ row*11 +cardHeight -attackerRow*(11)}vh`
+
+        AnimAttackerLeft = 13+(attackeri%5+1)*14.8 
+        var targetLeft = 13+(enemyi%5+1)*14.8
+        AnimTargetLeft = `${targetLeft-AnimAttackerLeft}vw`
+
+        console.log("AnimLogTop: ",AnimAttackerTop,targetTop,AnimTargetTop);
+        console.log("AnimLogLeft: ",AnimAttackerLeft,targetLeft,AnimTargetLeft);
+
+        cardDomInAttackingMode.style.animation = "none"
+        cardDomInAttackingMode.offsetHeight;
+        cardDomInAttackingMode.style.animation = "attackAnim 0.7s"
+
+        ClearAttackModes()
+
+        enemyBoard = enemyBoard
+        enemyGameParameters = enemyGameParameters
+        console.log(enemyBoard, enemyGameParameters.hp);
+
+        enemyGameParameters.yourBoard = Array.from(enemyBoard)
+        SendGameData(JSON.stringify(enemyGameParameters))
+    }
+    //#endregion
+    
+    //#region ATTACK CALCULATION
     let attackableCards = [] //kicsit csúnyi de kell a funkción kívül is :((
     let attackableCardsDoms = []
     let cardInAttackingMode = ""
@@ -711,93 +911,12 @@
             enemyBoard = enemyBoard
         }
     }
-
-
-    let AnimTargetTop
-    let AnimTargetLeft
-    let AnimAttackerTop
-    let AnimAttackerLeft
-    let AnimAttackerYRot
-    function CardDmgAnimation(dom,dmg,side){
-        
-        setTimeout(() => {
-            dom.children[0].children[0].src = cardV2BackgroundRed
-            console.log(dom.children[0].children[0]);
-            dom.children[0].children[3].style.background = '../../lib/assets/global/cardV2TopRed.png'
-        }, 600);
-
-        dom.children[0].style.animation = "none"
-        dom.children[0].offsetHeight;
-        if(dmg == "sebzés"){
-            dom.children[0].style.animation = "cardDmg 1.5s 0.6s ease-in"
-        }
-        else if(dmg == "halál"){
-            dom.children[0].style.animation = "cardDeath 1.5s 0.6s ease-in"
-            setTimeout(() => {
-                if(side == "enemy"){
-                    enemyBoard[Number(dom.id.replace("etd",""))].source = despair
-                }
-                else if(side == "your"){
-                    yourBoard[Number(dom.id.replace("td",""))].source = despair
-                }
-            }, 600);
-            setTimeout(() => {
-                if(side == "enemy"){
-                    enemyBoard[Number(dom.id.replace("etd",""))] = ""
-                }
-                else if(side == "your"){
-                    yourBoard[Number(dom.id.replace("td",""))] = ""
-                }
-            }, 2100);
-        }  
-    }
-    function CardAttackAnimation(enemyi){
-        //ANIM----------
-        var attackeri = yourBoard.indexOf(cardInAttackingMode)
-        console.log(attackeri);
-        var row = enemyi
-        row < 5 ? row = 1 : row = 0
-        var attackerRow = attackeri
-        attackerRow < 5 ? attackerRow = 0 : attackerRow = 1
-
-        var cardHeight = window.innerHeight/window.innerWidth * 12.5*0.57 * (3/2)
-        console.log(window.innerWidth/window.innerHeight);
-        console.log("AnimLog cardH: ",cardHeight);
-
-        AnimAttackerYRot = `${((enemyi%5)-(attackeri%5))*10}deg`
-
-        AnimAttackerTop = 15 + 32.5 + attackerRow*(16.25-11)
-        //margó + az enemy sávja + ahanyadik row-ba van annyiszor a row magassága - ha a másodikba van mert ők feljebb vannak a row-ban
-        var targetTop = 15 + row*16.25 - row*11 + cardHeight
-        //margó + ahanyadik row* raw magassága - ha a másodikba van mert az feljebb + egy kártya magasága
-        AnimTargetTop = `${-32.5+ row*11 +cardHeight -attackerRow*(11)}vh`
-
-        AnimAttackerLeft = 13+(attackeri%5+1)*14.8 
-        var targetLeft = 13+(enemyi%5+1)*14.8
-        AnimTargetLeft = `${targetLeft-AnimAttackerLeft}vw`
-
-        console.log("AnimLogTop: ",AnimAttackerTop,targetTop,AnimTargetTop);
-        console.log("AnimLogLeft: ",AnimAttackerLeft,targetLeft,AnimTargetLeft);
-
-        cardDomInAttackingMode.style.animation = "none"
-        cardDomInAttackingMode.offsetHeight;
-        cardDomInAttackingMode.style.animation = "attackAnim 0.7s"
-
-        ClearAttackModes()
-
-        enemyBoard = enemyBoard
-        enemyGameParameters = enemyGameParameters
-        console.log(enemyBoard, enemyGameParameters.hp);
-
-        enemyGameParameters.yourBoard = Array.from(enemyBoard)
-        SendGameData(JSON.stringify(enemyGameParameters))
-    }
-    
     function AttackCard(target,i){
         console.log("target: ", target, " i: ", i);
 
         var dmg = cardInAttackingMode.attack
 
+        //DMG CALCULATION
         if(target.health - dmg >= 0){ //1 kezdés, 1 megáll
             target.health -= dmg
             console.log("1 kezdés, 1 megáll");
@@ -809,41 +928,12 @@
             else{
                 CardDmgAnimation(enemyBoardDoms[i],"sebzés","enemy")
             }
-
-            //BLAST TÁMADÁS
-            if(cardInAttackingMode.talent.includes("robbanó támadás")){
-                if((i%5 != 0 || i%5 != 4) && enemyBoard[i+1] != "" && enemyBoard[i-1] != ""){
-                    enemyBoard[i-1].health -= Math.ceil(dmg*(1/3))
-                    enemyBoard[i+1].health -= Math.ceil(dmg*(1/3))
-                }
-                else if(i%5 == 0 && enemyBoard[i+1] != ""){
-                    enemyBoard[i+1].health -= Math.ceil(dmg*(1/3))
-                }
-                else if(i%5 == 4 && enemyBoard[i-1] != ""){
-                    enemyBoard[i-1].health -= Math.ceil(dmg*(1/3))
-                }
-
-                if(enemyBoard[i-1].health > 0 && enemyBoard[i-1] != ""){
-                    CardDmgAnimation(enemyBoardDoms[i-1],"sebzés","enemy")
-                }
-                else if(enemyBoard[i-1] != ""){
-                    CardDmgAnimation(enemyBoardDoms[i-1],"halál","enemy")
-                }
-                if(enemyBoard[i+1].health > 0 && enemyBoard[i+1] != ""){
-                    CardDmgAnimation(enemyBoardDoms[i+1],"sebzés","enemy")
-                }
-                else if(enemyBoard[i+1] != ""){
-                    CardDmgAnimation(enemyBoardDoms[i+1],"halál","enemy")
-                }
-            }
         }
         else{ //1 kezdés, tovább
             
             dmg -= target.health
             target.health = 0 //első dead
             CardDmgAnimation(enemyBoardDoms[i],"halál","enemy")
-
-
 
             if(i < 5){ //1 kezdés, tovább
                 console.log(enemyBoard[i+5]);
@@ -886,11 +976,11 @@
             }
         }
 
+        //TALENTS--------------------------------------------------------------------
+        // #region TALENTS
         //KETTŐS TÁMADÁS
-        if(!yourBoard[yourBoard.indexOf(cardInAttackingMode)].talent.includes("kettős támadás")){
-            yourBoard[yourBoard.indexOf(cardInAttackingMode)].fieldEffects.push("asleep")
-            yourGameParameters.yourBoard = Array.from(yourBoard)
-            SendGameData(JSON.stringify(yourGameParameters))
+        if(!cardInAttackingMode.talent.includes("kettős támadás")){
+            //yourBoard[yourBoard.indexOf(cardInAttackingMode)].fieldEffects.push("asleep")
         }
         else{
             var whichAttack = Number(yourBoard[yourBoard.indexOf(cardInAttackingMode)].fieldEffects[0].replace("kettős:",""))
@@ -907,12 +997,58 @@
                 }
             }
         }
+        //ÉLETELSZÍVÁS
+        if(cardInAttackingMode.talent.includes("életelszívás")){
+            var healAmount = Number(cardInAttackingMode.talent[(cardInAttackingMode.talent.indexOf("_"))+1])
+            console.log("ÉLETLOG: amount:", healAmount);
 
+            yourBoard[yourBoard.indexOf(cardInAttackingMode)].health += healAmount
+        }
+        //TÖVISES BŐR
+        if(target.talent.includes("tövisesbőr")){
+            yourBoard[yourBoard.indexOf(cardInAttackingMode)].health -= 1
+        }
+        //BLAST TÁMADÁS l
+        if(cardInAttackingMode.talent.includes("robbanó támadás")){
+                if(i%5 != 4){ //ha a szélén van akkor ne menjen tovább, jobbral + balról is if
+                    //SEBZÉS
+                    if(enemyBoard[i+1] != ""){
+                        enemyBoard[i+1].health -= Math.ceil(dmg*(1/3))
+                        console.log("BLASTLOG: jobbrú");
+                    }
+                    //ANIM
+                    if(enemyBoard[i+1].health > 0 && enemyBoard[i+1] != ""){
+                        CardDmgAnimation(enemyBoardDoms[i+1],"sebzés","enemy")
+                    }
+                    else if(enemyBoard[i+1].health <= 0 && enemyBoard[i+1] != ""){
+                        CardDmgAnimation(enemyBoardDoms[i+1],"halál","enemy")
+                    }
+                }
+                if(i%5 != 0){
+                    //SEBZÉS
+                    if(enemyBoard[i-1] != ""){
+                        enemyBoard[i-1].health -= Math.ceil(dmg*(1/3))
+                        console.log("BLASTLOG: barró");
+                    }
+                    //ANIM
+                    if(enemyBoard[i-1].health > 0 && enemyBoard[i-1] != ""){
+                        CardDmgAnimation(enemyBoardDoms[i-1],"sebzés","enemy")
+                    }
+                    else if(enemyBoard[i-1].health <= 0 && enemyBoard[i-1] != ""){
+                        CardDmgAnimation(enemyBoardDoms[i-1],"halál","enemy")
+                    }
+                }
+        }
+        // #endregion
+
+
+        yourGameParameters.yourBoard = Array.from(yourBoard)
+        SendGameData(JSON.stringify(yourGameParameters))
 
         console.log("dom that attacked: ",cardDomInAttackingMode);
         CardAttackAnimation(i)
     }
-
+    //#endregion
     
 
 
@@ -933,7 +1069,7 @@
 
         for(let i = 0; i<yourBoard.length;i++){
             if(yourBoard[i] != ""){
-                if(yourBoard[i].health != yourGameParameters.yourBoard[i].health){
+                if(yourBoard[i].health > yourGameParameters.yourBoard[i].health && !isYourTurn){
                     if(yourGameParameters.yourBoard[i].health > 0){
                         CardDmgAnimation(yourBoardDoms[i],"sebzés","your")
                     }
@@ -1197,27 +1333,46 @@
                     </td>
                     {/each}
                 </tr>
+                <div id="spellTargetDiv" class:displayBlock={dragged != "" && dragged.type == "spell"} class:displayNone={dragged == "" || dragged.tpye != "spell"}><span style="margin-top:10vh; display:block; pointer-events: none;">play spell</span></div>
             </div>
         </div>
         <div id="yourHand" class="handCont" >
             {#each yourHand as card,i}
-            <div bind:this={cardsInHandDoms[i]} id={i} on:click={() => PlacingMode(card,i)} draggable={isYourTurn} class="previewInHand move" style="--cardNum: {yourHand.length};transform: rotate({-22.5+(45/yourHand.length)*(i+1)}deg);top:{(yourHand.length-(i))/3}vw;" on:keydown role="button" tabindex="">
-                <img draggable="false" class={cardsInYourHandClass[i]} id="cardBackground" src={cardBackground} style="--colorr: {backgroundColorByCost[(card.stars)-3]}; --colorr2: #{(parseInt((backgroundColorByCost[(card.stars)-3].replace("#","")), 16)+663552).toString(16)};" alt="cardBg">
-                <div id="rarityBG" style="background: {backgroundColorByCost[(card.stars)-3]}; "></div>
-                <img draggable="false" id="curCardInView" src={card.source} alt="">
-                <img draggable="false" class="cardTemplate" src={cardForeground} alt="cardBg">
-                <div id="curCardDesc" class="noScrollers">{card.description}</div>
-                <div class="curCardStats" style="left: calc(var(--cardsScale)*1vw*7.4);">{card.attack}</div>
-                <div class="curCardStats" style="left: calc(var(--cardsScale)*1vw*21.5)">{card.health}</div>
-                <div class="curCardCost">{card.cost}</div>
-                <div class="curCardName">{card.name}</div>
-                
-                <div id="curCardRarity" style="{starsColorByCost[(card.stars)-3]}; top: 0">
-                    {#each Array(Number(card.stars)) as card,index}
-                        <span style="font-size: calc(var(--cardsScale)*2.4vw">★</span>
-                    {/each}
+            {#if card.type == "character"}
+                <div bind:this={cardsInHandDoms[i]} id={i} on:click={() => PlacingMode(card,i)} draggable={isYourTurn} class="previewInHand move" style="--cardNum: {yourHand.length};transform: rotate({-22.5+(45/yourHand.length)*(i+1)}deg);top:{(yourHand.length-(i))/3}vw;" on:keydown role="button" tabindex="">
+                    <img draggable="false" class={cardsInYourHandClass[i]} id="cardBackground" src={cardBackground} style="--colorr: {backgroundColorByCost[(card.stars)-3]}; --colorr2: #{(parseInt((backgroundColorByCost[(card.stars)-3].replace("#","")), 16)+663552).toString(16)};" alt="cardBg">
+                    <div id="rarityBG" style="background: {backgroundColorByCost[(card.stars)-3]}; "></div>
+                    <img draggable="false" id="curCardInView" src={card.source} alt="">
+                    <img draggable="false" class="cardTemplate" src={cardForeground} alt="cardBg">
+                    <div id="curCardDesc" class="noScrollers">{@html card.description}</div>
+                    <div class="curCardStats" style="left: calc(var(--cardsScale)*1vw*7.4);">{card.attack}</div>
+                    <div class="curCardStats" style="left: calc(var(--cardsScale)*1vw*21.5)">{card.health}</div>
+                    <div class="curCardCost">{card.cost}</div>
+                    <div class="curCardName">{card.name}</div>
+                    
+                    <div id="curCardRarity" style="{starsColorByCost[(card.stars)-3]}; top: 0">
+                        {#each Array(Number(card.stars)) as card,index}
+                            <span style="font-size: calc(var(--cardsScale)*2.4vw">★</span>
+                        {/each}
+                    </div>
                 </div>
-            </div>
+            {:else if card.type == "spell"}
+                <div bind:this={cardsInHandDoms[i]} id={i} draggable={isYourTurn} class="previewInHand move" style="--cardNum: {yourHand.length};transform: rotate({-22.5+(45/yourHand.length)*(i+1)}deg);top:{(yourHand.length-(i))/3}vw;" on:keydown role="button" tabindex="">
+                    <img draggable="false" class={cardsInYourHandClass[i]} id="cardBackground" src={spellBackground} style="--colorr: {backgroundColorByCost[(card.stars)-3]}; --colorr2: #{(parseInt((backgroundColorByCost[(card.stars)-3].replace("#","")), 16)+663552).toString(16)};" alt="cardBg">
+                    <div id="rarityBG" style="background: {backgroundColorByCost[(card.stars)-3]}; "></div>
+                    <img draggable="false" id="curCardInView" src={card.source} alt="">
+                    <img draggable="false" class="cardTemplate" src={spellForeground} alt="cardBg">
+                    <div id="curCardDesc" class="noScrollers">{@html card.description}</div>
+                    <div class="curCardCost" style="top: calc(var(--cardsScale)*1vw*4);">{card.cost}</div>
+                    <div class="curCardName">{card.name}</div>
+                    
+                    <div id="curCardRarity" style="{starsColorByCost[(card.stars)-3]}; top: calc(var(--cardsScale)*1vw*1);">
+                        {#each Array(Number(card.stars)) as card,index}
+                            <span style="font-size: calc(var(--cardsScale)*2.4vw">★</span>
+                        {/each}
+                    </div>
+                </div>
+            {/if}
             {/each}
             
         </div>
@@ -1275,6 +1430,73 @@
         </div>
 
     </div>
+    <div id="actionLog">
+        <div class:displayNone={!logOpen} class:displayBlock={logOpen}>
+            {#if lastCardPlayed.type == "character"}
+                    <div id="logPerspectiveCont" >
+                        <div class="previewInLog" bind:this={logCard}>
+                            <img draggable="false" class="cardTemplateLog" id="cardBackgroundLog" src={cardBackground} style="--colorr: {backgroundColorByCost[(lastCardPlayed.stars)-3]};" alt="cardBg">
+                            <div id="rarityBGLog" style="background: {backgroundColorByCost[(lastCardPlayed.stars)-3]}; "></div>
+                            <img draggable="false" id="curCardInViewLog" src={lastCardPlayed.source} alt="">
+                            <img draggable="false" class="cardTemplateLog" src={cardForeground} alt="cardBg">
+                            <div id="curCardDescLog" class="noScrollers">{@html lastCardPlayed.description}</div>
+                            <div class="curCardStatsLog" style="left: calc(var(--cardsLogScale)*1vw*7.4);">{lastCardPlayed.attack}</div>
+                            <div class="curCardStatsLog" style="left: calc(var(--cardsLogScale)*1vw*21.5)">{lastCardPlayed.health}</div>
+                            <div class="curCardCostLog">{lastCardPlayed.cost}</div>
+                            <div class="curCardNameLog">{lastCardPlayed.name}</div>
+                            
+                            {#if lastCardPlayed.talent != ""}
+                            {#if lastCardPlayed.talent.includes(",")}
+                            <div class="curCardMultipleIconsContainerLog">
+                                {#each lastCardPlayed.talent.split(",") as icon, i}
+                                <div style="width:{(0.8*5.2)/lastCardPlayed.talent.split(",").length}vw; margin:auto">
+                                    <img style="width:calc(var(--cardsLogScale)*1vw*1.4)" src={talentIcons[icon.replace(" ","")]} alt="talent">
+                                </div>
+                                {/each}
+                            </div>
+                            {:else}
+                                <div class="curCardTalentLog">{lastCardPlayed.talent.replace("támadás","")}</div>
+                                <img style="left: calc(var(--cardsLogScale)*1vw*10);" class="curCardTalentIconLog" src={talentIcons[lastCardPlayed.talent.replace(" ","")]} alt="talent">
+                                {/if}
+                            {/if}
+
+                            {#if lastCardPlayed.aligment.includes(",")}
+                            {#each lastCardPlayed.aligment.split(",") as aligment,i}
+                                <img style="top: {0.8*9.8 + i* 4.5*0.8}vw; background-color: {aligmentBackgroundColors[aligment]}; border-radius: 0.5vw;" class="curCardAligLog" src={aligmentIcons[aligment]} alt="aligment">
+                            {/each}
+                            {:else}
+                                <img style="background-color: {aligmentBackgroundColors[lastCardPlayed.aligment]}; border-radius: 0.5vw;" class="curCardAligLog" src={aligmentIcons[lastCardPlayed.aligment]} alt="aligment">
+                            {/if}
+
+                            <div id="curCardRarityLog" style="{starsColorByCost[(lastCardPlayed.stars)-3]}; top: 0">
+                                {#each Array(Number(lastCardPlayed.stars)) as card,index}
+                                    <span style="font-size: calc(var(--cardsLogScale)*2.4vw">★</span>
+                                {/each}
+                            </div>
+                        </div>
+                    </div>
+            {:else if lastCardPlayed.type == "spell"}
+                <div id="logPerspectiveCont" >
+                    <div class="previewInLog" bind:this={logCard}>
+                        <img draggable="false" class="cardTemplateLog" id="cardBackgroundLog" src={spellBackground} style="--colorr: {backgroundColorByCost[(lastCardPlayed.stars)-3]};" alt="cardBg">
+                        <div id="rarityBGLog" style="background: {backgroundColorByCost[(lastCardPlayed.stars)-3]}; "></div>
+                        <img draggable="false" id="curCardInViewLog" src={lastCardPlayed.source} alt="">
+                        <img draggable="false" class="cardTemplateLog" src={spellForeground} alt="cardBg">
+                        <div id="curCardDescLog" class="noScrollers">{@html lastCardPlayed.description}</div>
+                        <div class="curCardCostLog" style="top: calc(var(--cardsLogScale)*1vw*4);">{lastCardPlayed.cost}</div>
+                        <div class="curCardNameLog">{lastCardPlayed.name}</div>
+
+                        <div id="curCardRarityLog" style="{starsColorByCost[(lastCardPlayed.stars)-3]}; top: 0">
+                            {#each Array(Number(lastCardPlayed.stars)) as card,index}
+                                <span style="font-size: calc(var(--cardsLogScale)*2.4vw">★</span>
+                            {/each}
+                        </div>
+                    </div>
+                </div>
+            {/if}
+        </div>
+        <button id="logOpenClose" on:click={OpenBattleLog}>Log</button>
+    </div>
     
 </div>
 
@@ -1292,6 +1514,10 @@
     @font-face {
       font-family: 'mainFont';
       src: url('../../lib/assets/fonts/zh-cn.ttf');
+    }
+    @font-face {
+      font-family: 'sgGachaFont';
+      src: url('../../lib/assets/fonts/MyFont-Regular.otf');
     }
     #loadingScreen {
     z-index: 9999;
@@ -1318,6 +1544,8 @@
     user-select: none;
 
     }
+    .displayNone{display: none;}
+    .displayBlock{display: block;}
 
 
 
@@ -1408,42 +1636,55 @@
 
 
 
-
-    #playerHps{
+    #actionLog{
         position: absolute;
 
-        height: 50vh;
+        background-color: rgba(19, 216, 19, 0.521);
+        width: 16vw;
+        height: 44vh;
+
+        top: 26vh;
+        left: 1vw;
+    }
+    #logOpenClose{
+        position: absolute;
+        bottom: 0;
+    }
+
+
+    .playerNameCont{
+        height: 7vh;
         width: 10vw;
 
-        top: 20vh;
-        left: 1.5vw;
-    }
-    .playerNameCont{
-        height: 15%;
-        width: 100%;
-
-        font-size: 3vw;
-        font-family: "mainFont";
+        font-size: 2vw;
+        font-family: "sgGachaFont";
         text-align: center;
 
         position: absolute;
+        background-color: red;
     }
-    #enemyPlayerName{top:0;}
-    #yourPlayerName{bottom:0;}
     .playerHpCont{
 
         position: absolute;
 
-        width: 100%;
-        height: 25%;
+        width: 10vw;
+        height: 15vh;
 
         font-size: 4.5vw;
         font-family: "ShadowLight";
         text-align: center;
+        background-color: blue;
+    }   
+    #enemyPlayerName{top:2vh;left: 2vw;}
+    #enemyPlayerHp{top: 8vh;left: 2vw;}
+    @media screen and (min-width: 836px) {
+        #yourPlayerName{bottom:4vh;left: 2vw;}
+        #yourPlayerHp{bottom: 8vh;left: 2vw;}
     }
-    #enemyPlayerHp{top: 20%;}
-    #yourPlayerHp{bottom: 20%;}
-
+    @media screen and (max-width: 836px) {
+        #yourPlayerName{bottom:4vh;left: 45vw;}
+        #yourPlayerHp{bottom: 8vh;left: 45vw;}
+    }
 
     .koCont{
         width: 7vw;
@@ -1591,7 +1832,21 @@
 
 
 
+    #spellTargetDiv{
+        width: 74vw;
+        height: 29.875vh; 
+        position: absolute;
+        top: -2.625vh;
+        background-color: #96aad691;
 
+        font-size: 1.5vw;
+        font-family: 'mainFont';
+        text-align: center;
+
+        box-shadow:inset 1vw 1vw 1.5vw #3e7ee6ba, inset -1vw -1vw 1.5vw #3e7ee6ba;
+
+        /*animation: spellTargetDivAnimation 3s infinite;*/
+    }
     #gamePlayFiledCont{
         position: fixed;
         top: 0;
@@ -1613,6 +1868,7 @@
         :root {
         --cardsScale: 0.4;
         --cardOnBoardScale: 0.57;
+        --cardsLogScale: 0.8;
     
         }
         #yourHand{
@@ -1632,6 +1888,7 @@
         :root {
         --cardsScale: 0.3;
         --cardOnBoardScale: 0.57;
+        --cardsLogScale: 0.8;
     
         }
         #yourHand{
@@ -1641,7 +1898,7 @@
         height: 15vh;
 
         position: absolute;
-        left: 0vw;
+        left: 1vw;
 
         display: flex;
         padding-bottom: 7vh;
@@ -1703,8 +1960,6 @@
         z-index: 11;
         perspective: 10vw; /* Adjust the perspective value as needed */
         perspective-origin: 50% 50%;
-
-        border: 2px solid black;
     }
     .tierOne{
         top: 0;
@@ -1865,6 +2120,7 @@
         text-align: center;
         mix-blend-mode: screen;
     }
+
     #cardPreviewListCont{
         position: relative;
         width:calc(var(--cardOnBoardScale)*1vw*14.3);
@@ -1974,5 +2230,165 @@
         width: calc(var(--cardOnBoardScale)*1vw*2.2);
         left: calc(var(--cardOnBoardScale)*1vw*1.8);
         top: calc(var(--cardOnBoardScale)*1vw*4.8);
+    }
+
+
+    #logPerspectiveCont{
+        perspective: 60vw; /* Adjust the perspective value as needed */
+        perspective-origin: 50% 50%;
+    }
+    .previewInLog{
+        position: absolute;
+        border: none;
+        margin: none;
+        background: none;
+
+        margin-top: 20%;
+    }
+    @keyframes -global-actionLogCard{
+        0%{
+            transform: rotateX(200deg) rotateZ(-30deg) rotateY(10deg);
+            left: 30vw;
+            top: -40vh;
+
+            opacity: 0;
+            scale: 0;
+        }
+        35%{
+            transform: rotateX(260deg) rotateZ(-25deg) rotateY(0deg);
+            opacity:1;
+        }
+        50%{
+            top: 8vh;
+            scale: 0.9;
+        }
+        80%{
+            left:0vw;
+        }
+        90%{
+            transform: rotateX(360deg) rotateZ(0deg) rotateY(0deg);
+            background: none;
+            top: -5vh;
+            scale: 1.1;
+        }
+        100%{
+            transform: rotateX(360deg) rotateZ(0deg) rotateY(0deg);
+            top: 0vh;
+            scale: 1;
+        }
+    }
+    .cardTemplateLog{
+        width: calc(var(--cardsLogScale)*1vw*30);
+        position: absolute;
+        left: 0;
+    }
+    #rarityBGLog{
+        position: absolute;
+        width: calc(var(--cardsLogScale)*1vw*20);
+        height: calc(var(--cardsLogScale)*1vw*20);
+        left: calc(var(--cardsLogScale)*1vw*6);
+        top: calc(var(--cardsLogScale)*1vw*2.5);
+
+        opacity: 0.35;
+    }
+    #curCardInViewLog{
+        position: absolute;
+        width: calc(var(--cardsLogScale)*1vw*14);
+        left: calc(var(--cardsLogScale)*1vw*8.5);
+        top: calc(var(--cardsLogScale)*1vw*5);
+
+        box-shadow: 0 0 calc(var(--cardsLogScale)*1vw*1.3) rgba(0, 0, 0, 0.735);
+    }
+    .curCardStatsLog{
+        font-size: calc(var(--cardsLogScale)*1vw*3);
+        font-family: 'SevenSwords';
+        color: white;
+        text-shadow:
+                -0.08vw -0.08vw 0 #000, /* Top-left shadow */
+                0.08vw -0.08vw 0 #000, /* Top-right shadow */
+                -0.08vw 0.08vw 0 #000, /* Bottom-left shadow */
+                0.08vw 0.08vw 0 #000; /* Bottom-right shadow */
+
+        position: absolute;
+        top: calc(var(--cardsLogScale)*1vw*26.7);
+    }
+    .curCardCostLog{
+        font-size: calc(var(--cardsLogScale)*1vw*5);
+        font-weight: bold;
+        font: italic;
+        font-family: 'ShadowLight';
+        color: rgb(184, 11, 11);
+
+        position: absolute;
+        top: calc(var(--cardsLogScale)*1vw*2.5);
+        left: calc(var(--cardsLogScale)*1vw*7);
+    }
+    .curCardNameLog{
+        font-size: calc(var(--cardsLogScale)*1vw*2);
+        font-family: Impact;
+        color: rgba(247, 240, 221, 0.778);
+        text-shadow: 0 0 calc(var(--cardsLogScale)*1vw*1) rgba(0, 0, 0, 0.536);
+
+        position: absolute;
+        top: calc(var(--cardsLogScale)*1vw*18.2);
+        left: calc(var(--cardsLogScale)*1vw*5.5);
+
+        text-align: center;
+        width: calc(var(--cardsLogScale)*1vw*20);
+    }
+    #curCardDescLog{
+        font-family: Arial, Helvetica, sans-serif;
+        color: rgba(0, 0, 0, 0.778);
+        font-weight: bold;
+        font-size: calc(var(--cardsLogScale)*1vw*1.3);
+
+        position: absolute;
+        top: calc(var(--cardsLogScale)*1vw*23);
+        left: calc(var(--cardsLogScale)*1vw*8.3);
+
+        width: calc(var(--cardsLogScale)*1vw*14);
+        text-align: center;
+        overflow: auto;
+        height: calc(var(--cardsLogScale)*1vw*6);
+    }
+    #curCardRarityLog{
+        position: absolute;
+        left: calc(var(--cardsLogScale)*1vw*8.5);
+        width: calc(var(--cardsLogScale)*1vw*13.8);
+        text-align: center;
+        mix-blend-mode: screen;
+    }
+    .curCardMultipleIconsContainerLog{
+        position: absolute;
+        top: calc(var(--cardsLogScale)*1vw*13.5);
+        left: calc(var(--cardsLogScale)*1vw*3.9);
+        width: calc(var(--cardsLogScale)*1vw*5.2);
+        height: calc(var(--cardsLogScale)*1vw*2);
+        display:flex;
+        flex-wrap:nowrap;
+        align-content:space-around;
+}
+    .curCardTalentIconLog{
+        position: absolute;
+        width: calc(var(--cardsLogScale)*1vw*3.1);
+        top: calc(var(--cardsLogScale)*1vw*19.6);
+        left: calc(var(--cardsLogScale)*1vw*10.3);
+    }
+    .curCardTalentLog{
+        position: absolute;
+        font-family: "talentFont";
+        color: antiquewhite;
+        font-size: calc(var(--cardsLogScale)*1vw*1.2);
+        top: calc(var(--cardsLogScale)*1vw*21.4);
+        left: calc(var(--cardsLogScale)*1vw*13.5);
+        width: calc(var(--cardsLogScale)*1vw*6);
+        height: calc(var(--cardsLogScale)*1vw*1.7);
+        padding-left:calc(var(--cardsLogScale)*1vw*1.9*var(--cardsLogScale));
+    }
+    .curCardAligLog{
+        position: absolute;
+        width: calc(var(--cardsLogScale)*1vw*4);
+        left: calc(var(--cardsLogScale)*1vw*5.8);
+        top: calc(var(--cardsLogScale)*1vw*10);
     }
 </style>

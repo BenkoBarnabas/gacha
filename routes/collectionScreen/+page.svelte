@@ -8,6 +8,7 @@
 
     import spellForeground from "../../lib/assets/global/spellV1Top.png"
     import spellV2Foreground from "../../lib/assets/global/spellV2Top.png"
+    import spellBackground from "../../lib/assets/global/spellV1BG.png"
 
     import qucikAtk from "../../lib/assets/global/quickAtk.png"
     import doubleAtk from "../../lib/assets/global/doubleAtk.png"
@@ -484,7 +485,7 @@
 <div id="cardPreview" >
     <div id="curCardQuote" class="noScrollers"><i>"{curCardInView.quote}"</i></div>
     <div style="position:relative">
-        <img class="cardTemplate" src={cardBackground} alt="cardBg">
+        <img class="cardTemplate" src={spellBackground} alt="cardBg">
         <div id="rarityBG" style="background: {backgroundColorByCost[(curCardInView.rarity)-3]}; "></div>
         <img id="curCardInView" src={curCardInView.source} alt="">
         <img class="cardTemplate" src={spellForeground} alt="cardBg">

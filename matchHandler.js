@@ -20,6 +20,8 @@ let yourGameID = ""
 let opponentGameID = ""
 let gameKey = ""
 
+export let lastCardPlayedClient = ""
+
 export let yourGameParametersClient = {currentHand: [],remaningDeck: [], yourBoard: Array(10).fill(""), mana: 0, spellMana: 0, username: "", hp: 0}
 export let enemyGameParametersClient = {currentHand: [],remaningDeck: [], yourBoard: Array(10).fill(""), mana: 0, spellMana: 0, username: "", hp: 0}
 
@@ -95,7 +97,7 @@ export function SveltePageLoaded(){
 let socketConnectedEvent
 let nextTurnEvent
 let updateEvent
-
+let actionLogEvent
 
 
 function WaitForDomPage(){
@@ -108,6 +110,7 @@ function WaitForDomPage(){
         socketConnectedEvent = new Event('socketConnected');
         nextTurnEvent = new Event("nextTurn")
         updateEvent = new Event("updateParams")
+        actionLogEvent = new Event("actionLog")
         ServerCode()
     }
 }
@@ -166,6 +169,10 @@ function ServerCode(){
             document.dispatchEvent(nextTurnEvent);
             document.dispatchEvent(updateEvent)
         }
+        else if(msg.includes("ActionLog")){
+            lastCardPlayedClient = JSON.parse(msg.replace("ActionLog",""))
+            document.dispatchEvent(actionLogEvent)
+        }
         else{
             msg = JSON.parse(msg)
             if(msg.gameId != yourGameID){
@@ -212,6 +219,12 @@ export function SendGameData(data){
 //-------------------------------------------------------------------------------------------
 export function EndTurn(){
     Client.socket.emit(gameKey,"TurnEnded")
+}
+
+export function LastActionLog(card){
+    
+    Client.socket.emit(gameKey,`ActionLog${JSON.stringify(card)}`)
+    console.log("ACTIONLOG: ",`ActionLog${JSON.stringify(card)}`);
 }
 
 
