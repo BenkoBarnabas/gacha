@@ -716,6 +716,7 @@
             logOpen = logOpen
             logCard.offsetHeight
             logCard.style.animation = "none"
+            logCard.style.top = "-10vh"
         }, 4000);
     }
     // #endregion
@@ -1179,11 +1180,30 @@
                                 <div class="curCardCostList">{enemyBoard[i].cost}</div>
                                 <div class="curCardNameList">{enemyBoard[i].name}</div>
 
-                                <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[enemyBoard[i].aligment]}; border-radius: 0.5vw;"></div>
-                                <img class="curCardAligList" src={aligmentIcons[enemyBoard[i].aligment]} alt="aligment">
+                                {#if enemyBoard[i].aligment.includes(",")}
+                                        {#each enemyBoard[i].aligment.split(",") as aligment,j}
+                                        <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[aligment]}; border-radius: 0.5vw;"></div>
+                                        <img style="top: calc(var(--cardOnBoardScale)*1vw*{4.8 + j* 2.55});" class="curCardAligList" src={aligmentIcons[aligment]} alt="aligment">
+                                        {/each}
+                                    {:else}
+                                        <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[enemyBoard[i].aligment]}; border-radius: 0.5vw;"></div>
+                                        <img class="curCardAligList" src={aligmentIcons[enemyBoard[i].aligment]} alt="aligment">
+                                    {/if}
 
-                                <div class="curCardTalentList">{enemyBoard[i].talent.replace("támadás","")}</div>
-                                <img style="left: calc(var(--cardOnBoardScale)*1vw*4);" class="curCardTalentIconList" src={talentIcons[enemyBoard[(enemyBoard.length)/2+i].talent.replace(" ","")]} alt="talent">
+                                    {#if enemyBoard[i].talent != ""}
+                                        {#if enemyBoard[i].talent.includes(",")}
+                                            <div class="curCardMultipleIconsContainerList">
+                                                {#each enemyBoard[i].talent.split(",") as icon, j}
+                                                <div style="width:calc(var(--cardOnBoardScale)*1vw*{0.57*3.9/enemyBoard[i].talent.split(",").length}); margin:auto">
+                                                    <img style="calc(var(--cardOnBoardScale)*1vw*1.4);" src={talentIcons[icon.replace(" ","")]} alt="talent">
+                                                </div>
+                                                {/each}
+                                            </div>
+                                            {:else}
+                                            <div class="curCardTalentList">{enemyBoard[i].talent.replace("támadás","")}</div>
+                                            <img style="left: calc(var(--cardOnBoardScale)*1vw*3.8);" class="curCardTalentIconList" src={talentIcons[enemyBoard[i].talent.replace(" ","")]} alt="talent">
+                                            {/if}
+                                    {/if}
                     
                                 <div class="curCardRarityList" style="{starsColorByCost[(enemyBoard[i].stars)-3]}">
                                     {#each Array(Number(enemyBoard[i].stars)) as card,index}
@@ -1220,8 +1240,8 @@
 
                             {#if enemyBoard[(enemyBoard.length)/2+i].aligment.includes(",")}
                                 {#each enemyBoard[(enemyBoard.length)/2+i].aligment.split(",") as aligment,j}
-                                <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[enemyBoard[(enemyBoard.length)/2+j].aligment]}; border-radius: 0.5vw;"></div>
-                                <img style="top: calc(var(--cardOnBoardScale)*1vw*{4.8 + j* 2.55}); background-color: {aligmentBackgroundColors[aligment]}; border-radius: 0.5vw;" class="curCardAligList" src={aligmentIcons[aligment]} alt="aligment">
+                                <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[aligment]}; border-radius: 0.5vw;"></div>
+                                <img style="top: calc(var(--cardOnBoardScale)*1vw*{4.8 + j* 2.55});" class="curCardAligList" src={aligmentIcons[aligment]} alt="aligment">
                                 {/each}
                             {:else}
                                 <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[enemyBoard[(enemyBoard.length)/2+i].aligment]}; border-radius: 0.5vw;"></div>
@@ -1230,16 +1250,16 @@
 
                             {#if enemyBoard[(enemyBoard.length)/2+i].talent != ""}
                                 {#if enemyBoard[(enemyBoard.length)/2+i].talent.includes(",")}
-                                    <div class="curCardMultipleIconsContainer">
+                                    <div class="curCardMultipleIconsContainerList">
                                         {#each enemyBoard[(enemyBoard.length)/2+i].talent.split(",") as icon, j}
-                                        <div style="width:{5.2/enemyBoard[(enemyBoard.length)/2+i].talent.split(",").length}vw; margin:auto">
+                                        <div style="width:calc(var(--cardOnBoardScale)*1vw*{0.57*3.9/enemyBoard[i+(enemyBoard.length)/2].talent.split(",").length}); margin:auto">
                                             <img style="calc(var(--cardOnBoardScale)*1vw*1.4);" src={talentIcons[icon.replace(" ","")]} alt="talent">
                                         </div>
                                         {/each}
                                     </div>
                                     {:else}
                                     <div class="curCardTalentList">{enemyBoard[(enemyBoard.length)/2+i].talent.replace("támadás","")}</div>
-                                    <img style="left: calc(var(--cardOnBoardScale)*1vw*4);" class="curCardTalentIconList" src={talentIcons[enemyBoard[(enemyBoard.length)/2+i].talent.replace(" ","")]} alt="talent">
+                                    <img style="left: calc(var(--cardOnBoardScale)*1vw*3.8);" class="curCardTalentIconList" src={talentIcons[enemyBoard[(enemyBoard.length)/2+i].talent.replace(" ","")]} alt="talent">
                                     {/if}
                             {/if}
                 
@@ -1259,82 +1279,6 @@
                 </tr>
             </div>
             <div class="gameFiledSides" id="yourSide">
-                <tr class="tierOne boardRows">
-                    {#each Array((yourBoard.length)/2) as cell,i}
-                        <td class="target boardsCells" id="td{i}" bind:this={yourBoardDoms[i]}>
-                        {#if yourBoardPhs[i] != ""}
-                            {#if yourBoardPhs[i].type == "character"}
-                                <div on:click={() => PlaceByClick(yourBoardPhs[i],i)} id="cardPreviewListCont" class:isPlacingModePh={isCardInYourHandInPlacingMode} style="filter: grayscale(0.5) contrast(50%);opacity: 0.7;" on:keydown role="button" tabindex="">
-                                    <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute" src={cardV2Background} alt="cardBg">
-                                    <div id="rarityBGList" style="background: {backgroundColorByCost[( yourBoardPhs[i].stars)-3]}; "></div>
-                                    <img draggable="false" class = "cardButton" src={yourBoardPhs[i].source} alt="preview"/>
-                                    <button class="cardListFrame" alt="cardBg"></button>
-                                    <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*2.68);">{ yourBoardPhs[i].attack}</div>
-                                    <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*9.65);">{ yourBoardPhs[i].health}</div>
-                                    <div class="curCardCostList">{ yourBoardPhs[i].cost}</div>
-                                    <div class="curCardNameList">{ yourBoardPhs[i].name}</div>
-                        
-                                    <div class="curCardRarityList" style="{starsColorByCost[( yourBoardPhs[i].stars)-3]}">
-                                        {#each Array(Number( yourBoardPhs[i].stars)) as card,index}
-                                            <span style="font-size: calc(var(--cardOnBoardScale)*1vw*1);">★</span>
-                                        {/each}
-                                    </div>
-                                </div>
-                            {:else if yourBoardPhs[i].type == "ko"}
-                                <div on:click={() => KoPlacedByClick(i,"yourSide")} style="filter: grayscale(0.5) contrast(50%);opacity: 0.7;" class:isPlacingModePh={isKoInPlacingMode} class="ko" on:keydown role="button" tabindex="">{yourBoardPhs[i].health}</div>
-                            {/if}
-                        {/if}
-
-                        {#if yourBoard[i] != ""}
-                            {#if yourBoard[i].type == "character"}
-                                <div on:click={() => CardInAttackMode(yourBoard[i])} class:cardAwake={!yourBoard[i].fieldEffects.includes("asleep") && isYourTurn} style="--AnimTargetTop: {AnimTargetTop}; --AnimTargetLeft: {AnimTargetLeft}; --AnimAttackerYRot: {AnimAttackerYRot};"  class:cardInAttackingMode={cardInAttackingMode == yourBoard[i]}  id="cardPreviewListCont" on:keydown role="button" tabindex="">
-                                    <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute" src={cardV2Background} alt="cardBg">
-                                    <div id="rarityBGList" style="background: {backgroundColorByCost[(yourBoard[i].stars)-3]}; "></div>
-                                    <img draggable="false" class = "cardButton" src={yourBoard[i].source} alt="preview"/>
-                                    <button class="cardListFrame" alt="cardBg"></button>
-                                    <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*2.68);">{yourBoard[i].attack}</div>
-                                    <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*9.65);">{yourBoard[i].health}</div>
-                                    <div class="curCardCostList">{yourBoard[i].cost}</div>
-                                    <div class="curCardNameList">{yourBoard[i].name}</div>
-
-                                    {#if yourBoard[i].aligment.includes(",")}
-                                        {#each yourBoard[i].aligment.split(",") as aligment,j}
-                                        <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[yourBoard[i].aligment]}; border-radius: 0.5vw;"></div>
-                                        <img style="top: calc(var(--cardOnBoardScale)*1vw*{4.8 + j* 2.55}); background-color: {aligmentBackgroundColors[aligment]}; border-radius: 0.5vw;" class="curCardAligList" src={aligmentIcons[aligment]} alt="aligment">
-                                        {/each}
-                                    {:else}
-                                        <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[yourBoard[i].aligment]}; border-radius: 0.5vw;"></div>
-                                        <img class="curCardAligList" src={aligmentIcons[yourBoard[i].aligment]} alt="aligment">
-                                    {/if}
-
-                                    {#if yourBoard[i].talent != ""}
-                                        {#if yourBoard[i].talent.includes(",")}
-                                            <div class="curCardMultipleIconsContainer">
-                                                {#each yourBoard[i].talent.split(",") as icon, j}
-                                                <div style="width:{5.2/yourBoard[i].talent.split(",").length}vw; margin:auto">
-                                                    <img style="calc(var(--cardOnBoardScale)*1vw*1.4);" src={talentIcons[icon.replace(" ","")]} alt="talent">
-                                                </div>
-                                                {/each}
-                                            </div>
-                                            {:else}
-                                            <div class="curCardTalentList">{yourBoard[i].talent.replace("támadás","")}</div>
-                                            <img style="left: calc(var(--cardOnBoardScale)*1vw*4);" class="curCardTalentIconList" src={talentIcons[yourBoard[i].talent.replace(" ","")]} alt="talent">
-                                            {/if}
-                                    {/if}
-
-                                    <div class="curCardRarityList" style="{starsColorByCost[(yourBoard[i].stars)-3]}">
-                                        {#each Array(Number(yourBoard[i].stars)) as card,index}
-                                            <span style="font-size: calc(var(--cardOnBoardScale)*1vw*1);">★</span>
-                                        {/each}
-                                    </div>
-                                </div>
-                            {:else if yourBoard[i].type == "ko"}
-                                <div class="ko">{yourBoard[i].health}</div>
-                            {/if}
-                        {/if}
-                        </td>
-                    {/each}
-                </tr>
                 <tr class="tierTwo boardRows">
                     {#each Array((yourBoard.length)/2) as cell,i}
                         <td class="target boardsCells" id="td{i+(yourBoard.length)/2}" bind:this={yourBoardDoms[i+(yourBoard.length/2)]}>
@@ -1375,8 +1319,8 @@
 
                                     {#if yourBoard[i+(yourBoard.length)/2].aligment.includes(",")}
                                         {#each yourBoard[i+(yourBoard.length)/2].aligment.split(",") as aligment,j}
-                                        <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[yourBoard[i+(yourBoard.length)/2].aligment]}; border-radius: 0.5vw;"></div>
-                                        <img style="top: calc(var(--cardOnBoardScale)*1vw*{4.8 + j* 2.55}); background-color: {aligmentBackgroundColors[aligment]}; border-radius: 0.5vw;" class="curCardAligList" src={aligmentIcons[aligment]} alt="aligment">
+                                        <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[aligment]}; border-radius: 0.5vw;"></div>
+                                        <img style="top: calc(var(--cardOnBoardScale)*1vw*{4.8 + j* 2.55});" class="curCardAligList" src={aligmentIcons[aligment]} alt="aligment">
                                         {/each}
                                     {:else}
                                         <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[yourBoard[i+(yourBoard.length)/2].aligment]}; border-radius: 0.5vw;"></div>
@@ -1385,16 +1329,16 @@
 
                                     {#if yourBoard[i+(yourBoard.length)/2].talent != ""}
                                         {#if yourBoard[i+(yourBoard.length)/2].talent.includes(",")}
-                                            <div class="curyourBoard[i+(yourBoard.length)/2]MultipleIconsContainer">
+                                            <div class="curCardMultipleIconsContainerList">
                                                 {#each yourBoard[i+(yourBoard.length)/2].talent.split(",") as icon, j}
-                                                <div style="width:{5.2/yourBoard[i+(yourBoard.length)/2].talent.split(",").length}vw; margin:auto">
-                                                    <img style="width:1.4vw" src={talentIcons[icon.replace(" ","")]} alt="talent">
+                                                <div style="width:calc(var(--cardOnBoardScale)*1vw*{0.57*3.9/yourBoard[i+(yourBoard.length)/2].talent.split(",").length}); margin:auto">
+                                                    <img style="width:calc(var(--cardOnBoardScale)*1vw*1.4);" src={talentIcons[icon.replace(" ","")]} alt="talent">
                                                 </div>
                                                 {/each}
                                             </div>
                                             {:else}
                                             <div class="curCardTalentList">{yourBoard[i+(yourBoard.length)/2].talent.replace("támadás","")}</div>
-                                            <img style="left: 3.8vw;" class="curCardTalentIconList" src={talentIcons[yourBoard[i+(yourBoard.length)/2].talent.replace(" ","")]} alt="talent">
+                                            <img style="left:calc(var(--cardOnBoardScale)*1vw*3.8);" class="curCardTalentIconList" src={talentIcons[yourBoard[i+(yourBoard.length)/2].talent.replace(" ","")]} alt="talent">
                                             {/if}
                                     {/if}      
 
@@ -1407,7 +1351,83 @@
                             {:else if yourBoard[i+(yourBoard.length)/2].type == "ko"}
                                 <div class="ko BoardTierTwo">{yourBoard[i+(yourBoard.length)/2].health}</div>
                             {/if}
-                        {/if}   
+                        {/if} 
+                        </td>
+                    {/each}
+                </tr>
+                <tr class="tierOne boardRows">
+                    {#each Array((yourBoard.length)/2) as cell,i}
+                        <td class="target boardsCells" id="td{i}" bind:this={yourBoardDoms[i]}>
+                        {#if yourBoardPhs[i] != ""}
+                            {#if yourBoardPhs[i].type == "character"}
+                                <div on:click={() => PlaceByClick(yourBoardPhs[i],i)} id="cardPreviewListCont" class:isPlacingModePh={isCardInYourHandInPlacingMode} style="filter: grayscale(0.5) contrast(50%);opacity: 0.7;" on:keydown role="button" tabindex="">
+                                    <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute" src={cardV2Background} alt="cardBg">
+                                    <div id="rarityBGList" style="background: {backgroundColorByCost[( yourBoardPhs[i].stars)-3]}; "></div>
+                                    <img draggable="false" class = "cardButton" src={yourBoardPhs[i].source} alt="preview"/>
+                                    <button class="cardListFrame" alt="cardBg"></button>
+                                    <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*2.68);">{ yourBoardPhs[i].attack}</div>
+                                    <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*9.65);">{ yourBoardPhs[i].health}</div>
+                                    <div class="curCardCostList">{ yourBoardPhs[i].cost}</div>
+                                    <div class="curCardNameList">{ yourBoardPhs[i].name}</div>
+                        
+                                    <div class="curCardRarityList" style="{starsColorByCost[( yourBoardPhs[i].stars)-3]}">
+                                        {#each Array(Number( yourBoardPhs[i].stars)) as card,index}
+                                            <span style="font-size: calc(var(--cardOnBoardScale)*1vw*1);">★</span>
+                                        {/each}
+                                    </div>
+                                </div>
+                            {:else if yourBoardPhs[i].type == "ko"}
+                                <div on:click={() => KoPlacedByClick(i,"yourSide")} style="filter: grayscale(0.5) contrast(50%);opacity: 0.7;" class:isPlacingModePh={isKoInPlacingMode} class="ko" on:keydown role="button" tabindex="">{yourBoardPhs[i].health}</div>
+                            {/if}
+                        {/if}
+
+                        {#if yourBoard[i] != ""}
+                            {#if yourBoard[i].type == "character"}
+                                <div on:click={() => CardInAttackMode(yourBoard[i])} class:cardAwake={!yourBoard[i].fieldEffects.includes("asleep") && isYourTurn} style="--AnimTargetTop: {AnimTargetTop}; --AnimTargetLeft: {AnimTargetLeft}; --AnimAttackerYRot: {AnimAttackerYRot};"  class:cardInAttackingMode={cardInAttackingMode == yourBoard[i]}  id="cardPreviewListCont" on:keydown role="button" tabindex="">
+                                    <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute" src={cardV2Background} alt="cardBg">
+                                    <div id="rarityBGList" style="background: {backgroundColorByCost[(yourBoard[i].stars)-3]}; "></div>
+                                    <img draggable="false" class = "cardButton" src={yourBoard[i].source} alt="preview"/>
+                                    <button class="cardListFrame" alt="cardBg"></button>
+                                    <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*2.68);">{yourBoard[i].attack}</div>
+                                    <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*9.65);">{yourBoard[i].health}</div>
+                                    <div class="curCardCostList">{yourBoard[i].cost}</div>
+                                    <div class="curCardNameList">{yourBoard[i].name}</div>
+
+                                    {#if yourBoard[i].aligment.includes(",")}
+                                        {#each yourBoard[i].aligment.split(",") as aligment,j}
+                                        <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[aligment]}; border-radius: 0.5vw;"></div>
+                                        <img style="top: calc(var(--cardOnBoardScale)*1vw*{4.8 + j* 2.55});" class="curCardAligList" src={aligmentIcons[aligment]} alt="aligment">
+                                        {/each}
+                                    {:else}
+                                        <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[yourBoard[i].aligment]}; border-radius: 0.5vw;"></div>
+                                        <img class="curCardAligList" src={aligmentIcons[yourBoard[i].aligment]} alt="aligment">
+                                    {/if}
+
+                                    {#if yourBoard[i].talent != ""}
+                                        {#if yourBoard[i].talent.includes(",")}
+                                            <div class="curCardMultipleIconsContainerList">
+                                                {#each yourBoard[i].talent.split(",") as icon, j}
+                                                <div style="width:calc(var(--cardOnBoardScale)*1vw*{0.57*3.9/yourBoard[i].talent.split(",").length}); margin:auto">
+                                                    <img style="width:calc(var(--cardOnBoardScale)*1vw*1.4);" src={talentIcons[icon.replace(" ","")]} alt="talent">
+                                                </div>
+                                                {/each}
+                                            </div>
+                                            {:else}
+                                            <div class="curCardTalentList">{yourBoard[i].talent.replace("támadás","")}</div>
+                                            <img style="left:calc(var(--cardOnBoardScale)*1vw*3.8);" class="curCardTalentIconList" src={talentIcons[yourBoard[i].talent.replace(" ","")]} alt="talent">
+                                            {/if}
+                                    {/if} 
+
+                                    <div class="curCardRarityList" style="{starsColorByCost[(yourBoard[i].stars)-3]}">
+                                        {#each Array(Number(yourBoard[i].stars)) as card,index}
+                                            <span style="font-size: calc(var(--cardOnBoardScale)*1vw*1);">★</span>
+                                        {/each}
+                                    </div>
+                                </div>
+                            {:else if yourBoard[i].type == "ko"}
+                                <div class="ko">{yourBoard[i].health}</div>
+                            {/if}
+                        {/if}
                         </td>
                     {/each}
                 </tr>
@@ -1717,7 +1737,6 @@
     #actionLog{
         position: absolute;
 
-        background-color: rgba(19, 216, 19, 0.521);
         width: 16vw;
         height: 44vh;
 
@@ -1739,7 +1758,6 @@
         text-align: center;
 
         position: absolute;
-        background-color: red;
     }
     .playerHpCont{
 
@@ -1750,8 +1768,7 @@
 
         font-size: 4.5vw;
         font-family: "ShadowLight";
-        text-align: center;
-        background-color: blue;
+        text-align: center;;
     }   
     #enemyPlayerName{top:2vh;left: 2vw;}
     #enemyPlayerHp{top: 8vh;left: 2vw;}
@@ -1934,12 +1951,12 @@
     }
     #playField{
         background: url(../../lib/assets/gameplay/pad.png);
-        background-size: cover;
-        width: 74vw;
+        background-size: 100% 100%;
+        width: 80vw;
         height: 60vh;
 
         position: absolute;
-        left: 13vw;
+        left: 7vw;
         top: 15vh;
     }
     @media screen and (min-width: 836px) {
@@ -2015,29 +2032,33 @@
     #yourSide{
     }
     #enemySide{
+        margin-top: 3vh;
     }
 
 
     .gameFiledSides{
         width: 74vw;
-        height: 32.5vh; 
+        height: 27.25vh; 
         position: relative;
     }
     .boardRows{
         width: 74vw;
         height: 16.25vh;
         position: absolute;
+        margin-left: 8vw;
+        margin-right: 8vw;
     }
     .boardsCells{
         padding:0;
         margin: 0;
 
-        width: 14.8vw; /*wanna kill myself*/
+        width: 12.8vw; /*wanna kill myself*/
         height: 16.25vh;
 
         z-index: 11;
         perspective: 10vw; /* Adjust the perspective value as needed */
         perspective-origin: 50% 50%;
+        border: 2px solid black;
     }
     .tierOne{
         top: 0;
@@ -2303,6 +2324,16 @@
         height: calc(var(--cardOnBoardScale)*1vw*1);
         padding-left:calc(var(--cardOnBoardScale)*1vw*1.9);
     }
+    .curCardMultipleIconsContainerList{
+        position: absolute;
+        top: calc(var(--cardOnBoardScale)*1vw*13.5);
+        left: calc(var(--cardOnBoardScale)*1vw*3.9);
+        width: calc(var(--cardOnBoardScale)*1vw*5.2);
+        height: calc(var(--cardOnBoardScale)*1vw*2);
+        display:flex;
+        flex-wrap:nowrap;
+        align-content:space-around;
+    }
     .curCardAligList{
         position: absolute;
         width: calc(var(--cardOnBoardScale)*1vw*2.2);
@@ -2506,12 +2537,12 @@
         90%{
             transform: rotateX(360deg) rotateZ(0deg) rotateY(0deg);
             background: none;
-            top: -5vh;
+            top: -20vh;
             scale: 1.1;
         }
         100%{
             transform: rotateX(360deg) rotateZ(0deg) rotateY(0deg);
-            top: 0vh;
+            top: -10vh;
             scale: 1;
         }
     }
@@ -2605,7 +2636,7 @@
         display:flex;
         flex-wrap:nowrap;
         align-content:space-around;
-}
+    }
     .curCardTalentIconLog{
         position: absolute;
         width: calc(var(--cardsLogScale)*1vw*3.1);
