@@ -98,6 +98,7 @@ let socketConnectedEvent
 let nextTurnEvent
 let updateEvent
 let actionLogEvent
+let aligmentAnimEvent
 
 
 function WaitForDomPage(){
@@ -111,6 +112,7 @@ function WaitForDomPage(){
         nextTurnEvent = new Event("nextTurn")
         updateEvent = new Event("updateParams")
         actionLogEvent = new Event("actionLog")
+        aligmentAnimEvent = new Event("cellAligmentAnim")
         ServerCode()
     }
 }
@@ -173,6 +175,10 @@ function ServerCode(){
             lastCardPlayedClient = JSON.parse(msg.replace("ActionLog",""))
             document.dispatchEvent(actionLogEvent)
         }
+        else if(msg.includes("CellAligmentAnimation")){
+            aligmentAnimEvent.data = msg.replace("CellAligmentAnimation","")
+            document.dispatchEvent(aligmentAnimEvent)
+        }
         else{
             msg = JSON.parse(msg)
             if(msg.gameId != yourGameID){
@@ -225,6 +231,9 @@ export function LastActionLog(card){
     
     Client.socket.emit(gameKey,`ActionLog${JSON.stringify(card)}`)
     console.log("ACTIONLOG: ",`ActionLog${JSON.stringify(card)}`);
+}
+export function CellAligmentAnimation(targetId){
+    Client.socket.emit(gameKey,`CellAligmentAnimation${targetId}`)
 }
 
 
