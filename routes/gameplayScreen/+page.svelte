@@ -20,6 +20,12 @@
     import spellManaCrystal from "../../lib/assets/gameplay/spellManaCrystal.png"
     import manaCrystalPh from "../../lib/assets/gameplay/manaCrystalPh.png"
 
+    import scribble1 from "../../lib/assets/gameplay/scribble1.png"
+    import scribble2 from "../../lib/assets/gameplay/scribble2.png"
+    import scribble3 from "../../lib/assets/gameplay/scribble3.png"
+    import scribble4 from "../../lib/assets/gameplay/scribble4.png"
+    import scribble5 from "../../lib/assets/gameplay/scribble5.png"
+
     import { onMount } from 'svelte';
 	import { requestFullScreen} from "../../client";
 	import { blur } from "svelte/transition";
@@ -691,9 +697,24 @@
 
     let logOpen = false
     let logCard
+    let actionLogList = []
     function OpenBattleLog(){
         logOpen = !logOpen
         logOpen = logOpen
+    }
+    function NextBattleLog(){
+        if(actionLogList.indexOf(lastCardPlayed) != actionLogList.length-1){
+            lastCardPlayed = actionLogList[actionLogList.indexOf(lastCardPlayed)+1]
+        }
+        lastCardPlayed = lastCardPlayed
+        console.log("ACTIONlOG",lastCardPlayed);
+    }
+    function PrevBattleLog(){
+        if(actionLogList.indexOf(lastCardPlayed) != 0){
+            lastCardPlayed = actionLogList[actionLogList.indexOf(lastCardPlayed)-1]
+        }
+        lastCardPlayed = lastCardPlayed
+        console.log("ACTIONlOG",lastCardPlayed);
     }
     function ActionLogEvent(){
         logOpen = false
@@ -703,6 +724,7 @@
 
         lastCardPlayed = lastCardPlayedClient
         lastCardPlayed = lastCardPlayed
+        actionLogList.push(lastCardPlayed)
 
         setTimeout(() => {
             logCard.style.animation = "none"
@@ -1160,6 +1182,12 @@
             {/each}
         </div>
         <div id="playField">
+            <img class="scribble" style="top: 7%; left: 11%; width: 22vw;" src={scribble1} alt="scribble in a book">
+            <img class="scribble" style="top: 7%; right: 11%; width: 22vw;" src={scribble2} alt="scribble in a book">
+            <img class="scribble" style="bottom: 7%; left: 11%; width: 22vw;" src={scribble3} alt="scribble in a book">
+            <img class="scribble" style="bottom: 7%; right: 11%; width: 15vw;" src={scribble4} alt="scribble in a book">
+            <img class="scribble" style="top: 50%; right: 11%; width: 5vw;" src={scribble5} alt="scribble in a book">
+
             <div class="gameFiledSides" id="enemySide">
                 <tr class="tierTwo boardRows">
                     {#each Array(enemyBoard.length/2) as card,i}
@@ -1182,28 +1210,28 @@
 
                                 {#if enemyBoard[i].aligment.includes(",")}
                                         {#each enemyBoard[i].aligment.split(",") as aligment,j}
-                                        <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[aligment]}; border-radius: 0.5vw;"></div>
+                                        <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[aligment]}; border-radius: 0.5vw; top: calc(var(--cardOnBoardScale)*1vw*{4.8 + j* 2.55});"></div>
                                         <img style="top: calc(var(--cardOnBoardScale)*1vw*{4.8 + j* 2.55});" class="curCardAligList" src={aligmentIcons[aligment]} alt="aligment">
                                         {/each}
                                     {:else}
                                         <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[enemyBoard[i].aligment]}; border-radius: 0.5vw;"></div>
                                         <img class="curCardAligList" src={aligmentIcons[enemyBoard[i].aligment]} alt="aligment">
-                                    {/if}
+                                {/if}
 
-                                    {#if enemyBoard[i].talent != ""}
+                                {#if enemyBoard[i].talent != ""}
                                         {#if enemyBoard[i].talent.includes(",")}
                                             <div class="curCardMultipleIconsContainerList">
                                                 {#each enemyBoard[i].talent.split(",") as icon, j}
                                                 <div style="width:calc(var(--cardOnBoardScale)*1vw*{0.57*3.9/enemyBoard[i].talent.split(",").length}); margin:auto">
-                                                    <img style="calc(var(--cardOnBoardScale)*1vw*1.4);" src={talentIcons[icon.replace(" ","")]} alt="talent">
+                                                    <img style="width:calc(var(--cardOnBoardScale)*1vw*1.4);" src={talentIcons[icon.replace(" ","")]} alt="talent">
                                                 </div>
                                                 {/each}
                                             </div>
                                             {:else}
                                             <div class="curCardTalentList">{enemyBoard[i].talent.replace("támadás","")}</div>
-                                            <img style="left: calc(var(--cardOnBoardScale)*1vw*3.8);" class="curCardTalentIconList" src={talentIcons[enemyBoard[i].talent.replace(" ","")]} alt="talent">
-                                            {/if}
-                                    {/if}
+                                            <img style="left:calc(var(--cardOnBoardScale)*1vw*3.8);" class="curCardTalentIconList" src={talentIcons[enemyBoard[i].talent.replace(" ","")]} alt="talent">
+                                        {/if}
+                                {/if} 
                     
                                 <div class="curCardRarityList" style="{starsColorByCost[(enemyBoard[i].stars)-3]}">
                                     {#each Array(Number(enemyBoard[i].stars)) as card,index}
@@ -1225,7 +1253,6 @@
                         <div on:click={() => KoPlacedByClick((enemyBoardPhs.length)/2+i,"enemySide")} style="filter: grayscale(0.5) contrast(50%);opacity: 0.7;" class="ko" on:keydown role="button" tabindex="">{enemyBoardPhs[(enemyBoardPhs.length)/2+i].health}</div>
                     {/if}
 
-
                     {#if enemyBoard[(enemyBoard.length)/2+i] != ""}
                         {#if enemyBoard[(enemyBoard.length)/2+i].type == "character"}
                         <div on:click={() => AttackCard(enemyBoard[(enemyBoard.length)/2+i],(enemyBoard.length)/2+i)} id="cardPreviewListCont"  class:cardOnBoardInTargetMode={attackableCardsDoms.includes(document.getElementById(`etd${i+(enemyBoard.length/2)}`))}  class:NotcardOnBoardInTargetMode={isCardOnBoardInAttackingMode && !attackableCardsDoms.includes(document.getElementById(`etd${i+(enemyBoard.length/2)}`))} on:keydown role="button" tabindex="">
@@ -1240,7 +1267,7 @@
 
                             {#if enemyBoard[(enemyBoard.length)/2+i].aligment.includes(",")}
                                 {#each enemyBoard[(enemyBoard.length)/2+i].aligment.split(",") as aligment,j}
-                                <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[aligment]}; border-radius: 0.5vw;"></div>
+                                <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[aligment]}; border-radius: 0.5vw; top: calc(var(--cardOnBoardScale)*1vw*{4.8 + j* 2.55});"></div>
                                 <img style="top: calc(var(--cardOnBoardScale)*1vw*{4.8 + j* 2.55});" class="curCardAligList" src={aligmentIcons[aligment]} alt="aligment">
                                 {/each}
                             {:else}
@@ -1249,19 +1276,19 @@
                             {/if}
 
                             {#if enemyBoard[(enemyBoard.length)/2+i].talent != ""}
-                                {#if enemyBoard[(enemyBoard.length)/2+i].talent.includes(",")}
-                                    <div class="curCardMultipleIconsContainerList">
-                                        {#each enemyBoard[(enemyBoard.length)/2+i].talent.split(",") as icon, j}
-                                        <div style="width:calc(var(--cardOnBoardScale)*1vw*{0.57*3.9/enemyBoard[i+(enemyBoard.length)/2].talent.split(",").length}); margin:auto">
-                                            <img style="calc(var(--cardOnBoardScale)*1vw*1.4);" src={talentIcons[icon.replace(" ","")]} alt="talent">
-                                        </div>
-                                        {/each}
-                                    </div>
-                                    {:else}
-                                    <div class="curCardTalentList">{enemyBoard[(enemyBoard.length)/2+i].talent.replace("támadás","")}</div>
-                                    <img style="left: calc(var(--cardOnBoardScale)*1vw*3.8);" class="curCardTalentIconList" src={talentIcons[enemyBoard[(enemyBoard.length)/2+i].talent.replace(" ","")]} alt="talent">
-                                    {/if}
-                            {/if}
+                                        {#if enemyBoard[(enemyBoard.length)/2+i].talent.includes(",")}
+                                            <div class="curCardMultipleIconsContainerList">
+                                                {#each enemyBoard[(enemyBoard.length)/2+i].talent.split(",") as icon, j}
+                                                <div style="width:calc(var(--cardOnBoardScale)*1vw*{0.57*3.9/enemyBoard[(enemyBoard.length)/2+i].talent.split(",").length}); margin:auto">
+                                                    <img style="width:calc(var(--cardOnBoardScale)*1vw*1.4);" src={talentIcons[icon.replace(" ","")]} alt="talent">
+                                                </div>
+                                                {/each}
+                                            </div>
+                                            {:else}
+                                            <div class="curCardTalentList">{enemyBoard[(enemyBoard.length)/2+i].talent.replace("támadás","")}</div>
+                                            <img style="left:calc(var(--cardOnBoardScale)*1vw*3.8);" class="curCardTalentIconList" src={talentIcons[enemyBoard[(enemyBoard.length)/2+i].talent.replace(" ","")]} alt="talent">
+                                        {/if}
+                                {/if} 
                 
                             <div class="curCardRarityList" style="{starsColorByCost[(enemyBoard[i+(enemyBoard.length)/2].stars)-3]}">
                                 {#each Array(Number(enemyBoard[i+(enemyBoard.length)/2].stars)) as card,index}
@@ -1319,7 +1346,7 @@
 
                                     {#if yourBoard[i+(yourBoard.length)/2].aligment.includes(",")}
                                         {#each yourBoard[i+(yourBoard.length)/2].aligment.split(",") as aligment,j}
-                                        <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[aligment]}; border-radius: 0.5vw;"></div>
+                                        <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[aligment]}; border-radius: 0.5vw; top: calc(var(--cardOnBoardScale)*1vw*{4.8 + j* 2.55});"></div>
                                         <img style="top: calc(var(--cardOnBoardScale)*1vw*{4.8 + j* 2.55});" class="curCardAligList" src={aligmentIcons[aligment]} alt="aligment">
                                         {/each}
                                     {:else}
@@ -1395,7 +1422,7 @@
 
                                     {#if yourBoard[i].aligment.includes(",")}
                                         {#each yourBoard[i].aligment.split(",") as aligment,j}
-                                        <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[aligment]}; border-radius: 0.5vw;"></div>
+                                        <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[aligment]}; border-radius: 0.5vw; top: calc(var(--cardOnBoardScale)*1vw*{4.8 + j* 2.55});"></div>
                                         <img style="top: calc(var(--cardOnBoardScale)*1vw*{4.8 + j* 2.55});" class="curCardAligList" src={aligmentIcons[aligment]} alt="aligment">
                                         {/each}
                                     {:else}
@@ -1594,6 +1621,8 @@
             {/if}
         </div>
         <button id="logOpenClose" on:click={OpenBattleLog}>Log</button>
+        <button style="position:absolute; bottom: 0; left: 50%;" on:click={PrevBattleLog}>Prev</button>
+        <button style="position:absolute; bottom: 0; right: 100%;" on:click={NextBattleLog}>Next</button>
     </div>
     
 </div>
@@ -1644,7 +1673,6 @@
     }
     .displayNone{display: none;}
     .displayBlock{display: block;}
-
 
 
     @keyframes -global-cardDeath{
@@ -1926,7 +1954,11 @@
     }
 
 
-
+    .scribble{
+        position: absolute;
+        display: block;
+        pointer-events: none;
+    }
     #spellTargetDiv{
         width: 74vw;
         height: 29.875vh; 
@@ -1953,7 +1985,7 @@
         background: url(../../lib/assets/gameplay/pad.png);
         background-size: 100% 100%;
         width: 80vw;
-        height: 60vh;
+        height: 66vh;
 
         position: absolute;
         left: 7vw;
@@ -2032,13 +2064,13 @@
     #yourSide{
     }
     #enemySide{
-        margin-top: 3vh;
+        margin-top: 3.5vh;
     }
 
 
     .gameFiledSides{
         width: 74vw;
-        height: 27.25vh; 
+        height: 29.5vh; 
         position: relative;
     }
     .boardRows{
@@ -2058,7 +2090,6 @@
         z-index: 11;
         perspective: 10vw; /* Adjust the perspective value as needed */
         perspective-origin: 50% 50%;
-        border: 2px solid black;
     }
     .tierOne{
         top: 0;
