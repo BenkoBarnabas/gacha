@@ -369,14 +369,7 @@
                 <img style="background-color: {aligmentBackgroundColors[card.aligment]}; border-radius: 0.5vw;" class="curCardAligList" src={aligmentIcons[card.aligment]} alt="aligment">
             {/if}
             
-            
-            
-
-            <div class="curCardRarityList" style="{starsColorByCost[(card.stars)-3]}">
-                {#each Array(Number(card.stars)) as card,index}
-                    <span style="font-size: 1vw;">★</span>
-                {/each}
-            </div>
+                
         </div>
         {/each}
     </div>
