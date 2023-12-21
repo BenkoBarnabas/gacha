@@ -1063,7 +1063,6 @@
             
             if(target.aligment.includes(powerModType)){
                 target.health -= eval(`(Math.ceil(${dmg}${powerModDmg}))`)
-                console.log("POWERMODLOG:",eval(`(Math.ceil(${dmg}${powerModDmg}))`));
             }
             else{
                 target.health -= dmg
@@ -1270,52 +1269,68 @@
 
                 const result = await getUserChoice();
                 console.log("CHOOSELOG: ",result);
-
+                
                 var index
+                var preHealth
+                var preAttack
                 
                 yourBoard.forEach(element => {
                     if(element != ""){
                         if(element.name == "Kúti" || element.name == "Kúti humán" || element.name == "Kúti reál" || element.name == "Kúti sport"){
                             console.log("CHOOSELOG: ",element.name);
                             index = yourBoard.indexOf(element)
+                            preHealth = yourBoard[index].health
+                            preAttack = yourBoard[index].attack
+                            yourBoard[index].name == "Kúti humán" && preHealth != 1 ? preHealth -= 1 : {}
+                            yourBoard[index].name == "Kúti sport" && preAttack > 2 ? preAttack -= 2 : {}
                             yourBoard[index] = result
                         }
                     }
                 });
 
                 yourBoard[index].fieldEffects.push("asleep")
-                switch (result.name) {
-                case 'Kúti humán':
-                    yourBoard[index].health += 1
-                    yourBoardDoms[index].children[0].children[5].style.animation = "none"
-                    yourBoardDoms[index].children[0].children[5].offsetHeight
-                    yourBoardDoms[index].children[0].children[5].style.animation = "statHeal 1s"
 
-                    spellDmgMulti = 2
-                    
-                break;
-                case 'Kúti reál':
-                    yourBoard[index].health == Cards.KutiCard.health
-                    yourBoardDoms[index].children[0].children[5].style.animation = "none"
-                    yourBoardDoms[index].children[0].children[5].offsetHeight
-                    yourBoardDoms[index].children[0].children[5].style.animation = "statHeal 1s"
-                break;
-                case 'Kúti sport':
-                    yourBoard[index].attack += 2
-                    yourBoardDoms[index].children[0].children[4].style.animation = "none"
-                    yourBoardDoms[index].children[0].children[4].offsetHeight
-                    yourBoardDoms[index].children[0].children[4].style.animation = "statHeal 1s"
-                    
-                break;
-                default:
-                console.log('Invalid choice');
-                // Handle invalid choice
-            }
-                DeleteChoosingMode()
+                yourBoard[index].health = preHealth
+                yourBoard[index].attack = preAttack
+
+                switch (result.name) {
+                    case 'Kúti humán':
+                        yourBoard[index].health += 1
+                        yourBoardDoms[index].children[0].children[5].style.animation = "none"
+                        yourBoardDoms[index].children[0].children[5].offsetHeight
+                        yourBoardDoms[index].children[0].children[5].style.animation = "statHeal 1s"
+
+                        spellDmgMulti = 2
+                        
+                    break;
+                    case 'Kúti reál':
+                        yourBoard[index].health == Cards.KutiCard.health
+                        yourBoardDoms[index].children[0].children[5].style.animation = "none"
+                        yourBoardDoms[index].children[0].children[5].offsetHeight
+                        yourBoardDoms[index].children[0].children[5].style.animation = "statHeal 1s"
+
+                        yourBoard[index].attack += 1
+                        yourBoardDoms[index].children[0].children[4].style.animation = "none"
+                        yourBoardDoms[index].children[0].children[4].offsetHeight
+                        yourBoardDoms[index].children[0].children[4].style.animation = "statHeal 1s"
+                    break;
+                    case 'Kúti sport':
+                        yourBoard[index].attack += 2
+                        yourBoardDoms[index].children[0].children[4].style.animation = "none"
+                        yourBoardDoms[index].children[0].children[4].offsetHeight
+                        yourBoardDoms[index].children[0].children[4].style.animation = "statHeal 1s"
+                        
+                    break;
+                    default:
+                    console.log('Invalid choice');
+                    // Handle invalid choice
+                }
+                
 
                 yourBoard = yourBoard
                 SendGameData(yourGameParameters)
-            
+                
+                DeleteChoosingMode()
         }
 
 
