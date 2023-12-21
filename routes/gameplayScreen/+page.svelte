@@ -4,7 +4,7 @@
     import * as Cards from "../../card"
     let enemyStartingHand = [Cards.BarniCard,Cards.BarniCard, Cards.FarkasCard, Cards.BizsoCard, Cards.BencusCard, Cards.ZenoCard]
     
-    import {SendGameData,connectedToSocket, yourGameParametersClient, enemyGameParametersClient, DomLoaded, SveltePageLoaded, currentOpponentId, EndTurn, lastCardPlayedClient,LastActionLog,CellAligmentAnimation} from "../../matchHandler"
+    import {SendGameDataClient,connectedToSocket, yourGameParametersClient, enemyGameParametersClient, DomLoaded, SveltePageLoaded, currentOpponentId, EndTurn, lastCardPlayedClient,LastActionLog,CellAligmentAnimation} from "../../matchHandler"
 
     import cardBack from "../../lib/assets/global/cardBack.png"
 
@@ -88,6 +88,21 @@
     let newCard
     let cardsInHandDoms = []
 
+    let cardChoosingModeOptions = []
+    let isInChoosingMode = false
+    let cardChoosingModeResult = ""
+    function ChoosingModeResult(option){cardChoosingModeResult = option}
+    function DeleteChoosingMode(){
+        isInChoosingMode = false
+        isInChoosingMode = isInChoosingMode
+
+        cardChoosingModeOptions = []
+        cardChoosingModeOptions = cardChoosingModeOptions
+
+        cardChoosingModeResult = ""
+        cardChoosingModeResult = cardChoosingModeResult
+    }
+
     let yourKo = 8
     let isKoHasBeenPutDownThisTurn = false
 
@@ -140,6 +155,17 @@
         }}
         // #endregion
     
+
+    function SendGameData(data){
+        yourGameParameters.yourBoard = Array.from(yourBoard)
+        yourGameParameters.currentHand = Array.from(yourHand)
+        enemyGameParameters.yourBoard = Array.from(enemyBoard)
+
+        SendGameDataClient(JSON.stringify(data))
+    }
+
+
+
     function DrawStartingHand(n){
         for(let i = 0; i<n; i++){
             var random = Math.floor(Math.random() * yourGameParameters.remaningDeck.length)
@@ -151,11 +177,12 @@
 
         }
         yourHand[0] = Cards.YouCard
-        yourHand[1] = Cards.YouCard
-        yourGameParameters.currentHand = Array.from(yourHand)
-        //UpdateLocalStorage()
+        yourHand[1] = Cards.KutiCard
+        yourHand[2] = Cards.KutiDiplomaCard
+        yourHand[3] = Cards.ArhoCard
+         //UpdateLocalStorage()
         
-        SendGameData(JSON.stringify(yourGameParameters))
+        SendGameData(yourGameParameters)
     }
     function DrawOne(){
         yourHand.push(yourGameParameters.remaningDeck[Math.floor(Math.random() * yourGameParameters.remaningDeck.length)])
@@ -294,6 +321,12 @@
 
                 LastActionLog(dragged)
 
+                //#region ABILITIES
+                if(dragged.abilityType == "summon"){
+                        eval(`${dragged.ability}()`)
+                    }
+                //#endregion
+
             }
             else if(dragged.type == "ko"){
                 yourKo -= 1
@@ -304,15 +337,8 @@
 
             yourGameParameters.mana -= dragged.cost
             yourBoard = yourBoard
-            yourGameParameters.yourBoard = Array.from(yourBoard)
 
-            SendGameData(JSON.stringify(yourGameParameters))
-
-            //#region ABILITIES
-            if(dragged.abilityType == "summon"){
-                    eval(`${dragged.ability}()`)
-                }
-            //#endregion
+            SendGameData(yourGameParameters)
 
             dragged = ""
         }
@@ -337,8 +363,8 @@
 
         console.log("hey bb u dropped this :^ ", event.target);
 
-        SendGameData(JSON.stringify(yourGameParameters))
-        SendGameData(JSON.stringify(enemyGameParameters))
+        SendGameData(yourGameParameters)
+        SendGameData(enemyGameParameters)
     }
     function spellDrop(event){
         event.preventDefault()
@@ -361,6 +387,10 @@
 
             LastActionLog(dragged)
 
+            //#region ABILITIES
+                eval(`${dragged.ability}()`)
+            //#endregion
+
             dragged = ""
             dragged = dragged
 
@@ -368,7 +398,7 @@
             spellTargetArea.style.fontSize = "1.5vw"
             spellTargetArea.children[0].innerHtml = "play spell"
 
-            SendGameData(JSON.stringify(yourGameParameters))
+            SendGameData(yourGameParameters)
 
         }
 
@@ -552,9 +582,7 @@
         console.log("the thing u dropped by click: ",card);
         RemoveEventListenersFromCells()
 
-        yourGameParameters.currentHand = Array.from(yourHand)
-        yourGameParameters.yourBoard = Array.from(yourBoard)
-        SendGameData(JSON.stringify(yourGameParameters))
+        SendGameData(yourGameParameters)
 
         console.log(voicelines[card.name]);
         voicelines[card.name].play();
@@ -622,8 +650,7 @@
             else if(side == "enemySide"){
                 enemyBoard[i] = ko
                 enemyBoard = enemyBoard
-                enemyGameParameters.yourBoard = Array.from(enemyBoard)
-                SendGameData(JSON.stringify(enemyGameParameters))
+                SendGameData(enemyGameParameters)
             }
             yourGameParameters.ko -= 1
 
@@ -634,7 +661,7 @@
             enemyBoardPhs = enemyBoardPhs
             yourBoardPhs = yourBoardPhs
 
-            SendGameData(JSON.stringify(yourGameParameters))
+            SendGameData(yourGameParameters)
             
         } 
     }
@@ -689,8 +716,7 @@
 
             
             enemyGameParameters.currentHand = []
-            yourGameParameters.yourBoard = Array.from(yourBoard)
-            SendGameData(JSON.stringify(yourGameParameters))
+            SendGameData(yourGameParameters)
         }
         console.log("turn: ",turnCount," gameFaze: ",gameFase, " rally: ",isYourRally," u cum?: ",isYourTurn);
         
@@ -870,8 +896,7 @@
         enemyGameParameters = enemyGameParameters
         console.log(enemyBoard, enemyGameParameters.hp);
 
-        enemyGameParameters.yourBoard = Array.from(enemyBoard)
-        SendGameData(JSON.stringify(enemyGameParameters))
+        SendGameData(enemyGameParameters)
     }
     function CellAligmentAnim(event){
             var targetDom
@@ -902,6 +927,8 @@
     }
     //#endregion
     
+    //DMG VÁLTOZÓK
+    let spellDmgMulti = 1
     //#region ATTACK CALCULATION
     let attackableCards = [] //kicsit csúnyi de kell a funkción kívül is :((
     let attackableCardsDoms = []
@@ -1009,9 +1036,38 @@
 
         var dmg = cardInAttackingMode.attack
         var targetType = target.type
+
+        var powerModDmg = ""
+        var powerModType = ""
+
+        cardInAttackingMode.fieldEffects.forEach(effect => {
+            if(effect.includes("PowerMod")){
+
+            powerModType = effect.replace("PowerMod","")
+            console.log("POWERMODLOG: ",powerModType);
+            if(powerModType.includes("+")){
+                powerModDmg = powerModType.substring(powerModType.indexOf("+"));
+            }
+            if(powerModType.includes("*")){
+                powerModDmg = powerModType.substring(powerModType.indexOf("*"));
+            }
+            
+            powerModType = powerModType.replace(powerModDmg,"")
+            }
+        });
+        console.log("POWERMODLOG:"," dmg: ",powerModDmg," tpye: ",powerModType);
+        
+        
         //#region DMG CALCULATION
         if(target.health - dmg >= 0){ //1 kezdés, 1 megáll
-            target.health -= dmg
+            
+            if(target.aligment.includes(powerModType)){
+                target.health -= eval(`(Math.ceil(${dmg}${powerModDmg}))`)
+                console.log("POWERMODLOG:",eval(`(Math.ceil(${dmg}${powerModDmg}))`));
+            }
+            else{
+                target.health -= dmg
+            }
             console.log("1 kezdés, 1 megáll");
 
             
@@ -1033,7 +1089,12 @@
                 if(enemyBoard[i+5] != "") {//1 kezdés, 2 tovább
 
                     if(enemyBoard[i+5].health - dmg >= 0){ //1 kezdés, 2 megáll
-                        enemyBoard[i+5].health -= dmg
+                        if(enemyBoard[i+5].aligment.includes(powerModType)){
+                            enemyBoard[i+5].health -= eval(`(Math.ceil(${dmg}${powerModDmg}))`)
+                        }
+                        else{
+                            enemyBoard[i+5].health -= dmg
+                        }
 
                         console.log("1 kezdés, 2 megáll");
 
@@ -1156,10 +1217,18 @@
                 cardInAttackingMode.health -= 1
                 CellAligmentAnimation(`${yourBoard.indexOf(cardInAttackingMode)}lelkiismeretes`)
             }
+
+            //#region CHARACTER ABILITIES
+            //KUTI
+            if(cardInAttackingMode.name == "Kúti" || cardInAttackingMode.name == "Kúti humán" || cardInAttackingMode.name == "Kúti reál" || cardInAttackingMode.name == "Kúti sport"){
+                yourHand.push(Cards.KutiDiplomaCard)
+                cardsInYourHandClass.push("cardTemplate")
+                yourHand = yourHand
+            }
+            //#endregion
         }
 
-        yourGameParameters.yourBoard = Array.from(yourBoard)
-        SendGameData(JSON.stringify(yourGameParameters))
+        SendGameData(yourGameParameters)
 
         console.log("dom that attacked: ",cardDomInAttackingMode);
         CardAttackAnimation(i)
@@ -1171,6 +1240,86 @@
         function EmptyAbility(){
             console.log("ABILOG: ", "WOOO KIJÁTSZOTTÁL");
         }
+
+    
+        function getUserChoice() {
+            console.log("CHOOSELOG: getuserChoice meghívva");
+            return new Promise((resolve) => {
+            // Check if choice is not an empty string and resolve the promise
+            function checkValue() {
+            if (cardChoosingModeResult !== "") {
+                console.log("CHOOSELOG: resolved weee",cardChoosingModeResult.name);
+                resolve(cardChoosingModeResult);
+            } else {
+                // If value is still empty, wait and check again
+                setTimeout(checkValue, 100); // Adjust the delay as needed
+            }
+            }
+
+            // Start checking for the value
+            checkValue();
+        });
+        }
+        async function KutiDiploma(){
+
+                isInChoosingMode = true
+                isInChoosingMode = isInChoosingMode
+
+                cardChoosingModeOptions = [Cards.KutiHumanCard,Cards.KutiRealCard,Cards.KutiSportCard]
+                cardChoosingModeOptions = cardChoosingModeOptions
+
+                const result = await getUserChoice();
+                console.log("CHOOSELOG: ",result);
+
+                var index
+                
+                yourBoard.forEach(element => {
+                    if(element != ""){
+                        if(element.name == "Kúti" || element.name == "Kúti humán" || element.name == "Kúti reál" || element.name == "Kúti sport"){
+                            console.log("CHOOSELOG: ",element.name);
+                            index = yourBoard.indexOf(element)
+                            yourBoard[index] = result
+                        }
+                    }
+                });
+
+                yourBoard[index].fieldEffects.push("asleep")
+                switch (result.name) {
+                case 'Kúti humán':
+                    yourBoard[index].health += 1
+                    yourBoardDoms[index].children[0].children[5].style.animation = "none"
+                    yourBoardDoms[index].children[0].children[5].offsetHeight
+                    yourBoardDoms[index].children[0].children[5].style.animation = "statHeal 1s"
+
+                    spellDmgMulti = 2
+                    
+                break;
+                case 'Kúti reál':
+                    yourBoard[index].health == Cards.KutiCard.health
+                    yourBoardDoms[index].children[0].children[5].style.animation = "none"
+                    yourBoardDoms[index].children[0].children[5].offsetHeight
+                    yourBoardDoms[index].children[0].children[5].style.animation = "statHeal 1s"
+                break;
+                case 'Kúti sport':
+                    yourBoard[index].attack += 2
+                    yourBoardDoms[index].children[0].children[4].style.animation = "none"
+                    yourBoardDoms[index].children[0].children[4].offsetHeight
+                    yourBoardDoms[index].children[0].children[4].style.animation = "statHeal 1s"
+                    
+                break;
+                default:
+                console.log('Invalid choice');
+                // Handle invalid choice
+            }
+                DeleteChoosingMode()
+
+                yourBoard = yourBoard
+                SendGameData(yourGameParameters)
+            
+        }
+
+
+
     //#endregion
 
     //MAIN ---------------------------------------------
@@ -1607,7 +1756,7 @@
         </div>
 
     </div>
-    <div on:click={OpenBattleLog} id="actionLog" class:actionLogHidden={!logOpen} class:actionLogDisplayed={logOpen} on:keydown role="button" tabindex="">
+    <div id="actionLog" on:click={OpenBattleLog} class:actionLogHidden={!logOpen} class:actionLogDisplayed={logOpen} on:keydown role="button" tabindex="">
         <div class:displayNone={!logOpen} class:displayBlock={logOpen}>
             {#if lastCardPlayed.type == "character"}
                     <div id="logPerspectiveCont" >
@@ -1677,7 +1826,74 @@
         <button class="actionButtonClass hover-underline-animation" style="left: 4vw;" on:click={PrevBattleLog}>Prev</button>
         <button class="actionButtonClass hover-underline-animation" style="left: 15vw;" on:click={NextBattleLog}>Next</button>
     </div>
-    
+    {#if isInChoosingMode}
+    <div id="choosingMode">
+        {#each cardChoosingModeOptions as option,i}
+        <div id="cardChoosingModeCont">
+            {#if option.type == "character"}
+                    <div class="previewInChoosingMode" on:click={() => ChoosingModeResult(option)} on:keydown role="button" tabindex="">
+                        <img draggable="false" class="cardTemplateChoosingMode" id="cardBackgroundChoosingMode" src={cardBackground} style="--colorr: {backgroundColorByCost[(option.stars)-3]};" alt="cardBg">
+                        <div id="rarityBGChoosingMode" style="background: {backgroundColorByCost[(option.stars)-3]}; "></div>
+                        <img draggable="false" id="curCardInViewChoosingMode" src={option.source} alt="">
+                        <img draggable="false" class="cardTemplateChoosingMode" src={cardForeground} alt="cardBg">
+                        <div id="curCardDescChoosingMode" class="noScrollers">{@html option.description}</div>
+                        <div class="curCardStatsChoosingMode" style="left: calc(var(--cardsChoosingModeScale)*1vw*7.4);">{option.attack}</div>
+                        <div class="curCardStatsChoosingMode" style="left: calc(var(--cardsChoosingModeScale)*1vw*21.5)">{option.health}</div>
+                        <div class="curCardCostChoosingMode">{option.cost}</div>
+                        <div class="curCardNameChoosingMode">{option.name}</div>
+                        
+                        {#if option.talent != ""}
+                        {#if option.talent.includes(",")}
+                        <div class="curCardMultipleIconsContainerChoosingMode">
+                            {#each option.talent.split(",") as icon, i}
+                            <div style="width:{(0.65*5.2)/option.talent.split(",").length}vw; margin:auto">
+                                <img style="width:calc(var(--cardsChoosingModeScale)*1vw*3.1)" src={talentIcons[icon.replace(" ","")]} alt="talent">
+                            </div>
+                            {/each}
+                        </div>
+                        {:else}
+                            <div class="curCardTalentChoosingMode">{option.talent.replace("támadás","")}</div>
+                            <img style="left: calc(var(--cardsChoosingModeScale)*1vw*10);" class="curCardTalentIconChoosingMode" src={talentIcons[option.talent.replace(" ","")]} alt="talent">
+                            {/if}
+                        {/if}
+
+                        {#if option.aligment.includes(",")}
+                        {#each option.aligment.split(",") as aligment,i}
+                            <img style="top: {0.65*9.8 + i* 4.5*0.65}vw; background-color: {aligmentBackgroundColors[aligment]}; border-radius: 0.5vw;" class="curCardAligChoosingMode" src={aligmentIcons[aligment]} alt="aligment">
+                        {/each}
+                        {:else}
+                            <img style="background-color: {aligmentBackgroundColors[option.aligment]}; border-radius: 0.5vw;" class="curCardAligChoosingMode" src={aligmentIcons[option.aligment]} alt="aligment">
+                        {/if}
+
+                        <div id="curCardRarityChoosingMode" style="{starsColorByCost[(option.stars)-3]}; top: 0">
+                            {#each Array(Number(option.stars)) as card,index}
+                                <span style="font-size: calc(var(--cardsChoosingModeScale)*2.4vw">★</span>
+                            {/each}
+                        </div>
+                    </div>
+            {:else if option.type == "spell"}
+
+                <div class="previewInChoosingMode" on:click={() => ChoosingModeResult(option)} on:keydown role="button" tabindex="">
+                    <img draggable="false" class="cardTemplateChoosingMode" id="cardBackgroundChoosingMode" src={spellBackground} style="--colorr: {backgroundColorByCost[(option.stars)-3]};" alt="cardBg">
+                    <div id="rarityBGChoosingMode" style="background: {backgroundColorByCost[(option.stars)-3]}; "></div>
+                    <img draggable="false" id="curCardInViewChoosingMode" src={option.source} alt="">
+                    <img draggable="false" class="cardTemplateChoosingMode" src={spellForeground} alt="cardBg">
+                    <div id="curCardDescChoosingMode" class="noScrollers">{@html option.description}</div>
+                    <div class="curCardCostChoosingMode" style="top: calc(var(--cardsChoosingModeScale)*1vw*4);">{option.cost}</div>
+                    <div class="curCardNameChoosingMode">{option.name}</div>
+
+                    <div id="curCardRarityChoosingMode" style="{starsColorByCost[(option.stars)-3]}; top: 0">
+                        {#each Array(Number(option.stars)) as card,index}
+                            <span style="font-size: calc(var(--cardsChoosingModeScale)*2.4vw">★</span>
+                        {/each}
+                    </div>
+                </div>
+            {/if}
+        </div>
+        {/each}
+        <div style="text-align: center; width: 100vw; font-family: 'mainFont';">VÁLASSZ EGY KÁRTYÁT</div>
+    </div>
+    {/if}    
 </div>
 
 <button style="z-index: 100; position:absolute" id="fullScreenButton" on:click={requestFullScreen}>[]</button>
@@ -1726,6 +1942,30 @@
     }
     .displayNone{display: none;}
     .displayBlock{display: block;}
+
+    #choosingMode{
+        width: 100vw;
+        height: 100vh;
+        box-sizing: border-box;
+
+        position: fixed;
+        top:0;
+        left:0;
+        display: flex;
+        
+        z-index: 15;
+        background-color: #7ad35136;
+
+        text-align: center;
+
+        padding-left: 10vw;
+        padding-right: 10vw;
+        padding-top: 30vh;
+    }
+    #cardChoosingModeCont{
+        margin-right: 25vw;
+    }
+
 
 
     @keyframes -global-cardDeath{
@@ -2147,6 +2387,7 @@
         --cardsScale: 0.4;
         --cardOnBoardScale: 0.57;
         --cardsLogScale: 0.6;
+        --cardsChoosingModeScale: 0.65;
     
         }
         #yourHand{
@@ -2167,6 +2408,7 @@
         --cardsScale: 0.3;
         --cardOnBoardScale: 0.57;
         --cardsLogScale: 0.6;
+        --cardsChoosingModeScale: 0.65;
     
         }
         #yourHand{
@@ -2812,5 +3054,133 @@
         width: calc(var(--cardsLogScale)*1vw*4);
         left: calc(var(--cardsLogScale)*1vw*5.8);
         top: calc(var(--cardsLogScale)*1vw*10);
+    }
+
+    .previewInChoosingMode{
+        position: relative;
+        border: none;
+        background: none;
+        margin: auto;
+    }
+    .previewInChoosingMode:hover{
+        cursor: pointer;
+        scale: 1.05;
+        filter: drop-shadow(-0.6vw -0.6vw 3px rgba(113, 148, 223, 0.719)) drop-shadow(0.6vw 0.6vw 3px rgba(113, 148, 223, 0.719));
+
+    }
+    .cardTemplateChoosingMode{
+        width: calc(var(--cardsChoosingModeScale)*1vw*30);
+        position: absolute;
+        left: 0;
+    }
+    #rarityBGChoosingMode{
+        position: absolute;
+        width: calc(var(--cardsChoosingModeScale)*1vw*20);
+        height: calc(var(--cardsChoosingModeScale)*1vw*20);
+
+        left: calc(var(--cardsChoosingModeScale)*1vw*6);
+        top: calc(var(--cardsChoosingModeScale)*1vw*2.5);
+
+        opacity: 0.35;
+    }
+    #curCardInViewChoosingMode{
+        position: absolute;
+        width: calc(var(--cardsChoosingModeScale)*1vw*14);
+        left: calc(var(--cardsChoosingModeScale)*1vw*8.5);
+        top: calc(var(--cardsChoosingModeScale)*1vw*5);
+
+        box-shadow: 0 0 calc(var(--cardsChoosingModeScale)*1vw*1.3) rgba(0, 0, 0, 0.735);
+    }
+    .curCardStatsChoosingMode{
+        font-size: calc(var(--cardsChoosingModeScale)*1vw*3);
+        font-family: 'SevenSwords';
+        color: white;
+        text-shadow:
+                -0.08vw -0.08vw 0 #000, /* Top-left shadow */
+                0.08vw -0.08vw 0 #000, /* Top-right shadow */
+                -0.08vw 0.08vw 0 #000, /* Bottom-left shadow */
+                0.08vw 0.08vw 0 #000; /* Bottom-right shadow */
+
+        position: absolute;
+        top: calc(var(--cardsChoosingModeScale)*1vw*26.7);
+    }
+    .curCardCostChoosingMode{
+        font-size: calc(var(--cardsChoosingModeScale)*1vw*5);
+        font-weight: bold;
+        font: italic;
+        font-family: 'ShadowLight';
+        color: rgb(184, 11, 11);
+
+        position: absolute;
+        top: calc(var(--cardsChoosingModeScale)*1vw*2.5);
+        left: calc(var(--cardsChoosingModeScale)*1vw*7);
+    }
+    .curCardNameChoosingMode{
+        font-size: calc(var(--cardsChoosingModeScale)*1vw*2);
+        font-family: Impact;
+        color: rgba(247, 240, 221, 0.778);
+        text-shadow: 0 0 calc(var(--cardsChoosingModeScale)*1vw*1) rgba(0, 0, 0, 0.536);
+
+        position: absolute;
+        top: calc(var(--cardsChoosingModeScale)*1vw*18.2);
+        left: calc(var(--cardsChoosingModeScale)*1vw*5.5);
+
+        text-align: center;
+        width: calc(var(--cardsChoosingModeScale)*1vw*20);
+    }
+    #curCardDescChoosingMode{
+        font-family: Arial, Helvetica, sans-serif;
+        color: rgba(0, 0, 0, 0.778);
+        font-weight: bold;
+        font-size: calc(var(--cardsChoosingModeScale)*1vw*1.3);
+
+        position: absolute;
+        top: calc(var(--cardsChoosingModeScale)*1vw*23);
+        left: calc(var(--cardsChoosingModeScale)*1vw*8.3);
+
+        width: calc(var(--cardsChoosingModeScale)*1vw*14);
+        text-align: center;
+        overflow: auto;
+        height: calc(var(--cardsChoosingModeScale)*1vw*6);
+    }
+    #curCardRarityChoosingMode{
+        position: absolute;
+        left: calc(var(--cardsChoosingModeScale)*1vw*8.5);
+        width: calc(var(--cardsChoosingModeScale)*1vw*13.8);
+        text-align: center;
+        mix-blend-mode: screen;
+    }
+    .curCardMultipleIconsContainerChoosingMode{
+        position: absolute;
+        top: calc(var(--cardsChoosingModeScale)*1vw*19.6);
+        left: calc(var(--cardsChoosingModeScale)*1vw*10.3);
+        width: calc(var(--cardsChoosingModeScale)*1vw*5.2);
+        height: calc(var(--cardsChoosingModeScale)*1vw*2);
+        display:flex;
+        flex-wrap:nowrap;
+        align-content:space-around;
+    }
+    .curCardTalentIconChoosingMode{
+        position: absolute;
+        width: calc(var(--cardsChoosingModeScale)*1vw*3.1);
+        top: calc(var(--cardsChoosingModeScale)*1vw*19.6);
+        left: calc(var(--cardsChoosingModeScale)*1vw*10.3);
+    }
+    .curCardTalentChoosingMode{
+        position: absolute;
+        font-family: "talentFont";
+        color: antiquewhite;
+        font-size: calc(var(--cardsChoosingModeScale)*1vw*1.2);
+        top: calc(var(--cardsChoosingModeScale)*1vw*21.4);
+        left: calc(var(--cardsChoosingModeScale)*1vw*13.5);
+        width: calc(var(--cardsChoosingModeScale)*1vw*6);
+        height: calc(var(--cardsChoosingModeScale)*1vw*1.7);
+        padding-left:calc(var(--cardsChoosingModeScale)*1vw*1.9*var(--cardsChoosingModeScale));
+    }
+    .curCardAligChoosingMode{
+        position: absolute;
+        width: calc(var(--cardsChoosingModeScale)*1vw*4);
+        left: calc(var(--cardsChoosingModeScale)*1vw*5.8);
+        top: calc(var(--cardsChoosingModeScale)*1vw*10);
     }
 </style>

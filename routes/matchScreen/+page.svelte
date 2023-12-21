@@ -3,7 +3,7 @@
   import {onMount} from "svelte"
 
   import {clientID,userData, getUserDataFromLocalStorage, deckData} from "../../client"
-  import {GetGameIDs, PlayerReady, SendGameData, SveltePageLoaded, currentOpponentId} from "../../matchHandler"
+  import {GetGameIDs, PlayerReady, SendGameDataClient, SveltePageLoaded, currentOpponentId} from "../../matchHandler"
   import * as Cards from "../../card"
 
 
@@ -90,7 +90,7 @@
 
       localStorage.setItem("yourGameParams", JSON.stringify(yourGameParameters));
       console.log("your and enemy params: ", yourGameParameters,enemyGameParameters);
-      SendGameData(JSON.stringify(yourGameParameters))
+      SendGameDataClient(JSON.stringify(yourGameParameters))
 
     }
 

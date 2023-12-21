@@ -213,7 +213,7 @@ Client.socket.on('disconnect', () => {
     Client.socket.emit("disconnect",`${yourGameID}DisconnectedWithSocket`)
 });
 
-export function SendGameData(data){
+export function SendGameDataClient(data){
     Client.socket.emit(gameKey, data)
     console.log(`${Date.now()}: game data sent: `,yourGameID);
 }
