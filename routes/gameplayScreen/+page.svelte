@@ -88,21 +88,6 @@
     let newCard
     let cardsInHandDoms = []
 
-    let cardChoosingModeOptions = []
-    let isInChoosingMode = false
-    let cardChoosingModeResult = ""
-    function ChoosingModeResult(option){cardChoosingModeResult = option}
-    function DeleteChoosingMode(){
-        isInChoosingMode = false
-        isInChoosingMode = isInChoosingMode
-
-        cardChoosingModeOptions = []
-        cardChoosingModeOptions = cardChoosingModeOptions
-
-        cardChoosingModeResult = ""
-        cardChoosingModeResult = cardChoosingModeResult
-    }
-
     let yourKo = 8
     let isKoHasBeenPutDownThisTurn = false
 
@@ -202,7 +187,6 @@
 
     let isCardInYourHandInPlacingMode= false
     let isKoInPlacingMode = false
-    let isCardOnBoardInAttackingMode = false
 
     let turnCount = 1
     let isYourTurn = false
@@ -790,8 +774,7 @@
 
     //GAMEPLAY----------------------------------
     //-----------------------------------------------------------------------------------------------------------
-   
-   
+
     //#region ANIMS
     let AnimTargetTop
     let AnimTargetLeft
@@ -930,11 +913,98 @@
     //DMG VÁLTOZÓK
     let spellDmgMulti = 1
     //#region ATTACK CALCULATION
+    
+    let isInChoosingMode = false
+    let cardChoosingModeOptions = []
+    let isSelectTargetMode = false
+    let selectableCards = []
+    let selectableCardDoms = []
+    let cardChoosingModeResult = ""
+
+
+    function ChoosingModeResult(option){cardChoosingModeResult = option}
+    
+
+    function EnableTargetSelectionMode(targets){
+        isSelectTargetMode = true
+        isSelectTargetMode = isSelectTargetMode
+
+        selectableCards = targets
+        selectableCards = selectableCards
+        console.log("SELECTLOG: ",selectableCards,yourBoard);
+    }
+    function EnableChoosingMode(targets){
+        isInChoosingMode = true
+        isInChoosingMode = isInChoosingMode
+
+        cardChoosingModeOptions = targets
+        cardChoosingModeOptions = cardChoosingModeOptions
+    }
+    function DeleteChoosingMode(){
+        isInChoosingMode = false
+        isInChoosingMode = isInChoosingMode
+
+        cardChoosingModeOptions = []
+        cardChoosingModeOptions = cardChoosingModeOptions
+
+        cardChoosingModeResult = ""
+        cardChoosingModeResult = cardChoosingModeResult
+    }
+    function DeleteSelectTargetMode(){
+        isSelectTargetMode = false
+        isSelectTargetMode = isSelectTargetMode
+
+        selectableCards = []
+        selectableCards = selectableCards
+        selectableCardDoms = []
+        selectableCardDoms = selectableCardDoms
+
+        cardChoosingModeResult = ""
+        cardChoosingModeResult = cardChoosingModeResult
+    }
+
+    function getUserChoice() {
+            return new Promise((resolve) => {
+            // Check if choice is not an empty string and resolve the promise
+            function checkValue() {
+            if (cardChoosingModeResult !== "") {
+                resolve(cardChoosingModeResult);
+            } else {
+                // If value is still empty, wait and check again
+                setTimeout(checkValue, 100); // Adjust the delay as needed
+
+            }
+            }
+
+            // Start checking for the value
+            checkValue();
+        });
+    }
+
+
     let attackableCards = [] //kicsit csúnyi de kell a funkción kívül is :((
     let attackableCardsDoms = []
     let cardInAttackingMode = ""
     let cardDomInAttackingMode = ""
+    let isCardOnBoardInAttackingMode = false
 
+    function SelectTargetCard(target,i){
+        if(isSelectTargetMode){
+            cardChoosingModeResult = target
+            console.log("SELECTLOG: chosen as Starget");
+            return;
+        }
+        if(cardInAttackingMode != "" && enemyBoard.includes(target)){
+            AttackCard(target,i)
+            console.log("SELECTLOG: chosen as atkTarget");
+            return;
+        }
+        if(cardInAttackingMode == "" || isCardOnBoardInAttackingMode){
+            CardInAttackMode(target)
+            console.log("SELECTLOG: chosen as attackingCard");
+            return;
+        }
+    }
 
     function ClearAttackModes(){
         isCardOnBoardInAttackingMode = false
@@ -952,14 +1022,13 @@
     function CardInAttackMode(attackingCard){
         var canAttack = isYourTurn && isYourRally && !attackingCard.fieldEffects.includes("asleep")
         var cardHasQuickAttack = isYourTurn && !attackingCard.fieldEffects.includes("asleep")
-        if(canAttack || cardHasQuickAttack){
+    
+        if((canAttack || cardHasQuickAttack) && !isSelectTargetMode){
             ClearBoardPhs()
-            cardDomInAttackingMode = document.getElementById(`td${yourBoard.indexOf(attackingCard)}`).children[0]
-            console.log(cardDomInAttackingMode);
 
             attackableCards = []
             attackableCardsDoms = []
-            console.log("yourCard: ",attackingCard);
+    
 
             if(!isCardOnBoardInAttackingMode && cardInAttackingMode != attackingCard){
                 cardInAttackingMode = attackingCard
@@ -1024,6 +1093,9 @@
 
                 isCardOnBoardInAttackingMode = true
             }
+            console.log("yourCard: ",attackingCard);
+
+            cardDomInAttackingMode = document.getElementById(`td${yourBoard.indexOf(attackingCard)}`).children[0]
             attackableCards = attackableCards
             attackableCardsDoms = attackableCardsDoms
             cardInAttackingMode = cardInAttackingMode
@@ -1240,97 +1312,91 @@
             console.log("ABILOG: ", "WOOO KIJÁTSZOTTÁL");
         }
 
-    
-        function getUserChoice() {
-            console.log("CHOOSELOG: getuserChoice meghívva");
-            return new Promise((resolve) => {
-            // Check if choice is not an empty string and resolve the promise
-            function checkValue() {
-            if (cardChoosingModeResult !== "") {
-                console.log("CHOOSELOG: resolved weee",cardChoosingModeResult.name);
-                resolve(cardChoosingModeResult);
-            } else {
-                // If value is still empty, wait and check again
-                setTimeout(checkValue, 100); // Adjust the delay as needed
-            }
-            }
+        async function Kuti(){
+            var targets = []
 
-            // Start checking for the value
-            checkValue();
-        });
+            for(let i = 0; i<yourBoard.length; i++){
+                if(yourBoard[i] != ""){
+                    targets.push(yourBoard[i])
+                    selectableCardDoms.push(yourBoardDoms[i])
+                }
+            }
+            EnableTargetSelectionMode(targets)
+            const result = await getUserChoice()
+            console.log("CHOOSELOG: ",result);
+
+            yourBoard[yourBoard.indexOf(result)].health *= 2
+            yourBoard = yourBoard
+            SendGameData(yourGameParameters)
+            
+            DeleteSelectTargetMode()
         }
         async function KutiDiploma(){
-
-                isInChoosingMode = true
-                isInChoosingMode = isInChoosingMode
-
-                cardChoosingModeOptions = [Cards.KutiHumanCard,Cards.KutiRealCard,Cards.KutiSportCard]
-                cardChoosingModeOptions = cardChoosingModeOptions
-
-                const result = await getUserChoice();
-                console.log("CHOOSELOG: ",result);
-                
-                var index
-                var preHealth
-                var preAttack
-                
-                yourBoard.forEach(element => {
-                    if(element != ""){
-                        if(element.name == "Kúti" || element.name == "Kúti humán" || element.name == "Kúti reál" || element.name == "Kúti sport"){
-                            console.log("CHOOSELOG: ",element.name);
-                            index = yourBoard.indexOf(element)
-                            preHealth = yourBoard[index].health
-                            preAttack = yourBoard[index].attack
-                            yourBoard[index].name == "Kúti humán" && preHealth != 1 ? preHealth -= 1 : {}
-                            yourBoard[index].name == "Kúti sport" && preAttack > 2 ? preAttack -= 2 : {}
-                            yourBoard[index] = result
-                        }
+            EnableChoosingMode([Cards.KutiHumanCard,Cards.KutiRealCard,Cards.KutiSportCard])
+            const result = await getUserChoice();
+            console.log("CHOOSELOG: ",result);
+            
+            var index
+            var preHealth
+            var preAttack
+            
+            yourBoard.forEach(element => {
+                if(element != ""){
+                    if(element.name == "Kúti" || element.name == "Kúti humán" || element.name == "Kúti reál" || element.name == "Kúti sport"){
+                        console.log("CHOOSELOG: ",element.name);
+                        index = yourBoard.indexOf(element)
+                        preHealth = yourBoard[index].health
+                        preAttack = yourBoard[index].attack
+                        yourBoard[index].name == "Kúti humán" && preHealth != 1 ? preHealth -= 1 : {}
+                        yourBoard[index].name == "Kúti sport" && preAttack > 2 ? preAttack -= 2 : {}
+                        yourBoard[index] = result
                     }
-                });
-
-                yourBoard[index].fieldEffects.push("asleep")
-
-                yourBoard[index].health = preHealth
-                yourBoard[index].attack = preAttack
-
-                switch (result.name) {
-                    case 'Kúti humán':
-                        yourBoard[index].health += 1
-                        yourBoardDoms[index].children[0].children[5].style.animation = "none"
-                        yourBoardDoms[index].children[0].children[5].offsetHeight
-                        yourBoardDoms[index].children[0].children[5].style.animation = "statHeal 1s"
-
-                        spellDmgMulti = 2
-                        
-                    break;
-                    case 'Kúti reál':
-                        yourBoard[index].health == Cards.KutiCard.health
-                        yourBoardDoms[index].children[0].children[5].style.animation = "none"
-                        yourBoardDoms[index].children[0].children[5].offsetHeight
-                        yourBoardDoms[index].children[0].children[5].style.animation = "statHeal 1s"
-
-                        yourBoard[index].attack += 1
-                        yourBoardDoms[index].children[0].children[4].style.animation = "none"
-                        yourBoardDoms[index].children[0].children[4].offsetHeight
-                        yourBoardDoms[index].children[0].children[4].style.animation = "statHeal 1s"
-                    break;
-                    case 'Kúti sport':
-                        yourBoard[index].attack += 2
-                        yourBoardDoms[index].children[0].children[4].style.animation = "none"
-                        yourBoardDoms[index].children[0].children[4].offsetHeight
-                        yourBoardDoms[index].children[0].children[4].style.animation = "statHeal 1s"
-                        
-                    break;
-                    default:
-                    console.log('Invalid choice');
-                    // Handle invalid choice
                 }
-                
+            });
 
-                yourBoard = yourBoard
-                SendGameData(yourGameParameters)
-                
-                DeleteChoosingMode()
+            yourBoard[index].fieldEffects.push("asleep")
+
+            yourBoard[index].health = preHealth
+            yourBoard[index].attack = preAttack
+
+            switch (result.name) {
+                case 'Kúti humán':
+                    yourBoard[index].health += 1
+                    yourBoardDoms[index].children[0].children[5].style.animation = "none"
+                    yourBoardDoms[index].children[0].children[5].offsetHeight
+                    yourBoardDoms[index].children[0].children[5].style.animation = "statHeal 1s"
+
+                    spellDmgMulti = 2
+                    
+                break;
+                case 'Kúti reál':
+                    yourBoard[index].health == Cards.KutiCard.health
+                    yourBoardDoms[index].children[0].children[5].style.animation = "none"
+                    yourBoardDoms[index].children[0].children[5].offsetHeight
+                    yourBoardDoms[index].children[0].children[5].style.animation = "statHeal 1s"
+
+                    yourBoard[index].attack += 1
+                    yourBoardDoms[index].children[0].children[4].style.animation = "none"
+                    yourBoardDoms[index].children[0].children[4].offsetHeight
+                    yourBoardDoms[index].children[0].children[4].style.animation = "statHeal 1s"
+                break;
+                case 'Kúti sport':
+                    yourBoard[index].attack += 2
+                    yourBoardDoms[index].children[0].children[4].style.animation = "none"
+                    yourBoardDoms[index].children[0].children[4].offsetHeight
+                    yourBoardDoms[index].children[0].children[4].style.animation = "statHeal 1s"
+                    
+                break;
+                default:
+                console.log('Invalid choice');
+                // Handle invalid choice
+            }
+            
+
+            yourBoard = yourBoard
+            SendGameData(yourGameParameters)
+            
+            DeleteChoosingMode()
         }
 
 
@@ -1414,7 +1480,7 @@
 
                     {#if enemyBoard[i] != ""}
                         {#if enemyBoard[i].type == "character"}
-                            <div on:click={() => AttackCard(enemyBoard[i],i)} class="BoardTierTwo" id="cardPreviewListCont" class:cardOnBoardInTargetMode={attackableCardsDoms.includes(document.getElementById(`etd${i}`))}  class:NotcardOnBoardInTargetMode={isCardOnBoardInAttackingMode && !attackableCardsDoms.includes(document.getElementById(`etd${i}`))} on:keydown role="button" tabindex="">
+                            <div on:click={() => SelectTargetCard(enemyBoard[i],i)} class="BoardTierTwo" id="cardPreviewListCont" class:cardOnBoardInSelectMode={selectableCardDoms.includes(enemyBoardDoms[i])} class:cardOnBoardInTargetMode={attackableCardsDoms.includes(document.getElementById(`etd${i}`))}  class:NotcardOnBoardInTargetMode={isCardOnBoardInAttackingMode && !attackableCardsDoms.includes(document.getElementById(`etd${i}`))} on:keydown role="button" tabindex="">
                                 <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute"  src={cardV2Background} alt="cardBg">
                                 <div id="rarityBGList" style="background: {backgroundColorByCost[(enemyBoard[i].stars)-3]}; "></div>
                                 <img draggable="false" class = "cardButton" src={enemyBoard[i].source} alt="preview"/>
@@ -1456,7 +1522,7 @@
                                 </div>
                             </div>
                         {:else if enemyBoard[i].type == "ko"}
-                            <div on:click={() => AttackCard(enemyBoard[i],i)} class="BoardTierTwo ko" class:cardOnBoardInTargetMode={attackableCardsDoms.includes(document.getElementById(`etd${i}`))}  class:NotKoOnBoardInTargetMode={isCardOnBoardInAttackingMode && !attackableCardsDoms.includes(document.getElementById(`etd${i}`))} on:keydown role="button" tabindex="">{enemyBoard[i].health}</div>
+                            <div on:click={() => SelectTargetCard(enemyBoard[i],i)} class="BoardTierTwo ko" class:cardOnBoardInSelectMode={selectableCardDoms.includes(enemyBoardDoms[i])} class:cardOnBoardInTargetMode={attackableCardsDoms.includes(document.getElementById(`etd${i}`))}  class:NotKoOnBoardInTargetMode={isCardOnBoardInAttackingMode && !attackableCardsDoms.includes(document.getElementById(`etd${i}`))} on:keydown role="button" tabindex="">{enemyBoard[i].health}</div>
                         {/if}
                     {/if}
                     </td>
@@ -1471,7 +1537,7 @@
 
                     {#if enemyBoard[(enemyBoard.length)/2+i] != ""}
                         {#if enemyBoard[(enemyBoard.length)/2+i].type == "character"}
-                        <div on:click={() => AttackCard(enemyBoard[(enemyBoard.length)/2+i],(enemyBoard.length)/2+i)} id="cardPreviewListCont"  class:cardOnBoardInTargetMode={attackableCardsDoms.includes(document.getElementById(`etd${i+(enemyBoard.length/2)}`))}  class:NotcardOnBoardInTargetMode={isCardOnBoardInAttackingMode && !attackableCardsDoms.includes(document.getElementById(`etd${i+(enemyBoard.length/2)}`))} on:keydown role="button" tabindex="">
+                        <div on:click={() => SelectTargetCard(enemyBoard[(enemyBoard.length)/2+i],(enemyBoard.length)/2+i)} id="cardPreviewListCont" class:cardOnBoardInSelectMode={selectableCardDoms.includes(enemyBoardDoms[(enemyBoard.length)/2+i])}  class:cardOnBoardInTargetMode={attackableCardsDoms.includes(document.getElementById(`etd${i+(enemyBoard.length/2)}`))}  class:NotcardOnBoardInTargetMode={isCardOnBoardInAttackingMode && !attackableCardsDoms.includes(document.getElementById(`etd${i+(enemyBoard.length/2)}`))} on:keydown role="button" tabindex="">
                             <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute"  src={cardV2Background} alt="cardBg">
                             <div id="rarityBGList" style="background: {backgroundColorByCost[(enemyBoard[i+(enemyBoard.length)/2].stars)-3]}; "></div>
                             <img draggable="false" class = "cardButton" src={enemyBoard[i+(enemyBoard.length)/2].source} alt="preview"/>
@@ -1513,7 +1579,7 @@
                             </div>
                         </div>
                         {:else if enemyBoard[(enemyBoard.length)/2+i].type == "ko"}
-                            <div on:click={() => AttackCard(enemyBoard[(enemyBoard.length)/2+i],(enemyBoard.length)/2+i)} class="ko" class:cardOnBoardInTargetMode={attackableCardsDoms.includes(document.getElementById(`etd${i+(enemyBoard.length/2)}`))}  class:NotKoOnBoardInTargetMode={isCardOnBoardInAttackingMode && !attackableCardsDoms.includes(document.getElementById(`etd${i+(enemyBoard.length/2)}`))} on:keydown role="button" tabindex="">{enemyBoard[(enemyBoard.length)/2+i].health}</div>
+                            <div on:click={() => SelectTargetCard(enemyBoard[(enemyBoard.length)/2+i],(enemyBoard.length)/2+i)} class="ko" class:cardOnBoardInSelectMode={selectableCardDoms.includes(enemyBoardDoms[(enemyBoard.length)/2+i])} class:cardOnBoardInTargetMode={attackableCardsDoms.includes(document.getElementById(`etd${i+(enemyBoard.length/2)}`))}  class:NotKoOnBoardInTargetMode={isCardOnBoardInAttackingMode && !attackableCardsDoms.includes(document.getElementById(`etd${i+(enemyBoard.length/2)}`))} on:keydown role="button" tabindex="">{enemyBoard[(enemyBoard.length)/2+i].health}</div>
                         {/if}
                     {/if}
 
@@ -1550,7 +1616,7 @@
 
                         {#if yourBoard[i+(yourBoard.length)/2] != ""}
                             {#if yourBoard[i+(yourBoard.length)/2].type == "character"}
-                                <div class="BoardTierTwo" on:click={() => CardInAttackMode(yourBoard[i+(yourBoard.length)/2])} class:cardAwake={!yourBoard[i+(yourBoard.length)/2].fieldEffects.includes("asleep") && isYourTurn} style="--AnimTargetTop: {AnimTargetTop}; --AnimTargetLeft: {AnimTargetLeft}; --AnimAttackerYRot: {AnimAttackerYRot};" class:cardInAttackingMode={cardInAttackingMode == yourBoard[i+(yourBoard.length/2)]}  id="cardPreviewListCont" on:keydown role="button" tabindex="">
+                                <div class="BoardTierTwo" on:click={() => SelectTargetCard(yourBoard[i+(yourBoard.length)/2])} class:cardOnBoardInSelectMode={selectableCardDoms.includes(yourBoardDoms[i+(yourBoard.length)/2])} class:cardAwake={!yourBoard[i+(yourBoard.length)/2].fieldEffects.includes("asleep") && isYourTurn && !isSelectTargetMode} style="--AnimTargetTop: {AnimTargetTop}; --AnimTargetLeft: {AnimTargetLeft}; --AnimAttackerYRot: {AnimAttackerYRot};" class:cardInAttackingMode={cardInAttackingMode == yourBoard[i+(yourBoard.length/2)]}  id="cardPreviewListCont" on:keydown role="button" tabindex="">
                                     <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute" src={cardV2Background} alt="cardBg">
                                     <div id="rarityBGList" style="background: {backgroundColorByCost[(yourBoard[i+(yourBoard.length)/2].stars)-3]}; "></div>
                                     <img draggable="false" class = "cardButton" src={yourBoard[i+(yourBoard.length)/2].source} alt="preview"/>
@@ -1592,7 +1658,7 @@
                                     </div>
                                 </div>
                             {:else if yourBoard[i+(yourBoard.length)/2].type == "ko"}
-                                <div class="ko BoardTierTwo">{yourBoard[i+(yourBoard.length)/2].health}</div>
+                                <div class="ko BoardTierTwo" on:click={() => SelectTargetCard(yourBoard[i+(yourBoard.length)/2])} class:cardOnBoardInSelectMode={selectableCardDoms.includes(yourBoardDoms[i+(yourBoard.length)/2])} on:keydown role="button" tabindex="">{yourBoard[i+(yourBoard.length)/2].health}</div>
                             {/if}
                         {/if} 
                         </td>
@@ -1626,7 +1692,7 @@
 
                         {#if yourBoard[i] != ""}
                             {#if yourBoard[i].type == "character"}
-                                <div on:click={() => CardInAttackMode(yourBoard[i])} class:cardAwake={!yourBoard[i].fieldEffects.includes("asleep") && isYourTurn} style="--AnimTargetTop: {AnimTargetTop}; --AnimTargetLeft: {AnimTargetLeft}; --AnimAttackerYRot: {AnimAttackerYRot};"  class:cardInAttackingMode={cardInAttackingMode == yourBoard[i]}  id="cardPreviewListCont" on:keydown role="button" tabindex="">
+                                <div on:click={() => SelectTargetCard(yourBoard[i])} class:cardOnBoardInSelectMode={selectableCardDoms.includes(yourBoardDoms[i])} class:cardAwake={!yourBoard[i].fieldEffects.includes("asleep") && isYourTurn && !isSelectTargetMode} style="--AnimTargetTop: {AnimTargetTop}; --AnimTargetLeft: {AnimTargetLeft}; --AnimAttackerYRot: {AnimAttackerYRot};"  class:cardInAttackingMode={cardInAttackingMode == yourBoard[i]}  id="cardPreviewListCont" on:keydown role="button" tabindex="">
                                     <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute" src={cardV2Background} alt="cardBg">
                                     <div id="rarityBGList" style="background: {backgroundColorByCost[(yourBoard[i].stars)-3]}; "></div>
                                     <img draggable="false" class = "cardButton" src={yourBoard[i].source} alt="preview"/>
@@ -1668,7 +1734,7 @@
                                     </div>
                                 </div>
                             {:else if yourBoard[i].type == "ko"}
-                                <div class="ko">{yourBoard[i].health}</div>
+                                <div class="ko" on:click={() => SelectTargetCard(yourBoard[i])} class:cardOnBoardInSelectMode={selectableCardDoms.includes(yourBoardDoms[i])} on:keydown role="button" tabindex="">{yourBoard[i].health}</div>
                             {/if}
                         {/if}
                         </td>
@@ -2105,6 +2171,14 @@
         filter: drop-shadow(-0.6vw -0.6vw 3px rgba(170, 49, 49, 0.62)) drop-shadow(0.6vw 0.6vw 3px rgba(170, 49, 49, 0.62));
     }
     .cardOnBoardInTargetMode:hover {
+        transform: scale(1.1);
+        cursor: pointer;
+    }
+
+    .cardOnBoardInSelectMode{
+        filter: drop-shadow(-0.6vw -0.6vw 3px rgb(0, 140, 255)) drop-shadow(0.6vw 0.6vw 3px rgb(0, 140, 255));
+    }
+    .cardOnBoardInSelectMode:hover {
         transform: scale(1.1);
         cursor: pointer;
     }
