@@ -38,6 +38,7 @@
     import Tritz from "./lib/assets/collection/tanar/Tritz.gif"
     import Anderlene from "./lib/assets/collection/tanar/Anderlene.png"
     import Sagine from "./lib/assets/collection/tanar/Sagine.png"
+    import Blazó from "./lib/assets/collection/tanar/Blazó.png"
     //#endregion
     //#region diák képek
     import Arho from "./lib/assets/collection/diak/Arho.png"
@@ -268,7 +269,7 @@
     //#endregion
 
     //#region TANÁROK
-    export let BizsoCard = new tanarCards("Bizsó","lelkiismeretes","","summon","EmptyAbility", "Ha ez a kártya <b>elkárhozik</b>, a <b>kör</b> fázistól függetlenül azonnal <b>véget ér</b>.", 4, 6, Bizso, 4, 3, "character", BizsoGacha, "BizsoCard", BizsoA, "Kedvence egy jó python feladat. Ha szépen kéred, kienged a hátsó kijáraton. Szexi apuka.", []); 
+    export let BizsoCard = new tanarCards("Bizsó","lelkiismeretes","","death","Bizso", "Ha ez a kártya <b>elkárhozik</b>, a <b>kör</b> fázistól függetlenül azonnal <b>véget ér</b>.", 4, 6, Bizso, 4, 3, "character", BizsoGacha, "BizsoCard", BizsoA, "Kedvence egy jó python feladat. Ha szépen kéred, kienged a hátsó kijáraton. Szexi apuka.", []); 
     export let FarkasCard = new tanarCards("Dr. Farkas","lelkiismeretes","robbanó támadás","summon","EmptyAbility", "<b>ledermeszt</b> egy kiválsztott <b>ellenséget és szomszédjait</b>, és sebez beléjük.", 4, 8, Farkas, 5, 4, "character", FarkasGacha, "FarkasCard", FarkasA, "Filozófusszakállát évente vágja. Ennek ellenére mindig visszanő. Nem kell félni tőle.", []);
     export let MoniCard = new tanarCards("Szalay Mónika","lelkiismeretes","életelszívás_1","summon","EmptyAbility", "<b>Elnémít</b> egy ellenséges kártyát <b>1</b> körre.", 2, 3, Moni, 4, 2, "character", MoniGacha, "MoniCard", MoniA, "Hobbifilozófus. Képes 45 percig elemezni egy 10 soros lírai alkotást. Lenyűgöző!", []);
     export let NagyoraCard = new tanarCards("Nagy 'óra","veszett","kihívó","summon","EmptyAbility", "A <b>hátsó</b> sorod összes kártyája kap <b>2</b> hp-t.", 6, 10, Nagyora, 3, 6, "character", NagyoraGacha, "NagyoraCard", NagyoraA, "Télen is szoknyában jár. Számára a stílus az első.", []);
@@ -277,7 +278,7 @@
     export let BencusCard = new tanarCards("Illés Bence","tunya","","summon","EmptyAbility", "<b>Visszakerül</b> a játékos kezébe az a kártya, ami által <b>elkárhozott</b>.", 2, 2, Bencus, 4, 1, "character", BencusGacha, "BencusCard", BencusA, "Másodállásban professzionális diáktanya dolgozó.", []);
     export let DobiCard = new tanarCards("Dobi","veszett","kettős támadás","summon","EmptyAbility", "Az ellenfél összes <b>'diák'</b> kártyája <b>ledermed 1</b> körre. ", 1, 2, Dobi, 6, 2, "character", DobiGacha, "DobiCard", DobbyA, "Dob", ["kettős:0"]);
     export let IvanEvaCard = new tanarCards("Iván Éva","tunya","tövisesbőr","summon","EmptyAbility", "<b>Ledermed 1</b> körre minden kártya, amelyik <b>megtámadja</b>.", 2, 3, IvanEva, 3, 2, "character", IvanEvaGacha, "IvanEvaCard", IvanEvaA, "Average Edward Allen Poe fan, nem egy szakbarbár. Irigylésre méltó!", []);
-    export let KocsiAndiCard = new tanarCards("Kocsondi Andrea","lelkiismeretes","","summon","EmptyAbility", "Az <b>átfolyó sebzés</b> halálakor mindig 1.", 6, 8, KocsiAndi, 3, 4, "character", KocsiAndiGacha, "KocsiAndiCard", KocsiAndiA, "Senki se tudja, hogy pontosan mit csinál. A sárga könyvvel kapcsolatban őt keresd!", []);
+    export let KocsiAndiCard = new tanarCards("Kocsondi Andrea","lelkiismeretes","","summon","KocsiAndi", "Az <b>átfolyó sebzés</b> halálakor mindig 1.", 6, 8, KocsiAndi, 3, 4, "character", KocsiAndiGacha, "KocsiAndiCard", KocsiAndiA, "Senki se tudja, hogy pontosan mit csinál. A sárga könyvvel kapcsolatban őt keresd!", []);
     export let KoPaszCard = new tanarCards("Kopaszka","vérszomjas","robbanó támadás","summon","EmptyAbility", "Ha van előtte kő, a kő kap 5 életerőpontot.", 2, 4, KoPasz, 5, 3, "character", KoPaszGacha, "KoPaszCard", KopaszkaA, "Gyakran látom a ligetben sétálni. Az Edaq530 ott is a zsebében van.", []);
     
     export let KutiCard = new tanarCards("Kúti","veszett","","summon","Kuti", "Egy karakterkártyád életerőpontjai megduplázódnak.", 6, 6, Kuti, 5, 7, "character", KutiGacha, "KutiCard", KutiA, "Irodalom, nyelvtan, matematika, tesi szakos, síoktató, asztronauta és agysebész.", []);
@@ -295,8 +296,9 @@
     export let KinyoCard = new tanarCards("Kinyó","veszett","", "summon","EmptyAbility","Egy szabadon választott kártyába 3-mat sebez.", 9, 6, Kinyo, 3, 6, "character", GachaPH, "KinyoCard", KinyoA, "Megrendeli a ságváris merch-öt(?)", []);
     export let LaciNeniCard = new tanarCards("Laci néni","lelkiismeretes","","summon","EmptyAbility", "Amíg a pályán van, a kőpakli csak mézeskalácsházakat tartalmaz.", 7, 10, LaciNeni, 3, 5, "character", GachaPH, "LaciNeniCard", LaciNeniA, "Qu'est-ce que les schtroumpfs", []);
     export let MsFarkasCard = new tanarCards("Mrs Farkas","lelkiismeretes","életelszívás_2", "summon","EmptyAbility","Ha Dr. Farkas a pályán van vele, +2atk/+2hp.", 4, 4, MsFarkas, 4, 3, "character", GachaPH, "MsFarkasCard", MrsFarkasA, "Csak 2 embernek hinném el, hogy zöld az ég és kék a fű. Anyám és Farkas Judit.", []);
-    export let NagyTCard = new tanarCards("Nagy T","vérszomjas","kihívó,robbanó támadás", "summon","EmptyAbility","1/1-ként 1-szer újjáéled a pályán.", 2, 10, NagyT, 5, 5, "character", GachaPH, "NagyTCard", NagyTA, "T", []);
-    export let ParagiCard = new tanarCards("Paragi","tunya","tövisesbőr", "Egy szabadon választott kártyát duplikál a pályán 1/1-ként.", 1, 5, Paragi, 4, 2, "character", GachaPH, "ParagiCard", ParagiA, "Pontok, vonalak, foltok. Baguette zene a kedvence.", []);
+    export let NagyTCard = new tanarCards("Nagy T","vérszomjas","kihívó,robbanó támadás", "death","NagyT","1/1-ként 1-szer újjáéled a pályán.", 2, 10, NagyT, 5, 5, "character", GachaPH, "NagyTCard", NagyTA, "T", ["PowerModveszett*1.5"]);
+    export let BlazóCard = new tanarCards("Blazó","tunya","fürge támadás","death","Blazó", "", 3, 2, Blazó, 5, 3, "character", GachaPH, "BlazóCard", gachaPHAudio, "B", ["PowerModtunya*1.5"]);
+    export let ParagiCard = new tanarCards("Paragi","tunya","tövisesbőr","summon","EmptyAbility", "Egy szabadon választott kártyát duplikál a pályán 1/1-ként.", 1, 5, Paragi, 4, 2, "character", GachaPH, "ParagiCard", ParagiA, "Pontok, vonalak, foltok. Baguette zene a kedvence.", []);
     export let RixerCard = new tanarCards("Rixer Márta","tunya","robbanó támadás","summon","EmptyAbility", "A megtámadott kártya szomszédjai <b>elnémulnak</b> 1 körre.", 5, 5, Rixer, 3, 4, "character", GachaPH, "RixerCard", RixerA, "Tanított fél évet...papíron.", []);
     export let SisakCard = new tanarCards("Sisák","veszett","","summon","EmptyAbility", "A szomszédjai 'tunyává' válnak.", 6, 5, Sisak, 3, 4, "character", GachaPH, "SisakCard", SisakA, "Nem is olyan régen lett nagypapa. Gratulálunk!", []);
     export let SzaszakCard = new tanarCards("Szaszi","lelkiismeretes,vérszomjas","életelszívás_1,tövisesbőr","summon","EmptyAbility", "Az összes táblán lévő kártya veszít 2 életerőpontot.", 3, 5, Szaszak, 5, 4, "character", GachaPH, "SzaszakCard", SzasziA, "Bács-Kiskun, Baranya, Békés, Borsod-Abaúj-Zemplén, Csongrád-Csanád, Fejér, Győr-Moson-Sopron, Hajdú-Bihar, Heves, Jász-Nagykun-Szolnok, Komárom-Esztergom, Nógrád, Pest, Somogy, Szabolcs-Szatmár-Bereg, Tolna, Vas, Veszprém, Zala", []);

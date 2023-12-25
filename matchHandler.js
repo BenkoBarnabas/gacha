@@ -99,7 +99,9 @@ let nextTurnEvent
 let updateEvent
 let actionLogEvent
 let aligmentAnimEvent
+let cardDmgAnimEvent
 
+let bizsoEndTurnEvent
 
 function WaitForDomPage(){
     if(!domLoaded && !connectedToSocket){
@@ -113,6 +115,9 @@ function WaitForDomPage(){
         updateEvent = new Event("updateParams")
         actionLogEvent = new Event("actionLog")
         aligmentAnimEvent = new Event("cellAligmentAnim")
+        cardDmgAnimEvent = new Event("cardDmgAnim")
+
+        bizsoEndTurnEvent = new Event("bizsoEndTurn")
         ServerCode()
     }
 }
@@ -179,6 +184,16 @@ function ServerCode(){
             aligmentAnimEvent.data = msg.replace("CellAligmentAnimation","")
             document.dispatchEvent(aligmentAnimEvent)
         }
+        else if(msg.includes("CardDmgAnimation")){
+            var params = JSON.parse(msg.replace("CardDmgAnimation",""))
+            params.side == yourGameID ? params.side = "your" : params.side = "enemy"
+            params.side == "enemy" ? params.domId = `e${params.domId}` : {}
+            cardDmgAnimEvent.data = params
+            document.dispatchEvent(cardDmgAnimEvent)
+        }
+        else if(msg.includes("BizsoEndTurn")){
+            document.dispatchEvent(bizsoEndTurnEvent)
+        }
         else{
             msg = JSON.parse(msg)
             if(msg.gameId != yourGameID){
@@ -214,7 +229,8 @@ Client.socket.on('disconnect', () => {
 });
 
 export function SendGameDataClient(data){
-    Client.socket.emit(gameKey, data)
+    data.gameId == yourGameID ? yourGameParametersClient = data : {}
+    Client.socket.emit(gameKey, JSON.stringify(data))
     console.log(`${Date.now()}: game data sent: `,yourGameID);
 }
 
@@ -234,6 +250,22 @@ export function LastActionLog(card){
 }
 export function CellAligmentAnimation(targetId){
     Client.socket.emit(gameKey,`CellAligmentAnimation${targetId}`)
+}
+
+export function CardDmgAnimationClient(domId,dmg,side,type){
+    side == "your" ? side = yourGameID : side = opponentGameID
+    var params = {
+        domId: domId,
+        dmg: dmg,
+        side: side,
+        type: type
+    }
+    Client.socket.emit(gameKey,`CardDmgAnimation${JSON.stringify(params)}`)
+}
+
+//gameplay abilties
+export function BizsoEndTurnClient(){
+    Client.socket.emit(gameKey,"BizsoEndTurn")
 }
 
 
