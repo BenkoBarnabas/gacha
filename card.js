@@ -264,7 +264,7 @@
     export let visszaakezembeCard = new spellCards("Vissza a kezembe!","EmptyAbility","Egy általad kiválasztott kártyád <b>visszakerül</b> a tábláról <b>a kezedbe</b>.",visszaakezembe,3,1,"spell",GachaPHSpell,"puskazasCard",gachaPHAudio, "Nyugi, a padtársad se tudja a választ.")
     //#endregion
     //#region EGYÉB KARAKTERSPELLEK/SEGÉDSPELLEK
-    export let KutiDiplomaCard = new spellCards("Tanári Diploma","KutiDiploma","A pályádon lévő <b>Kuti</b> kártya lediplomázott. Válaszd meg milyen szakon. <b>Reál, humán vagy sport.</b>",KutiDiploma,5,0,"spell",GachaPHSpell,"KutiDiplomaCard",gachaPHAudio, "")
+    export let KutiDiplomaCard = new spellCards("Tanári Diploma","KutiDiploma","A pályádon lévő <b>Kúti</b> kártya lediplomázott. Válaszd meg milyen szakon. <b>Reál, humán vagy sport.</b>",KutiDiploma,5,0,"spell",GachaPHSpell,"KutiDiplomaCard",gachaPHAudio, "")
 
     //#endregion
 
