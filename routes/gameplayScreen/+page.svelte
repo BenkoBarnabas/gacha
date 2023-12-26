@@ -91,6 +91,9 @@
     let newCard
     let cardsInHandDoms = []
 
+    let yourPlayerNameDom
+    let enemyPlayerNameDom
+
     let yourKo = 8
     let isKoHasBeenPutDownThisTurn = false
 
@@ -167,16 +170,20 @@
         yourHand[0] = Cards.YouCard
         yourHand[1] = Cards.KutiCard
         yourHand[2] = Cards.KutiDiplomaCard
-        yourHand[3] = Cards.BizsoCard
+        yourHand[3] = Cards.KinyoCard
+        yourHand[4] = Cards.SzaszakCard
          //UpdateLocalStorage()
         
         SendGameData(yourGameParameters)
     }
     function DrawOne(){
-        yourHand.push(yourGameParameters.remaningDeck[Math.floor(Math.random() * yourGameParameters.remaningDeck.length)])
-        cardsInYourHandClass.push("cardTemplate")
-        yourHand = yourHand
-        yourGameParameters.yourHand = Array.from(yourHand)
+        var random = Math.floor(Math.random() * yourGameParameters.remaningDeck.length)
+            yourHand.push(yourGameParameters.remaningDeck[random])
+
+            yourGameParameters.remaningDeck.splice(random,1)
+            cardsInYourHandClass.push("cardTemplate")
+            yourHand = yourHand
+            SendGameData(yourGameParameters)
     }
     
     //#region VARS FOR GAMEPLAY
@@ -313,7 +320,8 @@
 
                 //#region ABILITIES
                 if(dragged.abilityType == "summon"){
-                        eval(`${dragged.ability}()`)
+                    console.log("uwulog1: ",yourBoard[Number(event.target.id.replace("td",""))]);
+                        eval(`${dragged.ability}(yourBoard[Number(event.target.id.replace("td",""))])`)
                     }
                 //#endregion
 
@@ -582,7 +590,7 @@
 
         //#region ABILITIES
             if(card.abilityType == "summon"){
-                eval(`${card.ability}()`)
+                eval(`${card.ability}(yourBoard[i])`)
             }
         //#endregion
     }
@@ -838,6 +846,10 @@
             else if (type == "ko"){
                 dom.children[0].style.backgroundImage = "../../lib/assets/gameplay/koTarget.png"
             }
+
+            //#region ABILITIES
+                yourBoard[domId].name == "Szaszi" ? Szaszak() : {}
+            //#endregion
         }, 300);
 
         if(dmg == "sebzés"){
@@ -872,7 +884,7 @@
                     if(type == "character"){
                         //#region ABILITIES
                         if(yourBoard[Number(dom.id.replace("td",""))].abilityType == "death"){
-                                eval(`${yourBoard[Number(dom.id.replace("td",""))].ability}()`)
+                                eval(`${yourBoard[Number(dom.id.replace("td",""))].ability}(yourBoard[Number(dom.id.replace("td",""))])`)
                             }
                         //#endregion
                     }
@@ -921,7 +933,7 @@
 
         enemyBoard = enemyBoard
         enemyGameParameters = enemyGameParameters
-        console.log(enemyBoard, enemyGameParameters.hp);
+        console.log(enemyBoard, enemyGameParameters.health);
 
         SendGameData(enemyGameParameters)
     }
@@ -973,9 +985,12 @@
         isSelectTargetMode = true
         isSelectTargetMode = isSelectTargetMode
 
-        selectableCards = targets
+        for(let i=0;i<targets.length;i++){
+            selectableCards.push(targets[i])
+        }
+        
         selectableCards = selectableCards
-        console.log("SELECTLOG: ",selectableCards,yourBoard);
+        console.log("kinyo: ",selectableCards);
     }
     function EnableChoosingMode(targets){
         isInChoosingMode = true
@@ -1187,7 +1202,6 @@
             }
             console.log("1 kezdés, 1 megáll");
 
-            
             if(target.health == 0){
                 CardDmgAnimationClient(`td${i}`,"halál","enemy",targetType)
             }
@@ -1231,18 +1245,18 @@
                         CardDmgAnimationClient(`td${i+5}`,"halál","enemy",targetType)
                         
 
-                        enemyGameParameters.hp -= dmg
+                        enemyGameParameters.health -= dmg
                         console.log("1 kezdés, 2 tovább, 3 megáll");
                     }
                 }
                 else{ //1kezdés, 2 nincs, 3 megáll
-                    enemyGameParameters.hp -= dmg
+                    enemyGameParameters.health -= dmg
                     console.log("1kezdés, 2 nincs, 3 megáll");
                 }
             }
             else{ //2 kezdés, tovább
                 //2 kezdés, 3 megáll
-                enemyGameParameters.hp -= dmg
+                enemyGameParameters.health -= dmg
                 console.log("2 kezdés, 3 megáll")
             }
         }
@@ -1362,12 +1376,12 @@
     //ABILITIES HERE AAAAAAAAA_____________________________________________________________________________________
     //#region DAMN... ABILITIES
 
-        function EmptyAbility(){
+        function EmptyAbility(card){
             console.log("ABILOG: ", "WOOO KIJÁTSZOTTÁL");
         }
 
         //abc sorrend
-        function Bizso(){
+        function Bizso(card){
             BizsoEndTurnClient()
         }
         function BizsoEndTurn(){
@@ -1417,17 +1431,54 @@
             ClearBoardPhs()
             ClearAttackModes()
         }
-        function Blazó(){
-            for(let i = 0; i<yourBoard.length;i++){
-                if(yourBoard[i].name == "Blazó"){
-                    yourBoard[i].source = BlazóS
-                    yourBoard[i].attack = Math.floor(yourBoard[i].attack*1.5)
-                    yourBoard[i].health = yourBoard[i].attack
-                    yourBoard = yourBoard
+        function Blazó(card){
+            card.source = BlazóS
+            card.attack = Math.floor(card.attack*1.5)
+            card.health = card.attack
+            yourBoard = yourBoard
+        }
+        function Kinyo(card){
+            giveDobi(".attack += 2")
+
+            card.abilityType = "death"
+            card.ability = "KinyoDeath"
+            SendGameData(yourGameParameters)
+            
+        }
+        async function KinyoDeath(card){
+            console.log("UWULOG: kinyodeatzh");
+            var targets = Array.from(enemyBoard)
+            targets.push(enemyGameParameters)
+
+            for(let i = 0; i<enemyBoard.length; i++){
+                if(enemyBoard[i] != ""){
+                    selectableCardDoms.push(enemyBoardDoms[i])
                 }
             }
+            selectableCardDoms.push(enemyPlayerNameDom)
+            selectableCardDoms = selectableCardDoms
+            
+            EnableTargetSelectionMode(targets)
+            const result = await getUserChoice()
+
+            var domID
+            for(let i = 0; i<targets.length;i++){
+                console.log("kinyoLog: ",i,targets[i]);
+                if(targets[i] != ""){
+                    targets[i].name == result.name ? domID = i : {}
+                }
+                
+            }
+            targets[domID].health -= 2
+            if(targets[domID].type == "character" || targets[domID].type == "ko"){
+                targets[domID].health > 0 ? CardDmgAnimationClient(`td${domID}`,"sebzés","enemy",result.type) : CardDmgAnimationClient(`td${domID}`,"death","enemy",result.type)
+            }
+            console.log("playerDMGLOG: ",targets[domID].health,enemyGameParameters)
+            SendGameData(enemyGameParameters)
+            
+            DeleteSelectTargetMode()
         }
-        function KocsiAndi(){
+        function KocsiAndi(card){
             yourBoard.forEach(element => {
                 if(element != ""){
                     if(element.aligment.includes("lelkiismeretes")){
@@ -1438,7 +1489,7 @@
             giveDobi(".cost -= 1")
 
         }
-        async function Kuti(){
+        async function Kuti(card){
             var targets = []
 
             for(let i = 0; i<yourBoard.length; i++){
@@ -1447,6 +1498,7 @@
                     selectableCardDoms.push(yourBoardDoms[i])
                 }
             }
+            selectableCardDoms = selectableCardDoms
             EnableTargetSelectionMode(targets)
             const result = await getUserChoice()
             console.log("CHOOSELOG: ",result);
@@ -1457,7 +1509,7 @@
             
             DeleteSelectTargetMode()
         }
-        async function KutiDiploma(){
+        async function KutiDiploma(card){
             EnableChoosingMode([Cards.KutiHumanCard,Cards.KutiRealCard,Cards.KutiSportCard])
             const result = await getUserChoice();
             console.log("CHOOSELOG: ",result);
@@ -1524,19 +1576,30 @@
             
             DeleteChoosingMode()
         }
-        function NagyT(){
-            for(let i = 0; i<yourBoard.length;i++){
-                if(yourBoard[i].name == "Nagy T"){
-                    yourBoard[i].source = NagyTS
-                    yourBoard[i].attack = Math.ceil(yourBoard[i].attack*0.5)
-                    yourBoard[i].health = yourBoard[i].attack
+        function Meszaros(card){
+            giveDobi(".attack += 2")
+            card.abilityType = "death"
+            card.ability = "MeszarosDeath"
+            SendGameData(yourGameParameters)
+            
+        }
+        function MeszarosDeath(card){
+            DrawOne()
+        }
+        function NagyT(card){
+            card.source = NagyTS
+            card.attack = Math.ceil(card.attack*0.5)
+            card.health = card.attack
 
-                    yourBoard = yourBoard
-                    SendGameData(yourGameParameters)
-                }
-            }
+            yourBoard = yourBoard
+            SendGameData(yourGameParameters)
+        }
+        function Szaszak(card){
+            giveDobi(".attack += 1")
+            giveDobi(".health += 1")
         }
         
+
         //bonus functions
         function giveDobi(what){
             for(let i = 0; i<yourBoard.length;i++){
@@ -1593,12 +1656,12 @@
 
 <div id="gamePlayFiledCont">
     <div id="playerHps">
-        <div class="playerNameCont" id="enemyPlayerName">{enemyGameParameters.username}</div>
+        <div class="playerNameCont" id="enemyPlayerName" on:click={()=> SelectTargetCard(enemyGameParameters)} bind:this={enemyPlayerNameDom} class:cardOnBoardInSelectMode={selectableCardDoms.includes(enemyPlayerNameDom)} on:keydown role="button" tabindex="">{enemyGameParameters.username}</div>
 
-        <div class="playerHpCont" id="enemyPlayerHp">{enemyGameParameters.hp}</div>
-        <div class="playerHpCont" id="yourPlayerHp">{yourGameParameters.hp}</div>
+        <div class="playerHpCont" id="enemyPlayerHp">{enemyGameParameters.health}</div>
+        <div class="playerHpCont" id="yourPlayerHp">{yourGameParameters.health}</div>
 
-        <div class="playerNameCont" id="yourPlayerName">{yourGameParameters.username}</div>
+        <div class="playerNameCont" id="yourPlayerName" on:click={()=> SelectTargetCard(yourGameParameters)} bind:this={yourPlayerNameDom} class:cardOnBoardInSelectMode={selectableCardDoms.includes(yourPlayerNameDom)} on:keydown role="button" tabindex="">{yourGameParameters.username}</div>
     </div>
     <div id="board">
         <div id="enemyHand" class="handCont">
@@ -2534,6 +2597,9 @@
         font-size: 2vw;
         font-family: "sgGachaFont";
         text-align: center;
+
+        background-image: url("../../lib/assets/gameplay/playerSprite.png");
+        background-size: 100% 100%;
 
         position: absolute;
     }
