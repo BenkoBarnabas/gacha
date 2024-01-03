@@ -152,7 +152,7 @@
             </div>
             <div on:click={() => GoToPage("../gachaScreen")} class="contentPicsDiv" id="szerencses" style="height: 30%; width:96%; margin-left:4%; " on:keydown role="button" tabindex="">
                 
-                <div class="tag" style="background-image: url({tag2}); filter:hue-rotate(-50deg);"><p class="tagText"  style="top: 47%; left: 12%;">Szerencsés húzás</p></div>
+                <div class="tag" style="background-image: url({tag2}); filter:hue-rotate(-50deg);"><p class="tagText"  style="top: 47%; left: 12%;">Zsákbamacska</p></div>
                 
             </div>
         </div>

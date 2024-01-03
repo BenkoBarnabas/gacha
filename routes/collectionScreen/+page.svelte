@@ -260,6 +260,11 @@
         
         console.log("kill me");
     }
+
+    function scrollDown() {
+        var scrollContainer = document.getElementById("list");
+        scrollContainer.children[0].scrollTop += 200;
+    }
 </script>
 {#if !pageLoaded}
 <div id="loadingScreen">
@@ -332,9 +337,9 @@
 
 
 
-<div id="list">
+<div id="list" >
     {#if selectedCollection == 1}
-    <div class = "cardcollection" id = "tanarcollection">
+    <div class = "cardcollection noScrollers" id = "tanarcollection" >
         {#each refTanarDeck as card}
         <div id="cardPreviewListCont">
             <img style="width: 12.5vw; position:absolute" src={cardV2Background} alt="cardBg">
@@ -374,7 +379,7 @@
         {/each}
     </div>
     {:else if selectedCollection == 2}
-    <div class = "cardcollection" id = "diakcollection">
+    <div class = "cardcollection  noScrollers" id = "diakcollection">
         {#each Cards.diakCardsArr as card}
         <div id="cardPreviewListCont">
             <img style="width: 12.5vw; position:absolute" src={cardV2Background} alt="cardBg">
@@ -419,7 +424,7 @@
         {/each}
     </div>
     {:else}
-        <div class = "cardcollection" id = "spellcollection">
+        <div class = "cardcollection  noScrollers" id = "spellcollection">
             {#each Cards.spellCardsArr as card}
             <div id="cardPreviewListCont">
                 <img style="width: 12.5vw; position:absolute" src={cardV2Background} alt="cardBg">
@@ -475,34 +480,33 @@
     </div>
 </div>
     {:else if curCardInView.type == "spell"}
-<div id="cardPreview" >
-    <div id="curCardQuote" class="noScrollers"><i>"{curCardInView.quote}"</i></div>
-    <div style="position:relative">
-        <img class="cardTemplate" src={spellBackground} alt="cardBg">
-        <div id="rarityBG" style="background: {backgroundColorByCost[(curCardInView.rarity)-3]}; "></div>
-        <img id="curCardInView" src={curCardInView.source} alt="">
-        <img class="cardTemplate" src={spellForeground} alt="cardBg">
-        <div id="curCardDesc" class="noScrollers">{@html curCardInView.desc}</div>
-        <div class="curCardCost">{curCardInView.cost}</div>
-        <div style="top: 19.4vw" class="curCardName">{curCardInView.name}</div>
-        
-        <div id="curCardRarity" style="{starsColorByCost[(curCardInView.rarity)-3]}; top: {starSizeTop[(curCardInView.rarity)-3]}vw;">
-            {#each Array(Number(curCardInView.rarity)) as card,index}
-                <span style="font-size: {starSizeArray[index]}vw;">★</span>
-            {/each}
-        </div>
+    <div id="cardPreview" >
+        <div id="curCardQuote" class="noScrollers"><i>"{curCardInView.quote}"</i></div>
+        <div style="position:relative">
+            <img class="cardTemplate" src={spellBackground} alt="cardBg">
+            <div id="rarityBG" style="background: {backgroundColorByCost[(curCardInView.rarity)-3]}; "></div>
+            <img id="curCardInView" src={curCardInView.source} alt="">
+            <img class="cardTemplate" src={spellForeground} alt="cardBg">
+            <div id="curCardDesc" class="noScrollers">{@html curCardInView.desc}</div>
+            <div class="curCardCost">{curCardInView.cost}</div>
+            <div style="top: 19.4vw" class="curCardName">{curCardInView.name}</div>
+            
+            <div id="curCardRarity" style="{starsColorByCost[(curCardInView.rarity)-3]}; top: {starSizeTop[(curCardInView.rarity)-3]}vw;">
+                {#each Array(Number(curCardInView.rarity)) as card,index}
+                    <span style="font-size: {starSizeArray[index]}vw;">★</span>
+                {/each}
+            </div>
 
+        </div>
+    </div>
+    {/if}
+    <div >
+        <button>Senior Bölcsesség</button>
+        <button>Fabrikál</button>
     </div>
 </div>
-    {/if}
-</div>
 
-
-
-<div style="margin-right: 14vw;">
-    <button style="float: right;" on:click={()=> GoToPage("../gachaScreen")}>=></button>
-    <div id="cardSrouceInfo" style="background-color: aqua; display:inline-block">Source: [Senior Bölcsesség]</div>
-</div>
+<button on:click={scrollDown} id="lefele"></button>
 
 
 
@@ -541,6 +545,33 @@
         z-index: -3;
     }
 
+    #lefele{
+        position:absolute;
+        width: 3vw;
+        height: 3vw;
+        background-image: url("../../lib/assets/global/scrollbarDownArrow.png");
+        background-size:100% 100% ;
+        background-color: transparent;
+
+        left: 30vw;
+        animation: arrowUpDown 2s infinite;
+
+        border: none;
+    }
+    #lefele:hover{
+        cursor: pointer;
+    }
+    @keyframes arrowUpDown {
+        0%{
+            bottom: 4vh;
+        }
+        50%{
+            bottom: 5vh;
+        }
+        100%{
+            bottom: 4vh;
+        }
+    }
 
     #loadingScreen {
     z-index: 9999;
@@ -650,12 +681,6 @@
 
 
 
-
-    #cardSrouceInfo{
-        font-size:1.5vw;
-        float: right;
-    }
-
     .bannerIcon {   /*the selectors itself */
         height: 4vw;
         width: 6vw;
@@ -742,8 +767,9 @@
         width: 60vw;
         height: 65vh;
         overflow: auto;
-        float: left;
-        padding-top: 4vh;
+        position: absolute;
+        top: 23.5vh;
+        left: 4vw;
     }
     .cardListFrame{
         width: 12.5vw;
@@ -869,19 +895,16 @@
         left: 1.8vw;
         top: 4.8vw;
     }
-
-
-.curCardMultipleIconsContainer{
-        position: absolute;
-        top: 13.5vw;
-        left: 3.9vw;
-        width: 5.2vw;
-        height: 2vw;
-        display:flex;
-        flex-wrap:nowrap;
-        align-content:space-around;
-}
-
+    .curCardMultipleIconsContainer{
+            position: absolute;
+            top: 13.5vw;
+            left: 3.9vw;
+            width: 5.2vw;
+            height: 2vw;
+            display:flex;
+            flex-wrap:nowrap;
+            align-content:space-around;
+    }
     .curCardTalentIcon{
         position: absolute;
         width: 3.1vw;
@@ -898,6 +921,13 @@
         width: 6vw;
         height: 1.7vw;
         text-align: center;
+    }
+
+
+    #preview{
+        position: absolute;
+        top:18.5vh;
+        left:2vw;
     }
     #cardPreview{
         width: 32vw;

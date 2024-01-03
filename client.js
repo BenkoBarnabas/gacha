@@ -150,14 +150,18 @@ export function getAccountData(email){
   socket.emit("getAccountData", data)
   socket.on("getAccountData", data =>{
     if(data.id == clientID){
-      console.log(data);
+      console.log("GETDATALOG: ",data);
       userData = data["account"]
       pullData = data["rolls"]
       deckData = data["deck"]
     
-      if (pullData.history == ""){
+      if (pullData.history === "" || pullData.history == undefined || pullData.history == null){
         pullData.history = []
       }
+      if (userData.cards == "" || userData.cards == undefined || userData.cards == null){
+        userData.cards = ""
+      }
+
       else{
         if (typeof pullData.history != "object"){
           pullData.history= pullData.history.split(',');

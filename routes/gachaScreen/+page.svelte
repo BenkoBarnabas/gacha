@@ -169,7 +169,12 @@
         return rarity[Math.floor(Math.random() * rarity.length)].source
     }
 
-
+    let shardValueChart = {
+        s3: 50,
+        s4: 200,
+        s5: 750,
+        s6: 2000
+    }
     function CalculatePulls(num){ //loads the pull cards and already calculates their content
         if(localUserData.tickets < num && localUserData.gachaCurrency < num*200){
             window.alert("nincs elég pénzed haver")
@@ -261,12 +266,40 @@
                 console.log("4pity: "+localPullData.pity4S+" 5pity: "+localPullData.pity5S+" URpity: "+localPullData.pityUR);
                 DoPullAnimation(i)
                 DoShineAnimation(i,yourCard.stars)
+
+                //got card
+                if(!localUserData.cards.includes(yourCard.name)){ //nincs meg a kártyi, belerakja 
+                    console.log("CARDSDATA: ",localUserData.cards);
+                    sendData("cards",`${localUserData.cards}${yourCard.name},`,localUserData.id,"account")
+                    localUserData.cards = `${localUserData.cards}${yourCard.name},`
+                }
+                else{
+                    if(yourCard.stars == 5 || yourCard.stars == 6){ //ha benne van de SRR v UR megnézia kari spellt
+                        if(!localUserData.cards.includes(`${yourCard.cardSRCText}CSpell`)){
+                            var urcardname = eval(`Cards.${yourCard.cardSRCText}CSpell.name`)
+                            localUserData.cards = `${localUserData.cards}${urcardname},`
+                            console.log("CARDSDATA: ",localUserData.cards);
+                            sendData("cards",localUserData.cards,localUserData.id,"account")
+                            
+                        }
+                        else{
+                            localUserData.shards += shardValueChart[`s${yourCard.stars}`]
+                        }
+                    }
+                    else{
+                            localUserData.shards += shardValueChart[`s${yourCard.stars}`]
+                    }
+                }
+                console.log("CARDSDATA: ",localUserData.shards);
+                sendData("shards",localUserData.shards,localUserData.id,"account")
+                
+                
                 
             }
             console.log("fasz: ",localPullData.history);
             console.log("fasz2: ",lastPulls);
             for (let i = 0; i < lastPulls.length; i++){
-                localPullData.history.push(lastPulls[i])
+                localPullData.history = `${localPullData.history}${lastPulls[i]},`
             }
             //localPullData.history = localPullData.history.concat(lastPulls)
             
@@ -277,7 +310,10 @@
             sendData("pity5S",localPullData.pity5S,localUserData.id,"rolls")
             sendData("pityUR",localPullData.pityUR,localUserData.id,"rolls")
 
-    
+            localStorage.setItem("userData", JSON.stringify(localUserData));
+            localStorage.setItem("pullData", JSON.stringify(localPullData));
+
+
             }
     }
 
@@ -320,12 +356,12 @@
     let historyTableForm = []
 
     function LoadHistory(){
-        historyTableForm = localPullData.history
-        console.log("fasz:4 loadhis: ",localPullData.history);
+        historyTableForm = Array.from(localPullData.history.substring(0,localPullData.history.length -1).split(","))
+        console.log("fasz:4 loadhis: ",historyTableForm);
         //localPullData.history= localPullData.history.split(',');
         
-        for (let i = 0; i < localPullData.history.length; i++){
-            historyTableForm[i] = localPullData.history[i].split(':')
+        for (let i = 0; i < historyTableForm.length; i++){
+            historyTableForm[i]= Array.from( historyTableForm[i].split(':'))
         }
         console.log("history table form: ",historyTableForm);
 

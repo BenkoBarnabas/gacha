@@ -68,6 +68,28 @@
         vérszomjas: "rgb(166, 113, 118)",
         veszett: "rgb(133, 113, 166)"
     }
+
+    import freezFE from "../../lib/assets/gameplay/freezFE.png"
+    import sleepFE from "../../lib/assets/gameplay/sleepFE.png"
+    import stunnFE from "../../lib/assets/gameplay/stunnFE.png"
+    let fieldEffectIcons = {
+        frozen: freezFE,
+        asleep: sleepFE,
+        stunned: stunnFE
+    }
+    import frozenOverlay from "../../lib/assets/gameplay/frozenOverlay.png"
+    import frozenGif from "../../lib/assets/gameplay/frozenGif.gif"
+    import stunnOverlay from "../../lib/assets/gameplay/stunnOverlay.png"
+    import stunnGif from "../../lib/assets/gameplay/stunnGif.gif"
+    let fieldEffectOverlays = {
+        frozen: frozenOverlay,
+        stunned: stunnOverlay
+    }
+    let fieldEffectGifs = {
+        frozen: frozenGif,
+        stunned: stunnGif
+    }
+
     let voicelines = {}
 
     //#region SEGÁDVÁLTOZÓK
@@ -94,7 +116,7 @@
     let yourPlayerNameDom
     let enemyPlayerNameDom
 
-    let yourKo = 8
+    let yourKo = 5
     let isKoHasBeenPutDownThisTurn = false
 
     let targetArea = []
@@ -156,7 +178,6 @@
     }
 
 
-
     function DrawStartingHand(n){
         for(let i = 0; i<n; i++){
             var random = Math.floor(Math.random() * yourGameParameters.remaningDeck.length)
@@ -170,8 +191,8 @@
         yourHand[0] = Cards.YouCard
         yourHand[1] = Cards.KutiCard
         yourHand[2] = Cards.KutiDiplomaCard
-        yourHand[3] = Cards.KinyoCard
-        yourHand[4] = Cards.SzaszakCard
+        yourHand[3] = Cards.FarkasCard
+        yourHand[4] = Cards.agyhalalCard
          //UpdateLocalStorage()
         
         SendGameData(yourGameParameters)
@@ -310,7 +331,7 @@
                 yourGameParameters.yourHand = Array.from(yourHand)
 
                 if(!dragged.talent.includes("fürge támadás")){
-                    yourBoard[Number(event.target.id.replace("td",""))].fieldEffects.push("asleep")
+                    yourBoard[Number(event.target.id.replace("td",""))].fieldEffects.push("asleep:")
                 }
 
                 console.log(voicelines);
@@ -319,7 +340,7 @@
                 LastActionLog(dragged)
 
                 //#region ABILITIES
-                if(dragged.abilityType == "summon"){
+                if(dragged.abilityType == "summon" || dragged.abilityType == "boardcon"){
                     console.log("uwulog1: ",yourBoard[Number(event.target.id.replace("td",""))]);
                         eval(`${dragged.ability}(yourBoard[Number(event.target.id.replace("td",""))])`)
                     }
@@ -386,7 +407,7 @@
             LastActionLog(dragged)
 
             //#region ABILITIES
-                eval(`${dragged.ability}()`)
+            eval(`${dragged.ability}()`)
             //#endregion
 
             dragged = ""
@@ -402,7 +423,7 @@
 
     }
     function dragStart(event) {
-        if(yourHand[event.target.id].type == "character" || yourHand[event.target.id].type == "spell"){
+        if((yourHand[event.target.id].type == "character" || yourHand[event.target.id].type == "spell") && !isSummonLocationChoosing){
             ClearAttackModes()
 
             RemoveEventListenersFromCells()
@@ -421,7 +442,7 @@
         }
     }
     function koDragStart(event){
-        if(!isKoHasBeenPutDownThisTurn){
+        if(!isKoHasBeenPutDownThisTurn  && !isSummonLocationChoosing){
             ClearAttackModes()
 
             RemoveEventListenersFromCells()
@@ -504,8 +525,9 @@
         isCardInYourHandInPlacingMode = false
         isCardInYourHandInPlacingMode = isCardInYourHandInPlacingMode
     }
+    let isSummonLocationChoosing = false
     function PlacingMode(card, domId){
-        if(isYourTurn && card.cost <= yourGameParameters.mana){
+        if(isYourTurn && card.cost <= yourGameParameters.mana  && !isSummonLocationChoosing){
             ClearAttackModes()
 
             enemyBoardPhs.fill("")
@@ -561,20 +583,23 @@
 
         //#region Card placing
         if(!card.talent.includes("fürge támadás")){
-            yourBoard[i].fieldEffects.push("asleep")
+            yourBoard[i].fieldEffects.push("asleep:")
         }
     
         yourBoardPhs.fill("")
-        yourHand.splice(placingModeHighlightedCardIndex, 1);
 
-        cardsInYourHandClass = Array(yourHand.length).fill("cardTemplate")
-
-
-        yourGameParameters.mana -= card.cost
+        if(!isSummonLocationChoosing){
+            yourHand.splice(placingModeHighlightedCardIndex, 1);
+            cardsInYourHandClass = Array(yourHand.length).fill("cardTemplate")
+            yourGameParameters.mana -= card.cost
+        }
+        
 
         yourBoard = yourBoard
         yourBoardPhs = yourBoardPhs
         yourHand = yourHand
+
+        isSummonLocationChoosing = false
 
         console.log("dropped to this cell by click: ",yourBoard[i]);
         console.log("the thing u dropped by click: ",card);
@@ -589,13 +614,13 @@
         //#endregion
 
         //#region ABILITIES
-            if(card.abilityType == "summon"){
+            if(card.abilityType == "summon" || dragged.abilityType == "boardcon"){
                 eval(`${card.ability}(yourBoard[i])`)
             }
         //#endregion
     }
     function KoPlacingMode(){
-        if(isYourTurn){
+        if(isYourTurn  && !isSummonLocationChoosing){
             isCardInYourHandInPlacingMode = false
 
             ClearAttackModes()
@@ -676,8 +701,8 @@
                 yourBoard.forEach(element => {
                     console.log(element,yourBoard);
                     if(element != ""){
-                        if(element.fieldEffects.includes("asleep")){
-                            element.fieldEffects.splice(element.fieldEffects.indexOf("asleep"),1)
+                        if(element.fieldEffects.includes("asleep:")){
+                            element.fieldEffects.splice(element.fieldEffects.indexOf("asleep:"),1)
                         }
                     }
                 });
@@ -688,6 +713,43 @@
             isYourTurn = !isYourTurn
             yourGameParameters.isYourTurn = isYourTurn
             gameFase = 1
+
+            //CC-K
+            yourBoard.forEach(element => {
+                var toDeleteIndexes = []
+                if(element != ""){
+                    var i = 0
+                    element.fieldEffects.forEach(effect => {
+                        if(effect.includes("stunned") || effect.includes("frozen") || effect.includes("silence")){
+                            var stringPartOne = effect.substring(effect.indexOf(":"),-1)
+                            if(effect.includes("frozen")){
+                                var preTurn = Number(effect.substring(effect.indexOf(":")+1,effect.indexOf("-")))
+                                var stringPartTwo = effect.substring(effect.indexOf("-"))
+                            }
+                            else{
+                                var preTurn = Number(effect.substring(effect.indexOf(":")+1))
+                                var stringPartTwo = ""
+                            }
+                            console.log("TURNLOG: preTurn",preTurn)
+                            if(preTurn == 1){
+                                toDeleteIndexes.push(i)
+                            }
+                            else{
+                                effect = `${stringPartOne}:${preTurn-1}${stringPartTwo}`
+                            }
+                            
+                            
+                        }
+                        i++
+                    });
+                    console.log("TURNLOG: ",toDeleteIndexes)
+                    toDeleteIndexes.sort((a, b) => b - a);
+                    toDeleteIndexes.forEach(index => {
+                        element.fieldEffects.splice(index,1)
+                    });
+                }
+            });
+            console.log("TURNLOG: ",yourBoard)
 
             //mana számolás
             console.log(yourGameParameters.spellMana + yourGameParameters.mana);
@@ -704,8 +766,8 @@
 
             yourBoard.forEach(element => {
                 if(element != ""){
-                    if(!element.fieldEffects.includes("asleep"))
-                    element.fieldEffects.push("asleep")
+                    if(!element.fieldEffects.includes("asleep:"))
+                    element.fieldEffects.push("asleep:")
                     if(element.talent.includes("kettős támadás")){
                         yourBoard[yourBoard.indexOf(element)].fieldEffects[0] = "kettős:0"
                     }
@@ -839,16 +901,16 @@
                 dom.children[0].children[0].src = cardV2BackgroundRed
                 dom.children[0].children[3].style.background = '../../lib/assets/global/cardV2TopRed.png'
 
-                dom.children[0].children[5].style.animation = "none"
-                dom.children[0].children[5].offsetHeight;
-                dom.children[0].children[5].style.animation = "statDmg 1s"
+                dom.children[0].children[6].style.animation = "none"
+                dom.children[0].children[6].offsetHeight;
+                dom.children[0].children[6].style.animation = "statDmg 1s"
             }
             else if (type == "ko"){
                 dom.children[0].style.backgroundImage = "../../lib/assets/gameplay/koTarget.png"
             }
 
             //#region ABILITIES
-                yourBoard[domId].name == "Szaszi" ? Szaszak() : {}
+                //yourBoard[domId].name == "Szaszi" ? Szaszak() : {}
             //#endregion
         }, 300);
 
@@ -883,9 +945,15 @@
                 else if(side == "your"){
                     if(type == "character"){
                         //#region ABILITIES
-                        if(yourBoard[Number(dom.id.replace("td",""))].abilityType == "death"){
+                        if(yourBoard[Number(dom.id.replace("td",""))].abilityType == "death" && yourBoard[Number(dom.id.replace("td",""))].fieldEffects.some(element => element.includes("silence"))){
                                 eval(`${yourBoard[Number(dom.id.replace("td",""))].ability}(yourBoard[Number(dom.id.replace("td",""))])`)
                             }
+                        yourBoard.forEach(element => {
+                            if(element != ""){
+                            if(element.abilityType.includes("boardcon")){
+                                eval(`${element.ability}(element)`)
+                            }}
+                        });
                         //#endregion
                     }
                     if(yourBoard[Number(dom.id.replace("td",""))].name != "Blazó" && yourBoard[Number(dom.id.replace("td",""))].name != "Nagy T"){
@@ -943,23 +1011,23 @@
             isYourTurn ? targetDom = document.getElementById(`td${event.data[0]}`).children[0] : targetDom = document.getElementById(`etd${event.data[0]}`).children[0]
             targetAbility = event.data.replace(event.data[0],"")
 
-            targetDom.children[8].style.animation = "none"
-            targetDom.children[8].offsetHeight
-            targetDom.children[8].style.animation = `aligActivateCont${targetAbility} 1.8s 0.8s`
-
-            targetDom.children[4].style.animation = "none"
-            targetDom.children[4].offsetHeight
-            targetDom.children[5].style.animation = "none"
-            targetDom.children[5].offsetHeight
-
-            targetAbility == "vérszomjas" ? targetDom.children[4].style.animation = "statHeal 1s 0.8s" : {}
-            targetAbility == "veszett" ? targetDom.children[5].style.animation = "statHeal 1s 0.8s" : {}
-            targetAbility == "tunya" ? targetDom.children[4].style.animation = "statDmg 1s 0.8s" : {}
-            targetAbility == "lelkiismeretes" ? targetDom.children[5].style.animation = "statDmg 1s 0.8s" : {}
-
             targetDom.children[9].style.animation = "none"
             targetDom.children[9].offsetHeight
-            targetDom.children[9].style.animation = "aligActivateImg 1.8s 0.8s"
+            targetDom.children[9].style.animation = `aligActivateCont${targetAbility} 1.8s 0.8s`
+
+            targetDom.children[5].style.animation = "none"
+            targetDom.children[5].offsetHeight
+            targetDom.children[6].style.animation = "none"
+            targetDom.children[6].offsetHeight
+
+            targetAbility == "vérszomjas" ? targetDom.children[5].style.animation = "statHeal 1s 0.8s" : {}
+            targetAbility == "veszett" ? targetDom.children[6].style.animation = "statHeal 1s 0.8s" : {}
+            targetAbility == "tunya" ? targetDom.children[5].style.animation = "statDmg 1s 0.8s" : {}
+            targetAbility == "lelkiismeretes" ? targetDom.children[6].style.animation = "statDmg 1s 0.8s" : {}
+
+            targetDom.children[10].style.animation = "none"
+            targetDom.children[10].offsetHeight
+            targetDom.children[10].style.animation = "aligActivateImg 1.8s 0.8s"
             
 
             
@@ -982,6 +1050,7 @@
     
 
     function EnableTargetSelectionMode(targets){
+        if(targets)
         isSelectTargetMode = true
         isSelectTargetMode = isSelectTargetMode
 
@@ -1034,7 +1103,6 @@
 
             }
             }
-
             // Start checking for the value
             checkValue();
         });
@@ -1047,22 +1115,26 @@
     let cardDomInAttackingMode = ""
     let isCardOnBoardInAttackingMode = false
 
-    function SelectTargetCard(target,i){
-        if(isSelectTargetMode){
-            cardChoosingModeResult = target
-            console.log("SELECTLOG: chosen as Starget");
+    function SelectTargetCard(target,i,side){
+        if(!isSummonLocationChoosing){
+            console.log("SELECTLOG: chosen card",target);
+            if(isSelectTargetMode && selectableCards.some(element => element.name == target.name)){
+            cardChoosingModeResult = {target: target, i: i,side:side}
+            console.log("SELECTLOG: chosen as Starget",i);
             return;
+            }
+            if(cardInAttackingMode != "" && enemyBoard.includes(target)){
+                AttackCard(target,i)
+                console.log("SELECTLOG: chosen as atkTarget");
+                return;
+            }
+            if(cardInAttackingMode == "" || isCardOnBoardInAttackingMode){
+                CardInAttackMode(target)
+                console.log("SELECTLOG: chosen as attackingCard");
+                return;
+            }
         }
-        if(cardInAttackingMode != "" && enemyBoard.includes(target)){
-            AttackCard(target,i)
-            console.log("SELECTLOG: chosen as atkTarget");
-            return;
-        }
-        if(cardInAttackingMode == "" || isCardOnBoardInAttackingMode){
-            CardInAttackMode(target)
-            console.log("SELECTLOG: chosen as attackingCard");
-            return;
-        }
+        
     }
 
     function ClearAttackModes(){
@@ -1079,10 +1151,11 @@
         attackableCardsDoms = attackableCardsDoms
     }
     function CardInAttackMode(attackingCard){
-        var canAttack = isYourTurn && isYourRally && !attackingCard.fieldEffects.includes("asleep")
-        var cardHasQuickAttack = isYourTurn && !attackingCard.fieldEffects.includes("asleep")
+        var cardNotCCd = !attackingCard.fieldEffects.some(element => element.includes("frozen")) && !attackingCard.fieldEffects.some(element => element.includes("stunned")) 
+        var canAttack = isYourTurn && isYourRally && !attackingCard.fieldEffects.includes("asleep:")
+        var cardHasQuickAttack = isYourTurn && !attackingCard.fieldEffects.includes("asleep:")
     
-        if((canAttack || cardHasQuickAttack) && !isSelectTargetMode && !isCardAttackingAnimationOngoing){
+        if((canAttack || cardHasQuickAttack) && !isSelectTargetMode && !isCardAttackingAnimationOngoing && cardNotCCd){
             ClearBoardPhs()
 
             attackableCards = []
@@ -1192,6 +1265,10 @@
         
         
         //#region DMG CALCULATION
+        if(target.fieldEffects.includes("barrier")){
+            target.fieldEffects.splice(target.fieldEffects.indexOf("barrier"),1)
+        }
+        else{
         if(target.health - dmg >= 0){ //1 kezdés, 1 megáll
             
             if(target.aligment.includes(powerModType)){
@@ -1260,13 +1337,14 @@
                 console.log("2 kezdés, 3 megáll")
             }
         }
+        }
         //#endregion
         
         //#region TALENTS
         //---------------------------------------------------------------
         //KETTŐS TÁMADÁS
         if(!cardInAttackingMode.talent.includes("kettős támadás")){
-            //yourBoard[yourBoard.indexOf(cardInAttackingMode)].fieldEffects.push("asleep")
+            //yourBoard[yourBoard.indexOf(cardInAttackingMode)].fieldEffects.push("asleep:")
         }
         else{
             var whichAttack = Number(yourBoard[yourBoard.indexOf(cardInAttackingMode)].fieldEffects[0].replace("kettős:",""))
@@ -1279,7 +1357,7 @@
                 
                 if(whichAttack == 2){
                 yourBoard[yourBoard.indexOf(cardInAttackingMode)].fieldEffects[0] = "kettős:0"
-                yourBoard[yourBoard.indexOf(cardInAttackingMode)].fieldEffects.push("asleep")
+                yourBoard[yourBoard.indexOf(cardInAttackingMode)].fieldEffects.push("asleep:")
                 }
             }
         }
@@ -1350,11 +1428,8 @@
             }
 
             //#region CHARACTER ABILITIES
-            //KUTI
-            if(cardInAttackingMode.name == "Kúti" || cardInAttackingMode.name == "Kúti humán" || cardInAttackingMode.name == "Kúti reál" || cardInAttackingMode.name == "Kúti sport"){
-                yourHand.push(Cards.KutiDiplomaCard)
-                cardsInYourHandClass.push("cardTemplate")
-                yourHand = yourHand
+            if(cardInAttackingMode.abilityType == "onkill"){
+                eval(`${cardInAttackingMode.ability}(cardInAttackingMode)`)
             }
             //#endregion
         }
@@ -1380,6 +1455,7 @@
             console.log("ABILOG: ", "WOOO KIJÁTSZOTTÁL");
         }
 
+        //#region KARAKETERK
         //abc sorrend
         function Bizso(card){
             BizsoEndTurnClient()
@@ -1405,8 +1481,8 @@
 
             yourBoard.forEach(element => {
                 if(element != ""){
-                    if(!element.fieldEffects.includes("asleep"))
-                    element.fieldEffects.push("asleep")
+                    if(!element.fieldEffects.includes("asleep:"))
+                    element.fieldEffects.push("asleep:")
                     if(element.talent.includes("kettős támadás")){
                         yourBoard[yourBoard.indexOf(element)].fieldEffects[0] = "kettős:0"
                     }
@@ -1437,6 +1513,41 @@
             card.health = card.attack
             yourBoard = yourBoard
         }
+        async function Farkas(card){
+            var targets = Array.from(enemyBoard)
+
+        
+            if(targets.some(element => element !== "")){ //ha nincs target nem történik semmi
+                for(let i = 0; i<enemyBoard.length; i++){
+                if(enemyBoard[i] != ""){
+                    selectableCardDoms.push(enemyBoardDoms[i])
+                }
+                }
+                selectableCardDoms = selectableCardDoms
+
+
+                EnableTargetSelectionMode(targets)
+                const result = await getUserChoice()
+                var domID = result.i
+                
+                console.log("FREEZLOG: ",enemyBoardDoms[domID])
+                FreezEnemy(targets[domID],enemyBoardDoms[domID],1,"enemy")
+
+                if(domID%5 != 4){ //ha a szélén van akkor ne menjen tovább, jobbral + balról is if
+                    if(enemyBoard[domID+1] != ""){
+                        FreezEnemy(targets[domID+1],enemyBoardDoms[domID+1],1,"enemy")
+                    }
+                }
+                if(domID%5 != 0){
+                    if(enemyBoard[domID-1] != ""){
+                        FreezEnemy(targets[domID-1],enemyBoardDoms[domID-1],1,"enemy")
+                    }
+                    
+                }          
+                DeleteSelectTargetMode()
+            }
+            
+        }
         function Kinyo(card){
             giveDobi(".attack += 2")
 
@@ -1450,33 +1561,33 @@
             var targets = Array.from(enemyBoard)
             targets.push(enemyGameParameters)
 
-            for(let i = 0; i<enemyBoard.length; i++){
+        
+            if(targets.some(element => element !== "")){
+                for(let i = 0; i<enemyBoard.length; i++){
                 if(enemyBoard[i] != ""){
                     selectableCardDoms.push(enemyBoardDoms[i])
                 }
-            }
-            selectableCardDoms.push(enemyPlayerNameDom)
-            selectableCardDoms = selectableCardDoms
-            
-            EnableTargetSelectionMode(targets)
-            const result = await getUserChoice()
-
-            var domID
-            for(let i = 0; i<targets.length;i++){
-                console.log("kinyoLog: ",i,targets[i]);
-                if(targets[i] != ""){
-                    targets[i].name == result.name ? domID = i : {}
                 }
+                selectableCardDoms.push(enemyPlayerNameDom)
+                selectableCardDoms = selectableCardDoms
+
+
+                EnableTargetSelectionMode(targets)
+                const result = await getUserChoice()
+
+                var domID = result.i
+
+
+                targets[domID].health -= 2
+                if(targets[domID].type == "character" || targets[domID].type == "ko"){
+                    targets[domID].health > 0 ? CardDmgAnimationClient(`td${domID}`,"sebzés","enemy",result.type) : CardDmgAnimationClient(`td${domID}`,"death","enemy",result.type)
+                }
+                console.log("playerDMGLOG: ",targets[domID].health,enemyGameParameters)
+                SendGameData(enemyGameParameters)
                 
+                DeleteSelectTargetMode()
             }
-            targets[domID].health -= 2
-            if(targets[domID].type == "character" || targets[domID].type == "ko"){
-                targets[domID].health > 0 ? CardDmgAnimationClient(`td${domID}`,"sebzés","enemy",result.type) : CardDmgAnimationClient(`td${domID}`,"death","enemy",result.type)
-            }
-            console.log("playerDMGLOG: ",targets[domID].health,enemyGameParameters)
-            SendGameData(enemyGameParameters)
             
-            DeleteSelectTargetMode()
         }
         function KocsiAndi(card){
             yourBoard.forEach(element => {
@@ -1490,24 +1601,46 @@
 
         }
         async function Kuti(card){
-            var targets = []
+            card.abilityType = "onkill"
+            card.ability = "KutiOnkill"
+            console.log("KUTILOG: ",yourBoard);
+            SendGameData(yourGameParameters)
 
-            for(let i = 0; i<yourBoard.length; i++){
+            var targets = Array.from(yourBoard)
+            console.log("KUTILOG: ",targets);
+            console.log("KUTILOG: ",targets.some(element => element !== ""));
+      
+            if(targets.some(element => element !== "")){
+                console.log("KUTILOG: bemm");
+                for(let i = 0; i<yourBoard.length; i++){
                 if(yourBoard[i] != ""){
-                    targets.push(yourBoard[i])
                     selectableCardDoms.push(yourBoardDoms[i])
                 }
-            }
-            selectableCardDoms = selectableCardDoms
-            EnableTargetSelectionMode(targets)
-            const result = await getUserChoice()
-            console.log("CHOOSELOG: ",result);
+                }
+                selectableCardDoms = selectableCardDoms
 
-            yourBoard[yourBoard.indexOf(result)].health *= 2
-            yourBoard = yourBoard
-            SendGameData(yourGameParameters)
+                EnableTargetSelectionMode(targets)
+                console.log("KUTILOG: enabled");
+                const result = await getUserChoice()
+                console.log("CHOOSELOG: ",result);
+
+                yourBoard[result.i].health *= 2
+                yourBoard = yourBoard
+
+                SendGameData(yourGameParameters)
+                
+                DeleteSelectTargetMode()
+
+                
+            }
             
-            DeleteSelectTargetMode()
+        }
+        function KutiOnkill(card){
+            yourHand.push(Cards.KutiDiplomaCard)
+            cardsInYourHandClass.push("cardTemplate")
+            console.log("HUGYOSFOS")
+            yourHand = yourHand
+            SendGameData(yourGameParameters)
         }
         async function KutiDiploma(card){
             EnableChoosingMode([Cards.KutiHumanCard,Cards.KutiRealCard,Cards.KutiSportCard])
@@ -1532,7 +1665,7 @@
                 }
             });
 
-            yourBoard[index].fieldEffects.push("asleep")
+            yourBoard[index].fieldEffects.push("asleep:")
 
             yourBoard[index].health = preHealth
             yourBoard[index].attack = preAttack
@@ -1540,29 +1673,29 @@
             switch (result.name) {
                 case 'Kúti humán':
                     yourBoard[index].health += 1
-                    yourBoardDoms[index].children[0].children[5].style.animation = "none"
-                    yourBoardDoms[index].children[0].children[5].offsetHeight
-                    yourBoardDoms[index].children[0].children[5].style.animation = "statHeal 1s"
+                    yourBoardDoms[index].children[0].children[6].style.animation = "none"
+                    yourBoardDoms[index].children[0].children[6].offsetHeight
+                    yourBoardDoms[index].children[0].children[6].style.animation = "statHeal 1s"
 
                     spellDmgMulti = 2
                     
                 break;
                 case 'Kúti reál':
                     yourBoard[index].health == Cards.KutiCard.health
+                    yourBoardDoms[index].children[0].children[6].style.animation = "none"
+                    yourBoardDoms[index].children[0].children[6].offsetHeight
+                    yourBoardDoms[index].children[0].children[6].style.animation = "statHeal 1s"
+
+                    yourBoard[index].attack += 1
                     yourBoardDoms[index].children[0].children[5].style.animation = "none"
                     yourBoardDoms[index].children[0].children[5].offsetHeight
                     yourBoardDoms[index].children[0].children[5].style.animation = "statHeal 1s"
-
-                    yourBoard[index].attack += 1
-                    yourBoardDoms[index].children[0].children[4].style.animation = "none"
-                    yourBoardDoms[index].children[0].children[4].offsetHeight
-                    yourBoardDoms[index].children[0].children[4].style.animation = "statHeal 1s"
                 break;
                 case 'Kúti sport':
                     yourBoard[index].attack += 2
-                    yourBoardDoms[index].children[0].children[4].style.animation = "none"
-                    yourBoardDoms[index].children[0].children[4].offsetHeight
-                    yourBoardDoms[index].children[0].children[4].style.animation = "statHeal 1s"
+                    yourBoardDoms[index].children[0].children[5].style.animation = "none"
+                    yourBoardDoms[index].children[0].children[5].offsetHeight
+                    yourBoardDoms[index].children[0].children[5].style.animation = "statHeal 1s"
                     
                 break;
                 default:
@@ -1575,6 +1708,17 @@
             SendGameData(yourGameParameters)
             
             DeleteChoosingMode()
+        }
+        function Matos(card){
+            enemyGameParameters.health -= 2
+            SendGameData(enemyGameParameters)
+
+            card.abilityType = "death"
+            card.ability = "MatosDeath"
+            SendGameData(yourGameParameters)
+        }
+        function MatosDeath(){
+            CreateSGEndre()
         }
         function Meszaros(card){
             giveDobi(".attack += 2")
@@ -1598,9 +1742,559 @@
             giveDobi(".attack += 1")
             giveDobi(".health += 1")
         }
+        //#endregion
+
+        //#region SPELLEK
+        async function Acelpajzs(){
+            var targets = Array.from(yourBoard).concat(Array.from(enemyBoard))
+            
+            if(targets.some(element => element !== '')){
+                selectableCardDoms = Array.from(yourBoardDoms).concat(Array.from(enemyBoardDoms))
+                selectableCardDoms = selectableCardDoms
+                
+                EnableTargetSelectionMode(targets)
+                const result = await getUserChoice()
+                var domID = result.i
+                
+                result.target.fieldEffects.includes("barrier") == false ? result.target.fieldEffects.push("barrier") : {}
+                
+                SendGameData(enemyGameParameters)
+                SendGameData(yourGameParameters)
+                
+                DeleteSelectTargetMode()
+            }
+        }
+        async function Agyhalal(){
+            var targets = Array.from(yourBoard).concat(Array.from(enemyBoard))
+            
+            if(targets.some(element => element !== '')){
+                selectableCardDoms = Array.from(yourBoardDoms).concat(Array.from(enemyBoardDoms))
+                selectableCardDoms = selectableCardDoms
+                
+                EnableTargetSelectionMode(targets)
+                const result = await getUserChoice()
+                var domID = result.i
+                result.side == "your" ? domID = domID : domID += yourBoard.length
+                
+                var Sindex = targets[domID].fieldEffects.findIndex(element => element.includes('spellshield'));
+                if(Sindex === -1){
+                    SilenceEnemy(result.target,1,result.side)
+                }
+                else{
+                    result.target.fieldEffects.splice(Sindex,1)
+                }
+                console.log("SPELLLOG: ",yourBoard);
+                
+                eval(`SendGameData(${result.side}GameParameters)`)
+                
+                DeleteSelectTargetMode()
+            }
+        }
+        async function Alazatossag(){
+            var targets = Array.from(enemyBoard)
+            
+            if(targets.some(element => element !== '')){
+                for(let i = 0; i<targets.length; i++){
+                    if(targets[i] != ''){
+                        selectableCardDoms.push(enemyBoardDoms[i])
+                    }
+                }
+                selectableCardDoms = selectableCardDoms
+            
+                EnableTargetSelectionMode(targets)
+                const result = await getUserChoice()
+                var domID = result.i
+            
+                targets[domID].attack = 1
+
+                enemyBoardDoms[domID].children[0].children[5].style.animation = "none"
+                enemyBoardDoms[domID].children[0].children[5].offsetHeight
+                enemyBoardDoms[domID].children[0].children[5].style.animation = "statDmg 1s"
+
+                SendGameData(enemyGameParameters)
+            
+                DeleteSelectTargetMode()
+            }
+        }
+        async function CsereBere(){
+            var targets = Array.from(yourBoard)
+            
+            if(targets.some(element => element !== '')){
+                for(let i = 0; i<targets.length; i++){
+                    if(targets[i] != ''){
+                        selectableCardDoms.push(yourBoardDoms[i])
+                    }
+                }
+                selectableCardDoms = selectableCardDoms
+            
+                EnableTargetSelectionMode(targets)
+                const result = await getUserChoice()
+                var domID = result.i
+            
+                var preAttack = targets[domID].attack
+                var preHealth = targets[domID].health
+                targets[domID].attack = preHealth
+                targets[domID].health = preAttack
+
+                yourBoardDoms[domID].children[0].children[5].style.animation = "none"
+                yourBoardDoms[domID].children[0].children[6].style.animation = "none"
+                yourBoardDoms[domID].children[0].children[5].offsetHeight
+                yourBoardDoms[domID].children[0].children[6].offsetHeight
+                if(preAttack >= preHealth){
+                    yourBoardDoms[domID].children[0].children[5].style.animation = "statHeal 1s"
+                    yourBoardDoms[domID].children[0].children[6].style.animation = "statDmg 1s"
+                }
+                else{
+                    yourBoardDoms[domID].children[0].children[6].style.animation = "statHeal 1s"
+                    yourBoardDoms[domID].children[0].children[5].style.animation = "statDmg 1s"
+                }
+
+                SendGameData(yourGameParameters)
+            
+                DeleteSelectTargetMode()
+            }
+        }
+        async function ElloptakAKabatod(){
+            var targets = Array.from(yourBoard).concat(Array.from(enemyBoard))
+            
+            if(targets.some(element => element !== '')){
+
+                selectableCardDoms = Array.from(yourBoardDoms).concat(Array.from(enemyBoardDoms))
+                selectableCardDoms = selectableCardDoms
+            
+                EnableTargetSelectionMode(targets)
+                const result = await getUserChoice()
+                var domID = result.i
+                result.side == "your" ? domID = domID : domID += yourBoard.length
+            
+                var Sindex = targets[domID].fieldEffects.findIndex(element => element.includes('spellshield'));
+                if(Sindex === -1){
+                    DealDmg(result.target,result.i,3,result.side)
+                    console.log("SPELLEKLOG: ",selectableCardDoms,selectableCardDoms[domID])
+                    FreezEnemy(result.target,selectableCardDoms[domID],1,result.side)
+                }
+                else{
+                    result.target.fieldEffects.splice(Sindex,1)
+                }
+                eval(`SendGameData(${result.side}GameParameters)`)
+            
+                DeleteSelectTargetMode()
+            }
+        }
+        function Falanx(){
+            for(let i = 5;i<yourBoard.length;i++){
+                if(yourBoard[i] != "" && yourBoard[i-(yourBoard.length/2)] == ""){
+                    var ko = {
+                        attack: 0,
+                        health: Math.ceil(2*turnCount/3),
+                        type: "ko",
+                        cost: 0
+                    }
+                    yourBoard[i-(yourBoard.length/2)] = ko
+                }
+            }
+            SendGameData(yourGameParameters)
+        }
+        function IdeAManaddal(){
+            if(enemyGameParameters.mana >= 2){
+                enemyGameParameters.mana -= 2
+                yourGameParameters.mana += 2
+            }
+            else{
+                yourGameParameters.mana = enemyGameParameters.mana
+                enemyGameParameters.mana = 0
+            }
+            SendGameData(enemyGameParameters)
+            SendGameData(yourGameParameters)
+        }
+        function JegkremAzUdvaron(){
+            yourBoard.forEach(element => {
+                if(element != ""){
+                    if(element.aligment.includes("tunya")){
+                    yourGameParameters.mana += 1
+                }
+                }
+            });
+            SendGameData(yourGameParameters)
+        }
+        async function InstantMerevedes(){
+            var targets = Array.from(yourBoard).concat(Array.from(enemyBoard))
+            
+            if(targets.some(element => element !== '')){
+                selectableCardDoms = Array.from(yourBoardDoms).concat(Array.from(enemyBoardDoms))
+                selectableCardDoms = selectableCardDoms
+            
+                EnableTargetSelectionMode(targets)
+                const result = await getUserChoice()
+                var domID = result.i
+                result.side == "your" ? domID = domID : domID += yourBoard.length
+                
+                var Sindex = targets[domID].fieldEffects.findIndex(element => element.includes('spellshield'));
+                if(Sindex === -1){
+                    result.target.type = "ko"
+                    result.target.attack = 0
+                }
+                else{
+                    result.target.fieldEffects.splice(Sindex,1)
+                }
+                
+                eval(`SendGameData(${result.side}GameParameters)`)
+            
+                DeleteSelectTargetMode()
+            }
+        }
+        function Kommunizmus(){
+            for(let i = 0;i<yourBoard.length;i++){
+                if(yourBoard[i] != ""){
+                    yourBoard[i].health = 1
+                    yourBoardDoms[i].children[0].children[6].style.animation = "none"
+                    yourBoardDoms[i].children[0].children[6].offsetHeight
+                    yourBoardDoms[i].children[0].children[6].style.animation = "statDmg 1s"
+                }
+                if(enemyBoard[i] != ""){
+                    enemyBoard[i].health = 1
+                    enemyBoardDoms[i].children[0].children[6].style.animation = "none"
+                    enemyBoardDoms[i].children[0].children[6].offsetHeight
+                    enemyBoardDoms[i].children[0].children[6].style.animation = "statDmg 1s"
+                }
+            }
+        }
+        function Leltarazas(){
+            for(let i = 0;i<yourBoard.length;i++){
+                if(yourBoard[i] != ""){
+                    var Sindex = yourBoard[i].fieldEffects.findIndex(element => element.includes('spellshield'));
+                    if(Sindex === -1){
+                        yourBoard[i].fieldEffects.push("silence:1")
+                        DealDmg(yourBoard[i],i,99999,"your")
+                        DrawOne()
+                        DrawOne()
+                        DrawOne()
+                    }
+                    else{
+                        yourBoard[i].fieldEffects.splice(Sindex,1)
+                    }
+                }
+            }
+        }
+        function NemTudod(){
+            for(let i = 0;i<enemyBoard.length;i++){
+                if(enemyBoard[i] != ""){
+                    var preHealth = enemyBoard[i].health
+                    DealDmg(enemyBoard[i],i,1,"enemy")
+                    if(preHealth == 1){
+                        setTimeout(() => {
+                        NemTudod()
+                    }, 1000);
+                        
+                    }
+                }
+            }
+        }
+        async function NokedliLeszel(){
+            var targets = Array.from(yourBoard).concat(Array.from(enemyBoard))
+            
+            if(targets.some(element => element !== '')){
+                selectableCardDoms = Array.from(yourBoardDoms).concat(Array.from(enemyBoardDoms))
+                selectableCardDoms = selectableCardDoms
+                console.log("SELECTABLELOG: ",selectableCardDoms)
+            
+                EnableTargetSelectionMode(targets)
+                const result = await getUserChoice()
+                var domID = result.i
+                result.side == "your" ? domID = domID : domID += yourBoard.length
+                
+                var Sindex = targets[domID].fieldEffects.findIndex(element => element.includes('spellshield'));
+                if(Sindex === -1){
+                    eval(`${result.side}Board[result.i] = Cards.NokedliCard`)
+                    eval(`${result.side}Board[result.i].fieldEffects.push('asleep:')`)
+                }
+                else{
+                    result.target.fieldEffects.splice(Sindex,1)
+                }
+            
+                eval(`SendGameData(${result.side}GameParameters)`)
+            
+                DeleteSelectTargetMode()
+            }
+        }
+        async function NokedliVagy(){
+            var targets = []
+            for(let i=0;i<yourBoard.length;i++){
+                if(yourBoard[i].attack <= 4){
+                    targets.push(yourBoard[i])
+                }
+                if(enemyBoard[i].attack <= 4){
+                    targets.push(enemyBoard[i])
+                }
+            }
+            
+            if(targets.some(element => element !== '')){
+                for(let i=0;i<yourBoard.length;i++){
+                    if(yourBoard[i].attack <= 4){
+                        selectableCardDoms.push(yourBoardDoms[i])
+                    }
+                    if(enemyBoard[i].attack <= 4){
+                        selectableCardDoms.push(enemyBoardDoms[i])
+                    }
+                }
+                selectableCardDoms = selectableCardDoms
+            
+                EnableTargetSelectionMode(targets)
+                const result = await getUserChoice()
+                var domID = result.i
+                result.side == 'your' ? domID = domID : domID += yourBoard.length
+
+                var Sindex = result.target.fieldEffects.findIndex(element => element.includes('spellshield'));
+                if(Sindex === -1){
+                    result.target.fieldEffects.push("silence:1")
+                    DealDmg(result.target,result.i,99999,result.side)
+                    
+                }
+                else{
+                    result.target.fieldEffects.splice(Sindex,1)
+                }
+            
+                eval(`SendGameData(${result.side}GameParameters)`)
+            
+                DeleteSelectTargetMode()
+            }
+        }
+        async function PirosLampa(){
+            var targets = Array.from(enemyBoard)
+            
+            if(targets.some(element => element !== '')){
+                for(let i = 0; i<targets.length; i++){
+                    if(targets[i] != ''){
+                        selectableCardDoms.push(enemyBoardDoms[i])
+                    }
+                }
+                selectableCardDoms = selectableCardDoms
+            
+                EnableTargetSelectionMode(targets)
+                const result = await getUserChoice()
+                var domID = result.i
+            
+                var Sindex = targets[domID].fieldEffects.findIndex(element => element.includes('spellshield'));
+                if(Sindex === -1){
+                    StunnEnemy(result.target,1,result.side)
+                }
+                else{
+                    result.target.fieldEffects.splice(Sindex,1)
+                }
+
+                SendGameData(enemyGameParameters)
+            
+                DeleteSelectTargetMode()
+            }
+        }
+        async function SagvarizmusEjszakaja(){
+            var targets = Array.from(yourBoard)
+            
+            if(targets.some(element => element !== '')){
+                for(let i = 0; i<targets.length; i++){
+                    if(targets[i] != ''){
+                        selectableCardDoms.push(yourBoardDoms[i])
+                    }
+                }
+                selectableCardDoms = selectableCardDoms
+            
+                EnableTargetSelectionMode(targets)
+                const result = await getUserChoice()
+                var domID = result.i
+            
+                var Sindex = targets[domID].fieldEffects.findIndex(element => element.includes('spellshield'));
+                if(Sindex === -1){
+                    result.target.attack *= 2
+                    yourBoardDoms[result.i].children[0].children[5].style.animation = "none"
+                    yourBoardDoms[result.i].children[0].children[5].offsetHeight
+                    yourBoardDoms[result.i].children[0].children[5].style.animation = "statHeal 1s"
+                }
+                else{
+                    result.target.fieldEffects.splice(Sindex,1)
+                }
+
+                SendGameData(yourGameParameters)
+            
+                DeleteSelectTargetMode()
+            }
+        }
+        function SaraSzurkolotabor(){
+            for(let i = 0;i<yourBoard.length;i++){
+                if(yourBoard[i] != ""){
+                    yourBoard[i].health += 1
+                    yourBoard[i].attack += 1
+
+                    yourBoardDoms[i].children[0].children[6].style.animation = "none"
+                    yourBoardDoms[i].children[0].children[6].offsetHeight
+                    yourBoardDoms[i].children[0].children[6].style.animation = "statDmg 1s"
+                    yourBoardDoms[i].children[0].children[5].style.animation = "none"
+                    yourBoardDoms[i].children[0].children[5].offsetHeight
+                    yourBoardDoms[i].children[0].children[5].style.animation = "statDmg 1s"
+                }
+            }
+        }
+        function SaraToborzas(){
+            DrawOne()
+            DrawOne()
+            SendGameData(yourGameParameters)
+        }
+        function Sitabor(){
+            for(let i=0;i<yourBoard.length;i++){
+                if(yourBoard[i] != ""){
+                    if(yourBoard[i].aligment.includes("tunya")){
+                    Evolve(yourBoard[i].cost,i,1)
+                    }
+                }
+            }
+        }
+        function SportSzelet(){
+            yourGameParameters.mana += 1
+            SendGameData(yourGameParameters)
+        }
+        async function Tuzgolyo(){
+            var targets = Array.from(yourBoard).concat(Array.from(enemyBoard))
+            
+            if(targets.some(element => element !== '')){
+                selectableCardDoms = Array.from(yourBoardDoms).concat(Array.from(enemyBoardDoms))
+                selectableCardDoms = selectableCardDoms
+            
+                EnableTargetSelectionMode(targets)
+                const result = await getUserChoice()
+                var domID = result.i
+                result.side == 'your' ? domID = domID : domID += yourBoard.length
+            
+                var Sindex = targets[domID].fieldEffects.findIndex(element => element.includes('spellshield'));
+                if(Sindex === -1){
+                    DealDmg(result.target,result.i,4,result.side)
+                }
+                else{
+                    result.target.fieldEffects.splice(Sindex,1)
+                }
+
+                eval(`SendGameData(${result.side}GameParameters)`)
+            
+                DeleteSelectTargetMode()
+            }
+        }
+        async function Meteor(){
+            var targets = Array.from(enemyBoard)
+            
+            if(targets.some(element => element !== '')){
+                for(let i = 0; i<targets.length; i++){
+                    if(targets[i] != ''){
+                        selectableCardDoms.push(enemyBoardDoms[i])
+                    }
+                }
+                selectableCardDoms = selectableCardDoms
+            
+                EnableTargetSelectionMode(targets)
+                const result = await getUserChoice()
+                var domID = result.i
+                
+                //target
+                var Sindex = targets[domID].fieldEffects.findIndex(element => element.includes('spellshield'));
+                if(Sindex === -1){
+                    DealDmg(result.target,result.i,5,result.side)
+                }
+                else{
+                    result.target.fieldEffects.splice(Sindex,1)
+                }
+
+                //sides
+                if(domID%5 != 4){ //ha a szélén van akkor ne menjen tovább, jobbral + balról is if
+                    if(enemyBoard[domID+1] != ""){
+                        var Sindex2 = targets[domID+1].fieldEffects.findIndex(element => element.includes('spellshield'));
+                        if(Sindex2 === -1){
+                            DealDmg(enemyBoard[domID+1],result.i+1,5,result.side)
+                        }
+                        else{
+                            enemyBoard[domID+1].fieldEffects.splice(Sindex,1)
+                        }
+                    }
+                }
+                if(domID%5 != 0){
+                    if(enemyBoard[domID-1] != ""){
+                        var Sindex3 = targets[domID-1].fieldEffects.findIndex(element => element.includes('spellshield'));
+                        if(Sindex3 === -1){
+                            DealDmg(enemyBoard[domID-1],result.i-1,5,result.side)
+                        }
+                        else{
+                            enemyBoard[domID-1].fieldEffects.splice(Sindex,1)
+                        }
+                    }
+                    
+                } 
+            
+                SendGameData(enemyGameParameters)
+            
+                DeleteSelectTargetMode()
+            }
+        }
+        async function Varazskoponyeg(){
+            var targets = Array.from(yourBoard).concat(Array.from(enemyBoard))
+            
+            if(targets.some(element => element !== '')){
+                selectableCardDoms = Array.from(yourBoardDoms).concat(Array.from(enemyBoardDoms))
+                selectableCardDoms = selectableCardDoms
+                
+                EnableTargetSelectionMode(targets)
+                const result = await getUserChoice()
+                var domID = result.i
+                result.side == "your" ? domID = domID : domID += yourBoard.length
+                
+                var Sindex = targets[domID].fieldEffects.findIndex(element => element.includes('spellshield'));
+                if(Sindex === -1){
+                    result.target.fieldEffects.push("spellshield")
+                }
+                
+                eval(`SendGameData(${result.side}GameParameters)`)
+                
+                DeleteSelectTargetMode()
+            }
+        }
+        function Varazskotet(){
+            var random = Math.floor(Math.random() * Cards.spellCardsArr.length)
+            yourHand.push(spellCardsArr[random])
+            cardsInYourHandClass.push("cardTemplate")
+        }
+        async function VisszaAKezembe(){
+            var targets = Array.from(yourBoard)
+            
+            if(targets.some(element => element !== '')){
+                for(let i = 0; i<targets.length; i++){
+                    if(targets[i] != ''){
+                        selectableCardDoms.push(yourBoardDoms[i])
+                    }
+                }
+                selectableCardDoms = selectableCardDoms
+            
+                EnableTargetSelectionMode(targets)
+                const result = await getUserChoice()
+                var domID = result.i
+
+                var Sindex = targets[domID].fieldEffects.findIndex(element => element.includes('spellshield'));
+                if(Sindex === -1){
+                    yourBoard[result.i] = ""
+                    var originalIndex = Cards.allCardsArr.findIndex(element => element.name == result.target.name);
+                    yourHand.push(allCardsArr[originalIndex])
+                    cardsInYourHandClass.push("cardTemplate")
+                }
+                else{
+                    result.target.fieldEffects.splice(Sindex,1)
+                }
+            
+                SendGameData(yourGameParameters)
+            
+                DeleteSelectTargetMode()
+            }
+        }
+
         
 
-        //bonus functions
+
+        //#endregion
+
+        //#region bonus functions
         function giveDobi(what){
             for(let i = 0; i<yourBoard.length;i++){
                 if(yourBoard[i].name == "Dobi"){
@@ -1618,8 +2312,109 @@
                 }
             }  
         }
+        let SGEndreCounter = 0
+        function CreateSGEndre(){
+            SGEndreCounter += 1
+            var newSGEndre = Cards.SGEndreCard
 
+            newSGEndre.attack = SGEndreCounter
+            newSGEndre.health = SGEndreCounter
+            newSGEndre.cost = SGEndreCounter
 
+            isSummonLocationChoosing = true
+
+            yourBoardPhs.fill("")
+            for (let i = 0; i<yourBoardPhs.length+1;i++){
+                if(yourBoard[i] == ""){
+                    yourBoardPhs[i] = newSGEndre
+                }
+            }
+            yourBoardPhs = yourBoardPhs
+        }
+        function GiveAttack(card,cardDom,amount){
+            card.attack += amount
+
+            cardDom.children[0].children[5].style.animation = "none"
+            cardDom.children[0].children[5].offsetHeight
+            cardDom.children[0].children[5].style.animation = "statHeal 1s"
+
+            var index = card.fieldEffects.findIndex(element => element.includes("frozen"));
+            if(index !== -1){
+                var preAttack = card.fieldEffects[index].substring(card.fieldEffects[index].indexOf("-")+1)
+                card.fieldEffects[index] = `${card.fieldEffects[index].substring(card.fieldEffects[index].indexOf("-"),-1)}-${Number(preAttack)+amount}`
+            }
+            enemyBoard = enemyBoard
+            SendGameData(enemyGameParameters)
+        }
+        function FreezEnemy(card,cardDom,turns,side){
+            console.log("SPELLEKLOG: ",card,cardDom,turns)
+            var index = card.fieldEffects.findIndex(element => element.includes("frozen"));
+            if(index !== -1){
+                var preTurns = card.fieldEffects[index].substring(card.fieldEffects[index].indexOf(":")+1,card.fieldEffects[index].indexOf("-"))
+                var preAttackInd = card.fieldEffects[index].substring(card.fieldEffects[index].indexOf("-"))
+                card.fieldEffects[index] = `frozen:${Number(preTurns)+turns}${preAttackInd}`
+
+            }
+            else{
+                card.fieldEffects.push(`frozen:${turns}-${card.attack}`)
+            }
+
+            card.attack = 0
+
+            cardDom.children[0].children[5].style.animation = "none"
+            cardDom.children[0].children[5].offsetHeight
+            cardDom.children[0].children[5].style.animation = "statDmg 1s"
+
+            eval(`SendGameData(${side}GameParameters)`)
+        }
+        function StunnEnemy(card,turns,side){
+            console.log("SPELLEKLOG: ",card,turns)
+            var index = card.fieldEffects.findIndex(element => element.includes("stunned"));
+            if(index !== -1){
+                var preTurns = card.fieldEffects[index].substring(card.fieldEffects[index].indexOf(":")+1,card.fieldEffects[index].indexOf("-"))
+                card.fieldEffects[index] = `stunned:${Number(preTurns)+turns}`
+
+            }
+            else{
+                card.fieldEffects.push(`stunned:${turns}`)
+            }
+            eval(`SendGameData(${side}GameParameters)`)
+        }
+        function SilenceEnemy(card,turns,side){
+            console.log("SPELLEKLOG: ",card,turns)
+            var index = card.fieldEffects.findIndex(element => element.includes("silence"));
+            if(index !== -1){
+                var preTurns = card.fieldEffects[index].substring(card.fieldEffects[index].indexOf(":")+1,card.fieldEffects[index].indexOf("-"))
+                card.fieldEffects[index] = `silence:${Number(preTurns)+turns}`
+
+            }
+            else{
+                card.fieldEffects.push(`silenced:${turns}`)
+            }
+            eval(`SendGameData(${side}GameParameters)`)
+        }
+        function DealDmg(card,i,amount,side){
+            card.health -= amount
+            if(card.health <= 0){
+                CardDmgAnimationClient(`td${i}`,"halál",side,card.type)
+            }
+            else{
+                CardDmgAnimationClient(`td${i}`,"sebzés",side,card.type)
+            }
+        }
+        function Evolve(cost,i,amount){
+            var evolveCandidets = []
+            Cards.allCardsArr.forEach(element => {
+                element.cost == cost+amount && element.type == "character" ? evolveCandidets.push(element) : {}
+            });
+            var random = Math.floor(Math.random() * evolveCandidets.length)
+            console.log("EVOLVELOG: ",evolveCandidets[random],evolveCandidets)
+            yourBoard[i] = evolveCandidets[random]
+            yourBoard[i].talent.includes("fürge") == false ? yourBoard[i].fieldEffects.push("asleep:") : {}
+            SendGameData(yourGameParameters)
+        }
+        //#endregion
+        
 
     //#endregion
 
@@ -1656,22 +2451,22 @@
 
 <div id="gamePlayFiledCont">
     <div id="playerHps">
-        <div class="playerNameCont" id="enemyPlayerName" on:click={()=> SelectTargetCard(enemyGameParameters)} bind:this={enemyPlayerNameDom} class:cardOnBoardInSelectMode={selectableCardDoms.includes(enemyPlayerNameDom)} on:keydown role="button" tabindex="">{enemyGameParameters.username}</div>
+        <div class="playerNameCont" id="enemyPlayerName" on:click={()=> SelectTargetCard(enemyGameParameters,10,"enemy")} bind:this={enemyPlayerNameDom} class:cardOnBoardInSelectMode={selectableCardDoms.includes(enemyPlayerNameDom)} on:keydown role="button" tabindex="">{enemyGameParameters.username}</div>
 
         <div class="playerHpCont" id="enemyPlayerHp">{enemyGameParameters.health}</div>
         <div class="playerHpCont" id="yourPlayerHp">{yourGameParameters.health}</div>
 
-        <div class="playerNameCont" id="yourPlayerName" on:click={()=> SelectTargetCard(yourGameParameters)} bind:this={yourPlayerNameDom} class:cardOnBoardInSelectMode={selectableCardDoms.includes(yourPlayerNameDom)} on:keydown role="button" tabindex="">{yourGameParameters.username}</div>
+        <div class="playerNameCont" id="yourPlayerName" on:click={()=> SelectTargetCard(yourGameParameters,11,"your")} bind:this={yourPlayerNameDom} class:cardOnBoardInSelectMode={selectableCardDoms.includes(yourPlayerNameDom)} on:keydown role="button" tabindex="">{yourGameParameters.username}</div>
     </div>
     <div id="board">
         <div id="enemyHand" class="handCont">
             {#each enemyGameParameters.currentHand as card,i}
                 <div id="enemyHandCardCont" style="--enemyCardNum: {enemyGameParameters.currentHand.length};transform: rotate({-22.5+(45/enemyGameParameters.currentHand.length)*(i+1)}deg);top:{(enemyGameParameters.currentHand.length-(i))/3}vw;">
-                    <img class="cardTemplate" src={cardBack} alt="enemy Card">
+                    <img class="cardTemplate" style="width: 9vw;" src={cardBack} alt="enemy Card">
                 </div>
             {/each}
         </div>
-        <div id="playField">
+        <div id="playField" class:selectingGameplayfield={isSelectTargetMode || isSummonLocationChoosing}>
             <img class="scribble" style="top: 7%; left: 11%; width: 25vw;" src={scribble1} alt="scribble in a book">
             <img class="scribble" style="top: 7%; right: 11%; width: 22vw;" src={scribble2} alt="scribble in a book">
             <img class="scribble" style="bottom: 7%; left: 11%; width: 22vw;" src={scribble3} alt="scribble in a book">
@@ -1688,7 +2483,7 @@
 
                     {#if enemyBoard[i] != ""}
                         {#if enemyBoard[i].type == "character"}
-                            <div on:click={() => SelectTargetCard(enemyBoard[i],i)} class="BoardTierTwo" id="cardPreviewListCont" class:cardOnBoardInSelectMode={selectableCardDoms.includes(enemyBoardDoms[i])} class:cardOnBoardInTargetMode={attackableCardsDoms.includes(document.getElementById(`etd${i}`))}  class:NotcardOnBoardInTargetMode={isCardOnBoardInAttackingMode && !attackableCardsDoms.includes(document.getElementById(`etd${i}`))} on:keydown role="button" tabindex="">
+                            <div on:click={() => SelectTargetCard(enemyBoard[i],i,"enemy")} class="BoardTierTwo" id="cardPreviewListCont" class:cardOnBoardInSelectMode={selectableCardDoms.includes(enemyBoardDoms[i])} class:cardOnBoardInTargetMode={attackableCardsDoms.includes(document.getElementById(`etd${i}`))}  class:NotcardOnBoardInTargetMode={isCardOnBoardInAttackingMode && !attackableCardsDoms.includes(document.getElementById(`etd${i}`))} on:keydown role="button" tabindex="">
                                 <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute"  src={cardV2Background} alt="cardBg">
                                 <div id="rarityBGList" style="background: {backgroundColorByCost[(enemyBoard[i].stars)-3]}; "></div>
                                 <img draggable="false" class = "cardButton" src={enemyBoard[i].source} alt="preview"/>
@@ -1698,6 +2493,15 @@
                                 <div class="curCardCostList">{enemyBoard[i].cost}</div>
                                 <div class="curCardNameList">{enemyBoard[i].name}</div>
 
+                                {#if enemyBoard[i].fieldEffects != ""}
+                                        {#each enemyBoard[i].fieldEffects as effect,j}
+                                            {#if !effect.includes("kettős")}
+                                            <img class="curCardFieldEffectList" style="top: calc(var(--cardOnBoardScale)*1vw*{1.9+ j*3.1});" src={fieldEffectIcons[effect.substring(effect.indexOf(":"),-1)]} alt="effect">
+                                            {/if}
+                                        {/each}
+                                {/if}
+
+                                {#if enemyBoard[i].aligment != ""}
                                 {#if enemyBoard[i].aligment.includes(",")}
                                         {#each enemyBoard[i].aligment.split(",") as aligment,j}
                                         <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[aligment]}; border-radius: 0.5vw; top: calc(var(--cardOnBoardScale)*1vw*{4.8 + j* 2.55});"></div>
@@ -1707,6 +2511,8 @@
                                         <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[enemyBoard[i].aligment]}; border-radius: 0.5vw;"></div>
                                         <img class="curCardAligList" src={aligmentIcons[enemyBoard[i].aligment]} alt="aligment">
                                 {/if}
+                                {/if}
+
 
                                 {#if enemyBoard[i].talent != ""}
                                         {#if enemyBoard[i].talent.includes(",")}
@@ -1730,7 +2536,7 @@
                                 </div>
                             </div>
                         {:else if enemyBoard[i].type == "ko"}
-                            <div on:click={() => SelectTargetCard(enemyBoard[i],i)} class="BoardTierTwo ko" class:cardOnBoardInSelectMode={selectableCardDoms.includes(enemyBoardDoms[i])} class:cardOnBoardInTargetMode={attackableCardsDoms.includes(document.getElementById(`etd${i}`))}  class:NotKoOnBoardInTargetMode={isCardOnBoardInAttackingMode && !attackableCardsDoms.includes(document.getElementById(`etd${i}`))} on:keydown role="button" tabindex="">{enemyBoard[i].health}</div>
+                            <div on:click={() => SelectTargetCard(enemyBoard[i],i,"enemy")} class="BoardTierTwo ko" class:cardOnBoardInSelectMode={selectableCardDoms.includes(enemyBoardDoms[i])} class:cardOnBoardInTargetMode={attackableCardsDoms.includes(document.getElementById(`etd${i}`))}  class:NotKoOnBoardInTargetMode={isCardOnBoardInAttackingMode && !attackableCardsDoms.includes(document.getElementById(`etd${i}`))} on:keydown role="button" tabindex="">{enemyBoard[i].health}</div>
                         {/if}
                     {/if}
                     </td>
@@ -1745,7 +2551,7 @@
 
                     {#if enemyBoard[(enemyBoard.length)/2+i] != ""}
                         {#if enemyBoard[(enemyBoard.length)/2+i].type == "character"}
-                        <div on:click={() => SelectTargetCard(enemyBoard[(enemyBoard.length)/2+i],(enemyBoard.length)/2+i)} id="cardPreviewListCont" class:cardOnBoardInSelectMode={selectableCardDoms.includes(enemyBoardDoms[(enemyBoard.length)/2+i])}  class:cardOnBoardInTargetMode={attackableCardsDoms.includes(document.getElementById(`etd${i+(enemyBoard.length/2)}`))}  class:NotcardOnBoardInTargetMode={isCardOnBoardInAttackingMode && !attackableCardsDoms.includes(document.getElementById(`etd${i+(enemyBoard.length/2)}`))} on:keydown role="button" tabindex="">
+                        <div on:click={() => SelectTargetCard(enemyBoard[(enemyBoard.length)/2+i],(enemyBoard.length)/2+i,"enemy")} id="cardPreviewListCont" class:cardOnBoardInSelectMode={selectableCardDoms.includes(enemyBoardDoms[(enemyBoard.length)/2+i])}  class:cardOnBoardInTargetMode={attackableCardsDoms.includes(document.getElementById(`etd${i+(enemyBoard.length/2)}`))}  class:NotcardOnBoardInTargetMode={isCardOnBoardInAttackingMode && !attackableCardsDoms.includes(document.getElementById(`etd${i+(enemyBoard.length/2)}`))} on:keydown role="button" tabindex="">
                             <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute"  src={cardV2Background} alt="cardBg">
                             <div id="rarityBGList" style="background: {backgroundColorByCost[(enemyBoard[i+(enemyBoard.length)/2].stars)-3]}; "></div>
                             <img draggable="false" class = "cardButton" src={enemyBoard[i+(enemyBoard.length)/2].source} alt="preview"/>
@@ -1755,6 +2561,15 @@
                             <div class="curCardCostList">{enemyBoard[i+(enemyBoard.length)/2].cost}</div>
                             <div class="curCardNameList">{enemyBoard[i+(enemyBoard.length)/2].name}</div>
 
+                            {#if enemyBoard[(enemyBoard.length)/2+i].fieldEffects != ""}
+                                        {#each enemyBoard[(enemyBoard.length)/2+i].fieldEffects as effect,j}
+                                            {#if !effect.includes("kettős")}
+                                            <img class="curCardFieldEffectList" style="top: calc(var(--cardOnBoardScale)*1vw*{1.9+ j*3.1});" src={fieldEffectIcons[effect.substring(effect.indexOf(":"),-1)]} alt="effect">
+                                            {/if}
+                                        {/each}
+                            {/if}
+
+                            {#if enemyBoard[(enemyBoard.length)/2+i].aligment != ""}
                             {#if enemyBoard[(enemyBoard.length)/2+i].aligment.includes(",")}
                                 {#each enemyBoard[(enemyBoard.length)/2+i].aligment.split(",") as aligment,j}
                                 <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[aligment]}; border-radius: 0.5vw; top: calc(var(--cardOnBoardScale)*1vw*{4.8 + j* 2.55});"></div>
@@ -1763,6 +2578,7 @@
                             {:else}
                                 <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[enemyBoard[(enemyBoard.length)/2+i].aligment]}; border-radius: 0.5vw;"></div>
                                 <img class="curCardAligList" src={aligmentIcons[enemyBoard[(enemyBoard.length)/2+i].aligment]} alt="aligment">
+                            {/if}
                             {/if}
 
                             {#if enemyBoard[(enemyBoard.length)/2+i].talent != ""}
@@ -1778,7 +2594,7 @@
                                             <div class="curCardTalentList">{enemyBoard[(enemyBoard.length)/2+i].talent.replace("támadás","")}</div>
                                             <img style="left:calc(var(--cardOnBoardScale)*1vw*3.8);" class="curCardTalentIconList" src={talentIcons[enemyBoard[(enemyBoard.length)/2+i].talent.replace(" ","")]} alt="talent">
                                         {/if}
-                                {/if} 
+                            {/if} 
                 
                             <div class="curCardRarityList" style="{starsColorByCost[(enemyBoard[i+(enemyBoard.length)/2].stars)-3]}">
                                 {#each Array(Number(enemyBoard[i+(enemyBoard.length)/2].stars)) as card,index}
@@ -1787,7 +2603,7 @@
                             </div>
                         </div>
                         {:else if enemyBoard[(enemyBoard.length)/2+i].type == "ko"}
-                            <div on:click={() => SelectTargetCard(enemyBoard[(enemyBoard.length)/2+i],(enemyBoard.length)/2+i)} class="ko" class:cardOnBoardInSelectMode={selectableCardDoms.includes(enemyBoardDoms[(enemyBoard.length)/2+i])} class:cardOnBoardInTargetMode={attackableCardsDoms.includes(document.getElementById(`etd${i+(enemyBoard.length/2)}`))}  class:NotKoOnBoardInTargetMode={isCardOnBoardInAttackingMode && !attackableCardsDoms.includes(document.getElementById(`etd${i+(enemyBoard.length/2)}`))} on:keydown role="button" tabindex="">{enemyBoard[(enemyBoard.length)/2+i].health}</div>
+                            <div on:click={() => SelectTargetCard(enemyBoard[(enemyBoard.length)/2+i],(enemyBoard.length)/2+i,"enemy")} class="ko" class:cardOnBoardInSelectMode={selectableCardDoms.includes(enemyBoardDoms[(enemyBoard.length)/2+i])} class:cardOnBoardInTargetMode={attackableCardsDoms.includes(document.getElementById(`etd${i+(enemyBoard.length/2)}`))}  class:NotKoOnBoardInTargetMode={isCardOnBoardInAttackingMode && !attackableCardsDoms.includes(document.getElementById(`etd${i+(enemyBoard.length/2)}`))} on:keydown role="button" tabindex="">{enemyBoard[(enemyBoard.length)/2+i].health}</div>
                         {/if}
                     {/if}
 
@@ -1824,16 +2640,29 @@
 
                         {#if yourBoard[i+(yourBoard.length)/2] != ""}
                             {#if yourBoard[i+(yourBoard.length)/2].type == "character"}
-                                <div class="BoardTierTwo" on:click={() => SelectTargetCard(yourBoard[i+(yourBoard.length)/2])} class:cardOnBoardInSelectMode={selectableCardDoms.includes(yourBoardDoms[i+(yourBoard.length)/2])} class:cardAwake={!yourBoard[i+(yourBoard.length)/2].fieldEffects.includes("asleep") && isYourTurn && !isSelectTargetMode} style="--AnimTargetTop: {AnimTargetTop}; --AnimTargetLeft: {AnimTargetLeft}; --AnimAttackerYRot: {AnimAttackerYRot};" class:cardInAttackingMode={cardInAttackingMode == yourBoard[i+(yourBoard.length/2)]}  id="cardPreviewListCont" on:keydown role="button" tabindex="">
+                                <div class="BoardTierTwo" on:click={() => SelectTargetCard(yourBoard[i+(yourBoard.length)/2],i+(yourBoard.length)/2,"your")} class:cardOnBoardInSelectMode={selectableCardDoms.includes(yourBoardDoms[i+(yourBoard.length)/2])}  class:cardAwake={!yourBoard[i+(yourBoard.length)/2].fieldEffects.some(element => element.includes("frozen")) && !yourBoard[i+(yourBoard.length)/2].fieldEffects.some(element => element.includes("stunned")) && !yourBoard[i+(yourBoard.length)/2].fieldEffects.includes("asleep:") && isYourTurn && !isSelectTargetMode} style="--AnimTargetTop: {AnimTargetTop}; --AnimTargetLeft: {AnimTargetLeft}; --AnimAttackerYRot: {AnimAttackerYRot};" class:cardInAttackingMode={cardInAttackingMode == yourBoard[i+(yourBoard.length/2)]}  id="cardPreviewListCont" on:keydown role="button" tabindex="">
                                     <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute" src={cardV2Background} alt="cardBg">
                                     <div id="rarityBGList" style="background: {backgroundColorByCost[(yourBoard[i+(yourBoard.length)/2].stars)-3]}; "></div>
                                     <img draggable="false" class = "cardButton" src={yourBoard[i+(yourBoard.length)/2].source} alt="preview"/>
                                     <button class="cardListFrame" alt="cardBg"></button>
+
+                                    <div>
+                                    {#if yourBoard[i+(yourBoard.length)/2].fieldEffects != ""}
+                                        {#each yourBoard[i+(yourBoard.length)/2].fieldEffects as effect,j}
+                                            {#if !effect.includes("kettős")}
+                                            <img class="curCardFieldEffectList" style="top: calc(var(--cardOnBoardScale)*1vw*{1.9+ j*3.1});" src={fieldEffectIcons[effect.substring(effect.indexOf(":"),-1)]} alt="effect">
+                                            {/if}
+                                        {/each}
+                                    {/if}
+                                    </div>
                                     <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*2.68);">{yourBoard[i+(yourBoard.length)/2].attack}</div>
                                     <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*9.65);">{yourBoard[i+(yourBoard.length)/2].health}</div>
                                     <div class="curCardCostList">{yourBoard[i+(yourBoard.length)/2].cost}</div>
                                     <div class="curCardNameList">{yourBoard[i+(yourBoard.length)/2].name}</div>
 
+
+                                    
+                                    {#if yourBoard[i+(yourBoard.length)/2].aligment != ""}
                                     {#if yourBoard[i+(yourBoard.length)/2].aligment.includes(",")}
                                         {#each yourBoard[i+(yourBoard.length)/2].aligment.split(",") as aligment,j}
                                         <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[aligment]}; border-radius: 0.5vw; top: calc(var(--cardOnBoardScale)*1vw*{4.8 + j* 2.55});"></div>
@@ -1842,6 +2671,7 @@
                                     {:else}
                                         <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[yourBoard[i+(yourBoard.length)/2].aligment]}; border-radius: 0.5vw;"></div>
                                         <img class="curCardAligList" src={aligmentIcons[yourBoard[i+(yourBoard.length)/2].aligment]} alt="aligment">
+                                    {/if}
                                     {/if}
 
                                     {#if yourBoard[i+(yourBoard.length)/2].talent != ""}
@@ -1866,7 +2696,7 @@
                                     </div>
                                 </div>
                             {:else if yourBoard[i+(yourBoard.length)/2].type == "ko"}
-                                <div class="ko BoardTierTwo" on:click={() => SelectTargetCard(yourBoard[i+(yourBoard.length)/2])} class:cardOnBoardInSelectMode={selectableCardDoms.includes(yourBoardDoms[i+(yourBoard.length)/2])} on:keydown role="button" tabindex="">{yourBoard[i+(yourBoard.length)/2].health}</div>
+                                <div class="ko BoardTierTwo" on:click={() => SelectTargetCard(yourBoard[i+(yourBoard.length)/2],i+(yourBoard.length)/2,"your")} class:cardOnBoardInSelectMode={selectableCardDoms.includes(yourBoardDoms[i+(yourBoard.length)/2])} on:keydown role="button" tabindex="">{yourBoard[i+(yourBoard.length)/2].health}</div>
                             {/if}
                         {/if} 
                         </td>
@@ -1900,16 +2730,39 @@
 
                         {#if yourBoard[i] != ""}
                             {#if yourBoard[i].type == "character"}
-                                <div on:click={() => SelectTargetCard(yourBoard[i])} class:cardOnBoardInSelectMode={selectableCardDoms.includes(yourBoardDoms[i])} class:cardAwake={!yourBoard[i].fieldEffects.includes("asleep") && isYourTurn && !isSelectTargetMode} style="--AnimTargetTop: {AnimTargetTop}; --AnimTargetLeft: {AnimTargetLeft}; --AnimAttackerYRot: {AnimAttackerYRot};"  class:cardInAttackingMode={cardInAttackingMode == yourBoard[i]}  id="cardPreviewListCont" on:keydown role="button" tabindex="">
+                                <div on:click={() => SelectTargetCard(yourBoard[i],i,"your")} class:cardOnBoardInSelectMode={selectableCardDoms.includes(yourBoardDoms[i])} class:cardAwake={!yourBoard[i].fieldEffects.some(element => element.includes("frozen")) && !yourBoard[i].fieldEffects.some(element => element.includes("stunned")) && !yourBoard[i].fieldEffects.includes("asleep:") && isYourTurn && !isSelectTargetMode} style="--AnimTargetTop: {AnimTargetTop}; --AnimTargetLeft: {AnimTargetLeft}; --AnimAttackerYRot: {AnimAttackerYRot};"  class:cardInAttackingMode={cardInAttackingMode == yourBoard[i]}  id="cardPreviewListCont" on:keydown role="button" tabindex="">
                                     <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute" src={cardV2Background} alt="cardBg">
                                     <div id="rarityBGList" style="background: {backgroundColorByCost[(yourBoard[i].stars)-3]}; "></div>
                                     <img draggable="false" class = "cardButton" src={yourBoard[i].source} alt="preview"/>
                                     <button class="cardListFrame" alt="cardBg"></button>
+
+                                    <div>
+                                    {#if yourBoard[i].fieldEffects != ""}
+                                        {#each yourBoard[i].fieldEffects as effect,j}
+                                            {#if !effect.includes("kettős") && !effect.includes("asleep")}
+                                            <img class="cardListFrame" src={fieldEffectOverlays[effect.substring(effect.indexOf(":"),-1)]} alt="overlay">
+                                            <img class="cardListFrame" style="mix-blend-mode: screen;" src={fieldEffectGifs[effect.substring(effect.indexOf(":"),-1)]} alt="overlay">
+                                            {/if}
+                                        {/each}
+                                    {/if}
+                                    </div>
                                     <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*2.68);">{yourBoard[i].attack}</div>
                                     <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*9.65);">{yourBoard[i].health}</div>
+
                                     <div class="curCardCostList">{yourBoard[i].cost}</div>
                                     <div class="curCardNameList">{yourBoard[i].name}</div>
+                                    
 
+
+                                    {#if yourBoard[i].fieldEffects != ""}
+                                        {#each yourBoard[i].fieldEffects as effect,j}
+                                            {#if !effect.includes("kettős")}
+                                            <img class="curCardFieldEffectList" style="top: calc(var(--cardOnBoardScale)*1vw*{1.9+ j*3.1});" src={fieldEffectIcons[effect.substring(effect.indexOf(":"),-1)]} alt="effect">
+                                            {/if}
+                                        {/each}
+                                    {/if}
+
+                                    {#if yourBoard[i].aligment != ""}
                                     {#if yourBoard[i].aligment.includes(",")}
                                         {#each yourBoard[i].aligment.split(",") as aligment,j}
                                         <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[aligment]}; border-radius: 0.5vw; top: calc(var(--cardOnBoardScale)*1vw*{4.8 + j* 2.55});"></div>
@@ -1918,6 +2771,7 @@
                                     {:else}
                                         <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[yourBoard[i].aligment]}; border-radius: 0.5vw;"></div>
                                         <img class="curCardAligList" src={aligmentIcons[yourBoard[i].aligment]} alt="aligment">
+                                    {/if}
                                     {/if}
 
                                     {#if yourBoard[i].talent != ""}
@@ -1942,7 +2796,7 @@
                                     </div>
                                 </div>
                             {:else if yourBoard[i].type == "ko"}
-                                <div class="ko" on:click={() => SelectTargetCard(yourBoard[i])} class:cardOnBoardInSelectMode={selectableCardDoms.includes(yourBoardDoms[i])} on:keydown role="button" tabindex="">{yourBoard[i].health}</div>
+                                <div class="ko" on:click={() => SelectTargetCard(yourBoard[i],i,"your")} class:cardOnBoardInSelectMode={selectableCardDoms.includes(yourBoardDoms[i])} on:keydown role="button" tabindex="">{yourBoard[i].health}</div>
                             {/if}
                         {/if}
                         </td>
@@ -1964,6 +2818,31 @@
                     <div class="curCardStats" style="left: calc(var(--cardsScale)*1vw*21.5)">{card.health}</div>
                     <div class="curCardCost">{card.cost}</div>
                     <div class="curCardName">{card.name}</div>
+
+                    {#if card.talent != ""}
+                        {#if card.talent.includes(",")}
+                        <div class="curCardMultipleIconsContainer">
+                            {#each card.talent.split(",") as icon, i}
+                            <div style="width:{(0.4*5.2)/card.talent.split(",").length}vw; margin:auto">
+                                <img style="width:calc(var(--cardsScale)*1vw*3.1)" src={talentIcons[icon.replace(" ","")]} alt="talent">
+                            </div>
+                            {/each}
+                        </div>
+                        {:else}
+                            <div class="curCardTalent">{card.talent.replace("támadás","")}</div>
+                            <img style="left: calc(var(--cardsScale)*1vw*10);" class="curCardTalentIcon" src={talentIcons[card.talent.replace(" ","")]} alt="talent">
+                            {/if}
+                        {/if}
+
+                    {#if card.aligment != ""}
+                    {#if card.aligment.includes(",")}
+                    {#each card.aligment.split(",") as aligment,i}
+                        <img style="top: {0.4*9.8 + i* 4.5*0.4}vw; background-color: {aligmentBackgroundColors[aligment]}; border-radius: 0.5vw;" class="curCardAlig" src={aligmentIcons[aligment]} alt="aligment">
+                    {/each}
+                    {:else}
+                        <img style="background-color: {aligmentBackgroundColors[card.aligment]}; border-radius: 0.5vw;" class="curCardAlig" src={aligmentIcons[card.aligment]} alt="aligment">
+                    {/if}
+                    {/if}
                     
                     <div id="curCardRarity" style="{starsColorByCost[(card.stars)-3]}; top: 0">
                         {#each Array(Number(card.stars)) as card,index}
@@ -1991,6 +2870,7 @@
             {/each}
             
         </div>
+        
     </div>
     <div id="mana">
         <div class="manaCont" id="enemyManaCont">
@@ -2075,12 +2955,14 @@
                                 {/if}
                             {/if}
 
+                            {#if lastCardPlayed.aligment != ""}
                             {#if lastCardPlayed.aligment.includes(",")}
                             {#each lastCardPlayed.aligment.split(",") as aligment,i}
                                 <img style="top: {0.8*9.8 + i* 4.5*0.8}vw; background-color: {aligmentBackgroundColors[aligment]}; border-radius: 0.5vw;" class="curCardAligLog" src={aligmentIcons[aligment]} alt="aligment">
                             {/each}
                             {:else}
                                 <img style="background-color: {aligmentBackgroundColors[lastCardPlayed.aligment]}; border-radius: 0.5vw;" class="curCardAligLog" src={aligmentIcons[lastCardPlayed.aligment]} alt="aligment">
+                            {/if}
                             {/if}
 
                             <div id="curCardRarityLog" style="{starsColorByCost[(lastCardPlayed.stars)-3]}; top: 0">
@@ -2147,12 +3029,14 @@
                             {/if}
                         {/if}
 
+                        {#if option.aligment != ""}
                         {#if option.aligment.includes(",")}
                         {#each option.aligment.split(",") as aligment,i}
                             <img style="top: {0.65*9.8 + i* 4.5*0.65}vw; background-color: {aligmentBackgroundColors[aligment]}; border-radius: 0.5vw;" class="curCardAligChoosingMode" src={aligmentIcons[aligment]} alt="aligment">
                         {/each}
                         {:else}
                             <img style="background-color: {aligmentBackgroundColors[option.aligment]}; border-radius: 0.5vw;" class="curCardAligChoosingMode" src={aligmentIcons[option.aligment]} alt="aligment">
+                        {/if}
                         {/if}
 
                         <div id="curCardRarityChoosingMode" style="{starsColorByCost[(option.stars)-3]}; top: 0">
@@ -2181,9 +3065,12 @@
             {/if}
         </div>
         {/each}
-    </div>
-    
+    </div> 
     {/if}
+    {#if isSelectTargetMode || isSummonLocationChoosing}
+        <div id="selectingModeBG"></div>
+    {/if}
+    
     <div id="guideText">
         {#if isInChoosingMode}
         VÁLASSZ EGY KÁRTYÁT
@@ -2311,6 +3198,18 @@
         }
     }
 
+    #selectingModeBG{
+        width: 100vw;
+        height: 100vh;
+        position: absolute;
+        top: 0;
+        left:0;
+        background-color: rgba(37, 86, 109, 0.377);
+        z-index: 15;
+    }
+    .selectingGameplayfield{
+        z-index: 9999;
+    }
     #choosingMode{
         width: 100vw;
         height: 100vh;
@@ -2510,6 +3409,8 @@
 
     .cardOnBoardInSelectMode{
         filter: drop-shadow(-0.3vw -0.3vw 0.1vw rgb(0, 140, 255)) drop-shadow(0.3vw 0.3vw 0.1vw rgb(0, 140, 255));
+        scale: 1.1;
+        z-index: 9999;
     }
     .cardOnBoardInSelectMode:hover {
         transform: scale(1.1);
@@ -2868,7 +3769,7 @@
         
     }
     #enemyHandCardCont{
-        width: calc(var(--cardsScale)*1vw*30);
+        width: 15vw;
 
     }
     .handCont{
@@ -2907,7 +3808,6 @@
         width: 12.8vw; /*wanna kill myself*/
         height: 16.25vh;
 
-        z-index: 11;
         perspective: 10vw; /* Adjust the perspective value as needed */
         perspective-origin: 50% 50%;
     }
@@ -3070,6 +3970,40 @@
         text-align: center;
         mix-blend-mode: screen;
     }
+    .curCardMultipleIconsContainer{
+        position: absolute;
+        top: calc(var(--cardsScale)*1vw*20);
+        left: calc(var(--cardsScale)*1vw*11);
+        width: calc(var(--cardsScale)*1vw*8);
+        height: calc(var(--cardsScale)*1vw*2);
+        display:flex;
+        flex-wrap:nowrap;
+        align-content:space-around;
+    }
+    .curCardTalentIcon{
+        position: absolute;
+        width: calc(var(--cardsScale)*1vw*3.1);
+        top: calc(var(--cardsScale)*1vw*19.6);
+        left: calc(var(--cardsScale)*1vw*10.3);
+    }
+    .curCardTalent{
+        position: absolute;
+        font-family: "talentFont";
+        color: antiquewhite;
+        font-size: calc(var(--cardsScale)*1vw*1.2);
+        top: calc(var(--cardsScale)*1vw*21.4);
+        left: calc(var(--cardsScale)*1vw*13.5);
+        width: calc(var(--cardsScale)*1vw*6);
+        height: calc(var(--cardsScale)*1vw*1.7);
+        padding-left:calc(var(--cardsScale)*1vw*1.9*var(--cardsScale));
+    }
+    .curCardAlig{
+        position: absolute;
+        width: calc(var(--cardsScale)*1vw*4);
+        left: calc(var(--cardsScale)*1vw*5.8);
+        top: calc(var(--cardsScale)*1vw*10);
+    }
+
 
     #cardPreviewListCont{
         position: relative;
@@ -3313,6 +4247,11 @@
             box-shadow: 0 0 0 0 rgba(133, 113, 166, 0.6);
             scale: 1;
         }
+    }
+    .curCardFieldEffectList{
+        position: absolute;
+        width: calc(var(--cardOnBoardScale)*1vw*3);
+        left: calc(var(--cardOnBoardScale)*1vw*10.2);
     }
 
     
