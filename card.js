@@ -1,9 +1,9 @@
     //#region SETUP/CARDS
     //#region tanár képek
-    import Bizso from "./lib/assets/collection/tanar/Bizso.png"
+    import Bizso from "./lib/assets/collection/tanar/Bizso.png" //kell új kép
     import Farkas from "./lib/assets/collection/tanar/Farkas.png"
     import Moni from "./lib/assets/collection/tanar/Moni.png"
-    import Nagyora from "./lib/assets/collection/tanar/Nagyora.png"
+    import Nagyora from "./lib/assets/collection/tanar/Nagyora.png" //kell új kép
     import Rozgonyi from "./lib/assets/collection/tanar/Rozgonyi.png"
     import Tabi from "./lib/assets/collection/tanar/Tabi.png"
     import Bencus from "./lib/assets/collection/tanar/Bencus.png"
@@ -11,15 +11,10 @@
     import IvanEva from "./lib/assets/collection/tanar/IvanEva.png"
     import KocsiAndi from "./lib/assets/collection/tanar/KocsiAndi.png"
     import KoPasz from "./lib/assets/collection/tanar/KoPasz.png"
-
     import Kuti from "./lib/assets/collection/tanar/Kuti.png"
-    import KutiHuman from "./lib/assets/collection/tanar/KutiHuman.png"
-    import KutiReal from "./lib/assets/collection/tanar/KutiReal.png"
-    import KutiSport from "./lib/assets/collection/tanar/KutiSport.png"
-
     import Matos from "./lib/assets/collection/tanar/Matos.png"
     import Meszaros from "./lib/assets/collection/tanar/Meszaros.png"
-    import Marti from "./lib/assets/collection/tanar/Marti.png"
+    import Marti from "./lib/assets/collection/tanar/Marti.png" //kell új kép
     import Jeff from "./lib/assets/collection/tanar/Jeff.png"
     import Tomi from "./lib/assets/collection/tanar/Tomi.png"
     import FiloReka from "./lib/assets/collection/tanar/FiloReka.png"
@@ -43,26 +38,66 @@
     //#region diák képek
     import Arho from "./lib/assets/collection/diak/Arho.png"
     import Barni from "./lib/assets/collection/diak/Barni.png"
-    import Eszter from "./lib/assets/collection/diak/Eszter.png"
-    import Olivia from "./lib/assets/collection/diak/Olivia.png"
+    import Eszter from "./lib/assets/collection/diak/Eszter.png" //kell új kép
+    import Olivia from "./lib/assets/collection/diak/Olivia.png" //kell új kép
     import Zalan from "./lib/assets/collection/diak/Zalan.png"
     import Zeno from "./lib/assets/collection/diak/Zeno.png"
-    import AproNo from "./lib/assets/collection/diak/AproNo.png"
     import Regina from "./lib/assets/collection/diak/Regina.png"
     import Emma from "./lib/assets/collection/diak/Emma.png"
     import Reka from "./lib/assets/collection/diak/Reka.png"
     import Juli from "./lib/assets/collection/diak/Juli.png"
-    
+    //balázs -
+    //abigél
+    //báló -
+    //árpád -
+    //szász levente
+    //vendel -
+    //nagy-györgy -
+    //szakonyi
+    //rebecca -
+    //tanács botond -
+    //zsíros péter -
+    //gál levente -
+    //boros kinga -
+    //molnár réka
+    //kasza domonkos -
+    //andris -
+    //miklós
+    //gitta -
+    //nagy benedek -
+    //vörös bálint -
+    //dénes -
     //#endregion
-    import Te from "./lib/assets/collection/diak/Te.png"
-    import SGEndre from "./lib/assets/collection/tanar/SGEndre.png"
-    
+    //#region extra képek
+    import Te from "./lib/assets/collection/extra/Te.png"
+    import SGEndre from "./lib/assets/collection/extra/SGEndre.png"
+    import AproNo from "./lib/assets/collection/extra/AproNo.png"
+    import KutiHuman from "./lib/assets/collection/extra/KutiHuman.png"
+    import KutiReal from "./lib/assets/collection/extra/KutiReal.png"
+    import KutiSport from "./lib/assets/collection/extra/KutiSport.png"
+    import Zsoblin from "./lib/assets/collection/extra/zsoblin.png"
+    //boldizsár -
+    //dolores -
+    //david -
+    //jenny -
+    //nokedli -
+    //csontváz -
+    //the rock -
+    //mikyx -
+    //tojas -
+    //charmander -
+    //charmeleon -
+    //charizard -
+    //mega charizard x -
+    //zozó
+    //strawberry
     import GachaPH from "./lib/assets/collection/tanar/GachaPH.png"
+    //#endregion
     //#region tanárgacha SRC
-    import BizsoGacha from "./lib/assets/collection/tanar/BizsoGacha.png"
+    import BizsoGacha from "./lib/assets/collection/tanar/BizsoGacha.png" //kell új kép
     import FarkasGacha from "./lib/assets/collection/tanar/FarkasGacha.png"
     import MoniGacha from "./lib/assets/collection/tanar/MoniGacha.png"
-    import NagyoraGacha from "./lib/assets/collection/tanar/NagyoraGacha.png"
+    import NagyoraGacha from "./lib/assets/collection/tanar/NagyoraGacha.png"//kell új kép
     import RozgonyiGacha from "./lib/assets/collection/tanar/RozgonyiGacha.png"
     import TabiGacha from "./lib/assets/collection/tanar/TabiGacha.png"
     import BencusGacha from "./lib/assets/collection/tanar/BencusGacha.png"
@@ -96,15 +131,49 @@
     //#region diák gacha SRC
     import ArhoGacha from "./lib/assets/collection/diak/ArhoGacha.png"
     import BarniGacha from "./lib/assets/collection/diak/BarniGacha.png"
-    import EszterGacha from "./lib/assets/collection/diak/EszterGacha.png"
-    import OliviaGacha from "./lib/assets/collection/diak/OliviaGacha.png"
+    import EszterGacha from "./lib/assets/collection/diak/EszterGacha.png" //kell új kép
+    import OliviaGacha from "./lib/assets/collection/diak/OliviaGacha.png" //kell új kép
     import ZalanGacha from "./lib/assets/collection/diak/ZalanGacha.png"
     import ZenoGacha from "./lib/assets/collection/diak/ZenoGacha.png"
-    import AproNoGacha from "./lib/assets/collection/diak/AproNoGacha.png"
     import EmmaGacha from "./lib/assets/collection/diak/EmmaGacha.png"
     import JuliGacha from "./lib/assets/collection/diak/JuliGacha.png"
     import RekaGacha from "./lib/assets/collection/diak/RekaGacha.png"
     import ReginaGacha from "./lib/assets/collection/diak/ReginaGacha.png"
+    //balázs
+    //abigél
+    //báló
+    //árpád
+    //szász levente
+    //vendel
+    //nagy-györgy
+    //szakonyi
+    //rebecca
+    //tanács botond
+    //zsíros péter
+    //gál levente
+    //boros kinga
+    //molnár réka
+    //kasza domonkos
+    //andris
+    //miklós
+    //gitta
+    //nagy benedek
+    //vörös bálint
+    //dénes
+    //#endregion
+    //#region extra gacha SRC
+    import AproNoGacha from "./lib/assets/collection/diak/AproNoGacha.png" //kell új kép
+    //nokedli
+    //csontváz
+    //the rock
+    //mikyx
+    //tojas
+    //charmander
+    //charmeleon
+    //charizard
+    //mega charizard x
+    //zozó
+    //strawberry
     //#endregion
 
     //#region voice lines
@@ -147,6 +216,39 @@
     import WeiszA from "./lib/assets/voicelines/Weisz.aac"
     import ZalanA from "./lib/assets/voicelines/Zalan.aac"
     import ZenoA from "./lib/assets/voicelines/Zeno.aac"
+    //balázs
+    //abigél
+    //báló
+    //árpád
+    //szász levente
+    //vendel
+    //nagy-györgy
+    //szakonyi
+    //rebecca
+    //tanács botond
+    //zsíros péter
+    //gál levente
+    //boros kinga
+    //molnár réka
+    //kasza domonkos
+    //andris
+    //miklós
+    //gitta
+    //nagy benedek
+    //vörös bálint
+    //dénes
+    //nokedli
+    //csontváz
+    //the rock
+    //mikyx
+    //tojas
+    //charmander
+    //charmeleon
+    //charizard
+    //mega charizard x
+    //zozó
+    //strawberry
+    //blazó
     //#endregion
 
     //#region spell képek
@@ -167,13 +269,48 @@
     import taktikaiTekerges from "./lib/assets/collection/spell/taktikaiTekerges.png"
     import sagvarizmusEjszakaja from "./lib/assets/collection/spell/sagvarizmusEjszakaja.png"
     import ideAManaddal from "./lib/assets/collection/spell/ideAManaddal.png"
-    import agyhalal from "./lib/assets/collection/spell/agyhalal.png"
+    import kaloda from "./lib/assets/collection/spell/kaloda.png" //kell új kép
     import javitoDolgozat from "./lib/assets/collection/spell/javitoDolgozat.png"
     import mezeskalacs from "./lib/assets/collection/spell/mezeskalacs.png"
     import osztalytalalkozo from "./lib/assets/collection/spell/osztalytalalkozo.png"
     import puskazas from "./lib/assets/collection/spell/puskazas.png"
     import saratoborzas from "./lib/assets/collection/spell/saratoborzas.png"
     import visszaakezembe from "./lib/assets/collection/spell/visszaakezembe.png"
+    //acélpajzs -
+    //alázatosság -
+    //álljon meg a menet! -
+    //atomrobbanás -
+    //ctrl+C / ctrl+V -
+    //csere-bere -
+    //ellopták a kabátod -
+    //hagyyá' má'! -
+    //kommunizmus -
+    //leltározás -
+    //nem tudod? 1-es! következő! -
+    //NERF pisztoly a padban -
+    //nokedli leszel -
+    //nokedli vagy -
+    //piros lámpa -
+    //sítábor -
+    //tanári értekezlet -
+    //UNO visszafordító kártya -
+    //varázsköpönyeg -
+    //varázskötet -
+    //nem szellőztettek -
+    //tanévnyitó -
+    //metamorfózis -
+    //szoborfaragás -
+    //mitózis -
+    //nincs fűtés -
+    //ez vagy az -
+    //kiosztják a dogát -
+    //télen szellőztettek -
+    //RNG -
+    //fakard a DÖK irodából
+    //nagy testvér vigyáz rád -
+    //gravitáció -
+    //G osztály eltörlése -
+    //enyém! -
     //#endregion
 
     //#region spellGacha
@@ -194,18 +331,66 @@
     import taktikaiTekergesGacha from "./lib/assets/collection/spell/taktikaiTekergesGacha.png"
     import sagvarizmusEjszakajaGacha from "./lib/assets/collection/spell/sagvarizmusEjszakajaGacha.png"
     import ideAManaddalGacha from "./lib/assets/collection/spell/ideAManaddalGacha.png"
-    import agyhalalGacha from "./lib/assets/collection/spell/agyhalalGacha.png"
+    import kalodaGacha from "./lib/assets/collection/spell/kalodaGacha.png" //kell új kép
     import javitoDolgozatGacha from "./lib/assets/collection/spell/javitoDolgozatGacha.png"
     import mezeskalacsGacha from "./lib/assets/collection/spell/mezeskalacsGacha.png"
     import osztalytalalkozoGacha from "./lib/assets/collection/spell/osztalytalalkozoGacha.png"
     import puskazasGacha from "./lib/assets/collection/spell/puskazasGacha.png"
     import saratoborzasGacha from "./lib/assets/collection/spell/saratoborzasGacha.png"
     import visszaakezembeGacha from "./lib/assets/collection/spell/visszaakezembeGacha.png"
+    //acélpajzs
+    //alázatosság
+    //álljon meg a menet!
+    //atomrobbanás
+    //ctrl+C / ctrl+V
+    //csere-bere
+    //ellopták a kabátod
+    //hagyyá' má'!
+    //kommunizmus
+    //leltározás
+    //nem tudod? 1-es! következő!
+    //NERF pisztoly a padban
+    //nokedli leszel
+    //nokedli vagy
+    //piros lámpa
+    //sítábor
+    //tanári értekezlet
+    //UNO visszafordító kártya
+    //varázsköpönyeg
+    //varázskötet
+    //nem szellőztettek
+    //tanévnyitó
+    //metamorfózis
+    //szoborfaragás
+    //mitózis
+    //nincs fűtés
+    //ez vagy az
+    //kiosztják a dogát
+    //télen szellőztettek
+    //RNG
+    //fakard a DÖK irodából
+    //nagy testvér vigyáz rád
+    //gravitáció
+    //G osztály eltörlése
+    //enyém!
     //#endregion
-    //#region egyéb spell képekú
+    //#region character spells
+    //mag -
+    //minden Balázs -
+    //felvilágosodás -
+    //terminusdoga -
+    //#endregion
+    //#region egyéb spell képek
     import KutiDiploma from "./lib/assets/collection/spell/KutiDiploma.png"
+    //pikk dáma -
+    //Charmander lángja -
+    //Charmeleon lángja -
+    //Charizard lángja -
+    //Mega Charizard X lángja -
     //#endregion
-    
+    //#region építmények
+    //tanári szoba
+    //#endregion
     //#endregion
 
     import GachaPHSpell from "./lib/assets/collection/spell/GachaPHSpell.png"
@@ -303,9 +488,9 @@
     export let sportSzeletCard = new spellCards("sport szelet a futónapon","EmptyAbility","Feltöltődsz energiával. <b>+1</b> mana.",sportSzelet,3,0,"spell",sportSzeletGacha,"sportSzeletCard",gachaPHAudio, "Bármikor lefutnék 2000 métert ilyen ajándékért.")
     export let keszultelCard = new spellCards("készültél","EmptyAbility","<b>Titok:</b> Ha az ellenfél <b>'Felelés'</b>-sel támad, támadása összes effektusát az <b>ellenfél felé fordítja</b>.",keszultel,5,0,"spell",keszultelGacha,"keszultelCard",gachaPHAudio, "Ilyenkor se akarsz felelni, de legalább nem húznak meg.")
     export let nemKeszultelCard = new spellCards("nem készültél","EmptyAbility","<b>Titok: +1</b> sebzést biztosít a <b>'Felelés'</b> kártyának és <b>elvesz 2 manát</b> az ellenféltől.",nemKeszultel,5,1,"spell",nemKeszultelGacha,"nemKeszultelCard",gachaPHAudio, "Ilyenkor főleg nem akarsz felelni és még meg is húznak.")
-    export let ideAManaddalCard = new spellCards("Ide a manáddal!","EmptyAbility","<b>Lopj el 2</b> manát az ellenféltől!",ideAManaddal,3,2,"spell",ideAManaddalGacha,"ideAManaddalCard",gachaPHAudio, "Lopni amúgy nem szép dolog.")
+    export let ideAManaddalCard = new spellCards("ide a manáddal","EmptyAbility","<b>Lopj el 2</b> manát az ellenféltől!",ideAManaddal,3,2,"spell",ideAManaddalGacha,"ideAManaddalCard",gachaPHAudio, "Lopni amúgy nem szép dolog.")
     export let tuzgolyoCard = new spellCards("tűzgolyó","EmptyAbility","Sebezz <b>4</b>-et egy általad kiválasztott kártyába!",tuzgolyo,3,3,"spell",tuzgolyoGacha,"tuzgolyoCard",gachaPHAudio, "Kedvenc Pitbull számom")
-    export let tuzsarkanyLangjaCard = new spellCards("tűzsárkány lángja","EmptyAbility","Sebez <b>3</b>-mat egy kiválasztott kártyába és a vele <b>szomszédos</b> kártyákba egyaránt.",tuzsarkanyLangja,3,5,"spell",tuzsarkanyLangjaGacha,"tuzsarkanyLangjaCard",gachaPHAudio, "Ami fent csíp, az előbb-utóbb alul is fog.")
+    export let tuzsarkanyLangjaCard = new spellCards("meteor","EmptyAbility","Sebez <b>3</b>-mat egy kiválasztott kártyába és a vele <b>szomszédos</b> kártyákba egyaránt.",tuzsarkanyLangja,3,5,"spell",tuzsarkanyLangjaGacha,"tuzsarkanyLangjaCard",gachaPHAudio, "Ami fent csíp, az előbb-utóbb alul is fog.")
     export let lanchegysegCard = new spellCards("lánchegység","EmptyAbility","Az ellenfél összes szabadon hagyott <b>hátsó</b> mezejére <b>kövek</b> kerülnek.",lanchegyseg,5,5,"spell",lanchegysegGacha,"lanchegysegCard",gachaPHAudio, "A kép nem méretarányos.")
     export let sagvarizmusEjszakajaCard = new spellCards("Ságvárizmus Éjszakája","EmptyAbility","Egy kiválasztott karakterkártyád <b>erejét megduplázza</b>.",sagvarizmusEjszakaja,3,2,"spell",sagvarizmusEjszakajaGacha,"sagvarizmusEjszakajaCard",gachaPHAudio, "Nem lehet alkoholt bevinni. Papíron.")
     export let taktikaiTekergesCard = new spellCards("taktikai tekergés","EmptyAbility","<b>Rendezd át</b> a térfeledet ízlésed szerint!",taktikaiTekerges,4,4,"spell",taktikaiTekergesGacha,"taktikaiTekergesCard",gachaPHAudio, "A röplabdacsapat jóvoltából.")
@@ -313,23 +498,65 @@
     export let saraSzurkolotaborCard = new spellCards("SÁRA szurkolótábor","EmptyAbility","Minden karakterkártyádnak <b>+2atk</b> és <b>+2hp</b>.",sportSzelet,3,2,"spell",GachaPHSpell,"saraSzurkolotaborCard",gachaPHAudio, "Versenyszellem garantált.")
     export let falanxCard = new spellCards("falanx","EmptyAbility","Minden <b>hátsó</b> sorban álló karakterkártyád elé rakj le egy ingyenes <b>'Kő'</b> kártyát!",falanx,4,3,"spell",falanxGacha,"falanxCard",gachaPHAudio, "Nagy Sándor tiszteletére.")
     export let kiteresCard = new spellCards("kitérés","EmptyAbility","Egy általad kiválasztott kártyád a soron belül <b>eltolódik 1</b> mezővel.",kiteres,3,0,"spell",kiteresGacha,"kiteresCard",gachaPHAudio, "Nem talált!")
-    export let agyhalalCard = new spellCards("agyhalál","DrawOne","<b>Némíts el</b> egy ellenséges kártyát!",agyhalal,3,2,"spell",agyhalalGacha,"agyhalalCard",gachaPHAudio, "Az agyi funkciók leállnak. Káros az egészségre.")
+    export let kalodaCard = new spellCards("kaloda a pincében","DrawOne","<b>Némíts el</b> egy ellenséges kártyát!",kaloda,3,2,"spell",kalodaGacha,"kalodaCard",gachaPHAudio, "Az agyi funkciók leállnak. Káros az egészségre.")
     export let javitoDolgozatCard = new spellCards("javító dolgozat","EmptyAbility","<b>Húzz fel</b> egy karakterkártyát a <b>temetődből</b>!",javitoDolgozat,3,0,"spell",javitoDolgozatGacha,"javitoDolgozatCard",gachaPHAudio, "Hiszek a második esélyben.")
     export let mezeskalacsCard = new spellCards("mézeskalács","EmptyAbility","Helyezz le a térfeledre egy <b>mézeskalácsház</b> 'Kő' variációt! Ha <b>lerombolják</b>, a <b>hátsó</b> sorban lévő kártyáid mind <b>3</b> hp-t gyógyulnak.",mezeskalacs,3,2,"spell",mezeskalacsGacha,"mezeskalacsCard",gachaPHAudio, "Hasznos az, amit meg lehet enni vagy házat lehet belőle készíteni. -Kristóf filozófia szakkörről")
     export let osztalytalalkozoCard = new spellCards("osztálytalálkozó","EmptyAbility","A paklid <b>legalsó 3</b> karakterkártyája a paklid <b>tetejére</b> kerül.",osztalytalalkozo,4,1,"spell",osztalytalalkozoGacha,"osztalytalalkozoCard",gachaPHAudio, "Felejtsünk el mindent, osztálytalálkozóóóóóóóóóóóóó!")
     export let puskazasCard = new spellCards("puskázás","EmptyAbility","Nézd meg az <b>ellenfeled paklijának</b> az <b>5 legfelső</b> lapját.",puskazas,5,1,"spell",puskazasGacha,"puskazasCard",gachaPHAudio, "Nyugi, a padtársad se tudja a választ.")
-    export let visszaakezembeCard = new spellCards("Vissza a kezembe!","EmptyAbility","Egy általad kiválasztott kártyád <b>visszakerül</b> a tábláról <b>a kezedbe</b>.",visszaakezembe,3,1,"spell",visszaakezembeGacha,"visszaakezembeCard",gachaPHAudio, "Nyugi, a padtársad se tudja a választ.")
+    export let visszaakezembeCard = new spellCards("vissza a kezembe","EmptyAbility","Egy általad kiválasztott kártyád <b>visszakerül</b> a tábláról <b>a kezedbe</b>.",visszaakezembe,3,1,"spell",visszaakezembeGacha,"visszaakezembeCard",gachaPHAudio, "Nyugi, a padtársad se tudja a választ.")
+    //acélpajzs
+    //alázatosság
+    //álljon meg a menet!
+    //atomrobbanás
+    //ctrl+C / ctrl+V
+    //csere-bere
+    //ellopták a kabátod
+    //hagyyá' má'!
+    //kommunizmus
+    //leltárazás
+    //nem tudod? 1-es! következő!
+    //NERF pisztoly a padban
+    //nokedli leszel
+    //nokedli vagy
+    //piros lámpa
+    //sítábor
+    //tanári értekezlet
+    //UNO visszafordító kártya
+    //varázsköpönyeg
+    //varázskötet
+    //nem szellőztettek
+    //tanévnyitó
+    //metamorfózis
+    //szoborfaragás
+    //mitózis
+    //nincs fűtés
+    //ez vagy az
+    //kiosztják a dogát
+    //télen szellőztettek
+    //RNG
+    //fakard a DÖK irodából
+    //nagy testvér vigyáz rád
+    //gravitáció
+    //G osztály eltörlése
+    //enyém!
     //#endregion
     //#region EGYÉB KARAKTERSPELLEK/SEGÉDSPELLEK
     export let KutiDiplomaCard = new spellCards("Tanári Diploma","KutiDiploma","A pályádon lévő <b>Kúti</b> kártya lediplomázott. Válaszd meg milyen szakon. <b>Reál, humán vagy sport.</b>",KutiDiploma,5,0,"spell",GachaPHSpell,"KutiDiplomaCard",gachaPHAudio, "")
-
+    //pick dáma
+    //Charmander lángja
+    //Charmander lángja
+    //Charmander lángja
+    //mag
+    //minden Balázs
+    //felvilágosodás
+    //terminusdoga
     //#endregion
 
     //#region TANÁROK
     export let BizsoCard = new tanarCards("Bizsó","lelkiismeretes","","death","Bizso", "Ha ez a kártya <b>elkárhozik</b>, a <b>kör</b> fázistól függetlenül azonnal <b>véget ér</b>.", 8, 6, Bizso, 4, 4, "character", BizsoGacha, "BizsoCard", BizsoA, "Kedvence egy jó python feladat. Ha szépen kéred, kienged a hátsó kijáraton. Szexi apuka.", []); 
     export let FarkasCard = new tanarCards("Dr. Farkas","lelkiismeretes","robbanó támadás","summon","Farkas", "<b>ledermeszt</b> egy kiválsztott <b>ellenséget és szomszédjait</b>, és sebez beléjük.", 9, 13, Farkas, 5, 7, "character", FarkasGacha, "FarkasCard", FarkasA, "Filozófusszakállát évente vágja. Ennek ellenére mindig visszanő. Nem kell félni tőle.", []);
     export let MoniCard = new tanarCards("Szalay Mónika","lelkiismeretes","életelszívás_1","summon","EmptyAbility", "<b>Elnémít</b> egy ellenséges kártyát <b>1</b> körre.", 7, 5, Moni, 4, 5, "character", MoniGacha, "MoniCard", MoniA, "Hobbifilozófus. Képes 45 percig elemezni egy 10 soros lírai alkotást. Lenyűgöző!", []);
-    export let NagyoraCard = new tanarCards("Nagy 'óra","veszett","kihívó","summon","EmptyAbility", "A <b>hátsó</b> sorod összes kártyája kap <b>2</b> hp-t.", 5, 8, Nagyora, 3, 4, "character", NagyoraGacha, "NagyoraCard", NagyoraA, "Télen is szoknyában jár. Számára a stílus az első.", []);
+    export let NagyoraCard = new tanarCards("Nagy Dóra","veszett","kihívó","summon","EmptyAbility", "A <b>hátsó</b> sorod összes kártyája kap <b>2</b> hp-t.", 5, 8, Nagyora, 3, 4, "character", NagyoraGacha, "NagyoraCard", NagyoraA, "Télen is szoknyában jár. Számára a stílus az első.", []);
     export let RozgonyiCard = new tanarCards("Rozgonyi","vérszomjas","tövisesbőr","summon","EmptyAbility", "Amíg a pályán van, <b>hátsó</b> sorod összes kártyája <b>+1atk</b>. <b>Elkárhozáskor</b> minden kártyádnak <b>+1atk</b> és <b>+1hp</b>.", 1, 5, Rozgonyi, 3, 2, "character", RozgonyiGacha, "RozgonyiCard", RoziA, "Szeret sütni. Szeret még legózni és gombócot enni is. A fiát láthatólag annyira nem.", []);
     export let TabiCard = new tanarCards("Tábi", "vérszomjas","fürge támadás","summon","EmptyAbility", "Minden <b>'tunya'</b> kártya <b>+2atk</b>.", 2, 4, Tabi, 3, 3, "character", TabiGacha, "TabiCard", TabiA, "Tesitanár és röplabdaedző. Epic gamer szabadidejében. Sose hagyja ki az alkalmat, hogy politizáljon.", []);
     export let BencusCard = new tanarCards("Illés Bence","tunya","","summon","EmptyAbility", "<b>Visszakerül</b> a játékos kezébe az a kártya, ami által <b>elkárhozott</b>.", 14, 10, Bencus, 4, 7, "character", BencusGacha, "BencusCard", BencusA, "Másodállásban professzionális diáktanya dolgozó.", []);
@@ -353,15 +580,15 @@
     export let LaciNeniCard = new tanarCards("Laci néni","lelkiismeretes","","summon","EmptyAbility", "Amíg a pályán van, a kőpakli csak mézeskalácsházakat tartalmaz.", 9, 13, LaciNeni, 3, 6, "character", LaciNeniGacha, "LaciNeniCard", LaciNeniA, "Qu'est-ce que les schtroumpfs", []);
     export let MsFarkasCard = new tanarCards("Mrs Farkas","lelkiismeretes","életelszívás_2", "summon","EmptyAbility","Ha Dr. Farkas a pályán van vele, +2atk/+2hp.", 2, 3, MsFarkas, 4, 2, "character", MsFarkasGacha, "MsFarkasCard", MrsFarkasA, "Csak 2 embernek hinném el, hogy zöld az ég és kék a fű. Anyám és Farkas Judit.", []);
     export let NagyTCard = new tanarCards("Nagy T","vérszomjas","kihívó,robbanó támadás", "death","NagyT","1/1-ként 1-szer újjáéled a pályán.", 5, 10, NagyT, 5, 6, "character", NagyTGacha, "NagyTCard", NagyTA, "T", []);
-    export let BlazóCard = new tanarCards("Blazó","tunya","fürge támadás","death","Blazó", "", 3, 2, Blazó, 5, 3, "character", GachaPH, "BlazóCard", gachaPHAudio, "B", ["PowerModtunya*1.5"]);
+    export let BlazoCard = new tanarCards("Blazó","tunya","fürge támadás","death","Blazó", "", 3, 2, Blazó, 5, 3, "character", GachaPH, "BlazóCard", gachaPHAudio, "B", ["PowerModtunya*1.5"]);
     export let ParagiCard = new tanarCards("Paragi","tunya","tövisesbőr","summon","EmptyAbility", "Egy szabadon választott kártyát duplikál a pályán 1/1-ként.", 4, 7, Paragi, 4, 4, "character", ParagiGacha, "ParagiCard", ParagiA, "Pontok, vonalak, foltok. Baguette zene a kedvence.", []);
     export let RixerCard = new tanarCards("Rixer Márta","tunya","robbanó támadás","summon","EmptyAbility", "A megtámadott kártya szomszédjai <b>elnémulnak</b> 1 körre.", 99, 99, Rixer, 3, 99, "character", RixerGacha, "RixerCard", RixerA, "Tanított fél évet...papíron.", []);
     export let SisakCard = new tanarCards("Sisák","veszett","","summon","EmptyAbility", "A szomszédjai 'tunyává' válnak.", 2, 2, Sisak, 3, 1, "character",SisakGacha, "SisakCard", SisakA, "Nem is olyan régen lett nagypapa. Gratulálunk!", []);
-    export let SzaszakCard = new tanarCards("Szaszi","lelkiismeretes,vérszomjas","életelszívás_1,tövisesbőr","summon","EmptyAbility", "Az összes táblán lévő kártya veszít 2 életerőpontot.", 3, 11, Szaszak, 5, 5, "character", SzaszakGacha, "SzaszakCard", SzasziA, "Bács-Kiskun, Baranya, Békés, Borsod-Abaúj-Zemplén, Csongrád-Csanád, Fejér, Győr-Moson-Sopron, Hajdú-Bihar, Heves, Jász-Nagykun-Szolnok, Komárom-Esztergom, Nógrád, Pest, Somogy, Szabolcs-Szatmár-Bereg, Tolna, Vas, Veszprém, Zala", []);
-    export let TothKareszCard = new tanarCards("Karesz","vérszomjas","","summon","EmptyAbility", "", 99, 99, TothKaresz, 3, 99, "character", TothKareszGacha, "TothKareszCard", KareszA, "Gurulási súrlódási együtthatója 0,7.", []);
+    export let SzaszakCard = new tanarCards("Szaszákné","lelkiismeretes,vérszomjas","életelszívás_1,tövisesbőr","summon","EmptyAbility", "Az összes táblán lévő kártya veszít 2 életerőpontot.", 3, 11, Szaszak, 5, 5, "character", SzaszakGacha, "SzaszakCard", SzasziA, "Bács-Kiskun, Baranya, Békés, Borsod-Abaúj-Zemplén, Csongrád-Csanád, Fejér, Győr-Moson-Sopron, Hajdú-Bihar, Heves, Jász-Nagykun-Szolnok, Komárom-Esztergom, Nógrád, Pest, Somogy, Szabolcs-Szatmár-Bereg, Tolna, Vas, Veszprém, Zala", []);
+    export let TothKareszCard = new tanarCards("Tóth Károly","vérszomjas","","summon","EmptyAbility", "", 99, 99, TothKaresz, 3, 99, "character", TothKareszGacha, "TothKareszCard", KareszA, "Gurulási súrlódási együtthatója 0,7.", []);
     export let VeronikaCard = new tanarCards("Németh Veronika","lelkiismeretes","tövisesbőr","summon","EmptyAbility", "A szomszédjai támadóereje ennek a kártyának a támadóerejének a 30%-ával nő lefelé kerekítve.", 99, 99, Veronika, 3, 99, "character", VeronikaGacha, "VeronikaCard", VeronikaA, "Vigyorog, mint a tejbetök. Nagyon cuki.", []);
     export let WeiszCard = new tanarCards("Weisz","tunya","kettős támadás","summon","EmptyAbility","Húzd fel a legdrágább kártyát a paklidból!", 3, 5, Weisz, 4, 3, "character", WeiszGacha, "WeiszCard", WeiszA, "Teljességgel kiszámíthatatlan. Támogatja, hogy órán Cards Against Humanity-t játsszunk.", ["kettős:0"]);
-    export let TritzCard = new tanarCards("Tritzy","vérszomjas","","summon","EmptyAbility", "A paklid 2 legalsó karakterkártyája a temedőbe kerül. ", 1, 3, Tritz, 4, 2, "character", TritzGacha, "TritzCard", TritzyA, "😄   -->   😈", []);
+    export let TritzCard = new tanarCards("Tritz Árpád","vérszomjas","","summon","EmptyAbility", "A paklid 2 legalsó karakterkártyája a temedőbe kerül. ", 1, 3, Tritz, 4, 2, "character", TritzGacha, "TritzCard", TritzyA, "😄   -->   😈", []);
     export let AnderleneCard = new tanarCards("Anderléné","vérszomjas","életelszívás_2","summon","EmptyAbility", "Húzz fel egy karakterkártyát a temetőből. A felhúzott kártya 1-gyel kevesebb manába kerül az eredeti értékénél.", 99, 99, Anderlene, 4, 99, "character", AnderleneGacha, "AnderleneCard", gachaPHAudio, "A nyelvtanárok nyelvtanára.", []);
     export let SagineCard = new tanarCards("Ságiné","veszett","","summon","EmptyAbility", "Ha van a húzópaklidban biosszertár csontváza kártya, húzd fel a kezedbe!", 99, 99, Sagine, 4, 99, "character", SagineGacha, "SagineCard", gachaPHAudio, "Szeretni máshogy is lehet. Nem kell bántani egymást.", []);
     //#endregion
@@ -373,23 +600,61 @@
     export let OliviaCard = new diakCards("Olívia","lelkiismeretes","kihívó","summon","EmptyAbility", "Amíg játékban van, a tábla összes kártyája 'veszetté' és 'vérszomjassá' válik.", 2, 6, Olivia, 4, 3, "character", OliviaGacha, "OliviaCard", OliviaA, "Lehelt már számtalanszon visszautasította. Oliver ikertestvére. Lehel ezt még nem tudja.", []);
     export let ZalanCard = new diakCards("Zalán","tunya","kihívó", "summon","EmptyAbility","Ha van a paklidban, húzd fel a palacsintafesztivál kártyát!", 3, 6, Zalan, 5, 3, "character", ZalanGacha, "ZalanCard", ZalanA, "Mindenki kedvenc DÖK elnöke. Volt. Fasza bőrdzseki!", []);
     export let ZenoCard = new diakCards("Zénó","lelkiismeretes,tunya","kettős támadás","summon","EmptyAbility", "Amíg a pályán van, ha elkárhozik egy diák kártyád, a temető helyett a kezedbe kerül vissza. Ha újból kijátszol egy ilyen kártyát, minden ellenséges kártya veszít 1 hp-t.", 6, 12, Zeno, 6, 7, "character", ZenoGacha, "ZenoCard", ZenoA, "SG DÖK elnök. Ha a terem hátsó sarkában valaki fulladozik a nevetéstől, ő az.", ["kettős:0"]);
-    export let AproNoCard = new diakCards("Apró Fehér Nő","veszett","fürge támadás","summon","EmptyAbility", "Ha 2 erős fehér férfi a szomszédja, +3atk és +3hp.", 1, 2, AproNo, 4, 2, "character", AproNoGacha, "AproNoCard", AproNoA, "Egy apró fehér nő. Gyenge, a férfiak alatt áll, nincsennek jogai.", []);
     export let ReginaCard = new diakCards("Redzsina","veszett","tövisesbőr","summon","EmptyAbility", "Minden 6-ödik kártyáért a temetődben +1 életelszívás.", 2, 3, Regina, 4, 3, "character", ReginaGacha, "ReginaCard", RedzsinaA, "Ötcsillagos akart lenni. Közhiedelem ellenére nem meleg.", []);
     export let EmmaCard = new diakCards("Emma","lelkiismeretes","kihívó,robbanó támadás","summon","EmptyAbility", "Minden követ 1 támadással elpusztít.", 3, 10, Emma, 5, 5, "character",EmmaGacha, "EmmaCard", gachaPHAudio, "Beépített tégla volt a Radnótiban, de jó útra tért. Árjafaj. Ennek ellenére szereti a zsidókat.", []);
     export let RekaCard = new diakCards("Réka","veszett","kettős támadás","summon","EmptyAbility", "Ha Barni a pályán van vele, minden ellenséges lány kártyát elnémít. Barni vagy a saját elkárhozása után az érintett kártyák visszanyerik képességeiket.", 1, 3, Reka, 3, 2, "character", RekaGacha, "RekaCard", gachaPHAudio, "Pedofil hobbizsiráf. Nem szereti a tejberizst. A cicákat szereti.", ["kettős:0"]);
     export let JuliCard = new diakCards("Juli","vérszomjas","kihívó","summon","EmptyAbility", "A kihívott kártya szomszédai ledermednek 1 körre. Az érintett kártyák nem dermednek le, ha a kihívott kártya már nincs a pályán.", 1, 2, Juli, 3, 1, "character", JuliGacha, "JuliCard", gachaPHAudio, "A manórúd óta Csillag Patrik.", []);
-    //#endregion
+    //balázs
+    //abigél
+    //báló
+    //árpád
+    //szász levente
+    //vendel
+    //nagy-györgy
+    //szakonyi
+    //rebecca
+    //tanács botond
+    //zsíros péter
+    //gál levente
+    //boros kinga
+    //molnár réka
+    //kasza domonkos
+    //andris
+    //miklós
+    //gitta
+    //nagy benedek
+    //vörös bálint
+    //dénes
+    //#endregion 
+    //#region EXTRÁK
     export let YouCard = new extraCards("Te","tunya","fürge támadás","summon","DrawOne", "Teszt kártya deveknek uwu", 2, 1, Te, 3, 0, "character", GachaPH, "YouCard", gachaPHAudio, 'Te vagy e világ kiválasztottja. Írdd meg a saját történeted és reméld, hogy utad végén sikerrel jársz. -???', ["stunned:1"]);
-    export let SGEndreCard = new extraCards("SGEndre","","","summon","EmptyAbility", "", 1, 1, SGEndre, 3, 1, "character", GachaPH, "SGEndreCard", gachaPHAudio, "", []);
+    export let SGEndreCard = new extraCards("Ságvári Endre szobor","","","summon","EmptyAbility", "", 1, 1, SGEndre, 3, 1, "character", GachaPH, "SGEndreCard", gachaPHAudio, "", []);
+    export let AproNoCard = new diakCards("Apró Fehér Nő","veszett","fürge támadás","summon","EmptyAbility", "Ha 2 erős fehér férfi a szomszédja, +3atk és +3hp.", 1, 2, AproNo, 4, 2, "character", AproNoGacha, "AproNoCard", AproNoA, "Egy apró fehér nő. Gyenge, a férfiak alatt áll, nincsennek jogai.", []);
+
     export let JeffCard = new extraCards("Jeff","lelkiismeretes","","summon","EmptyAbility", "", 99, 99, Jeff, 6, 99, "character", JeffGacha, "JeffCard", JeffA, "Plays golf with you on the weekends. Loves his wife, kids and family dog.", []);
+    //boldizsár
+    //dolores
+    //david
+    //jenny
+
     export let NokedliCard = new extraCards("Nokedli 7/G-s","","","death","EmptyAbility", "Teszt kártya deveknek uwu", 1, 1, Te, 3, 0, "character", GachaPH, "NokedliCard", gachaPHAudio, "", []);
-    export let TomiCloneCard = new extraCards("Dr. Tamás Klónja","vérszomjas,veszett","kettős támadás,robbanó támadás,életelszívás_3","death","TomiCloneDeath", "Készít maga mellé egy másolatot, csak akkor derül ki, hogy melyik az igazi, ha megtámadják az egyiket. A másolat elnyeli az átfolyó sebzést.", 5, 1, Tomi, 6, 10, "character", TomiGacha, "TomiCard", TomiA, "Fogorvos és táncvilágbajnok. Unatkozott, ezért elment tanárnak.", ["kettős:0"]);
+    //csontváz
+    //the rock
+    //zsoblin
+    //mikyx
+    //tojas
+    //charmander
+    //charmeleon
+    //charizard
+    //zozó
+    //strawberry
+    //#endregion    export let TomiCloneCard = new extraCards("Dr. Tamás Klónja","vérszomjas,veszett","kettős támadás,robbanó támadás,életelszívás_3","death","TomiCloneDeath", "Készít maga mellé egy másolatot, csak akkor derül ki, hogy melyik az igazi, ha megtámadják az egyiket. A másolat elnyeli az átfolyó sebzést.", 5, 1, Tomi, 6, 10, "character", TomiGacha, "TomiCard", TomiA, "Fogorvos és táncvilágbajnok. Unatkozott, ezért elment tanárnak.", ["kettős:0"]);
 
 
     //#region LISTÁK/KATEGORIÁZÁS
-    export let tanarCardsArr = [BizsoCard, FarkasCard,MartiCard, MoniCard, NagyoraCard, RozgonyiCard, TabiCard,BencusCard,DobiCard,IvanEvaCard,TomiCard,KocsiAndiCard,KoPaszCard,KutiCard,MatosCard,MeszarosCard,JeffCard,FiloRekaCard,IzigCard,KinyoCard, LaciNeniCard, MsFarkasCard,NagyTCard,ParagiCard,RixerCard,SisakCard,SzaszakCard,TothKareszCard,VeronikaCard,WeiszCard,TritzCard,AnderleneCard,SagineCard]
+    export let tanarCardsArr = [BizsoCard, FarkasCard,MartiCard, MoniCard, NagyoraCard, RozgonyiCard, TabiCard,BencusCard,DobiCard,IvanEvaCard,TomiCard,KocsiAndiCard,KoPaszCard,KutiCard,MatosCard,MeszarosCard,FiloRekaCard,IzigCard,KinyoCard, LaciNeniCard, MsFarkasCard,NagyTCard,BlazoCard,ParagiCard,RixerCard,SisakCard,SzaszakCard,TothKareszCard,VeronikaCard,WeiszCard,TritzCard,AnderleneCard,SagineCard]
     export let diakCardsArr = [ArhoCard, BarniCard, EszterCard, OliviaCard, ZalanCard, ZenoCard,AproNoCard,ReginaCard,EmmaCard,RekaCard,JuliCard]
-    export let spellCardsArr = [ebedCard,felelesCard,instantMerevedesCard,jegkremCard,lyukasoraCard,palacsintaFeszCard,sportSzeletCard,keszultelCard,nemKeszultelCard,ideAManaddalCard,tuzgolyoCard,tuzsarkanyLangjaCard,lanchegysegCard,sagvarizmusEjszakajaCard,taktikaiTekergesCard,saraToborzasCard,saraSzurkolotaborCard,falanxCard,kiteresCard,agyhalalCard,javitoDolgozatCard,mezeskalacsCard,osztalytalalkozoCard,puskazasCard]
+    export let spellCardsArr = [ebedCard,felelesCard,instantMerevedesCard,jegkremCard,lyukasoraCard,palacsintaFeszCard,sportSzeletCard,keszultelCard,nemKeszultelCard,ideAManaddalCard,tuzgolyoCard,tuzsarkanyLangjaCard,lanchegysegCard,sagvarizmusEjszakajaCard,taktikaiTekergesCard,saraToborzasCard,saraSzurkolotaborCard,falanxCard,kiteresCard,kalodaCard,javitoDolgozatCard,mezeskalacsCard,osztalytalalkozoCard,puskazasCard]
     export let allCardsArr = tanarCardsArr.concat(diakCardsArr)
     allCardsArr = allCardsArr.concat(spellCardsArr)
 
