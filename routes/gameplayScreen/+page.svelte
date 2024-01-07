@@ -178,6 +178,8 @@
     }
 
 
+
+
     function DrawStartingHand(n){
         for(let i = 0; i<n; i++){
             var random = Math.floor(Math.random() * yourGameParameters.remaningDeck.length)
@@ -190,9 +192,9 @@
         }
         yourHand[0] = Cards.YouCard
         yourHand[1] = Cards.KutiCard
-        yourHand[2] = Cards.KutiDiplomaCard
-        yourHand[3] = Cards.FarkasCard
-        yourHand[4] = Cards.agyhalalCard
+        yourHand[2] = Cards.FarkasCard
+        yourHand[3] = Cards.MsFarkasCard
+        yourHand[4] = Cards.TomiCard
          //UpdateLocalStorage()
         
         SendGameData(yourGameParameters)
@@ -229,7 +231,6 @@
     
     function ServerDependingCode(){
         update()
-
         console.log("your and enemy params: ", yourGameParameters,enemyGameParameters,);
         isYourTurn = yourGameParameters.isYourTurn
         console.log("IS IT MINE TURN????",isYourTurn);
@@ -249,6 +250,8 @@
         pageLoaded = pageLoaded
         
     }
+    let waitForUpdate
+    let promiseResolve
     onMount(() => {
             targetArea = document.getElementsByClassName("target")
             koTargetArea = document.getElementsByClassName("kotarget")
@@ -266,14 +269,51 @@
             //events for communicating with clinet.js
             document.addEventListener('socketConnected', ServerDependingCode)
             document.addEventListener('nextTurn',NextTurn)
+            waitForUpdate = new Promise((resolve) => {
+                promiseResolve = resolve
+                document.addEventListener('actionLog', function() {
+                    if(lastCardPlayedClient.side == "your" && lastCardPlayed.type == "character"){
+                        resolveBoardconPromise(resolve)
+                    }   
+                });
+            });
             document.addEventListener('updateParams', update)
+            
             document.addEventListener('actionLog', ActionLogEvent)
             document.addEventListener('cellAligmentAnim', CellAligmentAnim)
             document.addEventListener('cardDmgAnim',CardDmgAnimation)
 
             document.addEventListener('bizsoEndTurn',BizsoEndTurn)
+
+            document.addEventListener('animationstart', function (event) {
+                if(event.animationName !== "scaleUp" || event.animationName !== "actionLogCard"){
+                    console.log('ANIMATIONEVENTLOG: START', event);
+                    isAnimationOngoing = true
+                }
+                
+            });
+
+            document.addEventListener('animationend', function (event) {
+                if(event.animationName !== "scaleUp" || event.animationName !== "actionLogCard"){
+                    console.log('ANIMATIONEVENTLOG: END', event);
+                    isAnimationOngoing = false
+                }
+            });
         
     });
+    function resolveBoardconPromise(resolve){
+        resolve();
+
+        waitForUpdate = new Promise((resolvea) => {
+            promiseResolve = resolvea
+            document.addEventListener('actionLog', function() {
+                if(lastCardPlayedClient.side == "your" && lastCardPlayed.type == "character"){
+                    resolvea();
+                }   
+            });
+        });
+    }
+    
 
     //#region DRAG AND DROP LOGIC
     function RemoveEventListenersFromCells(){
@@ -342,7 +382,7 @@
                 //#region ABILITIES
                 if(dragged.abilityType == "summon" || dragged.abilityType == "boardcon"){
                     console.log("uwulog1: ",yourBoard[Number(event.target.id.replace("td",""))]);
-                        eval(`${dragged.ability}(yourBoard[Number(event.target.id.replace("td",""))])`)
+                        eval(`${dragged.ability}(yourBoard[Number(event.target.id.replace("td",""))]),${Number(event.target.id.replace("td",""))}`)
                     }
                 //#endregion
 
@@ -599,7 +639,13 @@
         yourBoardPhs = yourBoardPhs
         yourHand = yourHand
 
-        isSummonLocationChoosing = false
+        if(!isTomiSummonLocation){
+            isSummonLocationChoosing = false
+        }
+        else{
+            tomiPlaces[1] = i
+        }
+        
 
         console.log("dropped to this cell by click: ",yourBoard[i]);
         console.log("the thing u dropped by click: ",card);
@@ -615,7 +661,7 @@
 
         //#region ABILITIES
             if(card.abilityType == "summon" || dragged.abilityType == "boardcon"){
-                eval(`${card.ability}(yourBoard[i])`)
+                eval(`${card.ability}(yourBoard[i],${i})`)
             }
         //#endregion
     }
@@ -691,6 +737,7 @@
     // #endregion
 
     //#region QUALITY OF LIFE LOGIC
+    let isAnimationOngoing = false
     function NextTurn(){
         if(gameFase < 3){
             isYourTurn = !isYourTurn
@@ -709,74 +756,87 @@
             }
         }
         else if(gameFase == 3){
-            isYourRally = !isYourRally
-            isYourTurn = !isYourTurn
-            yourGameParameters.isYourTurn = isYourTurn
-            gameFase = 1
-
-            //CC-K
-            yourBoard.forEach(element => {
-                var toDeleteIndexes = []
-                if(element != ""){
-                    var i = 0
-                    element.fieldEffects.forEach(effect => {
-                        if(effect.includes("stunned") || effect.includes("frozen") || effect.includes("silence")){
-                            var stringPartOne = effect.substring(effect.indexOf(":"),-1)
-                            if(effect.includes("frozen")){
-                                var preTurn = Number(effect.substring(effect.indexOf(":")+1,effect.indexOf("-")))
-                                var stringPartTwo = effect.substring(effect.indexOf("-"))
-                            }
-                            else{
-                                var preTurn = Number(effect.substring(effect.indexOf(":")+1))
-                                var stringPartTwo = ""
-                            }
-                            console.log("TURNLOG: preTurn",preTurn)
-                            if(preTurn == 1){
-                                toDeleteIndexes.push(i)
-                            }
-                            else{
-                                effect = `${stringPartOne}:${preTurn-1}${stringPartTwo}`
-                            }
-                            
-                            
+            for(let i=0;i<yourBoard.length;i++){
+                if(yourBoard[i] != ""){
+                    if(yourBoard[i].abilityType == "onturnend"){
+                        eval(`${yourBoard[i].ability}(yourBoard[i],${i})`)
                         }
-                        i++
-                    });
-                    console.log("TURNLOG: ",toDeleteIndexes)
-                    toDeleteIndexes.sort((a, b) => b - a);
-                    toDeleteIndexes.forEach(index => {
-                        element.fieldEffects.splice(index,1)
-                    });
-                }
-            });
-            console.log("TURNLOG: ",yourBoard)
-
-            //mana számolás
-            console.log(yourGameParameters.spellMana + yourGameParameters.mana);
-            yourGameParameters.spellMana + yourGameParameters.mana <= 3 ? yourGameParameters.spellMana = yourGameParameters.spellMana + yourGameParameters.mana : yourGameParameters.spellMana = 3
-
-            yourGameParameters.mana <= 9 ? yourGameParameters.mana = turnCount + 2 : yourGameParameters.mana = 10
-            enemyGameParameters.mana <= 9 ? enemyGameParameters.mana = turnCount + 2 : enemyGameParameters.mana = 10
-            console.log("mana: ",yourGameParameters.mana," spellMana: ",yourGameParameters.spellMana);
-
-            isKoHasBeenPutDownThisTurn = false
-            turnCount++
-            DrawOne()
-
-
-            yourBoard.forEach(element => {
-                if(element != ""){
-                    if(!element.fieldEffects.includes("asleep:"))
-                    element.fieldEffects.push("asleep:")
-                    if(element.talent.includes("kettős támadás")){
-                        yourBoard[yourBoard.indexOf(element)].fieldEffects[0] = "kettős:0"
                     }
-                }
-            });
-
+            }
             
-            enemyGameParameters.currentHand = []
-            SendGameData(yourGameParameters)
+            isYourRally = !isYourRally
+                isYourTurn = !isYourTurn
+                yourGameParameters.isYourTurn = isYourTurn
+                gameFase = 1
+
+                //CC-K
+                yourBoard.forEach(element => {
+                    var toDeleteIndexes = []
+                    if(element != ""){
+                        var i = 0
+                        element.fieldEffects.forEach(effect => {
+                            if(effect.includes("stunned") || effect.includes("frozen") || effect.includes("silence")){
+                                var stringPartOne = effect.substring(effect.indexOf(":"),-1)
+                                if(effect.includes("frozen")){
+                                    var preTurn = Number(effect.substring(effect.indexOf(":")+1,effect.indexOf("-")))
+                                    var stringPartTwo = effect.substring(effect.indexOf("-"))
+                                }
+                                else{
+                                    var preTurn = Number(effect.substring(effect.indexOf(":")+1))
+                                    var stringPartTwo = ""
+                                }
+                                console.log("TURNLOG: preTurn",preTurn)
+                                if(preTurn == 1){
+                                    toDeleteIndexes.push(i)
+                                }
+                                else{
+                                    effect = `${stringPartOne}:${preTurn-1}${stringPartTwo}`
+                                }
+                                
+                                
+                            }
+                            i++
+                        });
+                        console.log("TURNLOG: ",toDeleteIndexes)
+                        toDeleteIndexes.sort((a, b) => b - a);
+                        toDeleteIndexes.forEach(index => {
+                            element.fieldEffects.splice(index,1)
+                        });
+                    }
+                });
+                console.log("TURNLOG: ",yourBoard)
+
+                //mana számolás
+                console.log(yourGameParameters.spellMana + yourGameParameters.mana);
+                yourGameParameters.spellMana + yourGameParameters.mana <= 3 ? yourGameParameters.spellMana = yourGameParameters.spellMana + yourGameParameters.mana : yourGameParameters.spellMana = 3
+
+                yourGameParameters.mana <= 9 ? yourGameParameters.mana = turnCount + 2 : yourGameParameters.mana = 10
+                enemyGameParameters.mana <= 9 ? enemyGameParameters.mana = turnCount + 2 : enemyGameParameters.mana = 10
+                console.log("mana: ",yourGameParameters.mana," spellMana: ",yourGameParameters.spellMana);
+
+                isKoHasBeenPutDownThisTurn = false
+                turnCount++
+                DrawOne()
+
+                yourBoard.forEach(element => {
+                    if(element != ""){
+                        if(!element.fieldEffects.includes("asleep:"))
+                        element.fieldEffects.push("asleep:")
+                        if(element.talent.includes("kettős támadás")){
+                            yourBoard[yourBoard.indexOf(element)].fieldEffects[0] = "kettős:0"
+                        }
+                    }
+                });
+                for(let i=0;i<yourBoard.length;i++){
+                if(yourBoard[i] != ""){
+                    if(yourBoard[i].abilityType == "onturnstart"){
+                        eval(`${yourBoard[i].ability}(yourBoard[i],${i})`)
+                        }
+                    }
+                }   
+                
+                enemyGameParameters.currentHand = []
+                SendGameData(yourGameParameters)            
         }
         console.log("turn: ",turnCount," gameFaze: ",gameFase, " rally: ",isYourRally," u cum?: ",isYourTurn);
         
@@ -791,10 +851,21 @@
 
         ClearBoardPhs()
         ClearAttackModes()
+
+        if(gameFase == 1){
+            for(let i=0;i<yourBoard.length;i++){
+                if(yourBoard[i] != ""){
+                    if(yourBoard[i].abilityType == "onturnstart"){
+                        eval(`${yourBoard[i].ability}(yourBoard[i],${i})`)
+                        }
+                    }
+            }
+        }
     }
     function ClickEndTurn(){
-        if(!isYourTurn || isSelectTargetMode || isInChoosingMode){
+        if(!isYourTurn || isSelectTargetMode || isInChoosingMode || isAnimationOngoing){
             console.log("nem a te köröd");
+            console.log("urtrun: ",isYourTurn," sleectTarget: ",isSelectTargetMode, " choosingÍMode: ",isInChoosingMode, " isAnimation: ",isAnimationOngoing, " tomisummon: ",isTomiSummonLocation)
             return;
         }
         EndTurn()
@@ -827,7 +898,7 @@
         logOpen = true
         logOpen = logOpen
 
-        lastCardPlayed = lastCardPlayedClient
+        lastCardPlayed = lastCardPlayedClient.card
         lastCardPlayed = lastCardPlayed
         actionLogList.push(lastCardPlayed)
 
@@ -842,6 +913,10 @@
             logCard.offsetHeight
             logCard.style.animation = "none"
         }, 4000);
+
+        if(lastCardPlayedClient.side == "your" && lastCardPlayed.type == "spell" && yourBoard.some(element => element.name == "Fehér Márta")){
+            eval(`${lastCardPlayed.ability}()`)
+        }
     }
 
     let isVisualAnimation = false
@@ -948,13 +1023,8 @@
                         if(yourBoard[Number(dom.id.replace("td",""))].abilityType == "death" && yourBoard[Number(dom.id.replace("td",""))].fieldEffects.some(element => element.includes("silence"))){
                                 eval(`${yourBoard[Number(dom.id.replace("td",""))].ability}(yourBoard[Number(dom.id.replace("td",""))])`)
                             }
-                        yourBoard.forEach(element => {
-                            if(element != ""){
-                            if(element.abilityType.includes("boardcon")){
-                                eval(`${element.ability}(element)`)
-                            }}
-                        });
                         //#endregion
+                        resolveBoardconPromise(promiseResolve)
                     }
                     if(yourBoard[Number(dom.id.replace("td",""))].name != "Blazó" && yourBoard[Number(dom.id.replace("td",""))].name != "Nagy T"){
                         yourBoard[Number(dom.id.replace("td",""))] = ""
@@ -1263,10 +1333,19 @@
         });
         console.log("POWERMODLOG:"," dmg: ",powerModDmg," tpye: ",powerModType);
         
-        
+
+        //ABILITY, onhit
+        if(target.abilityType == "onhit"){
+            eval(`${target.ability}(cardInAttackingMode,${Number((cardDomInAttackingMode.id).replace("td",""))})`)
+        }
+
+
         //#region DMG CALCULATION
         if(target.fieldEffects.includes("barrier")){
             target.fieldEffects.splice(target.fieldEffects.indexOf("barrier"),1)
+        }
+        else if(target.fieldEffects.includes("invinsible")){
+            console.log("szar lehet")
         }
         else{
         if(target.health - dmg >= 0){ //1 kezdés, 1 megáll
@@ -1409,6 +1488,9 @@
         // #endregion
 
         //ALIGMENTS death related things
+        if(cardInAttackingMode.abilityType == "onatk"){
+            eval(`${cardInAttackingMode.ability}(cardInAttackingMode)`)
+        }
         if(target.health == 0 && target.type == "character" && cardInAttackingMode.health > 0){
             if(cardInAttackingMode.aligment.includes("vérszomjas")){
                 cardInAttackingMode.attack += 1
@@ -1513,7 +1595,7 @@
             card.health = card.attack
             yourBoard = yourBoard
         }
-        async function Farkas(card){
+        async function Farkas(card,index){
             var targets = Array.from(enemyBoard)
 
         
@@ -1546,7 +1628,66 @@
                 }          
                 DeleteSelectTargetMode()
             }
+            console.log("BOARDCON: 1",index)
+            var isMrsFarkas = yourBoard.some(element => element.name == "Mrs Farkas")
+            if(isMrsFarkas){
+                yourBoard[index].attack += 3
+                yourBoard[index].health += 3
+
+                yourBoardDoms[index].children[0].children[6].style.animation = "none"
+                yourBoardDoms[index].children[0].children[6].offsetHeight
+                yourBoardDoms[index].children[0].children[6].style.animation = "statHeal 1s"
+
+                yourBoardDoms[index].children[0].children[5].style.animation = "none"
+                yourBoardDoms[index].children[0].children[5].offsetHeight
+                yourBoardDoms[index].children[0].children[5].style.animation = "statHeal 1s"
+
+                SendGameData(yourGameParameters)
+            }
+            FarkasBoardcon(card,index)
+        }
+        async function FarkasBoardcon(card,i){
+            var isMrsFarkas = yourBoard.some(element => element.name == "Mrs Farkas")
+            console.log("BOARDCON pre: ",isMrsFarkas)
+
+            await waitForUpdate
+
+            var isMrsFarkasNew = yourBoard.some(element => element.name == "Mrs Farkas")
+            var something = yourBoard.findIndex(element => element.name == "Mrs Farkas")
+            if(isMrsFarkasNew){
+                if(yourBoard[something].health <= 0){isMrsFarkasNew = false}
+            }
+            console.log("BOARDCON pre: ",isMrsFarkasNew)
+
+            if(isMrsFarkas == true && isMrsFarkasNew == false){
+                yourBoard[i].attack -= 3
+                DealDmg(yourBoard[i],i,3,"your")
+
+                yourBoardDoms[i].children[0].children[5].style.animation = "none"
+                yourBoardDoms[i].children[0].children[5].offsetHeight
+                yourBoardDoms[i].children[0].children[5].style.animation = "statHeal 1s"
+
+                SendGameData(yourGameParameters)
+            }
+            else if(isMrsFarkas == false && isMrsFarkasNew == true){
+                yourBoard[i].attack += 3
+                yourBoard[i].health += 3
+                yourBoardDoms[i].children[0].children[6].style.animation = "none"
+                yourBoardDoms[i].children[0].children[6].offsetHeight
+                yourBoardDoms[i].children[0].children[6].style.animation = "statHeal 1s"
+
+                yourBoardDoms[i].children[0].children[5].style.animation = "none"
+                yourBoardDoms[i].children[0].children[5].offsetHeight
+                yourBoardDoms[i].children[0].children[5].style.animation = "statHeal 1s"
+
+                SendGameData(yourGameParameters)
+            }
+            console.log("BOARDCON VÉGE")
+            FarkasBoardcon(card,i)
             
+        }
+        function IvanEva(target,i){
+            StunnEnemy(target,1,"your")
         }
         function Kinyo(card){
             giveDobi(".attack += 2")
@@ -1730,12 +1871,121 @@
         function MeszarosDeath(card){
             DrawOne()
         }
+        function Tabi(card,j){
+            var bonusAtk
+            for(let i=0;i<yourBoard.length;i++){
+                if(yourBoard[i] != ""){
+                    if(yourBoard[i].aligment.includes("tunya")){
+                        bonusAtk += 1
+                    }
+                }
+            }
+            card.attack += bonusAtk
+            yourBoardDoms[j].children[0].children[5].style.animation = 'none'
+            yourBoardDoms[j].children[0].children[5].offsetHeight
+            yourBoardDoms[j].children[0].children[5].style.animation = 'statHeal 1s'
+            SendGameData(yourGameParameters)
+        }
+        let isTomiSummonLocation = false
+        let tomiPlaces = []
+        function Tomi(card,i){
+            tomiPlaces[0] = i
+            isSummonLocationChoosing = true
+            isSummonLocationChoosing = isSummonLocationChoosing
+            isTomiSummonLocation = true
+            isTomiSummonLocation = isTomiSummonLocation
+
+            yourBoardPhs.fill("")
+            for (let i = 0; i<yourBoardPhs.length;i++){
+                if(yourBoard[i] == ""){
+                    yourBoardPhs[i] = Cards.TomiCloneCard
+                }
+            }
+            yourBoardPhs = yourBoardPhs
+
+            card.abilityType = "onturnend"
+            card.ability = "TomiOfferSwitch"
+            SendGameData(yourGameParameters)
+        }
+        function TomiSwitch(wether){
+            if(wether){
+                yourBoard[tomiPlaces[1]] = Cards.TomiCard
+                yourBoard[tomiPlaces[0]] = Cards.TomiCloneCard
+
+                yourBoard[tomiPlaces[1]].fieldEffects.some(e => e.includes("asleep:")) == false && yourBoard[tomiPlaces[1]].talents.includes("fürge") == false ? yourBoard[tomiPlaces[1]].fieldEffects.push("asleep:") : {}
+                yourBoard[tomiPlaces[0]].fieldEffects.some(e => e.includes("asleep:")) == false && yourBoard[tomiPlaces[0]].talents.includes("fürge") == false ? yourBoard[tomiPlaces[0]].fieldEffects.push("asleep:") : {}
+
+
+                console.log("TOMILOG: ",yourBoard,tomiPlaces)
+                var pre1 = tomiPlaces[0]
+                var pre2 = tomiPlaces[1]
+                tomiPlaces = [pre2,pre1]
+            }
+            isTomiSummonLocation = false
+            isSummonLocationChoosing = isSummonLocationChoosing
+            isSummonLocationChoosing = false
+            isTomiSummonLocation = isTomiSummonLocation
+
+            SendGameData(yourGameParameters)
+        }
+        function TomiCloneDeath(card,i){
+            if(!isYourTurn){
+                yourBoard[tomiPlaces[0]].filedEffects.push("invinsible")
+                console.log("TOMILOG",yourBoard[tomiPlaces[0]])
+                SendGameData(yourGameParameters)
+            }
+        }
+        function TomiOfferSwitch(card,i){
+            yourBoard[tomiPlaces[0]].fieldEffects.some(e=>e.includes("invinsible")) ? yourBoard[i].fieldEffects.splice(yourBoard[i].fieldEffects.indexOf("invinsible"),1) : {}
+            console.log("TOMILOG: ",yourBoard.some(element => element.name == "Dr. Tamás Klónja"))
+            if(yourBoard.some(element => element.name == "Dr. Tamás Klónja")){
+                isTomiSummonLocation = true
+                isTomiSummonLocation = isTomiSummonLocation
+            }
+            else{
+                
+                isSummonLocationChoosing = true
+                isSummonLocationChoosing = isSummonLocationChoosing
+                isTomiSummonLocation = true
+                isTomiSummonLocation = isTomiSummonLocation
+
+                yourBoardPhs.fill("")
+                for (let i = 0; i<yourBoardPhs.length;i++){
+                    if(yourBoard[i] == ""){
+                        yourBoardPhs[i] = Cards.TomiCloneCard
+                    }
+                }
+                yourBoardPhs = yourBoardPhs
+                console.log("TOMILOG: ",yourBoardPhs)
+            }
+        }
+        function NagyOra(card,i){
+            card.health += 1
+            yourBoardDoms[i].children[0].children[6].style.animation = 'none'
+            yourBoardDoms[i].children[0].children[6].offsetHeight
+            yourBoardDoms[i].children[0].children[6].style.animation = 'statHeal 1s'
+
+            SendGameData(yourGameParameters)
+        }
         function NagyT(card){
             card.source = NagyTS
             card.attack = Math.ceil(card.attack*0.5)
             card.health = card.attack
 
             yourBoard = yourBoard
+            SendGameData(yourGameParameters)
+        }
+        function Rozgonyi(card,j){
+            for(let i=0;i<yourBoard.length;i++){
+                if(yourBoard[i] != ""){
+                    if(yourBoard[i].szak.includes("reál")){
+                        yourBoard[i].health += 1
+                        yourBoardDoms[i].children[0].children[6].style.animation = 'none'
+                        yourBoardDoms[i].children[0].children[6].offsetHeight
+                        yourBoardDoms[i].children[0].children[6].style.animation = 'statHeal 1s'
+                    }
+                }
+            }
             SendGameData(yourGameParameters)
         }
         function Szaszak(card){
@@ -1785,7 +2035,8 @@
                 }
                 console.log("SPELLLOG: ",yourBoard);
                 
-                eval(`SendGameData(${result.side}GameParameters)`)
+                SendGameData(yourGameParameters)
+                SendGameData(enemyGameParameters)
                 
                 DeleteSelectTargetMode()
             }
@@ -1876,7 +2127,8 @@
                 else{
                     result.target.fieldEffects.splice(Sindex,1)
                 }
-                eval(`SendGameData(${result.side}GameParameters)`)
+                SendGameData(yourGameParameters)
+                SendGameData(enemyGameParameters)
             
                 DeleteSelectTargetMode()
             }
@@ -1938,7 +2190,8 @@
                     result.target.fieldEffects.splice(Sindex,1)
                 }
                 
-                eval(`SendGameData(${result.side}GameParameters)`)
+                SendGameData(yourGameParameters)
+                SendGameData(enemyGameParameters)
             
                 DeleteSelectTargetMode()
             }
@@ -2012,7 +2265,8 @@
                     result.target.fieldEffects.splice(Sindex,1)
                 }
             
-                eval(`SendGameData(${result.side}GameParameters)`)
+                SendGameData(yourGameParameters)
+                SendGameData(enemyGameParameters)
             
                 DeleteSelectTargetMode()
             }
@@ -2054,7 +2308,8 @@
                     result.target.fieldEffects.splice(Sindex,1)
                 }
             
-                eval(`SendGameData(${result.side}GameParameters)`)
+                SendGameData(yourGameParameters)
+                SendGameData(enemyGameParameters)
             
                 DeleteSelectTargetMode()
             }
@@ -2171,7 +2426,8 @@
                     result.target.fieldEffects.splice(Sindex,1)
                 }
 
-                eval(`SendGameData(${result.side}GameParameters)`)
+                SendGameData(yourGameParameters)
+                SendGameData(enemyGameParameters)
             
                 DeleteSelectTargetMode()
             }
@@ -2247,7 +2503,8 @@
                     result.target.fieldEffects.push("spellshield")
                 }
                 
-                eval(`SendGameData(${result.side}GameParameters)`)
+                SendGameData(yourGameParameters)
+                SendGameData(enemyGameParameters)
                 
                 DeleteSelectTargetMode()
             }
@@ -2365,7 +2622,8 @@
             cardDom.children[0].children[5].offsetHeight
             cardDom.children[0].children[5].style.animation = "statDmg 1s"
 
-            eval(`SendGameData(${side}GameParameters)`)
+            SendGameData(yourGameParameters)
+            SendGameData(enemyGameParameters)
         }
         function StunnEnemy(card,turns,side){
             console.log("SPELLEKLOG: ",card,turns)
@@ -2378,7 +2636,8 @@
             else{
                 card.fieldEffects.push(`stunned:${turns}`)
             }
-            eval(`SendGameData(${side}GameParameters)`)
+            SendGameData(yourGameParameters)
+            SendGameData(enemyGameParameters)
         }
         function SilenceEnemy(card,turns,side){
             console.log("SPELLEKLOG: ",card,turns)
@@ -2391,7 +2650,8 @@
             else{
                 card.fieldEffects.push(`silenced:${turns}`)
             }
-            eval(`SendGameData(${side}GameParameters)`)
+            SendGameData(yourGameParameters)
+            SendGameData(enemyGameParameters)
         }
         function DealDmg(card,i,amount,side){
             card.health -= amount
@@ -3079,6 +3339,12 @@
         VÁLASSZ EGY CÉLPONTOT
         {/if}
     </div>
+    {#if isTomiSummonLocation}
+    <div class="tomiCsere">
+        <button on:click={()=>TomiSwitch(true)}>CSRÉLD MEG</button>
+        <button on:click={()=>TomiSwitch(false)}>nE CSERÉLD MEG</button>
+    </div>
+    {/if}
     <div id="visualInteractionInicators" bind:this={visualAnimDom}>
         {#if isVisualAnimation}
         <div id="previewInVACont">
@@ -3174,6 +3440,12 @@
     .displayNone{display: none;}
     .displayBlock{display: block;}
 
+    .tomiCsere{
+        z-index: 100000;
+        position: absolute;
+        top:20vh;
+        left: 40vw;
+    }
 
     #guideText{
         margin-top: 20vh;

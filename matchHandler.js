@@ -177,7 +177,12 @@ function ServerCode(){
             document.dispatchEvent(updateEvent)
         }
         else if(msg.includes("ActionLog")){
-            lastCardPlayedClient = JSON.parse(msg.replace("ActionLog",""))
+            var side
+            msg.includes(yourGameID) ? side = "your" : side = "enemy"
+            var card = msg.replace("ActionLog","")
+            var cardLegit
+            side == "your" ? cardLegit = card.replace(yourGameID,"") : cardLegit = card.replace(opponentGameID,"")
+            lastCardPlayedClient = {card: JSON.parse(cardLegit), side: side}
             document.dispatchEvent(actionLogEvent)
         }
         else if(msg.includes("CellAligmentAnimation")){
@@ -245,7 +250,7 @@ export function EndTurn(){
 
 export function LastActionLog(card){
     
-    Client.socket.emit(gameKey,`ActionLog${JSON.stringify(card)}`)
+    Client.socket.emit(gameKey,`${yourGameID}ActionLog${JSON.stringify(card)}`)
     console.log("ACTIONLOG: ",`ActionLog${JSON.stringify(card)}`);
 }
 export function CellAligmentAnimation(targetId){
