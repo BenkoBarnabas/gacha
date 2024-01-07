@@ -100,6 +100,7 @@ let updateEvent
 let actionLogEvent
 let aligmentAnimEvent
 let cardDmgAnimEvent
+let summoningLocationEvent
 
 let bizsoEndTurnEvent
 
@@ -116,6 +117,7 @@ function WaitForDomPage(){
         actionLogEvent = new Event("actionLog")
         aligmentAnimEvent = new Event("cellAligmentAnim")
         cardDmgAnimEvent = new Event("cardDmgAnim")
+        summoningLocationEvent = new Event("summoningLocationEvent")
 
         bizsoEndTurnEvent = new Event("bizsoEndTurn")
         ServerCode()
@@ -199,6 +201,13 @@ function ServerCode(){
         else if(msg.includes("BizsoEndTurn")){
             document.dispatchEvent(bizsoEndTurnEvent)
         }
+        else if(msg.includes("SummoningLocationChoosing")){
+            var data = JSON.parse(msg.replace("SummoningLocationChoosing",""))
+            data.side == yourGameID ? data.side = "your" : data.side = "enemy"
+            summoningLocationEvent.data = data
+
+            document.dispatchEvent(summoningLocationEvent)
+        }
         else{
             msg = JSON.parse(msg)
             if(msg.gameId != yourGameID){
@@ -271,6 +280,14 @@ export function CardDmgAnimationClient(domId,dmg,side,type){
 //gameplay abilties
 export function BizsoEndTurnClient(){
     Client.socket.emit(gameKey,"BizsoEndTurn")
+}
+
+export function SummoningLocationClient(wether,side){
+    var data ={
+        side: yourGameID,
+        wether: wether
+    }
+    Client.socket.emit(gameKey,`SummoningLocationChoosing${JSON.stringify(data)}`)
 }
 
 

@@ -4,7 +4,7 @@
     import * as Cards from "../../card"
     let enemyStartingHand = [Cards.BarniCard,Cards.BarniCard, Cards.FarkasCard, Cards.BizsoCard, Cards.BencusCard, Cards.ZenoCard]
     
-    import {SendGameDataClient,connectedToSocket, yourGameParametersClient, enemyGameParametersClient, DomLoaded, SveltePageLoaded, currentOpponentId, EndTurn, lastCardPlayedClient,LastActionLog,CellAligmentAnimation, CardDmgAnimationClient,BizsoEndTurnClient} from "../../matchHandler"
+    import {SendGameDataClient,connectedToSocket, yourGameParametersClient, enemyGameParametersClient, DomLoaded, SveltePageLoaded, currentOpponentId, EndTurn, lastCardPlayedClient,LastActionLog,CellAligmentAnimation, CardDmgAnimationClient,BizsoEndTurnClient, SummoningLocationClient} from "../../matchHandler"
 
     import cardBack from "../../lib/assets/global/cardBack.png"
 
@@ -278,16 +278,15 @@
                 });
             });
             document.addEventListener('updateParams', update)
-            
             document.addEventListener('actionLog', ActionLogEvent)
             document.addEventListener('cellAligmentAnim', CellAligmentAnim)
             document.addEventListener('cardDmgAnim',CardDmgAnimation)
+            document.addEventListener('summoningLocationEvent',ChangeSummoningLocationStatus)
 
             document.addEventListener('bizsoEndTurn',BizsoEndTurn)
 
             document.addEventListener('animationstart', function (event) {
                 if(event.animationName !== "scaleUp" || event.animationName !== "actionLogCard"){
-                    console.log('ANIMATIONEVENTLOG: START', event);
                     isAnimationOngoing = true
                 }
                 
@@ -295,7 +294,6 @@
 
             document.addEventListener('animationend', function (event) {
                 if(event.animationName !== "scaleUp" || event.animationName !== "actionLogCard"){
-                    console.log('ANIMATIONEVENTLOG: END', event);
                     isAnimationOngoing = false
                 }
             });
@@ -566,6 +564,17 @@
         isCardInYourHandInPlacingMode = isCardInYourHandInPlacingMode
     }
     let isSummonLocationChoosing = false
+    let isSummonLocationChoosingEnemy = false
+    function SummoningLocation(wether){
+        SummoningLocationClient(wether,"your")
+    }
+    function ChangeSummoningLocationStatus(event){
+        console.log("SUMMEVENTLOG: ",event.data)
+        event.data.side == "your" ? isSummonLocationChoosing = event.data.wether : isSummonLocationChoosingEnemy = event.data.wether
+        console.log("SUMMEVENTLOG: ",isSummonLocationChoosing,isSummonLocationChoosingEnemy)
+        isSummonLocationChoosing = isSummonLocationChoosing
+        isSummonLocationChoosingEnemy = isSummonLocationChoosingEnemy
+    }
     function PlacingMode(card, domId){
         if(isYourTurn && card.cost <= yourGameParameters.mana  && !isSummonLocationChoosing){
             ClearAttackModes()
@@ -623,7 +632,7 @@
 
         //#region Card placing
         if(!card.talent.includes("fürge támadás")){
-            yourBoard[i].fieldEffects.push("asleep:")
+            yourBoard[i].fieldEffects.some(e => e.includes("asleep:")) == false ? yourBoard[i].fieldEffects.push("asleep:") : {}
         }
     
         yourBoardPhs.fill("")
@@ -640,7 +649,7 @@
         yourHand = yourHand
 
         if(!isTomiSummonLocation){
-            isSummonLocationChoosing = false
+            SummoningLocation(false)
         }
         else{
             tomiPlaces[1] = i
@@ -827,16 +836,9 @@
                         }
                     }
                 });
-                for(let i=0;i<yourBoard.length;i++){
-                if(yourBoard[i] != ""){
-                    if(yourBoard[i].abilityType == "onturnstart"){
-                        eval(`${yourBoard[i].ability}(yourBoard[i],${i})`)
-                        }
-                    }
-                }   
-                
+
                 enemyGameParameters.currentHand = []
-                SendGameData(yourGameParameters)            
+                SendGameData(yourGameParameters)             
         }
         console.log("turn: ",turnCount," gameFaze: ",gameFase, " rally: ",isYourRally," u cum?: ",isYourTurn);
         
@@ -863,7 +865,7 @@
         }
     }
     function ClickEndTurn(){
-        if(!isYourTurn || isSelectTargetMode || isInChoosingMode || isAnimationOngoing){
+        if(!isYourTurn || isSelectTargetMode || isInChoosingMode || isAnimationOngoing || isSummonLocationChoosing || isSummonLocationChoosingEnemy){
             console.log("nem a te köröd");
             console.log("urtrun: ",isYourTurn," sleectTarget: ",isSelectTargetMode, " choosingÍMode: ",isInChoosingMode, " isAnimation: ",isAnimationOngoing, " tomisummon: ",isTomiSummonLocation)
             return;
@@ -1020,7 +1022,7 @@
                 else if(side == "your"){
                     if(type == "character"){
                         //#region ABILITIES
-                        if(yourBoard[Number(dom.id.replace("td",""))].abilityType == "death" && yourBoard[Number(dom.id.replace("td",""))].fieldEffects.some(element => element.includes("silence"))){
+                        if(yourBoard[Number(dom.id.replace("td",""))].abilityType == "death" && !yourBoard[Number(dom.id.replace("td",""))].fieldEffects.some(element => element.includes("silence"))){
                                 eval(`${yourBoard[Number(dom.id.replace("td",""))].ability}(yourBoard[Number(dom.id.replace("td",""))])`)
                             }
                         //#endregion
@@ -1890,8 +1892,7 @@
         let tomiPlaces = []
         function Tomi(card,i){
             tomiPlaces[0] = i
-            isSummonLocationChoosing = true
-            isSummonLocationChoosing = isSummonLocationChoosing
+            SummoningLocation(true)
             isTomiSummonLocation = true
             isTomiSummonLocation = isTomiSummonLocation
 
@@ -1903,7 +1904,7 @@
             }
             yourBoardPhs = yourBoardPhs
 
-            card.abilityType = "onturnend"
+            card.abilityType = "onturnstart"
             card.ability = "TomiOfferSwitch"
             SendGameData(yourGameParameters)
         }
@@ -1911,27 +1912,27 @@
             if(wether){
                 yourBoard[tomiPlaces[1]] = Cards.TomiCard
                 yourBoard[tomiPlaces[0]] = Cards.TomiCloneCard
-
-                yourBoard[tomiPlaces[1]].fieldEffects.some(e => e.includes("asleep:")) == false && yourBoard[tomiPlaces[1]].talents.includes("fürge") == false ? yourBoard[tomiPlaces[1]].fieldEffects.push("asleep:") : {}
-                yourBoard[tomiPlaces[0]].fieldEffects.some(e => e.includes("asleep:")) == false && yourBoard[tomiPlaces[0]].talents.includes("fürge") == false ? yourBoard[tomiPlaces[0]].fieldEffects.push("asleep:") : {}
-
-
-                console.log("TOMILOG: ",yourBoard,tomiPlaces)
+                console.log("TOMILOG: ",yourBoard[tomiPlaces[0]].fieldEffects.some(e => e.includes("asleep:")),yourBoard[tomiPlaces[1]].fieldEffects.some(e => e.includes("asleep:")))
+                //yourBoard[tomiPlaces[1]].fieldEffects.some(e => e.includes("asleep:")) == false && yourBoard[tomiPlaces[1]].talents.includes("fürge") == false ? yourBoard[tomiPlaces[1]].fieldEffects.push("asleep:") : {}
+                //yourBoard[tomiPlaces[0]].fieldEffects.some(e => e.includes("asleep:")) == false && yourBoard[tomiPlaces[0]].talents.includes("fürge") == false ? yourBoard[tomiPlaces[0]].fieldEffects.push("asleep:") : {}
+                
                 var pre1 = tomiPlaces[0]
                 var pre2 = tomiPlaces[1]
                 tomiPlaces = [pre2,pre1]
+                console.log("TOMILOG: ",yourBoard,tomiPlaces)
             }
             isTomiSummonLocation = false
-            isSummonLocationChoosing = isSummonLocationChoosing
-            isSummonLocationChoosing = false
+            SummoningLocation(false)
             isTomiSummonLocation = isTomiSummonLocation
 
             SendGameData(yourGameParameters)
         }
         function TomiCloneDeath(card,i){
+            console.log("TOMILOG klon death kivül")
             if(!isYourTurn){
-                yourBoard[tomiPlaces[0]].filedEffects.push("invinsible")
-                console.log("TOMILOG",yourBoard[tomiPlaces[0]])
+                console.log("TOMILOG klon death",yourBoard[tomiPlaces[0]])
+                yourBoard[tomiPlaces[0]].fieldEffects.push("invinsible")
+                
                 SendGameData(yourGameParameters)
             }
         }
@@ -1939,24 +1940,12 @@
             yourBoard[tomiPlaces[0]].fieldEffects.some(e=>e.includes("invinsible")) ? yourBoard[i].fieldEffects.splice(yourBoard[i].fieldEffects.indexOf("invinsible"),1) : {}
             console.log("TOMILOG: ",yourBoard.some(element => element.name == "Dr. Tamás Klónja"))
             if(yourBoard.some(element => element.name == "Dr. Tamás Klónja")){
+                SummoningLocation(true)
                 isTomiSummonLocation = true
                 isTomiSummonLocation = isTomiSummonLocation
             }
             else{
-                
-                isSummonLocationChoosing = true
-                isSummonLocationChoosing = isSummonLocationChoosing
-                isTomiSummonLocation = true
-                isTomiSummonLocation = isTomiSummonLocation
-
-                yourBoardPhs.fill("")
-                for (let i = 0; i<yourBoardPhs.length;i++){
-                    if(yourBoard[i] == ""){
-                        yourBoardPhs[i] = Cards.TomiCloneCard
-                    }
-                }
-                yourBoardPhs = yourBoardPhs
-                console.log("TOMILOG: ",yourBoardPhs)
+                Tomi(card,i)
             }
         }
         function NagyOra(card,i){
@@ -2578,7 +2567,7 @@
             newSGEndre.health = SGEndreCounter
             newSGEndre.cost = SGEndreCounter
 
-            isSummonLocationChoosing = true
+            SummoningLocation(true)
 
             yourBoardPhs.fill("")
             for (let i = 0; i<yourBoardPhs.length+1;i++){
@@ -3330,6 +3319,9 @@
     {#if isSelectTargetMode || isSummonLocationChoosing}
         <div id="selectingModeBG"></div>
     {/if}
+    {#if isSummonLocationChoosingEnemy}
+        <div id="selectingModeBGEnemy"></div>
+    {/if}
     
     <div id="guideText">
         {#if isInChoosingMode}
@@ -3337,6 +3329,9 @@
         {/if}
         {#if isSelectTargetMode}
         VÁLASSZ EGY CÉLPONTOT
+        {/if}
+        {#if isSummonLocationChoosingEnemy}
+        AZ ELLENSÉG IDÉZÉSI HELYET VÁLASZT
         {/if}
     </div>
     {#if isTomiSummonLocation}
@@ -3478,6 +3473,15 @@
         left:0;
         background-color: rgba(37, 86, 109, 0.377);
         z-index: 15;
+    }
+    #selectingModeBGEnemy{
+        width: 100vw;
+        height: 100vh;
+        position: absolute;
+        top: 0;
+        left:0;
+        background-color: rgba(37, 86, 109, 0.377);
+        z-index: 1500;
     }
     .selectingGameplayfield{
         z-index: 9999;

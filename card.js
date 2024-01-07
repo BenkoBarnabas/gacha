@@ -638,6 +638,7 @@
     //jenny
 
     export let NokedliCard = new extraCards("Nokedli 7/G-s","","","death","EmptyAbility", "Teszt kártya deveknek uwu", 1, 1, Te, 3, 0, "character", GachaPH, "NokedliCard", gachaPHAudio, "", []);
+    export let TomiCloneCard = new extraCards("Dr. Tamás Klónja","vérszomjas,veszett","kettős támadás,robbanó támadás,életelszívás_3","death","TomiCloneDeath", "Készít maga mellé egy másolatot, csak akkor derül ki, hogy melyik az igazi, ha megtámadják az egyiket. A másolat elnyeli az átfolyó sebzést.", 5, 1, Tomi, 6, 10, "character", TomiGacha, "TomiCard", TomiA, "Fogorvos és táncvilágbajnok. Unatkozott, ezért elment tanárnak.", ["kettős:0"]);
     //csontváz
     //the rock
     //zsoblin
@@ -648,7 +649,7 @@
     //charizard
     //zozó
     //strawberry
-    //#endregion    export let TomiCloneCard = new extraCards("Dr. Tamás Klónja","vérszomjas,veszett","kettős támadás,robbanó támadás,életelszívás_3","death","TomiCloneDeath", "Készít maga mellé egy másolatot, csak akkor derül ki, hogy melyik az igazi, ha megtámadják az egyiket. A másolat elnyeli az átfolyó sebzést.", 5, 1, Tomi, 6, 10, "character", TomiGacha, "TomiCard", TomiA, "Fogorvos és táncvilágbajnok. Unatkozott, ezért elment tanárnak.", ["kettős:0"]);
+    //#endregion
 
 
     //#region LISTÁK/KATEGORIÁZÁS
