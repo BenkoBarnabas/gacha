@@ -194,7 +194,7 @@
         yourHand[1] = Cards.KutiCard
         yourHand[2] = Cards.FarkasCard
         yourHand[3] = Cards.MsFarkasCard
-        yourHand[4] = Cards.TomiCard
+        yourHand[4] = Cards.SisakCard
          //UpdateLocalStorage()
         
         SendGameData(yourGameParameters)
@@ -425,22 +425,25 @@
     }
     function spellDrop(event){
         event.preventDefault()
-        if(dragged.cost <= (yourGameParameters.mana+yourGameParameters.spellMana)){
+        var isAnder = yourBoard.some(e => e.name == "Anderléné")
+        var manaCost = dragged.cost
+        isAnder && manaCost > 0 ? manaCost -= 1 : {} 
+        if(manaCost <= (yourGameParameters.mana+yourGameParameters.spellMana)){
             event.preventDefault()
 
             yourHand.splice(placingModeHighlightedCardIndex, 1);
             yourHand = yourHand
             cardsInYourHandClass = Array(yourHand.length).fill("cardTemplate")
             yourGameParameters.yourHand = Array.from(yourHand)
-            console.log(yourGameParameters.spellMana,yourGameParameters.mana,dragged.cost);
-            if(yourGameParameters.spellMana >= dragged.cost){
-                yourGameParameters.spellMana -= dragged.cost
+            console.log(yourGameParameters.spellMana,yourGameParameters.mana,manaCost);
+            if(yourGameParameters.spellMana >= manaCost){
+                yourGameParameters.spellMana -= manaCost
             }
             else{
-                yourGameParameters.mana = dragged.cost-yourGameParameters.spellMana
+                yourGameParameters.mana = manaCost-yourGameParameters.spellMana
                 yourGameParameters.spellMana = 0
             }
-            console.log(yourGameParameters.spellMana,yourGameParameters.mana,dragged.cost);
+            console.log(yourGameParameters.spellMana,yourGameParameters.mana,manaCost);
 
             LastActionLog(dragged)
 
@@ -488,7 +491,10 @@
                 attack: 0,
                 health: Math.ceil(2*turnCount/3),
                 type: "ko",
-                cost: 0
+                cost: 0,
+                ability: "EmptyAbility",
+                abilityType: "summon",
+                fieldEffects: []
             }
             console.log(event);
             console.log(event.target);
@@ -716,7 +722,10 @@
                 attack: 0,
                 health: Math.ceil(2*turnCount/3),
                 type: "ko",
-                cost: 0
+                cost: 0,
+                ability: "EmptyAbility",
+                abilityType: "summon",
+                fieldEffects: []
             }
             enemyBoardPhs.fill("")
             yourBoardPhs.fill("")
@@ -747,6 +756,7 @@
 
     //#region QUALITY OF LIFE LOGIC
     let isAnimationOngoing = false
+    let cardsToDrawNewTurn = 1
     function NextTurn(){
         if(gameFase < 3){
             isYourTurn = !isYourTurn
@@ -769,6 +779,7 @@
                 if(yourBoard[i] != ""){
                     if(yourBoard[i].abilityType == "onturnend"){
                         eval(`${yourBoard[i].ability}(yourBoard[i],${i})`)
+                        console.log("MEZESLOG: ",yourBoard[i])
                         }
                     }
             }
@@ -781,7 +792,8 @@
                 //CC-K
                 yourBoard.forEach(element => {
                     var toDeleteIndexes = []
-                    if(element != ""){
+                    if(element != "" ){
+                        if(element.type == "character"){
                         var i = 0
                         element.fieldEffects.forEach(effect => {
                             if(effect.includes("stunned") || effect.includes("frozen") || effect.includes("silence")){
@@ -811,6 +823,7 @@
                         toDeleteIndexes.forEach(index => {
                             element.fieldEffects.splice(index,1)
                         });
+                        }
                     }
                 });
                 console.log("TURNLOG: ",yourBoard)
@@ -825,14 +838,18 @@
 
                 isKoHasBeenPutDownThisTurn = false
                 turnCount++
-                DrawOne()
+                for(let i=0; i<cardsToDrawNewTurn;i++){
+                    DrawOne()
+                }
 
                 yourBoard.forEach(element => {
                     if(element != ""){
+                        if(element.type == "character"){
                         if(!element.fieldEffects.includes("asleep:"))
                         element.fieldEffects.push("asleep:")
                         if(element.talent.includes("kettős támadás")){
                             yourBoard[yourBoard.indexOf(element)].fieldEffects[0] = "kettős:0"
+                        }
                         }
                     }
                 });
@@ -997,6 +1014,13 @@
                 if(type == "character"){
                     dom.children[0].children[0].src = cardV2Background
                     dom.children[0].children[3].style.background = '../../lib/assets/global/cardV2Top.png'
+                    if(side == "your"){
+                        var ybIndex = Number(domId.replace("td",""))
+                        if(yourBoard[ybIndex].abilityType == "onhit"){
+                        eval(`${yourBoard[ybIndex].ability}(yourBoard[ybIndex],${ybIndex})`)
+                        }
+                    }
+                    
                 }
                 else if (type == "ko"){
                     dom.children[0].style.background = "../../lib/assets/gameplay/ko.png"
@@ -1311,8 +1335,11 @@
         console.log("target: ", target, " i: ", i);
 
         cardInAttackingMode.health -= target.attack
-
-        var dmg = cardInAttackingMode.attack
+        var bombaN = 0
+        cardInAttackingMode.fieldEffects.forEach(effect => {
+            effect.includes("bomba") ? bombaN += 1 : {}
+        });
+        var dmg = cardInAttackingMode.attack + bombaN
         var targetType = target.type
 
         var powerModDmg = ""
@@ -1336,12 +1363,6 @@
         console.log("POWERMODLOG:"," dmg: ",powerModDmg," tpye: ",powerModType);
         
 
-        //ABILITY, onhit
-        if(target.abilityType == "onhit"){
-            eval(`${target.ability}(cardInAttackingMode,${Number((cardDomInAttackingMode.id).replace("td",""))})`)
-        }
-
-
         //#region DMG CALCULATION
         if(target.fieldEffects.includes("barrier")){
             target.fieldEffects.splice(target.fieldEffects.indexOf("barrier"),1)
@@ -1351,7 +1372,6 @@
         }
         else{
         if(target.health - dmg >= 0){ //1 kezdés, 1 megáll
-            
             if(target.aligment.includes(powerModType)){
                 target.health -= eval(`(Math.ceil(${dmg}${powerModDmg}))`)
             }
@@ -1491,7 +1511,7 @@
 
         //ALIGMENTS death related things
         if(cardInAttackingMode.abilityType == "onatk"){
-            eval(`${cardInAttackingMode.ability}(cardInAttackingMode)`)
+            eval(`${cardInAttackingMode.ability}(cardInAttackingMode,target,i)`)
         }
         if(target.health == 0 && target.type == "character" && cardInAttackingMode.health > 0){
             if(cardInAttackingMode.aligment.includes("vérszomjas")){
@@ -1649,13 +1669,14 @@
             FarkasBoardcon(card,index)
         }
         async function FarkasBoardcon(card,i){
-            var isMrsFarkas = yourBoard.some(element => element.name == "Mrs Farkas")
+            var isMrsFarkas = yourBoard.some(element => element.name == "Mrs. Farkas")
             console.log("BOARDCON pre: ",isMrsFarkas)
+            SendGameData(yourGameParameters)
 
             await waitForUpdate
 
-            var isMrsFarkasNew = yourBoard.some(element => element.name == "Mrs Farkas")
-            var something = yourBoard.findIndex(element => element.name == "Mrs Farkas")
+            var isMrsFarkasNew = yourBoard.some(element => element.name == "Mrs. Farkas")
+            var something = yourBoard.findIndex(element => element.name == "Mrs. Farkas")
             if(isMrsFarkasNew){
                 if(yourBoard[something].health <= 0){isMrsFarkasNew = false}
             }
@@ -1685,11 +1706,40 @@
                 SendGameData(yourGameParameters)
             }
             console.log("BOARDCON VÉGE")
+            SendGameData(yourGameParameters)
             FarkasBoardcon(card,i)
             
         }
+        function FiloReka(card,i){
+            SGEndreCounter + yourGameParameters.spellMana > 3 ? yourGameParameters.spellMana = 3 : yourGameParameters.spellMana += SGEndreCounter
+            SendGameData(yourGameParameters)
+        }
         function IvanEva(target,i){
             StunnEnemy(target,1,"your")
+        }
+        async function Izing(card,i){
+            var isParagi = yourBoard.some(e=>e.name == "Paragi")
+            if(isParagi){
+                yourBoard[i].talent = "fürge támadás,kettős támadás"
+                yourBoard[i].fieldEffects = ["kettős:0","asleep:"]
+            }
+            else{
+                var Izing1 = Object.assign({}, Cards.IzigCard)
+                var Izing2 = Object.assign({}, Cards.IzigCard)
+                Izing1.talent = "fürge támadás"
+                Izing1.fieldEffects = []
+                Izing2.talent = "kettős támadás"
+                Izing2.fieldEffects = ["kettős:0","asleep:"]
+                EnableChoosingMode([Izing1,Izing2])
+                const result = await getUserChoice();
+                console.log("IZINGLOG: ",result)
+                yourBoard[i] = result
+                //yourBoard[i].fieldEffects.push("asleep:")
+                console.log("IZINGLOG: ",yourBoard)
+                DeleteChoosingMode()
+            }
+            
+            SendGameData(yourGameParameters)
         }
         function Kinyo(card){
             giveDobi(".attack += 2")
@@ -1742,6 +1792,12 @@
             });
             giveDobi(".cost -= 1")
 
+        }
+        function Kopasz(card){
+            yourHand.push(Cards.gravitacioCard)
+            cardsInYourHandClass.push("cardTemplate")
+            yourHand = yourHand
+            SendGameData(yourGameParameters)
         }
         async function Kuti(card){
             card.abilityType = "onkill"
@@ -1852,6 +1908,16 @@
             
             DeleteChoosingMode()
         }
+        function LaciNeni(card,i){
+            if(i>4){
+                enemyBoard[i].attack = enemyBoard[i].health
+                SendGameData(enemyGameParameters)
+            }
+            else{
+                yourBoard[i-5].attack = yourBoard[i-5].health
+                SendGameData(yourGameParameters)
+            }
+        }
         function Matos(card){
             enemyGameParameters.health -= 2
             SendGameData(enemyGameParameters)
@@ -1872,6 +1938,67 @@
         }
         function MeszarosDeath(card){
             DrawOne()
+        }
+        function Moni(card,target,i){
+            target.fieldEffects.push("bomba:99999")
+        }
+        function MezeskalacsKo(card,i){
+            console.log("MEZESLOG: kint")
+            for(i=0;i<yourBoard.length;i++){
+                if(yourBoard[i] != ""){
+                    yourBoard[i].health += 1
+                    if(yourBoard[i].type == "character"){
+                        yourBoardDoms[i].children[0].children[6].style.animation = "none"
+                        yourBoardDoms[i].children[0].children[6].offsetHeight
+                        yourBoardDoms[i].children[0].children[6].style.animation = "statHeal 1s"
+                    }
+                    
+                }
+            }
+            console.log("MEZESLOG: vege",yourBoard)
+            SendGameData(yourGameParameters)
+        }
+        function MrsFarkas(card,i){
+            for(let j=0;j<yourBoard.length;j++){
+                if(yourBoard[j].type == "ko"){
+                    var mezesKo = {
+                        attack: 0,
+                        health: Math.ceil(2*turnCount/3),
+                        type: "ko",
+                        cost: 0,
+                        abilityType: "onturnend",
+                        ability: "MezeskalacsKo",
+                        fieldEffects: []
+                    }
+                    
+                    yourBoard[j] = mezesKo
+                    console.log("MEZESLOG: ",yourBoard[j])
+                }
+            }
+            yourBoard[i].abilityType = "boardcon"
+            yourBoard[i].ability = "MrsFarkasBoardcon"
+            SendGameData(yourGameParameters)
+        }
+        async function MrsFarkasBoardcon(card,i){
+            var isFarkas = yourBoard.some(element => element.name == "Dr. Farkas")
+            console.log("BOARDCON pre: ",isFarkas)
+            isFarkas ? cardsToDrawNewTurn += 1 : {}
+
+            SendGameData(yourGameParameters)
+            await waitForUpdate
+
+            var isFarkasNew = yourBoard.some(element => element.name == "Dr. Farkas")
+            if(isFarkasNew == true && isFarkas == false){
+                cardsToDrawNewTurn += 1
+            }
+            else if(isFarkasNew == false && isFarkas == true){
+                cardsToDrawNewTurn -= 1
+            }
+
+            console.log("BOARDCON VÉGE")
+            SendGameData(yourGameParameters)
+            MrsFarkasBoardcon(card,i)
+            
         }
         function Tabi(card,j){
             var bonusAtk
@@ -1948,6 +2075,10 @@
                 Tomi(card,i)
             }
         }
+        function TothKaresz(){
+            giveDobi(".attack += 1")
+            giveDobi(".health += 1")
+        }
         function NagyOra(card,i){
             card.health += 1
             yourBoardDoms[i].children[0].children[6].style.animation = 'none'
@@ -1977,9 +2108,76 @@
             }
             SendGameData(yourGameParameters)
         }
-        function Szaszak(card){
-            giveDobi(".attack += 1")
-            giveDobi(".health += 1")
+        function Sagine(card){
+            yourHand.push(Cards.CsontvazCard)
+            cardsInYourHandClass.push("cardTemplate")
+            yourHand = yourHand
+            SendGameData(yourGameParameters)
+        }
+        function Sisak(card,i){
+            SisakBoardcon(card,i)
+            card.ability = "SisakBoardcon"
+            card.abilityType = "boardcon"
+
+            SendGameData(yourGameParameters)
+        }
+        async function SisakBoardcon(card,i){
+            if(i%5 != 4){
+                if(yourBoard[i+1] != ""){
+                if(!yourBoard[i+1].aligment.includes("tunya")){
+                    var pre = yourBoard[i+1].aligment
+                    yourBoard[i+1].aligment = `${pre},tunya`
+                }}
+                
+            }
+            if(i%5 != 0){
+                if(yourBoard[i-1] != ""){
+                if(!yourBoard[i-1].aligment.includes("tunya")){
+                    var pre = yourBoard[i-1].aligment
+                    yourBoard[i-1].aligment = `${pre},tunya`
+                }}
+                
+            }
+            SendGameData(yourGameParameters)
+
+            await waitForUpdate
+
+            if(i%5 != 4){
+                if(yourBoard[i+1] != ""){
+                if(!yourBoard[i+1].aligment.includes("tunya")){
+                    var pre = yourBoard[i+1].aligment
+                    yourBoard[i+1].aligment = `${pre},tunya`
+                }}
+                
+            }
+            if(i%5 != 0){
+                if(yourBoard[i-1] != ""){
+                if(!yourBoard[i-1].aligment.includes("tunya")){
+                    var pre = yourBoard[i-1].aligment
+                    yourBoard[i-1].aligment = `${pre},tunya`
+                }}
+                
+            }
+            SendGameData(yourGameParameters)
+            SisakBoardcon(card,i)
+            
+        }
+        function Szaszak(card,i){
+            giveDobi(".attack += 3")
+            giveDobi(".health += 3")
+        }
+        function Weisz(){
+            const maxCost = yourGameParameters.remaningDeck.reduce((max, obj) => (obj.cost > max ? obj.cost : max), yourGameParameters.remaningDeck[0].cost);
+            console.log("WEISZLOG: MAX",maxCost)
+            var maxCostCards = []
+            yourGameParameters.remaningDeck.forEach(element => {
+                element.cost == maxCost ? maxCostCards.push(element) : {}
+            });
+            var randomCard = maxCostCards[Math.floor(Math.random() * (maxCostCards))];
+            yourHand.push(randomCard)
+            cardsInYourHandClass.push("cardTemplate")
+            
+
         }
         //#endregion
 
@@ -2217,6 +2415,27 @@
                     }
                 }
             }
+        }
+        function Gravitacio(){
+            for(let i= 0;i<enemyBoard.length/2;i++){
+                if(enemyBoard[i] != ""){
+                    if(enemyBoard[i+5] != ""){
+                        DealDmg(enemyBoard[i+5],i+5,9999999,"enemy")
+                    }
+                    else{
+                        if(i%5 != 4){
+                            DealDmg(enemyBoard[i+1],i+1,Math.floor(enemyBoard[i].health/2),"enemy")
+                        }
+                        if(i%5 != 0){
+                            DealDmg(enemyBoard[i-1],i-1,Math.floor(enemyBoard[i].health/2),"enemy")
+                        }
+                    }
+                    enemyBoard[i+5] = enemyBoard[i]
+                    enemyBoard[i] = ""
+                }
+                
+            }
+            SendGameData(enemyGameParameters)
         }
         function NemTudod(){
             for(let i = 0;i<enemyBoard.length;i++){
@@ -2660,6 +2879,11 @@
             console.log("EVOLVELOG: ",evolveCandidets[random],evolveCandidets)
             yourBoard[i] = evolveCandidets[random]
             yourBoard[i].talent.includes("fürge") == false ? yourBoard[i].fieldEffects.push("asleep:") : {}
+
+            if(yourBoard.some(e => e.name == "Németh Veronika")){
+                const randomIndex = Math.floor(Math.random() * (yourGameParameters.remaningDeck.length + 1));
+                yourGameParameters.remaningDeck.splice(randomIndex, 0, Cards.tanevnyitoCard);
+            }
             SendGameData(yourGameParameters)
         }
         //#endregion
