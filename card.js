@@ -262,7 +262,7 @@
     import nemKeszultel from "./lib/assets/collection/spell/nemKeszultel.png"
     import keszultel from "./lib/assets/collection/spell/keszultel.png"
     import tuzgolyo from "./lib/assets/collection/spell/tuzgolyo.png"
-    import tuzsarkanyLangja from "./lib/assets/collection/spell/tuzsarkanyLangja.png"
+    import meteor from "./lib/assets/collection/spell/tuzsarkanyLangja.png"
     import lanchegyseg from "./lib/assets/collection/spell/lanchegyseg.png"
     import kiteres from "./lib/assets/collection/spell/kiteres.png"
     import falanx from "./lib/assets/collection/spell/falanx.png"
@@ -324,7 +324,7 @@
     import nemKeszultelGacha from "./lib/assets/collection/spell/nemKeszultelGacha.png"
     import keszultelGacha from "./lib/assets/collection/spell/keszultelGacha.png"
     import tuzgolyoGacha from "./lib/assets/collection/spell/tuzgolyoGacha.png"
-    import tuzsarkanyLangjaGacha from "./lib/assets/collection/spell/tuzsarkanyLangjaGacha.png"
+    import meteorGacha from "./lib/assets/collection/spell/tuzsarkanyLangjaGacha.png"
     import lanchegysegGacha from "./lib/assets/collection/spell/lanchegysegGacha.png"
     import kiteresGacha from "./lib/assets/collection/spell/kiteresGacha.png"
     import falanxGacha from "./lib/assets/collection/spell/falanxGacha.png"
@@ -489,74 +489,74 @@
     export let keszultelCard = new spellCards("készültél","EmptyAbility","",keszultel,5,0,"spell",keszultelGacha,"keszultelCard",gachaPHAudio, "Ilyenkor se akarsz felelni, de legalább nem húznak meg.")
     export let nemKeszultelCard = new spellCards("nem készültél","EmptyAbility","",nemKeszultel,5,1,"spell",nemKeszultelGacha,"nemKeszultelCard",gachaPHAudio, "Ilyenkor főleg nem akarsz felelni és még meg is húznak.")
     export let ideAManaddalCard = new spellCards("ide a manáddal","EmptyAbility","",ideAManaddal,3,2,"spell",ideAManaddalGacha,"ideAManaddalCard",gachaPHAudio, "Lopni amúgy nem szép dolog.")
-    export let tuzgolyoCard = new spellCards("tűzgolyó","EmptyAbility","",tuzgolyo,3,3,"spell",tuzgolyoGacha,"tuzgolyoCard",gachaPHAudio, "Kedvenc Pitbull számom")
-    export let tuzsarkanyLangjaCard = new spellCards("meteor","EmptyAbility","",tuzsarkanyLangja,3,5,"spell",tuzsarkanyLangjaGacha,"tuzsarkanyLangjaCard",gachaPHAudio, "Ami fent csíp, az előbb-utóbb alul is fog.")
+    export let tuzgolyoCard = new spellCards("tűzgolyó","EmptyAbility","",tuzgolyo,3,2,"spell",tuzgolyoGacha,"tuzgolyoCard",gachaPHAudio, "Kedvenc Pitbull számom")
+    export let meteorCard = new spellCards("meteor","EmptyAbility","",meteor,3,5,"spell",meteorGacha,"meteorCard",gachaPHAudio, "Ami fent csíp, az előbb-utóbb alul is fog.")
     export let lanchegysegCard = new spellCards("lánchegység","EmptyAbility","",lanchegyseg,5,5,"spell",lanchegysegGacha,"lanchegysegCard",gachaPHAudio, "A kép nem méretarányos.")
     export let sagvarizmusEjszakajaCard = new spellCards("Ságvárizmus Éjszakája","EmptyAbility","",sagvarizmusEjszakaja,3,2,"spell",sagvarizmusEjszakajaGacha,"sagvarizmusEjszakajaCard",gachaPHAudio, "Nem lehet alkoholt bevinni. Papíron.")
-    export let taktikaiTekergesCard = new spellCards("taktikai tekergés","EmptyAbility","",taktikaiTekerges,4,4,"spell",taktikaiTekergesGacha,"taktikaiTekergesCard",gachaPHAudio, "A röplabdacsapat jóvoltából.")
+    export let taktikaiTekergesCard = new spellCards("taktikai tekergés","EmptyAbility","",taktikaiTekerges,4,2,"spell",taktikaiTekergesGacha,"taktikaiTekergesCard",gachaPHAudio, "A röplabdacsapat jóvoltából.")
     export let saraToborzasCard = new spellCards("SÁRA toborzás","EmptyAbility","",saratoborzas,3,1,"spell",saratoborzasGacha,"saraToborzasCard",gachaPHAudio, "A legügyesebbeket besorozzák. Egy fokkal jobb, mint a hadsereg.")
-    export let saraSzurkolotaborCard = new spellCards("SÁRA szurkolótábor","EmptyAbility","",sportSzelet,3,2,"spell",GachaPHSpell,"saraSzurkolotaborCard",gachaPHAudio, "Versenyszellem garantált.")
+    export let saraSzurkolotaborCard = new spellCards("SÁRA szurkolótábor","EmptyAbility","",Te,3,2,"spell",GachaPHSpell,"saraSzurkolotaborCard",gachaPHAudio, "Versenyszellem garantált.")
     export let falanxCard = new spellCards("falanx","EmptyAbility","",falanx,4,3,"spell",falanxGacha,"falanxCard",gachaPHAudio, "Nagy Sándor tiszteletére.")
     export let kiteresCard = new spellCards("kitérés","EmptyAbility","",kiteres,3,0,"spell",kiteresGacha,"kiteresCard",gachaPHAudio, "Nem talált!")
     export let kalodaCard = new spellCards("kaloda a pincében","DrawOne","",kaloda,3,2,"spell",kalodaGacha,"kalodaCard",gachaPHAudio, "Az agyi funkciók leállnak. Káros az egészségre.")
-    export let javitoDolgozatCard = new spellCards("javító dolgozat","EmptyAbility","",javitoDolgozat,3,0,"spell",javitoDolgozatGacha,"javitoDolgozatCard",gachaPHAudio, "Hiszek a második esélyben.")
+    export let javitoDolgozatCard = new spellCards("javító dolgozat","EmptyAbility","",javitoDolgozat,3,1,"spell",javitoDolgozatGacha,"javitoDolgozatCard",gachaPHAudio, "Hiszek a második esélyben.")
     export let mezeskalacsCard = new spellCards("mézeskalács","EmptyAbility","",mezeskalacs,3,2,"spell",mezeskalacsGacha,"mezeskalacsCard",gachaPHAudio, "Hasznos az, amit meg lehet enni vagy házat lehet belőle készíteni. -Kristóf filozófia szakkörről")
     export let osztalytalalkozoCard = new spellCards("osztálytalálkozó","EmptyAbility","",osztalytalalkozo,4,1,"spell",osztalytalalkozoGacha,"osztalytalalkozoCard",gachaPHAudio, "Felejtsünk el mindent, osztálytalálkozóóóóóóóóóóóóó!")
     export let puskazasCard = new spellCards("puskázás","EmptyAbility","",puskazas,5,1,"spell",puskazasGacha,"puskazasCard",gachaPHAudio, "Nyugi, a padtársad se tudja a választ.")
-    export let visszaakezembeCard = new spellCards("vissza a kezembe","EmptyAbility","",visszaakezembe,3,1,"spell",visszaakezembeGacha,"visszaakezembeCard",gachaPHAudio, "Nyugi, a padtársad se tudja a választ.")
-    export let acelpajzsCard = new spellCards("acélpajzs","EmptyAbility","",Te,3,1,"spell",GachaPH,"acelpajzsCard",gachaPHAudio, "")
-    export let alazatossagCard = new spellCards("alázatosság","EmptyAbility","",Te,3,1,"spell",GachaPH,"alazatossagCard",gachaPHAudio, "")
-    export let alljonMegAMenetCard = new spellCards("álljon meg a menet!","EmptyAbility","",Te,3,1,"spell",GachaPH,"alljonMegAMenetCard",gachaPHAudio, "")
-    export let atomrobbanasCard = new spellCards("atomrobbanás","EmptyAbility","",Te,3,1,"spell",GachaPH,"atomrobbanasCard",gachaPHAudio, "")
-    export let ctrlCCtrlVCard = new spellCards("Ctrl+C / Ctrl+V","EmptyAbility","",Te,3,1,"spell",GachaPH,"ctrlCCtrlVCard",gachaPHAudio, "")
+    export let visszaakezembeCard = new spellCards("vissza a kezembe","EmptyAbility","",visszaakezembe,3,0,"spell",visszaakezembeGacha,"visszaakezembeCard",gachaPHAudio, "Nyugi, a padtársad se tudja a választ.")
+    export let acelpajzsCard = new spellCards("acélpajzs","EmptyAbility","",Te,3,2,"spell",GachaPH,"acelpajzsCard",gachaPHAudio, "")
+    export let alazatossagCard = new spellCards("alázatosság","EmptyAbility","",Te,3,2,"spell",GachaPH,"alazatossagCard",gachaPHAudio, "")
+    export let alljonMegAMenetCard = new spellCards("álljon meg a menet!","EmptyAbility","",Te,3,2,"spell",GachaPH,"alljonMegAMenetCard",gachaPHAudio, "")
+    export let atomrobbanasCard = new spellCards("atomrobbanás","EmptyAbility","",Te,4,8,"spell",GachaPH,"atomrobbanasCard",gachaPHAudio, "")
+    export let ctrlCCtrlVCard = new spellCards("Ctrl+C / Ctrl+V","EmptyAbility","",Te,4,3,"spell",GachaPH,"ctrlCCtrlVCard",gachaPHAudio, "")
     export let csereBereCard = new spellCards("csere-bere","EmptyAbility","",Te,3,1,"spell",GachaPH,"csereBereCard",gachaPHAudio, "")
-    export let elloptakAKabatodCard = new spellCards("ellopták a kabátod","EmptyAbility","",Te,3,1,"spell",GachaPH,"elloptakAKabatodCard",gachaPHAudio, "")
-    export let haggyaMaCard = new spellCards("haggyá' má'!","EmptyAbility","",Te,3,1,"spell",GachaPH,"haggyaMaCard",gachaPHAudio, "")
-    export let kommunizmusCard = new spellCards("kommunizmus","EmptyAbility","",Te,3,1,"spell",GachaPH,"kommunizmusCard",gachaPHAudio, "")
-    export let leltarozasCard = new spellCards("leltározás","EmptyAbility","",Te,3,1,"spell",GachaPH,"leltarozasCard",gachaPHAudio, "")
-    export let nemTudodKovetkezoCard = new spellCards("nem tudod? 1-es! következő!","EmptyAbility","",Te,3,1,"spell",GachaPH,"nemTudodKovetkezoCard",gachaPHAudio, "")
-    export let NERFAPadbanCard = new spellCards("NERF pisztoly a padban","EmptyAbility","",Te,3,1,"spell",GachaPH,"NERFAPadbanCard",gachaPHAudio, "")
-    export let nokedliLeszelCard = new spellCards("nokedli leszel","EmptyAbility","",Te,3,1,"spell",GachaPH,"nokedliLeszelCard",gachaPHAudio, "")
-    export let nokedliVagyCard = new spellCards("nokedli vagy","EmptyAbility","",Te,3,1,"spell",GachaPH,"nokedliVagyCard",gachaPHAudio, "")
+    export let elloptakAKabatodCard = new spellCards("ellopták a kabátod","EmptyAbility","",Te,3,2,"spell",GachaPH,"elloptakAKabatodCard",gachaPHAudio, "")
+    export let haggyaMaCard = new spellCards("haggyá' má'!","EmptyAbility","",Te,3,4,"spell",GachaPH,"haggyaMaCard",gachaPHAudio, "")
+    export let kommunizmusCard = new spellCards("kommunizmus","EmptyAbility","",Te,3,3,"spell",GachaPH,"kommunizmusCard",gachaPHAudio, "")
+    export let leltarozasCard = new spellCards("leltározás","EmptyAbility","",Te,3,0,"spell",GachaPH,"leltarozasCard",gachaPHAudio, "")
+    export let nemTudodKovetkezoCard = new spellCards("nem tudod? 1-es! következő!","EmptyAbility","",Te,4,3,"spell",GachaPH,"nemTudodKovetkezoCard",gachaPHAudio, "")
+    export let NERFAPadbanCard = new spellCards("NERF pisztoly a padban","EmptyAbility","",Te,3,2,"spell",GachaPH,"NERFAPadbanCard",gachaPHAudio, "")
+    export let nokedliLeszelCard = new spellCards("nokedli leszel","EmptyAbility","",Te,3,4,"spell",GachaPH,"nokedliLeszelCard",gachaPHAudio, "")
+    export let nokedliVagyCard = new spellCards("nokedli vagy","EmptyAbility","",Te,3,3,"spell",GachaPH,"nokedliVagyCard",gachaPHAudio, "")
     export let pirosLampaCard = new spellCards("piros lámpa","EmptyAbility","",Te,3,1,"spell",GachaPH,"pirosLampaCard",gachaPHAudio, "")
-    export let sitaborCard = new spellCards("sítábor","EmptyAbility","",Te,3,1,"spell",GachaPH,"sitaborCard",gachaPHAudio, "")
-    export let tanariErtekezletCard = new spellCards("tanári értekezlet","EmptyAbility","",Te,3,1,"spell",GachaPH,"tanariErtekezletCard",gachaPHAudio, "")
-    export let UNOCard = new spellCards("UNO visszafordító kártya","EmptyAbility","",Te,3,1,"spell",GachaPH,"UNOCard",gachaPHAudio, "")
-    export let varazskoponyegCard = new spellCards("varázsköpönyeg","EmptyAbility","",Te,3,1,"spell",GachaPH,"varazskoponyegCard",gachaPHAudio, "")
+    export let sitaborCard = new spellCards("sítábor","EmptyAbility","",Te,4,1,"spell",GachaPH,"sitaborCard",gachaPHAudio, "")
+    export let tanariErtekezletCard = new spellCards("tanári értekezlet","EmptyAbility","",Te,4,2,"spell",GachaPH,"tanariErtekezletCard",gachaPHAudio, "")
+    export let UNOCard = new spellCards("UNO visszafordító kártya","EmptyAbility","",Te,3,4,"spell",GachaPH,"UNOCard",gachaPHAudio, "")
+    export let varazskoponyegCard = new spellCards("varázsköpönyeg","EmptyAbility","",Te,3,2,"spell",GachaPH,"varazskoponyegCard",gachaPHAudio, "")
     export let varazskotetCard = new spellCards("varázskötet","EmptyAbility","",Te,3,1,"spell",GachaPH,"varazskotetCard",gachaPHAudio, "")
-    export let nemSzelloztettekCard = new spellCards("nem szellőztettek","EmptyAbility","",Te,3,1,"spell",GachaPH,"nemSzelloztettekCard",gachaPHAudio, "")
-    export let tanevnyitoCard = new spellCards("tanévnyitó","EmptyAbility","",Te,3,1,"spell",GachaPH,"tanevnyitoCard",gachaPHAudio, "")
-    export let metamorfozisCard = new spellCards("metamorfózis","EmptyAbility","",Te,3,1,"spell",GachaPH,"metamorfozisCard",gachaPHAudio, "")
-    export let szoborfaragasCard = new spellCards("szoborfaragás","EmptyAbility","",Te,3,1,"spell",GachaPH,"szoborfaragasCard",gachaPHAudio, "")
-    export let mitozisCard = new spellCards("mitózis","EmptyAbility","",Te,3,1,"spell",GachaPH,"mitozisCard",gachaPHAudio, "")
-    export let nincsFutesCard = new spellCards("nincs fűtés","EmptyAbility","",Te,3,1,"spell",GachaPH,"nincsFutesCard",gachaPHAudio, "")
-    export let ezVagyAzCard = new spellCards("ez vagy az","EmptyAbility","",Te,3,1,"spell",GachaPH,"ezVagyAzCard",gachaPHAudio, "")
-    export let kiosztjakADogatCard = new spellCards("kiosztják a dogát","EmptyAbility","",Te,3,1,"spell",GachaPH,"kiosztjakADogatCard",gachaPHAudio, "")
-    export let telenSzelloztettekCard = new spellCards("télen szellőztettek","EmptyAbility","",Te,3,1,"spell",GachaPH,"telenSzelloztettekCard",gachaPHAudio, "")
+    export let nemSzelloztettekCard = new spellCards("nem szellőztettek","EmptyAbility","",Te,3,2,"spell",GachaPH,"nemSzelloztettekCard",gachaPHAudio, "")
+    export let tanevnyitoCard = new spellCards("tanévnyitó","EmptyAbility","",Te,3,2,"spell",GachaPH,"tanevnyitoCard",gachaPHAudio, "")
+    export let metamorfozisCard = new spellCards("metamorfózis","EmptyAbility","",Te,3,2,"spell",GachaPH,"metamorfozisCard",gachaPHAudio, "")
+    export let szoborfaragasCard = new spellCards("szoborfaragás","EmptyAbility","",Te,3,3,"spell",GachaPH,"szoborfaragasCard",gachaPHAudio, "")
+    export let mitozisCard = new spellCards("mitózis","EmptyAbility","",Te,4,7,"spell",GachaPH,"mitozisCard",gachaPHAudio, "")
+    export let nincsFutesCard = new spellCards("nincs fűtés","EmptyAbility","",Te,3,4,"spell",GachaPH,"nincsFutesCard",gachaPHAudio, "")
+    export let ezVagyAzCard = new spellCards("ez vagy az","EmptyAbility","",Te,3,2,"spell",GachaPH,"ezVagyAzCard",gachaPHAudio, "")
+    export let kiosztjakADogatCard = new spellCards("kiosztják a dogát","EmptyAbility","",Te,4,4,"spell",GachaPH,"kiosztjakADogatCard",gachaPHAudio, "")
+    export let telenSzelloztettekCard = new spellCards("télen szellőztettek","EmptyAbility","",Te,3,6,"spell",GachaPH,"telenSzelloztettekCard",gachaPHAudio, "")
     export let RNGCard = new spellCards("RNG","EmptyAbility","",Te,3,1,"spell",GachaPH,"RNGCard",gachaPHAudio, "")
-    export let fakardCard = new spellCards("fakard a DÖK irodából","EmptyAbility","",Te,3,1,"spell",GachaPH,"fakardCard",gachaPHAudio, "")
-    export let nagyTestverVigyazRadCard = new spellCards("nagy testvér vigyáz rád","EmptyAbility","",Te,3,1,"spell",GachaPH,"nagyTestverVigyazRadCard",gachaPHAudio, "")
-    export let gravitacioCard = new spellCards("gravitáció","EmptyAbility","",Te,3,1,"spell",GachaPH,"gravitacioCard",gachaPHAudio, "")
-    export let GOsztalyEltorleseCard = new spellCards("G osztály eltörlése","EmptyAbility","",Te,3,1,"spell",GachaPH,"GOsztalEltorleseCard",gachaPHAudio, "")
-    export let enyemCard = new spellCards("enyém","EmptyAbility","",Te,3,1,"spell",GachaPH,"enyemCard",gachaPHAudio, "")
+    export let fakardCard = new spellCards("fakard a DÖK irodából","EmptyAbility","",Te,3,0,"spell",GachaPH,"fakardCard",gachaPHAudio, "")
+    export let nagyTestverVigyazRadCard = new spellCards("nagy testvér vigyáz rád","EmptyAbility","",Te,3,2,"spell",GachaPH,"nagyTestverVigyazRadCard",gachaPHAudio, "")
+    export let gravitacioCard = new spellCards("gravitáció","EmptyAbility","",Te,5,6,"spell",GachaPH,"gravitacioCard",gachaPHAudio, "")
+    export let GOsztalyEltorleseCard = new spellCards("G osztály eltörlése","EmptyAbility","",Te,3,5,"spell",GachaPH,"GOsztalEltorleseCard",gachaPHAudio, "")
+    export let enyemCard = new spellCards("enyém","EmptyAbility","",Te,3,5,"spell",GachaPH,"enyemCard",gachaPHAudio, "")
     //#endregion
     //#region EGYÉB KARAKTERSPELLEK/SEGÉDSPELLEK
     export let KutiDiplomaCard = new spellCards("Tanári Diploma","KutiDiploma","A térfeleden lévő <b>Kúti</b> kártya lediplomázott. Válaszd ki, milyen szakon. <b>Reál, humán vagy sport</b>.",KutiDiploma,5,0,"spell",GachaPHSpell,"KutiDiplomaCard",gachaPHAudio, "")
-    export let pikkDamaCard = new spellCards("pikk dáma","EmptyAbility","",Te,3,1,"spell",GachaPH,"pikkDamaCard",gachaPHAudio, "")
-    export let CharmanderLangjaCard = new spellCards("Charmander lángja","EmptyAbility","",Te,3,1,"spell",GachaPH,"CharmanderLangjaCard",gachaPHAudio, "")
-    export let CharmeleonLangjaCard = new spellCards("Charmeleon lángja","EmptyAbility","",Te,3,1,"spell",GachaPH,"CharmeleonLangjaCard",gachaPHAudio, "")
-    export let CharizardLangjaCard = new spellCards("Charizard lángja","EmptyAbility","",Te,3,1,"spell",GachaPH,"CharizardLangjaCard",gachaPHAudio, "")
-    export let MegaCharizardXLangjaCard = new spellCards("Mega Charizard X lángja","EmptyAbility","",Te,3,1,"spell",GachaPH,"MegaCharizardXLangjaCard",gachaPHAudio, "")
-    export let magCard = new spellCards("mag","EmptyAbility","",Te,3,1,"spell",GachaPH,"magCard",gachaPHAudio, "")
-    export let mindenBalazsCard = new spellCards("minden Balázs","EmptyAbility","",Te,3,1,"spell",GachaPH,"mindenBalazsCard",gachaPHAudio, "")
-    export let felvilagosodasCard = new spellCards("felvilágosodás","EmptyAbility","",Te,3,1,"spell",GachaPH,"felvilagosodasCard",gachaPHAudio, "")
-    export let terminusdogaCard = new spellCards("terminusdoga","EmptyAbility","",Te,3,1,"spell",GachaPH,"terminusdogaCard",gachaPHAudio, "")
+    export let pikkDamaCard = new spellCards("pikk dáma","EmptyAbility","",Te,5,1,"spell",GachaPH,"pikkDamaCard",gachaPHAudio, "")
+    export let CharmanderLangjaCard = new spellCards("Charmander lángja","EmptyAbility","",Te,5,4,"spell",GachaPH,"CharmanderLangjaCard",gachaPHAudio, "")
+    export let CharmeleonLangjaCard = new spellCards("Charmeleon lángja","EmptyAbility","",Te,5,3,"spell",GachaPH,"CharmeleonLangjaCard",gachaPHAudio, "")
+    export let CharizardLangjaCard = new spellCards("Charizard lángja","EmptyAbility","",Te,5,3,"spell",GachaPH,"CharizardLangjaCard",gachaPHAudio, "")
+    export let MegaCharizardXLangjaCard = new spellCards("Mega Charizard X lángja","EmptyAbility","",Te,5,2,"spell",GachaPH,"MegaCharizardXLangjaCard",gachaPHAudio, "")
+    export let magCard = new spellCards("mag","EmptyAbility","",Te,5,1,"spell",GachaPH,"magCard",gachaPHAudio, "")
+    export let mindenBalazsCard = new spellCards("minden Balázs","EmptyAbility","",Te,5,7,"spell",GachaPH,"mindenBalazsCard",gachaPHAudio, "")
+    export let felvilagosodasCard = new spellCards("felvilágosodás","EmptyAbility","",Te,5,2,"spell",GachaPH,"felvilagosodasCard",gachaPHAudio, "")
+    export let terminusdogaCard = new spellCards("terminusdoga","EmptyAbility","",Te,5,2,"spell",GachaPH,"terminusdogaCard",gachaPHAudio, "")
     //#endregion
 
     //#region TANÁROK
     export let BizsoCard = new tanarCards("Bizsó","lelkiismeretes","","death","Bizso", "", 8, 6, Bizso, 4, 4, "character", BizsoGacha, "BizsoCard", BizsoA, "Kedvence egy jó python feladat. Ha szépen kéred, kienged a hátsó kijáraton. Szexi apuka.", [],["fiú", "tanár", "reálos"]); 
     export let FarkasCard = new tanarCards("Dr. Farkas","lelkiismeretes","robbanó támadás","summon","Farkas", "", 9, 13, Farkas, 5, 7, "character", FarkasGacha, "FarkasCard", FarkasA, "Filozófusszakállát évente vágja. Ennek ellenére mindig visszanő. Nem kell félni tőle.", [],["fiú", "tanár", "humános", "sportos"]);
-    export let MoniCard = new tanarCards("Szalay Mónika","lelkiismeretes","életelszívás_1","summon","EmptyAbility", "", 7, 5, Moni, 4, 5, "character", MoniGacha, "MoniCard", MoniA, "Hobbifilozófus. Képes 45 percig elemezni egy 10 soros lírai alkotást. Lenyűgöző!", [],["lány", "tanár", "humános"]);
+    export let MoniCard = new tanarCards("Szalay Mónika","lelkiismeretes","fürge támadás","summon","EmptyAbility", "", 7, 5, Moni, 4, 5, "character", MoniGacha, "MoniCard", MoniA, "Hobbifilozófus. Képes 45 percig elemezni egy 10 soros lírai alkotást. Lenyűgöző!", [],["lány", "tanár", "humános"]);
     export let NagyoraCard = new tanarCards("Nagy Dóra","veszett","kihívó","summon","EmptyAbility", "", 5, 8, Nagyora, 3, 4, "character", NagyoraGacha, "NagyoraCard", NagyoraA, "Télen is szoknyában jár. Számára a stílus az első.", [],["lány", "tanár", "reálos"]);
     export let RozgonyiCard = new tanarCards("Rozgonyi","vérszomjas","tövisesbőr","summon","EmptyAbility", "", 1, 5, Rozgonyi, 3, 2, "character", RozgonyiGacha, "RozgonyiCard", RoziA, "Szeret sütni. Szeret még legózni és gombócot enni is. A fiát láthatólag annyira nem.", [],["fiú", "tanár", "reálos"]);
     export let TabiCard = new tanarCards("Tábi", "vérszomjas","fürge támadás","summon","EmptyAbility", "", 2, 4, Tabi, 3, 3, "character", TabiGacha, "TabiCard", TabiA, "Tesitanár és röplabdaedző. Epic gamer szabadidejében. Sose hagyja ki az alkalmat, hogy politizáljon.", [],["lány", "tanár", "sportos"]);
