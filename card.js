@@ -539,11 +539,6 @@
     export let gravitacioCard = new spellCards("gravitáció","EmptyAbility","",Te,5,6,"spell",GachaPH,"gravitacioCard",gachaPHAudio, "")
     export let GOsztalyEltorleseCard = new spellCards("G osztály eltörlése","EmptyAbility","",Te,3,5,"spell",GachaPH,"GOsztalEltorleseCard",gachaPHAudio, "")
     export let enyemCard = new spellCards("enyém","EmptyAbility","",Te,3,5,"spell",GachaPH,"enyemCard",gachaPHAudio, "")
-    export let fakardCard = new spellCards("fakard a DÖK irodából","EmptyAbility","",Te,3,1,"spell",GachaPH,"fakardCard",gachaPHAudio, "")
-    export let nagyTestverVigyazRadCard = new spellCards("nagy testvér vigyáz rád","EmptyAbility","",Te,3,1,"spell",GachaPH,"nagyTestverVigyazRadCard",gachaPHAudio, "")
-    export let gravitacioCard = new spellCards("gravitáció","Gravitacio","",Te,3,1,"spell",GachaPH,"gravitacioCard",gachaPHAudio, "")
-    export let GOsztalyEltorleseCard = new spellCards("G osztály eltörlése","EmptyAbility","",Te,3,1,"spell",GachaPH,"GOsztalEltorleseCard",gachaPHAudio, "")
-    export let enyemCard = new spellCards("enyém","EmptyAbility","",Te,3,1,"spell",GachaPH,"enyemCard",gachaPHAudio, "")
     //#endregion
     //#region EGYÉB KARAKTERSPELLEK/SEGÉDSPELLEK
     export let KutiDiplomaCard = new spellCards("Tanári Diploma","KutiDiploma","A térfeleden lévő <b>Kúti</b> kártya lediplomázott. Válaszd ki, milyen szakon. <b>Reál, humán vagy sport</b>.",KutiDiploma,5,0,"spell",GachaPHSpell,"KutiDiplomaCard",gachaPHAudio, "")
