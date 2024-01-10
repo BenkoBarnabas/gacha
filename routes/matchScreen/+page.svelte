@@ -25,7 +25,8 @@
         ko: 8,
         yourBoard: [],
         yourBoardStatus: "",
-        isYourTurn: ""
+        isYourTurn: "",
+        type: "player"
     }
   let enemyGameParameters = {
         gameId: "",
@@ -38,7 +39,8 @@
         ko: 8,
         yourBoard: "",
         yourBoardStatus: "",
-        isYourTurn: ""
+        isYourTurn: "",
+        type: "player"
     }
 
 
