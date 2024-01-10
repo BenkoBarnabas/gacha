@@ -5095,8 +5095,6 @@
         display: flex;
         padding-bottom: 6vh;
     }
-    #yourSide{
-    }
     #enemySide{
         margin-top: 3.5vh;
     }
