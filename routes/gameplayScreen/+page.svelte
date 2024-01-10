@@ -2604,6 +2604,42 @@
                 DeleteSelectTargetMode()
             }
         }
+        async function Enyem(){
+            var targets = Array.from(enemyBoard)
+            
+            if(targets.some(element => element !== '')){
+                for(let i = 0; i<targets.length; i++){
+                    if(targets[i] != ''){
+                        selectableCardDoms.push(enemyBoardDoms[i])
+                    }
+                }
+                selectableCardDoms = selectableCardDoms
+            
+                EnableTargetSelectionMode(targets)
+                const result = await getUserChoice()
+                var domID = result.i
+                
+                var Sindex = targets[domID].fieldEffects.findIndex(element => element.includes('spellshield'));
+                if(Sindex === -1){
+                    SummoningLocation(true)
+
+                    yourBoardPhs.fill("")
+                    for (let i = 0; i<yourBoardPhs.length+1;i++){
+                        if(yourBoard[i] == ""){
+                            yourBoardPhs[i] =result.target
+                        }
+                    }
+                    yourBoardPhs = yourBoardPhs
+                }
+                else{
+                    result.target.fieldEffects.splice(Sindex,1)
+                }
+
+                SendGameData(enemyGameParameters)
+            
+                DeleteSelectTargetMode()
+            }
+        }
         async function EzVagyAz(){
             var isParagi = yourBoard.some(e=>e.name == "Paragi")
             if(isParagi){
@@ -2987,6 +3023,11 @@
             SendGameData(yourGameParameters)
         
         }
+        function GOsztalyEltorlese(){
+            for(let i=0;i<enemyBoard.length;i++){
+                enemyBoard[i] != "" ? DealDmg(enemyBoard[i],i,99999,"enemy") : {}
+            }
+        }
         function Gravitacio(){
             for(let i= 0;i<enemyBoard.length/2;i++){
                 if(enemyBoard[i] != ""){
@@ -3120,6 +3161,7 @@
             for(let i= 0; i<enemyBoard.length;i++){
                 enemyBoard[i] != "" ? DealDmg(enemyBoard[i],i,1,"enemy") : {}
             }
+            enemyGameParameters.health -= 1
             SendGameData(enemyGameParameters)
         }
         function NemTudod(){
@@ -3415,24 +3457,29 @@
         }
         async function Tuzgolyo(){
             var targets = Array.from(yourBoard).concat(Array.from(enemyBoard))
-            
+            targets.push(enemyGameParameters)
             if(targets.some(element => element !== '')){
                 selectableCardDoms = Array.from(yourBoardDoms).concat(Array.from(enemyBoardDoms))
+                selectableCardDoms.push(enemyPlayerNameDom)
                 selectableCardDoms = selectableCardDoms
             
                 EnableTargetSelectionMode(targets)
                 const result = await getUserChoice()
-                var domID = result.i
-                result.side == 'your' ? domID = domID : domID += yourBoard.length
-            
-                var Sindex = targets[domID].fieldEffects.findIndex(element => element.includes('spellshield'));
-                if(Sindex === -1){
-                    DealDmg(result.target,result.i,4,result.side)
+                if(result.target.type == "player"){
+                    enemyGameParameters.health -= 4
                 }
                 else{
-                    result.target.fieldEffects.splice(Sindex,1)
+                    var domID = result.i
+                    result.side == 'your' ? domID = domID : domID += yourBoard.length
+                    
+                    var Sindex = targets[domID].fieldEffects.findIndex(element => element.includes('spellshield'));
+                    if(Sindex === -1){
+                        DealDmg(result.target,result.i,4,result.side)
+                    }
+                    else{
+                        result.target.fieldEffects.splice(Sindex,1)
+                    }
                 }
-
                 SendGameData(yourGameParameters)
                 SendGameData(enemyGameParameters)
             
@@ -3552,10 +3599,108 @@
                 DeleteSelectTargetMode()
             }
         }
-
-        
-
-
+        //#endregion
+        //#region EXTRA SPELLS, CHARACTER SPELLS
+        async function CharmanderLangja(){
+            var targets = Array.from(yourBoard).concat(Array.from(enemyBoard))
+            targets.push(enemyGameParameters)
+            if(targets.some(element => element !== '')){
+                selectableCardDoms = Array.from(yourBoardDoms).concat(Array.from(enemyBoardDoms))
+                selectableCardDoms.push(enemyPlayerNameDom)
+                selectableCardDoms = selectableCardDoms
+            
+                EnableTargetSelectionMode(targets)
+                const result = await getUserChoice()
+                if(result.target.type == "player"){
+                    enemyGameParameters.health -= 5
+                }
+                else{
+                    var domID = result.i
+                    result.side == 'your' ? domID = domID : domID += yourBoard.length
+                    
+                    var Sindex = targets[domID].fieldEffects.findIndex(element => element.includes('spellshield'));
+                    if(Sindex === -1){
+                        DealDmg(result.target,result.i,5,result.side)
+                    }
+                    else{
+                        result.target.fieldEffects.splice(Sindex,1)
+                    }
+                }
+                SendGameData(yourGameParameters)
+                SendGameData(enemyGameParameters)
+            
+                DeleteSelectTargetMode()
+            }
+        }
+        async function CharmeleonLangja(){
+            var targets = Array.from(yourBoard).concat(Array.from(enemyBoard))
+            targets.push(enemyGameParameters)
+            if(targets.some(element => element !== '')){
+                selectableCardDoms = Array.from(yourBoardDoms).concat(Array.from(enemyBoardDoms))
+                selectableCardDoms.push(enemyPlayerNameDom)
+                selectableCardDoms = selectableCardDoms
+            
+                EnableTargetSelectionMode(targets)
+                const result = await getUserChoice()
+                if(result.target.type == "player"){
+                    enemyGameParameters.health -= 5
+                }
+                else{
+                    var domID = result.i
+                    result.side == 'your' ? domID = domID : domID += yourBoard.length
+                    
+                    var Sindex = targets[domID].fieldEffects.findIndex(element => element.includes('spellshield'));
+                    if(Sindex === -1){
+                        DealDmg(result.target,result.i,5,result.side)
+                    }
+                    else{
+                        result.target.fieldEffects.splice(Sindex,1)
+                    }
+                }
+                SendGameData(yourGameParameters)
+                SendGameData(enemyGameParameters)
+            
+                DeleteSelectTargetMode()
+            }
+        }
+        async function CharizardLangja(){
+            var targets = Array.from(yourBoard).concat(Array.from(enemyBoard))
+            targets.push(enemyGameParameters)
+            if(targets.some(element => element !== '')){
+                selectableCardDoms = Array.from(yourBoardDoms).concat(Array.from(enemyBoardDoms))
+                selectableCardDoms.push(enemyPlayerNameDom)
+                selectableCardDoms = selectableCardDoms
+            
+                EnableTargetSelectionMode(targets)
+                const result = await getUserChoice()
+                if(result.target.type == "player"){
+                    enemyGameParameters.health -= 7
+                }
+                else{
+                    var domID = result.i
+                    result.side == 'your' ? domID = domID : domID += yourBoard.length
+                    
+                    var Sindex = targets[domID].fieldEffects.findIndex(element => element.includes('spellshield'));
+                    if(Sindex === -1){
+                        DealDmg(result.target,result.i,7,result.side)
+                    }
+                    else{
+                        result.target.fieldEffects.splice(Sindex,1)
+                    }
+                }
+                SendGameData(yourGameParameters)
+                SendGameData(enemyGameParameters)
+            
+                DeleteSelectTargetMode()
+            }
+        }
+        function Mag(){
+            for(let i=0;i<yourBoard.length;i++){
+                if(yourBoard[i] != ""){
+                    yourBoard[i]bonusTraits.some(e => e.includes("humános")) ? Evolve(yourBoard[i],i,2)
+                }
+            }
+        }
         //#endregion
 
         //#region bonus functions
