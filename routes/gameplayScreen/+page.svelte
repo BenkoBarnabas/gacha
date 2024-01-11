@@ -193,7 +193,7 @@
         yourHand[0] = Cards.YouCard
         yourHand[1] = Cards.KutiCard
         yourHand[2] = Cards.FarkasCard
-        yourHand[3] = Cards.MsFarkasCard
+        yourHand[3] = Cards.SisakCard
         yourHand[4] = Cards.kiteresCard
          //UpdateLocalStorage()
         
@@ -2077,12 +2077,17 @@
             }
             yourBoard[i].abilityType = "boardcon"
             yourBoard[i].ability = "MrsFarkasBoardcon"
+
+            var isFarkas = yourBoard.some(element => element.name == "Dr. Farkas")
+            console.log("BOARDCON pre: ",isFarkas)
+            isFarkas ? cardsToDrawNewTurn += 1 : {}
             SendGameData(yourGameParameters)
+
+            MrsFarkasBoardcon(card,i)
         }
         async function MrsFarkasBoardcon(card,i){
             var isFarkas = yourBoard.some(element => element.name == "Dr. Farkas")
             console.log("BOARDCON pre: ",isFarkas)
-            isFarkas ? cardsToDrawNewTurn += 1 : {}
 
             SendGameData(yourGameParameters)
             await waitForUpdate
@@ -2094,10 +2099,10 @@
             else if(isFarkasNew == false && isFarkas == true){
                 cardsToDrawNewTurn -= 1
             }
-
             console.log("BOARDCON VÉGE")
             SendGameData(yourGameParameters)
-            MrsFarkasBoardcon(card,i)
+            var isMsFarkas = yourBoard.some(element => element.name == "Mrs. Farkas")
+            isMsFarkas == true ? MrsFarkasBoardcon(card,i) : {}
             
         }
         function Tabi(card,j){
@@ -2235,13 +2240,9 @@
             SendGameData(yourGameParameters)
         }
         function Sisak(card,i){
-            SisakBoardcon(card,i)
             card.ability = "SisakBoardcon"
             card.abilityType = "boardcon"
 
-            SendGameData(yourGameParameters)
-        }
-        async function SisakBoardcon(card,i){
             if(i%5 != 4){
                 if(yourBoard[i+1] != ""){
                 if(!yourBoard[i+1].aligment.includes("tunya")){
@@ -2259,27 +2260,47 @@
                 
             }
             SendGameData(yourGameParameters)
+
+            SisakBoardcon(card,i)
+        }
+        async function SisakBoardcon(card,i){
 
             await waitForUpdate
 
-            if(i%5 != 4){
-                if(yourBoard[i+1] != ""){
-                if(!yourBoard[i+1].aligment.includes("tunya")){
-                    var pre = yourBoard[i+1].aligment
-                    yourBoard[i+1].aligment = `${pre},tunya`
-                }}
-                
+            var isSisak = yourBoard.some(e => e.name == "Sisák")
+            if(isSisak){
+                if(i%5 != 4){ //NINCS BALLÓRA HELY
+                    for(let j=0;j<yourBoard.length;j++){
+                        if(j == i){
+                            if(!yourBoard[i+1].aligment.includes("tunya")){
+                                var pre = yourBoard[i+1].aligment
+                                yourBoard[i+1].aligment = `${pre},tunya`
+                            } 
+                        }
+                        else{
+                            var ogCard = Cards.allCardsArr.find(e => e.name == yourBoard[j].name)
+                            ogCard.talent.includes("tunya") == false && yourBoard[j].talent.includes("tunya") == true ? yourBoard[j].talent.replace(",tunya","") : {}
+                        }
+                    }
+                }
+                if(i%5 != 0){ //NINCS BALLÓRA HELY
+                    for(let j=0;j<yourBoard.length;j++){
+                        if(j == i){
+                            if(!yourBoard[i-1].aligment.includes("tunya")){
+                                var pre = yourBoard[i-1].aligment
+                                yourBoard[i-1].aligment = `${pre},tunya`
+                            } 
+                        }
+                        else{
+                            var ogCard = Cards.allCardsArr.find(e => e.name == yourBoard[j].name)
+                            ogCard.talent.includes("tunya") == false && yourBoard[j].talent.includes("tunya") == true ? yourBoard[j].talent.replace(",tunya","") : {}
+                        }
+                    }
+                }
+                SendGameData(yourGameParameters)
+                SisakBoardcon(card,i)
             }
-            if(i%5 != 0){
-                if(yourBoard[i-1] != ""){
-                if(!yourBoard[i-1].aligment.includes("tunya")){
-                    var pre = yourBoard[i-1].aligment
-                    yourBoard[i-1].aligment = `${pre},tunya`
-                }}
-                
-            }
-            SendGameData(yourGameParameters)
-            SisakBoardcon(card,i)
+            
             
         }
         function Szaszak(card,i){
@@ -2480,6 +2501,45 @@
         function ZalanOnatk(){
             giveDobi(".attack += 2")
             giveDObi(".health += 2")
+        }
+        //#endregion
+        //#region dökösök
+        let dokATablan = []
+        async function Dokosok(){
+            var dokATablanNew
+            yourBoard.forEach(element =>{
+                element.bonusTraits.some(e=>e == "dök") ? dokATablanNew.push(element) : {}
+            })
+            dokATablan = dokATablanNew
+            await waitForUpdate
+            Dokosok()
+        }
+        yourGameParameters.remaningDeck.some(e => (e.bonusTraits.some(f => f == "dök"))) ? Dokosok() : {}
+        function Regina(card,i){
+
+
+            card.abilityType = "boardcon"
+            card.ability = "ReginaBoardcon"
+        }
+        async function ReginaBoardcon(card,i){
+            var dok = array.filter(obj => obj.name !== "Regina");
+            for(let i=0;i<dok.length;i++){
+                dok[i].talent = `${dok[i].talent}, életelszívás-1`
+            }
+            await waitForUpdate
+
+            var isFarkasNew = yourBoard.some(element => element.name == "Dr. Farkas")
+            if(isFarkasNew == true && isFarkas == false){
+                cardsToDrawNewTurn += 1
+            }
+            else if(isFarkasNew == false && isFarkas == true){
+                cardsToDrawNewTurn -= 1
+            }
+
+            console.log("BOARDCON VÉGE")
+            SendGameData(yourGameParameters)
+            MrsFarkasBoardcon(card,i)
+            
         }
         //#endregion
         //#region SPELLEK
@@ -3697,7 +3757,7 @@
         function Mag(){
             for(let i=0;i<yourBoard.length;i++){
                 if(yourBoard[i] != ""){
-                    yourBoard[i]bonusTraits.some(e => e.includes("humános")) ? Evolve(yourBoard[i],i,2)
+                    yourBoard[i].bonusTraits.some(e => e.includes("humános")) ? Evolve(yourBoard[i],i,2) : {}
                 }
             }
         }
