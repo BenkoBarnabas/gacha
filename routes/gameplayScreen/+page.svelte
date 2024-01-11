@@ -194,7 +194,7 @@
         yourHand[1] = Cards.KutiCard
         yourHand[2] = Cards.FarkasCard
         yourHand[3] = Cards.MsFarkasCard
-        yourHand[4] = Cards.SisakCard
+        yourHand[4] = Cards.kiteresCard
          //UpdateLocalStorage()
         
         SendGameData(yourGameParameters)
@@ -854,6 +854,13 @@
                     }
                 });
 
+                for(let i= 0; i<yourHand.length;i++){
+                    if(yourHand[i].name.includes("Elillanó")){
+                        yourHand.splice(i,1)
+                        cardsInYourHandClass.pop()
+                    }
+                }
+
                 enemyGameParameters.currentHand = []
                 SendGameData(yourGameParameters)             
         }
@@ -880,6 +887,22 @@
                     }
             }
         }
+
+        //ANDRIS
+        var Aindex = yourBoard.findIndex(e => e.name == "Vígh Andris")
+        if(Aindex != -1 && isYourTurn){
+            yourBoard[Aindex].attack -= 3
+            yourBoardDoms[Aindex].children[0].children[5].style.animation = "none"
+            yourBoardDoms[Aindex].children[0].children[5].offsetHeight
+            yourBoardDoms[Aindex].children[0].children[5].style.animation = "statDmg 1s"
+        }
+        else if(Aindex != -1 && !isYourTurn){
+            yourBoard[Aindex].attack += 3
+            yourBoardDoms[Aindex].children[0].children[5].style.animation = "none"
+            yourBoardDoms[Aindex].children[0].children[5].offsetHeight
+            yourBoardDoms[Aindex].children[0].children[5].style.animation = "statHeal 1s"
+        }
+        
     }
     function ClickEndTurn(){
         if(!isYourTurn || isSelectTargetMode || isInChoosingMode || isAnimationOngoing || isSummonLocationChoosing || isSummonLocationChoosingEnemy){
@@ -893,6 +916,7 @@
     let logOpen = false
     let logCard
     let actionLogList = []
+
     function OpenBattleLog(){
         logOpen = !logOpen
         logOpen = logOpen
@@ -933,8 +957,10 @@
             logCard.style.animation = "none"
         }, 4000);
 
-        if(lastCardPlayedClient.side == "your" && lastCardPlayed.type == "spell" && yourBoard.some(element => element.name == "Fehér Márta")){
-            eval(`${lastCardPlayed.ability}()`)
+        if(lastCardPlayedClient.side == "your" && lastCardPlayed.type == "spell"){
+            yourBoard.some(element => element.name == "Fehér Márta") ? eval(`${lastCardPlayed.ability}()`) : {}
+            yourBoard.some(element => element.name == "Vörös Bálint") ? VBalint() : {}
+            yourBoard.some(element => element.name == "Gitta") ? Gitta(yourBoard.findIndex(element => element.name == "Gitta")) : {}
         }
     }
 
@@ -1051,6 +1077,15 @@
                             }
                         //#endregion
                         resolveBoardconPromise(promiseResolve)
+                        //onchardeath
+                        yourBoard.forEach(element => {
+                            if(element != ""){
+                                if(element.abilityType == "onchardeath" && !element.fieldEffects.some(e => e.includes("silence"))){
+                                    eval(`${element.ability}(yourBoard[domId])`)
+                                }
+                            }
+                        })
+                        
                     }
                     if(yourBoard[Number(dom.id.replace("td",""))].name != "Blazó" && yourBoard[Number(dom.id.replace("td",""))].name != "Nagy T"){
                         yourBoard[Number(dom.id.replace("td",""))] = ""
@@ -1258,27 +1293,45 @@
             attackableCardsDoms = []
     
 
-            if(!isCardOnBoardInAttackingMode && cardInAttackingMode != attackingCard){
+            if(!isCardOnBoardInAttackingMode && cardInAttackingMode != attackingCard){ //ÚJ KÁRTYA KATT
                 cardInAttackingMode = attackingCard
 
+                if(cardInAttackingMode.name == "Olívia"){
+                    for (let i = 0; i < enemyBoard.length; i++){
+                        if(enemyBoard[i] != ""){
+                            attackableCards.push(enemyBoard[i])
 
-                for (let i = 0; i < enemyBoard.length/2; i++){
-                    if(enemyBoard[i] != ""){
-                        attackableCards.push(enemyBoard[i])
-
-                        var dom = document.getElementById(`etd${i}`)
-                        attackableCardsDoms.push(dom)
-                        //dom.children[0].children[0].style = "transform: scale(1.1); width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute; filter: drop-shadow(calc(var(--cardOnBoardScale)*1vw*0.6) calc(var(--cardOnBoardScale)*1vw*0.6) 3px red) drop-shadow(calc(var(--cardOnBoardScale)*1vw*-0.6) calc(var(--cardOnBoardScale)*1vw*-0.6) 3px red);"
-                    }
-                    else{
-                        if(enemyBoard[i+(enemyBoard.length/2)] != ""){
-                            attackableCards.push(enemyBoard[i+(enemyBoard.length/2)])
-
-                            var dom = document.getElementById(`etd${i+(enemyBoard.length/2)}`)
+                            var dom = document.getElementById(`etd${i}`)
                             attackableCardsDoms.push(dom)
                             //dom.children[0].children[0].style = "transform: scale(1.1); width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute; filter: drop-shadow(calc(var(--cardOnBoardScale)*1vw*0.6) calc(var(--cardOnBoardScale)*1vw*0.6) 3px red) drop-shadow(calc(var(--cardOnBoardScale)*1vw*-0.6) calc(var(--cardOnBoardScale)*1vw*-0.6) 3px red);"
-
                         }
+                    }
+                    attackableCards.push(enemyGameParameters)
+                    attackableCardsDoms.push(enemyPlayerNameDom)
+                }
+                else{
+                    for (let i = 0; i < enemyBoard.length/2; i++){
+                        if(enemyBoard[i] != ""){
+                            attackableCards.push(enemyBoard[i])
+
+                            var dom = document.getElementById(`etd${i}`)
+                            attackableCardsDoms.push(dom)
+                            //dom.children[0].children[0].style = "transform: scale(1.1); width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute; filter: drop-shadow(calc(var(--cardOnBoardScale)*1vw*0.6) calc(var(--cardOnBoardScale)*1vw*0.6) 3px red) drop-shadow(calc(var(--cardOnBoardScale)*1vw*-0.6) calc(var(--cardOnBoardScale)*1vw*-0.6) 3px red);"
+                        }
+                        else{
+                            if(enemyBoard[i+(enemyBoard.length/2)] != ""){
+                                attackableCards.push(enemyBoard[i+(enemyBoard.length/2)])
+
+                                var dom = document.getElementById(`etd${i+(enemyBoard.length/2)}`)
+                                attackableCardsDoms.push(dom)
+                                //dom.children[0].children[0].style = "transform: scale(1.1); width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute; filter: drop-shadow(calc(var(--cardOnBoardScale)*1vw*0.6) calc(var(--cardOnBoardScale)*1vw*0.6) 3px red) drop-shadow(calc(var(--cardOnBoardScale)*1vw*-0.6) calc(var(--cardOnBoardScale)*1vw*-0.6) 3px red);"
+
+                            }
+                        }
+                    }
+                    if(attackableCards == []){
+                        attackableCards.push(enemyGameParameters)
+                        attackableCardsDoms.push(enemyPlayerNameDom)
                     }
                 }
                 console.log("you can attack these cards: ",attackableCards);
@@ -1286,14 +1339,14 @@
 
                 isCardOnBoardInAttackingMode = true
             }
-            else if (isCardOnBoardInAttackingMode && cardInAttackingMode == attackingCard){
+            else if (isCardOnBoardInAttackingMode && cardInAttackingMode == attackingCard){ //ATK CANCEL
                 isCardOnBoardInAttackingMode = false
                 attackableCards = []
                 attackableCardsDoms = []
 
                 cardInAttackingMode = ""
             }
-            else if(cardInAttackingMode != attackingCard){
+            else if(cardInAttackingMode != attackingCard){ //MÁSIKRA VÁLTÁS
                 cardInAttackingMode = attackingCard
 
 
@@ -1333,215 +1386,229 @@
     }
     function AttackCard(target,i){
         console.log("target: ", target, " i: ", i);
-
-        cardInAttackingMode.health -= target.attack
-        var bombaN = 0
-        cardInAttackingMode.fieldEffects.forEach(effect => {
-            effect.includes("bomba") ? bombaN += 1 : {}
-        });
-        var dmg = cardInAttackingMode.attack + bombaN
-        var targetType = target.type
-
-        var powerModDmg = ""
-        var powerModType = ""
-
-        cardInAttackingMode.fieldEffects.forEach(effect => {
-            if(effect.includes("PowerMod")){
-
-            powerModType = effect.replace("PowerMod","")
-            console.log("POWERMODLOG: ",powerModType);
-            if(powerModType.includes("+")){
-                powerModDmg = powerModType.substring(powerModType.indexOf("+"));
-            }
-            if(powerModType.includes("*")){
-                powerModDmg = powerModType.substring(powerModType.indexOf("*"));
-            }
-            
-            powerModType = powerModType.replace(powerModDmg,"")
-            }
-        });
-        console.log("POWERMODLOG:"," dmg: ",powerModDmg," tpye: ",powerModType);
-        
-
-        //#region DMG CALCULATION
-        if(target.fieldEffects.includes("barrier")){
-            target.fieldEffects.splice(target.fieldEffects.indexOf("barrier"),1)
-        }
-        else if(target.fieldEffects.includes("invinsible")){
-            console.log("szar lehet")
+        if(target.tpye == "player"){
+            enemyGameParameters.health -= cardInAttackingMode.attack
         }
         else{
-        if(target.health - dmg >= 0){ //1 kezdés, 1 megáll
-            if(target.aligment.includes(powerModType)){
-                target.health -= eval(`(Math.ceil(${dmg}${powerModDmg}))`)
-            }
-            else{
-                target.health -= dmg
-            }
-            console.log("1 kezdés, 1 megáll");
 
-            if(target.health == 0){
-                CardDmgAnimationClient(`td${i}`,"halál","enemy",targetType)
-            }
-            else{
-                CardDmgAnimationClient(`td${i}`,"sebzés","enemy",targetType)
-            }
-        }
-        else{ //1 kezdés, tovább
-            
-            dmg -= target.health
-            target.health = 0 //első dead
-            CardDmgAnimationClient(`td${i}`,"halál","enemy",targetType)
+            cardInAttackingMode.health -= target.attack
+            var bombaN = 0
+            cardInAttackingMode.fieldEffects.forEach(effect => {
+                effect.includes("bomba") ? bombaN += 1 : {}
+            });
+            var dmg = cardInAttackingMode.attack + bombaN
+            var targetType = target.type
 
-            if(i < 5){ //1 kezdés, tovább
-                console.log(enemyBoard[i+5]);
-                if(enemyBoard[i+5] != "") {//1 kezdés, 2 tovább
+            var powerModDmg = ""
+            var powerModType = ""
 
-                    if(enemyBoard[i+5].health - dmg >= 0){ //1 kezdés, 2 megáll
-                        if(enemyBoard[i+5].aligment.includes(powerModType)){
-                            enemyBoard[i+5].health -= eval(`(Math.ceil(${dmg}${powerModDmg}))`)
-                        }
-                        else{
-                            enemyBoard[i+5].health -= dmg
-                        }
+            cardInAttackingMode.fieldEffects.forEach(effect => {
+                if(effect.includes("PowerMod")){
 
-                        console.log("1 kezdés, 2 megáll");
-
-                        if(enemyBoardDoms[i+5].health == 0){
-                            CardDmgAnimationClient(`td${i+5}`,"halál","enemy",targetType)
-                        }
-                        else{
-                            CardDmgAnimationClient(`td${i+5}`,"sebzés","enemy",targetType)
-                        }
-                    }
-                    else{ //1 kezdés, 2 tovább, 3 megáll
-                        
-
-                        dmg -= enemyBoard[i+5].health
-                        enemyBoard[i+5].health = 0
-                        
-                        CardDmgAnimationClient(`td${i+5}`,"halál","enemy",targetType)
-                        
-
-                        enemyGameParameters.health -= dmg
-                        console.log("1 kezdés, 2 tovább, 3 megáll");
-                    }
+                powerModType = effect.replace("PowerMod","")
+                console.log("POWERMODLOG: ",powerModType);
+                if(powerModType.includes("+")){
+                    powerModDmg = powerModType.substring(powerModType.indexOf("+"));
                 }
-                else{ //1kezdés, 2 nincs, 3 megáll
-                    enemyGameParameters.health -= dmg
-                    console.log("1kezdés, 2 nincs, 3 megáll");
+                if(powerModType.includes("*")){
+                    powerModDmg = powerModType.substring(powerModType.indexOf("*"));
                 }
-            }
-            else{ //2 kezdés, tovább
-                //2 kezdés, 3 megáll
-                enemyGameParameters.health -= dmg
-                console.log("2 kezdés, 3 megáll")
-            }
-        }
-        }
-        //#endregion
-        
-        //#region TALENTS
-        //---------------------------------------------------------------
-        //KETTŐS TÁMADÁS
-        if(!cardInAttackingMode.talent.includes("kettős támadás")){
-            //yourBoard[yourBoard.indexOf(cardInAttackingMode)].fieldEffects.push("asleep:")
-        }
-        else{
-            var whichAttack = Number(yourBoard[yourBoard.indexOf(cardInAttackingMode)].fieldEffects[0].replace("kettős:",""))
-            console.log("KETTŐSLOG: ",yourBoard[yourBoard.indexOf(cardInAttackingMode)],whichAttack);
-            
-            if(whichAttack < 2){
-                whichAttack++
-                yourBoard[yourBoard.indexOf(cardInAttackingMode)].fieldEffects[0] = `kettős:${whichAttack}`
-                console.log("KETTŐSLOG: after ++",yourBoard[yourBoard.indexOf(cardInAttackingMode)].fieldEffects[0]);
                 
-                if(whichAttack == 2){
-                yourBoard[yourBoard.indexOf(cardInAttackingMode)].fieldEffects[0] = "kettős:0"
-                yourBoard[yourBoard.indexOf(cardInAttackingMode)].fieldEffects.push("asleep:")
+                powerModType = powerModType.replace(powerModDmg,"")
                 }
-            }
-        }
-        //ÉLETELSZÍVÁS
-        if(cardInAttackingMode.talent.includes("életelszívás")){
-            var healAmount = Number(cardInAttackingMode.talent[(cardInAttackingMode.talent.indexOf("_"))+1])
-            console.log("ÉLETLOG: amount:", healAmount);
+            });
+            console.log("POWERMODLOG:"," dmg: ",powerModDmg," tpye: ",powerModType);
+            
 
-            yourBoard[yourBoard.indexOf(cardInAttackingMode)].health += healAmount
-        }
-        //TÖVISES BŐR
-        if(target.type == "character"){
-            if(target.talent.includes("tövisesbőr")){
-                yourBoard[yourBoard.indexOf(cardInAttackingMode)].health -= 1
+            //#region DMG CALCULATION
+            if(target.fieldEffects.includes("barrier")){
+                target.fieldEffects.splice(target.fieldEffects.indexOf("barrier"),1)
             }
-        }
-        
-        //BLAST TÁMADÁS l
-        if(cardInAttackingMode.talent.includes("robbanó támadás")){
-                if(i%5 != 4){ //ha a szélén van akkor ne menjen tovább, jobbral + balról is if
-                    //SEBZÉS
-                    if(enemyBoard[i+1] != ""){
-                        enemyBoard[i+1].health -= Math.ceil(dmg*(1/3))
-                        console.log("BLASTLOG: jobbrú");
-                    }
-                    //ANIM
-                    if(enemyBoard[i+1].health > 0 && enemyBoard[i+1] != ""){
-                        CardDmgAnimationClient(`td${i+1}`,"sebzés","enemy",targetType)
-                    }
-                    else if(enemyBoard[i+1].health <= 0 && enemyBoard[i+1] != ""){
-                        CardDmgAnimationClient(`td${i+1}`,"halál","enemy",targetType)
-                    }
+            else if(target.fieldEffects.includes("invinsible")){
+                console.log("szar lehet")
+            }
+            else{
+            if(target.health - dmg >= 0 || (cardInAttackingMode.name == "Emma" && target.type == "ko")){ //1 kezdés, 1 megáll
+                if(cardInAttackingMode.name == "Emma" && target.type == "ko"){
+                    targt.health = 0
+                    CardDmgAnimationClient(`td${i}`,"halál","enemy","ko")
+
+                    dmg -= 1
                 }
-                if(i%5 != 0){
-                    //SEBZÉS
-                    if(enemyBoard[i-1] != ""){
-                        enemyBoard[i-1].health -= Math.ceil(dmg*(1/3))
-                        console.log("BLASTLOG: barró");
+                else{
+                    if(target.aligment.includes(powerModType)){
+                        target.health -= eval(`(Math.ceil(${dmg}${powerModDmg}))`)
                     }
-                    //ANIM
-                    if(enemyBoard[i-1].health > 0 && enemyBoard[i-1] != ""){
-                        CardDmgAnimationClient(`td${i-1}`,"sebzés","enemy",targetType)
+                    else{
+                        target.health -= dmg
                     }
-                    else if(enemyBoard[i-1].health <= 0 && enemyBoard[i-1] != ""){
-                        CardDmgAnimationClient(`td${i-1}`,"halál","enemy",targetType)
+                    console.log("1 kezdés, 1 megáll");
+
+                    if(target.health == 0){
+                        CardDmgAnimationClient(`td${i}`,"halál","enemy",targetType)
+                    }
+                    else{
+                        CardDmgAnimationClient(`td${i}`,"sebzés","enemy",targetType)
                     }
                 }
-        }
-        // #endregion
+                
+            }
+            else{ //1 kezdés, tovább
+                
+                dmg -= target.health
+                target.health = 0 //első dead
+                CardDmgAnimationClient(`td${i}`,"halál","enemy",targetType)
 
-        //ALIGMENTS death related things
-        if(cardInAttackingMode.abilityType == "onatk"){
-            eval(`${cardInAttackingMode.ability}(cardInAttackingMode,target,i)`)
-        }
-        if(target.health == 0 && target.type == "character" && cardInAttackingMode.health > 0){
-            if(cardInAttackingMode.aligment.includes("vérszomjas")){
-                cardInAttackingMode.attack += 1
-                CellAligmentAnimation(`${yourBoard.indexOf(cardInAttackingMode)}vérszomjas`)
-            }
-            if(cardInAttackingMode.aligment.includes("veszett")){
-                cardInAttackingMode.health += 1
-                CellAligmentAnimation(`${yourBoard.indexOf(cardInAttackingMode)}veszett`)
-            }
-            if(cardInAttackingMode.aligment.includes("tunya") && cardInAttackingMode.attack != 1){
-                cardInAttackingMode.attack -= 1
-                CellAligmentAnimation(`${yourBoard.indexOf(cardInAttackingMode)}tunya`)
-            }
-            if(cardInAttackingMode.aligment.includes("lelkiismeretes")){
-                cardInAttackingMode.health -= 1
-                CellAligmentAnimation(`${yourBoard.indexOf(cardInAttackingMode)}lelkiismeretes`)
-            }
+                if(i < 5){ //1 kezdés, tovább
+                    console.log(enemyBoard[i+5]);
+                    if(enemyBoard[i+5] != "") {//1 kezdés, 2 tovább
 
-            //#region CHARACTER ABILITIES
-            if(cardInAttackingMode.abilityType == "onkill"){
-                eval(`${cardInAttackingMode.ability}(cardInAttackingMode)`)
+                        if(enemyBoard[i+5].health - dmg >= 0){ //1 kezdés, 2 megáll
+                            if(enemyBoard[i+5].aligment.includes(powerModType)){
+                                enemyBoard[i+5].health -= eval(`(Math.ceil(${dmg}${powerModDmg}))`)
+                            }
+                            else{
+                                enemyBoard[i+5].health -= dmg
+                            }
+
+                            console.log("1 kezdés, 2 megáll");
+
+                            if(enemyBoardDoms[i+5].health == 0){
+                                CardDmgAnimationClient(`td${i+5}`,"halál","enemy",targetType)
+                            }
+                            else{
+                                CardDmgAnimationClient(`td${i+5}`,"sebzés","enemy",targetType)
+                            }
+                        }
+                        else{ //1 kezdés, 2 tovább, 3 megáll
+                            
+
+                            dmg -= enemyBoard[i+5].health
+                            enemyBoard[i+5].health = 0
+                            
+                            CardDmgAnimationClient(`td${i+5}`,"halál","enemy",targetType)
+                            
+
+                            enemyGameParameters.health -= dmg
+                            console.log("1 kezdés, 2 tovább, 3 megáll");
+                        }
+                    }
+                    else{ //1kezdés, 2 nincs, 3 megáll
+                        enemyGameParameters.health -= dmg
+                        console.log("1kezdés, 2 nincs, 3 megáll");
+                    }
+                }
+                else{ //2 kezdés, tovább
+                    //2 kezdés, 3 megáll
+                    enemyGameParameters.health -= dmg
+                    console.log("2 kezdés, 3 megáll")
+                }
+            }
             }
             //#endregion
+            
+            //#region TALENTS
+            //---------------------------------------------------------------
+            //KETTŐS TÁMADÁS
+            if(!cardInAttackingMode.talent.includes("kettős támadás")){
+                //yourBoard[yourBoard.indexOf(cardInAttackingMode)].fieldEffects.push("asleep:")
+            }
+            else{
+                var whichAttack = Number(yourBoard[yourBoard.indexOf(cardInAttackingMode)].fieldEffects[0].replace("kettős:",""))
+                console.log("KETTŐSLOG: ",yourBoard[yourBoard.indexOf(cardInAttackingMode)],whichAttack);
+                
+                if(whichAttack < 2){
+                    whichAttack++
+                    yourBoard[yourBoard.indexOf(cardInAttackingMode)].fieldEffects[0] = `kettős:${whichAttack}`
+                    console.log("KETTŐSLOG: after ++",yourBoard[yourBoard.indexOf(cardInAttackingMode)].fieldEffects[0]);
+                    
+                    if(whichAttack == 2){
+                    yourBoard[yourBoard.indexOf(cardInAttackingMode)].fieldEffects[0] = "kettős:0"
+                    yourBoard[yourBoard.indexOf(cardInAttackingMode)].fieldEffects.push("asleep:")
+                    }
+                }
+            }
+            //ÉLETELSZÍVÁS
+            if(cardInAttackingMode.talent.includes("életelszívás")){
+                var healAmount = Number(cardInAttackingMode.talent[(cardInAttackingMode.talent.indexOf("_"))+1])
+                console.log("ÉLETLOG: amount:", healAmount);
+
+                yourBoard[yourBoard.indexOf(cardInAttackingMode)].health += healAmount
+            }
+            //TÖVISES BŐR
+            if(target.type == "character"){
+                if(target.talent.includes("tövisesbőr")){
+                    yourBoard[yourBoard.indexOf(cardInAttackingMode)].health -= 1
+                }
+            }
+            
+            //BLAST TÁMADÁS l
+            if(cardInAttackingMode.talent.includes("robbanó támadás")){
+                    if(i%5 != 4){ //ha a szélén van akkor ne menjen tovább, jobbral + balról is if
+                        //SEBZÉS
+                        if(enemyBoard[i+1] != ""){
+                            enemyBoard[i+1].health -= Math.ceil(dmg*(1/3))
+                            console.log("BLASTLOG: jobbrú");
+                        }
+                        //ANIM
+                        if(enemyBoard[i+1].health > 0 && enemyBoard[i+1] != ""){
+                            CardDmgAnimationClient(`td${i+1}`,"sebzés","enemy",targetType)
+                        }
+                        else if(enemyBoard[i+1].health <= 0 && enemyBoard[i+1] != ""){
+                            CardDmgAnimationClient(`td${i+1}`,"halál","enemy",targetType)
+                        }
+                    }
+                    if(i%5 != 0){
+                        //SEBZÉS
+                        if(enemyBoard[i-1] != ""){
+                            enemyBoard[i-1].health -= Math.ceil(dmg*(1/3))
+                            console.log("BLASTLOG: barró");
+                        }
+                        //ANIM
+                        if(enemyBoard[i-1].health > 0 && enemyBoard[i-1] != ""){
+                            CardDmgAnimationClient(`td${i-1}`,"sebzés","enemy",targetType)
+                        }
+                        else if(enemyBoard[i-1].health <= 0 && enemyBoard[i-1] != ""){
+                            CardDmgAnimationClient(`td${i-1}`,"halál","enemy",targetType)
+                        }
+                    }
+            }
+            // #endregion
+
+            //ALIGMENTS, death related things
+            if(target.health == 0 && target.type == "character" && cardInAttackingMode.health > 0){
+                if(cardInAttackingMode.aligment.includes("vérszomjas")){
+                    cardInAttackingMode.attack += 1
+                    CellAligmentAnimation(`${yourBoard.indexOf(cardInAttackingMode)}vérszomjas`)
+                }
+                if(cardInAttackingMode.aligment.includes("veszett")){
+                    cardInAttackingMode.health += 1
+                    CellAligmentAnimation(`${yourBoard.indexOf(cardInAttackingMode)}veszett`)
+                }
+                if(cardInAttackingMode.aligment.includes("tunya") && cardInAttackingMode.attack != 1){
+                    cardInAttackingMode.attack -= 1
+                    CellAligmentAnimation(`${yourBoard.indexOf(cardInAttackingMode)}tunya`)
+                }
+                if(cardInAttackingMode.aligment.includes("lelkiismeretes")){
+                    cardInAttackingMode.health -= 1
+                    CellAligmentAnimation(`${yourBoard.indexOf(cardInAttackingMode)}lelkiismeretes`)
+                }
+
+                //#region CHARACTER ABILITIES
+                if(cardInAttackingMode.abilityType == "onkill"){
+                    eval(`${cardInAttackingMode.ability}(cardInAttackingMode)`)
+                }
+                //#endregion
+            }
+            var cardInAPId = cardDomInAttackingMode.parentNode.id
+            if(cardInAttackingMode.health <= 0){
+            setTimeout(() => {
+                CardDmgAnimationClient(cardInAPId,"halál","your","character")
+            }, 450);
+            }
         }
-        var cardInAPId = cardDomInAttackingMode.parentNode.id
-        if(cardInAttackingMode.health <= 0){
-        setTimeout(() => {
-            CardDmgAnimationClient(cardInAPId,"halál","your","character")
-        }, 450);
+        if(cardInAttackingMode.abilityType == "onatk"){
+            eval(`${cardInAttackingMode.ability}(cardInAttackingMode,target,i)`)
         }
 
         SendGameData(yourGameParameters)
@@ -1559,7 +1626,7 @@
             console.log("ABILOG: ", "WOOO KIJÁTSZOTTÁL");
         }
 
-        //#region KARAKETERK
+        //#region TANARS
         //abc sorrend
         function Bizso(card){
             BizsoEndTurnClient()
@@ -1611,11 +1678,44 @@
             ClearBoardPhs()
             ClearAttackModes()
         }
+        function Bencus(card,i){
+            card.attack += yourHand.length
+
+            yourBoardDoms[i].children[0].children[5].style.animation = "none"
+            yourBoardDoms[i].children[0].children[5].offsetHeight
+            yourBoardDoms[i].children[0].children[5].style.animation = "statHeal 1s"
+        }
         function Blazó(card){
             card.source = BlazóS
             card.attack = Math.floor(card.attack*1.5)
             card.health = card.attack
             yourBoard = yourBoard
+        }
+        function Dobi(card){
+            var targets = []
+            for(let i =0;i< enemyBoard.length;i++){
+                enemyBoard[i] != "" ? targets.push([enemyBoard[i],i]) : {}
+            }
+            targets.push(enemyGameParameters)
+            function dmgEnemy(){
+                    function chooseEnemy(){
+                        if(targets[Math.floor(Math.random() * (targets))][0].health > 0){
+                            targets[Math.floor(Math.random() * (targets))][0].health -= 1
+                            SendGameData(enemyGameParameters)
+                        }else{
+                            chooseEnemy()
+                        }
+                    }
+                }
+            Array(card.attack).forEach(() => {
+                setTimeout(() => {
+                    dmgEnemy()
+                },1000)
+            });
+            for(let i =0;i< targets.length-1;i++){
+                targets[i][0].health > 0 ? CardDmgAnimationClient(`td${targets[i][0]}`,"sebzés","enemy","character") : CardDmgAnimationClient(`td${targets[i][0]}`,"halál","enemy","character")
+
+            }  
         }
         async function Farkas(card,index){
             var targets = Array.from(enemyBoard)
@@ -2095,6 +2195,26 @@
             yourBoard = yourBoard
             SendGameData(yourGameParameters)
         }
+        async function Rixer(card,i){
+            var targets = Array.from(yourBoard).concat(Array.from(enemyBoard))
+            
+            if(targets.some(element => element !== '')){
+                selectableCardDoms = Array.from(yourBoardDoms).concat(Array.from(enemyBoardDoms))
+                selectableCardDoms = selectableCardDoms
+            
+                EnableTargetSelectionMode(targets)
+                const result = await getUserChoice()
+                var domID = result.i
+                result.side == 'your' ? domID = domID : domID += yourBoard.length
+            
+                DealDmg(result.target,result.i,4,result.side)
+
+                SendGameData(yourGameParameters)
+                SendGameData(enemyGameParameters)
+            
+                DeleteSelectTargetMode()
+            }
+        }
         function Rozgonyi(card,j){
             for(let i=0;i<yourBoard.length;i++){
                 if(yourBoard[i] != ""){
@@ -2180,7 +2300,188 @@
 
         }
         //#endregion
+        //#region DIAKS
+        function Abigel(){
+            for(let i=0;i<yourHand.length;i++){
+                if(yourHand[i].type == "character"){
+                    yourHand[i].attack += 1
+                    yourHand[i].health += 1
 
+                    cardsInHandDoms[i].children[5].style.animation = "none"
+                    cardsInHandDoms[i].children[5].offsetHeight
+                    cardsInHandDoms[i].children[5].style.animation = "statHeal 1s"
+                    cardsInHandDoms[i].children[6].style.animation = "none"
+                    cardsInHandDoms[i].children[6].offsetHeight
+                    cardsInHandDoms[i].children[6].style.animation = "statHeal 1s"
+                }
+            }
+            SendGameData(yourGameParameters)
+        }
+        function Arho(card,i){
+            CreateSGEndre()
+        }
+        function Balo(card,i){
+            function Tomi(card,i){
+                SummoningLocation(true)
+
+                yourBoardPhs.fill("")
+                for (let i = 0; i<yourBoardPhs.length;i++){
+                    if(yourBoard[i] == ""){
+                        yourBoardPhs[i] = Cards.NokedliCard
+                    }
+                }
+                yourBoardPhs = yourBoardPhs
+
+                SendGameData(yourGameParameters)
+            }
+        }
+        function Gitta(i){
+            yourBoard[i].attack += 1
+            
+            yourBoardDoms[i].children[0].children[5].style.animation = "none"
+            yourBoardDoms[i].children[0].children[5].offsetHeight
+            yourBoardDoms[i].children[0].children[5].style.animation = "statHeal 1s"
+
+            SendGameData(yourGameParameters)
+        }
+        async function Juli(card){
+            var isParagi = yourBoard.some(e=>e.name == "Paragi")
+            if(isParagi){
+                var targets = Array.from(enemyBoard)
+            
+                if(targets.some(element => element !== '')){
+                    for(let i = 0; i<targets.length; i++){
+                        if(targets[i] != ''){
+                            selectableCardDoms.push(enemyBoardDoms[i])
+                        }
+                    }
+                    selectableCardDoms = selectableCardDoms
+                
+                    EnableTargetSelectionMode(targets)
+                    const result = await getUserChoice()
+                    var domID = result.i
+                    StunnEnemy(result.target,1,result.side)
+                    SendGameData(enemyGameParameters)
+                    DeleteSelectTargetMode()
+
+                    CreateSGEndre()
+                }
+            }
+            else{
+                var Juli1 = Object.assign({}, Cards.JuliCard)
+                var Juli2 = Object.assign({}, Cards.JuliCard)
+                Juli1.description = "<b>Kábíts el</b> (1) egy kártyát"
+                Juli2.description = "Készíts egy <b>'Ságvári Endre szobor'</b> kártyát egy szabadon választott üres mezőre a térfeleden"
+                EnableChoosingMode([Juli1,Juli2])
+                const result = await getUserChoice();
+                DeleteChoosingMode()
+                if(result.description == Juli1.description){
+                    var targets = Array.from(enemyBoard)
+            
+                    if(targets.some(element => element !== '')){
+                        for(let i = 0; i<targets.length; i++){
+                            if(targets[i] != ''){
+                                selectableCardDoms.push(enemyBoardDoms[i])
+                            }
+                        }
+                        selectableCardDoms = selectableCardDoms
+                    
+                        EnableTargetSelectionMode(targets)
+                        const result2 = await getUserChoice()
+                        var domID = result2.i
+                        StunnEnemy(result2.target,1,result2.side)
+                        SendGameData(enemyGameParameters)
+                        DeleteSelectTargetMode()
+                    }
+                }else {
+                    CreateSGEndre()
+                }
+                
+            }
+            
+            SendGameData(yourGameParameters)
+        
+        }
+        function Miklos(){
+            CreateSGEndre()
+            setTimeout(() => {
+
+                function CheckDone(){
+                    if(isSummonLocationChoosing == true){
+                        setTimeout(() => {
+                            CheckDone()
+                        }, 1000);
+                    }
+                    else{
+                        CreateSGEndre()
+                    }
+                }
+                CheckDone()
+            },1000);
+        }
+        async function NagyBenedek(){
+            var targets = Array.from(yourBoard)
+            
+            if(targets.some(element => element !== '')){
+                for(let i = 0; i<targets.length; i++){
+                    if(targets[i] != ''){
+                        selectableCardDoms.push(yourBoardDoms[i])
+                    }
+                }
+                selectableCardDoms = selectableCardDoms
+            
+                EnableTargetSelectionMode(targets)
+                const result = await getUserChoice()
+                var domID = result.i
+            
+                result.target.attack += 2
+                yourBoardDoms[domID].children[0].children[5].style.animation = "none"
+                yourBoardDoms[domID].children[0].children[5].offsetHeight
+                yourBoardDoms[domID].children[0].children[5].style.animation = "statHeal 1s"
+
+                SendGameData(yourGameParameters)
+            
+                DeleteSelectTargetMode()
+            }
+        }
+        function NagyGyorgyBalazs(card,i){
+            i%5 != 4 && yourBoard[i+1] != "" ? Evolve(yourBoard[i+1].cost,i+1,1) : {}
+            i%5 != 0 && yourBoard[i-1] != "" ? Evolve(yourBoard[i-1].cost,i-1,1) : {}
+            i>4 && yourBoard[i-5] != "" ? Evolve(yourBoard[i-5].cost,i-5,1) : {}
+            i<5 && yourBoard[i+5] != "" ? Evolve(yourBoard[i+5].cost,i-5,1) : {}
+        }
+        function Reka(){
+            yourBoard.some(e => e.name == "Barni") ? DrawOne() : {}
+        }
+        function VBalint(){
+            var Cost2Candidets = []
+            Cards.allCardsArr.forEach(element => {
+                element.cost == 2 && element.type == "character" ? Cost2Candidets.push(element) : {}
+            });
+            var random = Cost2Candidets[Math.floor(Math.random() * Cost2Candidets.length)]
+            random.talent.includes("fürge") == false ? random.fieldEffects.push("asleep:") : {}
+            if(yourBoard.some(e => e == "")){
+                function CheckPlaceing(index){
+                    index == yourBoard.length ? index = 1 : {}
+                    yourBoard[index] == "" ? yourBoard[index] = random : CheckPlaceing(index+1)
+                }
+                CheckPlaceing(0)
+            }
+        }
+        function Zalan(card){
+            yourHand.push(Cards.palacsintaFeszCard)
+            cardsInYourHandClass.push("cardTemplate")
+            yourHand = yourHand
+
+            card.abilityType = "onatk"
+            card.ability = "ZalanOnatk"
+            SendGameData(yourGameParameters)
+        }
+        function ZalanOnatk(){
+            giveDobi(".attack += 2")
+            giveDObi(".health += 2")
+        }
+        //#endregion
         //#region SPELLEK
         async function Acelpajzs(){
             var targets = Array.from(yourBoard).concat(Array.from(enemyBoard))
@@ -2201,31 +2502,14 @@
                 DeleteSelectTargetMode()
             }
         }
-        async function Agyhalal(){
-            var targets = Array.from(yourBoard).concat(Array.from(enemyBoard))
-            
-            if(targets.some(element => element !== '')){
-                selectableCardDoms = Array.from(yourBoardDoms).concat(Array.from(enemyBoardDoms))
-                selectableCardDoms = selectableCardDoms
-                
-                EnableTargetSelectionMode(targets)
-                const result = await getUserChoice()
-                var domID = result.i
-                result.side == "your" ? domID = domID : domID += yourBoard.length
-                
-                var Sindex = targets[domID].fieldEffects.findIndex(element => element.includes('spellshield'));
-                if(Sindex === -1){
-                    SilenceEnemy(result.target,1,result.side)
+        function Atomrobbanas(){
+            for(let i=0;i<yourBoard.length;i++){
+                if(yourBoard[i] != ""){
+                    yourBoard.fieldEffects.some(e=>e.includes("spellshield")) ? DealDmg(yourBoard[i],i,99999,"your") : {}
                 }
-                else{
-                    result.target.fieldEffects.splice(Sindex,1)
+                if(enemyBoard[i] != ""){
+                    enemyBoard.fieldEffects.some(e=>e.includes("spellshield")) ? DealDmg(enemyBoard[i],i,99999,"enemy") : {}
                 }
-                console.log("SPELLLOG: ",yourBoard);
-                
-                SendGameData(yourGameParameters)
-                SendGameData(enemyGameParameters)
-                
-                DeleteSelectTargetMode()
             }
         }
         async function Alazatossag(){
@@ -2320,6 +2604,170 @@
                 DeleteSelectTargetMode()
             }
         }
+        async function Enyem(){
+            var targets = Array.from(enemyBoard)
+            
+            if(targets.some(element => element !== '')){
+                for(let i = 0; i<targets.length; i++){
+                    if(targets[i] != ''){
+                        selectableCardDoms.push(enemyBoardDoms[i])
+                    }
+                }
+                selectableCardDoms = selectableCardDoms
+            
+                EnableTargetSelectionMode(targets)
+                const result = await getUserChoice()
+                var domID = result.i
+                
+                var Sindex = targets[domID].fieldEffects.findIndex(element => element.includes('spellshield'));
+                if(Sindex === -1){
+                    SummoningLocation(true)
+
+                    yourBoardPhs.fill("")
+                    for (let i = 0; i<yourBoardPhs.length+1;i++){
+                        if(yourBoard[i] == ""){
+                            yourBoardPhs[i] =result.target
+                        }
+                    }
+                    yourBoardPhs = yourBoardPhs
+                }
+                else{
+                    result.target.fieldEffects.splice(Sindex,1)
+                }
+
+                SendGameData(enemyGameParameters)
+            
+                DeleteSelectTargetMode()
+            }
+        }
+        async function EzVagyAz(){
+            var isParagi = yourBoard.some(e=>e.name == "Paragi")
+            if(isParagi){
+                var targets = Array.from(yourBoard)
+            
+                if(targets.some(element => element !== '')){
+                    for(let i = 0; i<targets.length; i++){
+                        if(targets[i] != ''){
+                            selectableCardDoms.push(yourBoardDoms[i])
+                        }
+                    }
+                    selectableCardDoms = selectableCardDoms
+                
+                    EnableTargetSelectionMode(targets)
+                    const result2 = await getUserChoice()
+                    var domID = result2.i
+
+                    result2.target.attack += 3
+                    result2.target.health += 3
+
+                    yourBoardDoms[result.i].children[0].children[5].style.animation = "none"
+                    yourBoardDoms[result.i].children[0].children[5].offsetHeight
+                    yourBoardDoms[result.i].children[0].children[5].style.animation = "statHeal 1s"
+                    yourBoardDoms[result.i].children[0].children[6].style.animation = "none"
+                    yourBoardDoms[result.i].children[0].children[6].offsetHeight
+                    yourBoardDoms[result.i].children[0].children[6].style.animation = "statHeal 1s"
+                    
+                    DeleteSelectTargetMode()
+                } 
+            }
+            else{
+                var choice1 = Cards.ezVagyAzCard
+                var choice2 = Cards.ezVagyAzCard
+                choice1.description = "Egy szabadon választott kártyának a térfeleden +3atk"
+                choice2.description = "Egy szabadon választott kártyának a térfeleden +3hp"
+                EnableChoosingMode([choice1,choice2])
+                const result = await getUserChoice();
+                DeleteChoosingMode()
+                var targets = Array.from(yourBoard)
+            
+                if(targets.some(element => element !== '')){
+                    for(let i = 0; i<targets.length; i++){
+                        if(targets[i] != ''){
+                            selectableCardDoms.push(yourBoardDoms[i])
+                        }
+                    }
+                    selectableCardDoms = selectableCardDoms
+                
+                    EnableTargetSelectionMode(targets)
+                    const result2 = await getUserChoice()
+                    var domID = result2.i
+                    if(result2.target.description == choice1.description){
+                        result2.target.attack += 3
+
+                        yourBoardDoms[result.i].children[0].children[5].style.animation = "none"
+                        yourBoardDoms[result.i].children[0].children[5].offsetHeight
+                        yourBoardDoms[result.i].children[0].children[5].style.animation = "statHeal 1s"
+                    }else {
+                        result2.target.health += 3
+
+                        yourBoardDoms[result.i].children[0].children[6].style.animation = "none"
+                        yourBoardDoms[result.i].children[0].children[6].offsetHeight
+                        yourBoardDoms[result.i].children[0].children[6].style.animation = "statHeal 1s"
+                    }
+                    
+                    SendGameData(yourGameParameters)
+                    DeleteSelectTargetMode()
+                } 
+            }
+    
+            SendGameData(yourGameParameters)
+        }
+        async function Fakard(){
+            var targets = Array.from(yourBoard).concat(Array.from(enemyBoard))
+            
+            if(targets.some(element => element !== '')){
+                selectableCardDoms = Array.from(yourBoardDoms).concat(Array.from(enemyBoardDoms))
+                selectableCardDoms = selectableCardDoms
+                
+                EnableTargetSelectionMode(targets)
+                const result = await getUserChoice()
+                var domID = result.i
+                result.side == "your" ? domID = domID : domID += yourBoard.length
+                
+                result.target.attack += 1
+                if(result.side == "your"){
+                    yourBoardDoms[result.i].children[0].children[5].style.animation = "none"
+                    yourBoardDoms[result.i].children[0].children[5].offsetHeight
+                    yourBoardDoms[result.i].children[0].children[5].style.animation = "statHeal 1s"
+                }
+                else {
+                    enemyBoardDoms[result.i].children[0].children[5].style.animation = "none"
+                    enemyBoardDoms[result.i].children[0].children[5].offsetHeight
+                    enemyBoardDoms[result.i].children[0].children[5].style.animation = "statHeal 1s"
+                }
+
+                SendGameData(enemyGameParameters)
+                SendGameData(yourGameParameters)
+                
+                DeleteSelectTargetMode()
+            }
+        }
+        async function Feleles(){
+            var targets = Array.from(yourBoard).concat(Array.from(enemyBoard))
+            
+            if(targets.some(element => element !== '')){
+                selectableCardDoms = Array.from(yourBoardDoms).concat(Array.from(enemyBoardDoms))
+                selectableCardDoms = selectableCardDoms
+                
+                EnableTargetSelectionMode(targets)
+                const result = await getUserChoice()
+                var domID = result.i
+                result.side == "your" ? domID = domID : domID += yourBoard.length
+                
+                var Sindex = targets[domID].fieldEffects.findIndex(element => element.includes('spellshield'));
+                if(Sindex === -1){
+                    result.target.bonusTraits.some(e => e.includes("diák")) ? DealDmg(result.target,result.i,5,result.side) : DealDmg(result.target,result.i,2,result.side)
+                }
+                else{
+                    result.target.fieldEffects.splice(Sindex,1)
+                }
+
+                SendGameData(enemyGameParameters)
+                SendGameData(yourGameParameters)
+                
+                DeleteSelectTargetMode()
+            }
+        }
         function Falanx(){
             for(let i = 5;i<yourBoard.length;i++){
                 if(yourBoard[i] != "" && yourBoard[i-(yourBoard.length/2)] == ""){
@@ -2344,6 +2792,15 @@
                 enemyGameParameters.mana = 0
             }
             SendGameData(enemyGameParameters)
+            SendGameData(yourGameParameters)
+        }
+        function JavitoDolgozat(){
+            yourHand.splice(Math.floor(Math.random() * yourHand.length),1)
+            cardsInYourHandClass.pop()
+            DrawOne()
+            DrawOne()
+            DrawOne()
+
             SendGameData(yourGameParameters)
         }
         function JegkremAzUdvaron(){
@@ -2383,6 +2840,73 @@
                 DeleteSelectTargetMode()
             }
         }
+        async function Kaloda(){
+            var targets = Array.from(yourBoard).concat(Array.from(enemyBoard))
+            
+            if(targets.some(element => element !== '')){
+                selectableCardDoms = Array.from(yourBoardDoms).concat(Array.from(enemyBoardDoms))
+                selectableCardDoms = selectableCardDoms
+                
+                EnableTargetSelectionMode(targets)
+                const result = await getUserChoice()
+                var domID = result.i
+                result.side == "your" ? domID = domID : domID += yourBoard.length
+                
+                var Sindex = targets[domID].fieldEffects.findIndex(element => element.includes('spellshield'));
+                if(Sindex === -1){
+                    SilenceEnemy(result.target,1,result.side)
+                }
+                else{
+                    result.target.fieldEffects.splice(Sindex,1)
+                }
+                console.log("SPELLLOG: ",yourBoard);
+                
+                SendGameData(yourGameParameters)
+                SendGameData(enemyGameParameters)
+                
+                DeleteSelectTargetMode()
+            }
+        }
+        function KiosztjakADogat(){
+            var random = yourGameParameters.remaningCards[Math.floor(Math.random() * yourGameParameters.remaningCards.length)]
+            VisualAnimationEnabler(random)
+            var randomDmg = random.cost
+            for(let i=0; i<enemyBoard.length;i++){
+                enemyBoard[i] != "" ? DealDmg(enemyBoard[i],i,randomDmg,"enemy") : {}
+            }
+            
+        }
+        async function Kiteres(){
+            var targets = Array.from(yourBoard)
+            
+            if(targets.some(element => element !== '')){
+                for(let i = 0; i<targets.length; i++){
+                    if(targets[i] != ''){
+                        selectableCardDoms.push(yourBoardDoms[i])
+                    }
+                }
+                selectableCardDoms = selectableCardDoms
+            
+                EnableTargetSelectionMode(targets)
+                const result = await getUserChoice()
+                var domID = result.i
+
+                SummoningLocation(true)
+
+                yourBoardPhs.fill("")
+                for (let i = 0; i<yourBoardPhs.length+1;i++){
+                    if(yourBoard[i] == ""){
+                        yourBoardPhs[i] = result.target
+                    }
+                }
+                yourBoardPhs = yourBoardPhs
+                yourBoard[domID] = ""
+
+                SendGameData(yourGameParameters)
+            
+                DeleteSelectTargetMode()
+            }
+        }
         function Kommunizmus(){
             for(let i = 0;i<yourBoard.length;i++){
                 if(yourBoard[i] != ""){
@@ -2416,6 +2940,94 @@
                 }
             }
         }
+        async function Lyukasora(card){
+            var isParagi = yourBoard.some(e=>e.name == "Paragi")
+            if(isParagi){
+                var targets = Array.from(yourBoard)
+            
+                if(targets.some(element => element !== '')){
+                    for(let i = 0; i<targets.length; i++){
+                        if(targets[i] != ''){
+                            selectableCardDoms.push(yourBoardDoms[i])
+                        }
+                    }
+                    selectableCardDoms = selectableCardDoms
+                
+                    EnableTargetSelectionMode(targets)
+                    const result = await getUserChoice()
+                    var domID = result.i
+                    
+                    result.target.health += 3 
+                    yourBoardDoms[domID].children[0].children[6].style.animation = "none"
+                    yourBoardDoms[domID].children[0].children[6].offsetHeight
+                    yourBoardDoms[domID].children[0].children[6].style.animation = "statHeal 1s"
+
+                    var frozen = result.target.fieldEffects.findIndex(e => e.includes("frozen"))
+                    var stunn = result.target.fieldEffects.findIndex(e => e.includes("stunn"))
+                    var silence = result.target.fieldEffects.findIndex(e => e.includes("silence"))
+                    var bomba = result.target.fieldEffects.findIndex(e => e.includes("bomba"))
+                    frozen != -1 ? result.target.fieldEffects.splice(frozen,1) : {}
+                    stunn != -1 ? result.target.fieldEffects.splice(stunn,1) : {}
+                    silence != -1 ? result.target.fieldEffects.splice(silence,1) : {}
+                    bomba != -1 ? result.target.fieldEffects.splice(bomba,1) : {}
+
+                    SendGameData(yourGameParameters)
+                    DeleteSelectTargetMode()
+                }
+            }
+            else{
+                var Lyukas1 = Object.assign({}, Cards.lyukasoraCard)
+                var Lyukas2 = Object.assign({}, Cards.lyukasoraCard)
+                Lyukas1.description = "Levesz minden gyengítő hatást egy szabadon választott térfeleden lévő célpontról."
+                Lyukas2.description = "Gyógyít 3 életerőpontot egy szabadon választott térfeleden lévő célpontról."
+                EnableChoosingMode([Lyukas1,Lyukas2])
+                const result = await getUserChoice();
+                DeleteChoosingMode()
+
+
+                var targets = Array.from(yourBoard)
+            
+                if(targets.some(element => element !== '')){
+                    for(let i = 0; i<targets.length; i++){
+                        if(targets[i] != ''){
+                            selectableCardDoms.push(yourBoardDoms[i])
+                        }
+                    }
+                    selectableCardDoms = selectableCardDoms
+                
+                    EnableTargetSelectionMode(targets)
+                    const result = await getUserChoice()
+                    var domID = result.i
+                    
+                    if(result.description == Lyukas1.description){
+                        result.target.health += 3 
+                        yourBoardDoms[domID].children[0].children[6].style.animation = "none"
+                        yourBoardDoms[domID].children[0].children[6].offsetHeight
+                        yourBoardDoms[domID].children[0].children[6].style.animation = "statHeal 1s"
+                    }
+                    else{
+                        var frozen = result.target.fieldEffects.findIndex(e => e.includes("frozen"))
+                        var stunn = result.target.fieldEffects.findIndex(e => e.includes("stunn"))
+                        var silence = result.target.fieldEffects.findIndex(e => e.includes("silence"))
+                        var bomba = result.target.fieldEffects.findIndex(e => e.includes("bomba"))
+                        frozen != -1 ? result.target.fieldEffects.splice(frozen,1) : {}
+                        stunn != -1 ? result.target.fieldEffects.splice(stunn,1) : {}
+                        silence != -1 ? result.target.fieldEffects.splice(silence,1) : {}
+                        bomba != -1 ? result.target.fieldEffects.splice(bomba,1) : {}
+                    }   
+                    DeleteSelectTargetMode()
+                }
+                
+            }
+            
+            SendGameData(yourGameParameters)
+        
+        }
+        function GOsztalyEltorlese(){
+            for(let i=0;i<enemyBoard.length;i++){
+                enemyBoard[i] != "" ? DealDmg(enemyBoard[i],i,99999,"enemy") : {}
+            }
+        }
         function Gravitacio(){
             for(let i= 0;i<enemyBoard.length/2;i++){
                 if(enemyBoard[i] != ""){
@@ -2437,6 +3049,121 @@
             }
             SendGameData(enemyGameParameters)
         }
+        async function Metamorfózis(){
+            var targets = Array.from(yourBoard)
+            
+            if(targets.some(element => element !== '')){
+                for(let i = 0; i<targets.length; i++){
+                    if(targets[i] != ''){
+                        selectableCardDoms.push(yourBoardDoms[i])
+                    }
+                }
+                selectableCardDoms = selectableCardDoms
+            
+                EnableTargetSelectionMode(targets)
+                const result = await getUserChoice()
+                var domID = result.i
+            
+                Evolve(result.target,result.i,1)
+                var fleetMeta = Cards.metamorfozisCard
+                fleetMeta.name = "Elillanó metamorfózis"
+                yourHand.push(fleetMeta)
+                cardsInYourHandClass.push("cardTemplate")
+
+                SendGameData(yourGameParameters)
+            
+                DeleteSelectTargetMode()
+            }
+        }
+        async function Mitózis(){
+            var targets = Array.from(yourBoard)
+            
+            if(targets.some(element => element !== '')){
+                for(let i = 0; i<targets.length; i++){
+                    if(targets[i] != ''){
+                        selectableCardDoms.push(yourBoardDoms[i])
+                    }
+                }
+                selectableCardDoms = selectableCardDoms
+            
+                EnableTargetSelectionMode(targets)
+                const result = await getUserChoice()
+                var domID = result.i
+                
+
+                SummoningLocation(true)
+                yourBoardPhs.fill("")
+                for (let i = 0; i<yourBoardPhs.length+1;i++){
+                    if(yourBoard[i] == ""){
+                        yourBoardPhs[i] = result.target
+                    }
+                }
+                yourBoardPhs = yourBoardPhs
+                
+
+                SendGameData(yourGameParameters)
+            
+                DeleteSelectTargetMode()
+            }
+        }
+        function Mezeskalacs(){
+            for(let j=0;j<yourBoard.length;j++){
+                if(yourBoard[j].type == "ko"){
+                    var mezesKo = {
+                        attack: 0,
+                        health: Math.ceil(2*turnCount/3),
+                        type: "ko",
+                        cost: 0,
+                        abilityType: "onturnend",
+                        ability: "MezeskalacsKo",
+                        fieldEffects: []
+                    }
+                    
+                    yourBoard[j] = mezesKo
+                }
+            }
+        }
+        async function Nagytestver(){
+            var targets = Array.from(yourBoard).concat(Array.from(enemyBoard))
+            
+            if(targets.some(element => element !== '')){
+                selectableCardDoms = Array.from(yourBoardDoms).concat(Array.from(enemyBoardDoms))
+                selectableCardDoms = selectableCardDoms
+                
+                EnableTargetSelectionMode(targets)
+                const result = await getUserChoice()
+                var domID = result.i
+                result.side == "your" ? domID = domID : domID += yourBoard.length
+                
+                var numberOfUnits
+                targets.forEach(element => {
+                    element != "" ? numberOfUnits++ : {}
+                })
+                result.target.attack += numberOfUnits
+                if(result.side == "your"){
+                    yourBoardDoms[result.i].children[0].children[5].style.animation = "none"
+                    yourBoardDoms[result.i].children[0].children[5].offsetHeight
+                    yourBoardDoms[result.i].children[0].children[5].style.animation = "statHeal 1s"
+                }
+                else {
+                    enemyBoardDoms[result.i].children[0].children[5].style.animation = "none"
+                    enemyBoardDoms[result.i].children[0].children[5].offsetHeight
+                    enemyBoardDoms[result.i].children[0].children[5].style.animation = "statHeal 1s"
+                }
+
+                SendGameData(enemyGameParameters)
+                SendGameData(yourGameParameters)
+                
+                DeleteSelectTargetMode()
+            }
+        }
+        function NemSzelloztettek(){
+            for(let i= 0; i<enemyBoard.length;i++){
+                enemyBoard[i] != "" ? DealDmg(enemyBoard[i],i,1,"enemy") : {}
+            }
+            enemyGameParameters.health -= 1
+            SendGameData(enemyGameParameters)
+        }
         function NemTudod(){
             for(let i = 0;i<enemyBoard.length;i++){
                 if(enemyBoard[i] != ""){
@@ -2447,6 +3174,19 @@
                         NemTudod()
                     }, 1000);
                         
+                    }
+                }
+            }
+        }
+        function NincsFutes(){
+            for(let i=0;i<enemyBoard.length;i++){
+                if(enemyBoard[i] != ""){
+                    var Sindex = enemyBoard[i].fieldEffects.findIndex(element => element.includes('spellshield'));
+                    if(Sindex === -1){
+                        FreezEnemy(enemyBoard[i],enemyBoardDoms[i],1,"enemy")
+                    }
+                    else{
+                        result.target.fieldEffects.splice(Sindex,1)
                     }
                 }
             }
@@ -2522,6 +3262,19 @@
                 DeleteSelectTargetMode()
             }
         }
+        function Osztalytalalkozo(){
+            var oregCandid = []
+            
+            Cards.allCardsArr.forEach(element => {
+                element.bonusTraits.some(e => e == "öreg ságváris") ? oregCandid.push(element) : {}
+            });
+            if(orgCandid != []){
+                yourHand.push(oregCandid[Math.floor(Math.random() * oregCandid.length)])
+                cardsInYourHandClass.push("cardTemplate")
+
+                SendGameData(yourGameParameters)
+            }
+        }
         async function PirosLampa(){
             var targets = Array.from(enemyBoard)
             
@@ -2549,6 +3302,49 @@
             
                 DeleteSelectTargetMode()
             }
+        }
+        function Puskazas(){
+            isInChoosingMode = true
+            isInChoosingMode = isInChoosingMode
+            cardChoosingModeOptions = Array.from(enemyGameParameters.remaningDeck).slice(-5)
+            cardChoosingModeOptions = cardChoosingModeOptions
+            setTimeout(() => {
+                isInChoosingMode = false
+                isInChoosingMode = isInChoosingMode
+                cardChoosingModeOptions = []
+                cardChoosingModeOptions = cardChoosingModeOptions
+            },5000)
+        }
+        function Rng(){
+            var targets = []
+            for(let i=0;i<enemyBoard.length;i++){
+                if(enemyBoard[i] != ""){
+                    targets.push(i)
+                }
+            }
+            targets.push(enemyGameParameters)
+            
+            function dmg(){
+                let random = targets[Math.floor(Math.random()*targets.length)]
+                if(random.type == "character" || random.type == "ko"){
+                    var Sindex = enemyBoard[random].fieldEffects.findIndex(element => element.includes('spellshield'));
+                    if(Sindex !== -1){
+                        DealDmg(enemyBoard[random],random1,1,"enemy")
+                    }
+                    else{
+                        enemyBoard[random].fieldEffects.splice(Sindex,1)
+                    }
+                }
+                else{
+                    enemyGameParameters.health -= 1
+                }
+            }
+            for(let i=0;i<3;i++){
+                setTimeout(() => {
+                    dmg()
+                },700)
+            }
+            
         }
         async function SagvarizmusEjszakaja(){
             var targets = Array.from(yourBoard)
@@ -2614,26 +3410,76 @@
             yourGameParameters.mana += 1
             SendGameData(yourGameParameters)
         }
+        async function Szoborfaragas(card){
+            var isParagi = yourBoard.some(e=>e.name == "Paragi")
+            if(isParagi){
+                CreateSGEndre()
+                ShuffleIntoDeck(Cards.szoborfaragasCard)
+            }
+            else{
+                var choice1 = Cards.szoborfaragasCard
+                var choice2 = Cards.szoborfaragasCard
+                choice1.description = "Készíts egy <b>'Ságvári Endre szobor'</b> kártyát a térfeledre "
+                choice2.description = "Keverj három <b>'Szoborfaragás'</b> kártyát a paklidba"
+                EnableChoosingMode([choice1,choice2])
+                const result = await getUserChoice();
+                console.log("CHOOSELOG: ",result);
+                if(choice1.description == result.description){
+                    CreateSGEndre()
+                }
+                else{
+                    ShuffleIntoDeck(Cards.szoborfaragasCard)
+                }
+                
+                SendGameData(yourGameParameters)
+                
+                DeleteChoosingMode()
+            }
+        }
+        function Tanevnyito(){
+            for(let i= 0; i<yourBoard.length;i++){
+                yourBoard[i] != "" ? Evolve(yourBoard[i],i,1) : {}
+            }
+        }
+        function TelenSzelloztetnek(){
+            for(let i=0;i<enemyBoard.length;i++){
+                if(enemyBoard[i] != ""){
+                    var Sindex = enemyBoard[i].fieldEffects.findIndex(element => element.includes('spellshield'));
+                    if(Sindex === -1){
+                        FreezEnemy(enemyBoard[i],enemyBoardDoms[i],1,"enemy")
+                        DealDmg(enemyBoard[i],i,3,"enemy")
+                    }
+                    else{
+                        enemyBoard[i].fieldEffects.splice(Sindex,1)
+                    }
+                }
+            }
+        }
         async function Tuzgolyo(){
             var targets = Array.from(yourBoard).concat(Array.from(enemyBoard))
-            
+            targets.push(enemyGameParameters)
             if(targets.some(element => element !== '')){
                 selectableCardDoms = Array.from(yourBoardDoms).concat(Array.from(enemyBoardDoms))
+                selectableCardDoms.push(enemyPlayerNameDom)
                 selectableCardDoms = selectableCardDoms
             
                 EnableTargetSelectionMode(targets)
                 const result = await getUserChoice()
-                var domID = result.i
-                result.side == 'your' ? domID = domID : domID += yourBoard.length
-            
-                var Sindex = targets[domID].fieldEffects.findIndex(element => element.includes('spellshield'));
-                if(Sindex === -1){
-                    DealDmg(result.target,result.i,4,result.side)
+                if(result.target.type == "player"){
+                    enemyGameParameters.health -= 4
                 }
                 else{
-                    result.target.fieldEffects.splice(Sindex,1)
+                    var domID = result.i
+                    result.side == 'your' ? domID = domID : domID += yourBoard.length
+                    
+                    var Sindex = targets[domID].fieldEffects.findIndex(element => element.includes('spellshield'));
+                    if(Sindex === -1){
+                        DealDmg(result.target,result.i,4,result.side)
+                    }
+                    else{
+                        result.target.fieldEffects.splice(Sindex,1)
+                    }
                 }
-
                 SendGameData(yourGameParameters)
                 SendGameData(enemyGameParameters)
             
@@ -2753,10 +3599,108 @@
                 DeleteSelectTargetMode()
             }
         }
-
-        
-
-
+        //#endregion
+        //#region EXTRA SPELLS, CHARACTER SPELLS
+        async function CharmanderLangja(){
+            var targets = Array.from(yourBoard).concat(Array.from(enemyBoard))
+            targets.push(enemyGameParameters)
+            if(targets.some(element => element !== '')){
+                selectableCardDoms = Array.from(yourBoardDoms).concat(Array.from(enemyBoardDoms))
+                selectableCardDoms.push(enemyPlayerNameDom)
+                selectableCardDoms = selectableCardDoms
+            
+                EnableTargetSelectionMode(targets)
+                const result = await getUserChoice()
+                if(result.target.type == "player"){
+                    enemyGameParameters.health -= 5
+                }
+                else{
+                    var domID = result.i
+                    result.side == 'your' ? domID = domID : domID += yourBoard.length
+                    
+                    var Sindex = targets[domID].fieldEffects.findIndex(element => element.includes('spellshield'));
+                    if(Sindex === -1){
+                        DealDmg(result.target,result.i,5,result.side)
+                    }
+                    else{
+                        result.target.fieldEffects.splice(Sindex,1)
+                    }
+                }
+                SendGameData(yourGameParameters)
+                SendGameData(enemyGameParameters)
+            
+                DeleteSelectTargetMode()
+            }
+        }
+        async function CharmeleonLangja(){
+            var targets = Array.from(yourBoard).concat(Array.from(enemyBoard))
+            targets.push(enemyGameParameters)
+            if(targets.some(element => element !== '')){
+                selectableCardDoms = Array.from(yourBoardDoms).concat(Array.from(enemyBoardDoms))
+                selectableCardDoms.push(enemyPlayerNameDom)
+                selectableCardDoms = selectableCardDoms
+            
+                EnableTargetSelectionMode(targets)
+                const result = await getUserChoice()
+                if(result.target.type == "player"){
+                    enemyGameParameters.health -= 5
+                }
+                else{
+                    var domID = result.i
+                    result.side == 'your' ? domID = domID : domID += yourBoard.length
+                    
+                    var Sindex = targets[domID].fieldEffects.findIndex(element => element.includes('spellshield'));
+                    if(Sindex === -1){
+                        DealDmg(result.target,result.i,5,result.side)
+                    }
+                    else{
+                        result.target.fieldEffects.splice(Sindex,1)
+                    }
+                }
+                SendGameData(yourGameParameters)
+                SendGameData(enemyGameParameters)
+            
+                DeleteSelectTargetMode()
+            }
+        }
+        async function CharizardLangja(){
+            var targets = Array.from(yourBoard).concat(Array.from(enemyBoard))
+            targets.push(enemyGameParameters)
+            if(targets.some(element => element !== '')){
+                selectableCardDoms = Array.from(yourBoardDoms).concat(Array.from(enemyBoardDoms))
+                selectableCardDoms.push(enemyPlayerNameDom)
+                selectableCardDoms = selectableCardDoms
+            
+                EnableTargetSelectionMode(targets)
+                const result = await getUserChoice()
+                if(result.target.type == "player"){
+                    enemyGameParameters.health -= 7
+                }
+                else{
+                    var domID = result.i
+                    result.side == 'your' ? domID = domID : domID += yourBoard.length
+                    
+                    var Sindex = targets[domID].fieldEffects.findIndex(element => element.includes('spellshield'));
+                    if(Sindex === -1){
+                        DealDmg(result.target,result.i,7,result.side)
+                    }
+                    else{
+                        result.target.fieldEffects.splice(Sindex,1)
+                    }
+                }
+                SendGameData(yourGameParameters)
+                SendGameData(enemyGameParameters)
+            
+                DeleteSelectTargetMode()
+            }
+        }
+        function Mag(){
+            for(let i=0;i<yourBoard.length;i++){
+                if(yourBoard[i] != ""){
+                    yourBoard[i]bonusTraits.some(e => e.includes("humános")) ? Evolve(yourBoard[i],i,2)
+                }
+            }
+        }
         //#endregion
 
         //#region bonus functions
@@ -2870,20 +3814,34 @@
                 CardDmgAnimationClient(`td${i}`,"sebzés",side,card.type)
             }
         }
-        function Evolve(cost,i,amount){
+        function Evolve(card,i,amount){
+            var cost = card.cost
             var evolveCandidets = []
             Cards.allCardsArr.forEach(element => {
                 element.cost == cost+amount && element.type == "character" ? evolveCandidets.push(element) : {}
             });
-            var random = Math.floor(Math.random() * evolveCandidets.length)
-            console.log("EVOLVELOG: ",evolveCandidets[random],evolveCandidets)
-            yourBoard[i] = evolveCandidets[random]
-            yourBoard[i].talent.includes("fürge") == false ? yourBoard[i].fieldEffects.push("asleep:") : {}
-
-            if(yourBoard.some(e => e.name == "Németh Veronika")){
-                const randomIndex = Math.floor(Math.random() * (yourGameParameters.remaningDeck.length + 1));
-                yourGameParameters.remaningDeck.splice(randomIndex, 0, Cards.tanevnyitoCard);
+            var random = evolveCandidets[Math.floor(Math.random() * evolveCandidets.length)]
+            random.talent.includes("fürge") == false ? random.fieldEffects.push("asleep:") : {}
+            console.log("EVOLVELOG: ",random,evolveCandidets)
+            if(card.name == "Szakonyi" && yourBoard.some(e => e == "")){
+                function CheckPlaceing(index){
+                    index == yourBoard.length ? index = 1 : {}
+                    yourBoard[index] == "" ? yourBoard[index] = random : CheckPlaceing(index+1)
+                }
+                CheckPlaceing(i+1)
             }
+            else{
+                yourBoard[i] = random
+            }
+            
+            if(yourBoard.some(e => e.name == "Németh Veronika")){
+                ShuffleIntoDeck(Cards.tanevnyitoCard)
+            }
+            SendGameData(yourGameParameters)
+        }
+        function ShuffleIntoDeck(card){
+            const randomIndex = Math.floor(Math.random() * (yourGameParameters.remaningDeck.length + 1));
+            yourGameParameters.remaningDeck.splice(randomIndex, 0, card);
             SendGameData(yourGameParameters)
         }
         //#endregion
@@ -2924,7 +3882,7 @@
 
 <div id="gamePlayFiledCont">
     <div id="playerHps">
-        <div class="playerNameCont" id="enemyPlayerName" on:click={()=> SelectTargetCard(enemyGameParameters,10,"enemy")} bind:this={enemyPlayerNameDom} class:cardOnBoardInSelectMode={selectableCardDoms.includes(enemyPlayerNameDom)} on:keydown role="button" tabindex="">{enemyGameParameters.username}</div>
+        <div class="playerNameCont" id="enemyPlayerName" on:click={()=> SelectTargetCard(enemyGameParameters,10,"enemy")} bind:this={enemyPlayerNameDom} class:cardOnBoardInSelectMode={selectableCardDoms.includes(enemyPlayerNameDom)} class:cardOnBoardInTargetMode={attackableCardsDoms.includes(enemyPlayerNameDom)} on:keydown role="button" tabindex="">{enemyGameParameters.username}</div>
 
         <div class="playerHpCont" id="enemyPlayerHp">{enemyGameParameters.health}</div>
         <div class="playerHpCont" id="yourPlayerHp">{yourGameParameters.health}</div>
@@ -4281,8 +5239,6 @@
 
         display: flex;
         padding-bottom: 6vh;
-    }
-    #yourSide{
     }
     #enemySide{
         margin-top: 3.5vh;
