@@ -2365,7 +2365,7 @@
                 SendGameData(yourGameParameters)
         }
         function Eszter(card,i){
-
+            console.log("a")
             var cardToPush = Object.assign({},card)
             cardToPush.health = 1
             cardToPush.maxhealth = 1
