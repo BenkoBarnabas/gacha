@@ -193,8 +193,8 @@
         yourHand[0] = Cards.YouCard
         yourHand[1] = Cards.KutiCard
         yourHand[2] = Cards.FarkasCard
-        yourHand[3] = Cards.SisakCard
-        yourHand[4] = Cards.kiteresCard
+        yourHand[3] = Cards.BorosKingaCard
+        yourHand[4] = Cards.ReginaCard
          //UpdateLocalStorage()
         
         SendGameData(yourGameParameters)
@@ -1430,7 +1430,7 @@
             else{
             if(target.health - dmg >= 0 || (cardInAttackingMode.name == "Emma" && target.type == "ko")){ //1 kezdés, 1 megáll
                 if(cardInAttackingMode.name == "Emma" && target.type == "ko"){
-                    targt.health = 0
+                    target.health = 0
                     CardDmgAnimationClient(`td${i}`,"halál","enemy","ko")
 
                     dmg -= 1
@@ -1532,8 +1532,7 @@
             if(cardInAttackingMode.talent.includes("életelszívás")){
                 var healAmount = Number(cardInAttackingMode.talent[(cardInAttackingMode.talent.indexOf("_"))+1])
                 console.log("ÉLETLOG: amount:", healAmount);
-
-                yourBoard[yourBoard.indexOf(cardInAttackingMode)].health += healAmount
+                Heal(cardInAttackingMode,cardDomInAttackingMode,healAmount,"your")
             }
             //TÖVISES BŐR
             if(target.type == "character"){
@@ -1583,6 +1582,7 @@
                 }
                 if(cardInAttackingMode.aligment.includes("veszett")){
                     cardInAttackingMode.health += 1
+                    cardInAttackingMode.maxhealth += 1
                     CellAligmentAnimation(`${yourBoard.indexOf(cardInAttackingMode)}veszett`)
                 }
                 if(cardInAttackingMode.aligment.includes("tunya") && cardInAttackingMode.attack != 1){
@@ -1755,6 +1755,7 @@
             if(isMrsFarkas){
                 yourBoard[index].attack += 3
                 yourBoard[index].health += 3
+                yourBoard[index].maxhealth += 3
 
                 yourBoardDoms[index].children[0].children[6].style.animation = "none"
                 yourBoardDoms[index].children[0].children[6].offsetHeight
@@ -1795,6 +1796,8 @@
             else if(isMrsFarkas == false && isMrsFarkasNew == true){
                 yourBoard[i].attack += 3
                 yourBoard[i].health += 3
+                yourBoard[i].maxhealth += 3
+
                 yourBoardDoms[i].children[0].children[6].style.animation = "none"
                 yourBoardDoms[i].children[0].children[6].offsetHeight
                 yourBoardDoms[i].children[0].children[6].style.animation = "statHeal 1s"
@@ -1972,6 +1975,7 @@
             switch (result.name) {
                 case 'Kúti humán':
                     yourBoard[index].health += 1
+                    yourBoard[index].maxhealth += 1
                     yourBoardDoms[index].children[0].children[6].style.animation = "none"
                     yourBoardDoms[index].children[0].children[6].offsetHeight
                     yourBoardDoms[index].children[0].children[6].style.animation = "statHeal 1s"
@@ -2042,17 +2046,11 @@
         function Moni(card,target,i){
             target.fieldEffects.push("bomba:99999")
         }
-        function MezeskalacsKo(card,i){
+        function MezeskalacsKo(card,j){
             console.log("MEZESLOG: kint")
             for(i=0;i<yourBoard.length;i++){
                 if(yourBoard[i] != ""){
-                    yourBoard[i].health += 1
-                    if(yourBoard[i].type == "character"){
-                        yourBoardDoms[i].children[0].children[6].style.animation = "none"
-                        yourBoardDoms[i].children[0].children[6].offsetHeight
-                        yourBoardDoms[i].children[0].children[6].style.animation = "statHeal 1s"
-                    }
-                    
+                    Heal(yourBoard[i],yourBoardDoms[i].children[0],1,"your")                   
                 }
             }
             console.log("MEZESLOG: vege",yourBoard)
@@ -2183,6 +2181,7 @@
         function TothKaresz(){
             giveDobi(".attack += 1")
             giveDobi(".health += 1")
+            giveDobi(".maxhealth += 1")
         }
         function NagyOra(card,i){
             card.health += 1
@@ -2225,6 +2224,7 @@
                 if(yourBoard[i] != ""){
                     if(yourBoard[i].szak.includes("reál")){
                         yourBoard[i].health += 1
+                        yourBoard[i].maxhealth += 1
                         yourBoardDoms[i].children[0].children[6].style.animation = 'none'
                         yourBoardDoms[i].children[0].children[6].offsetHeight
                         yourBoardDoms[i].children[0].children[6].style.animation = 'statHeal 1s'
@@ -2306,6 +2306,7 @@
         function Szaszak(card,i){
             giveDobi(".attack += 3")
             giveDobi(".health += 3")
+            giveDobi(".maxhealth += 3")
         }
         function Weisz(){
             const maxCost = yourGameParameters.remaningDeck.reduce((max, obj) => (obj.cost > max ? obj.cost : max), yourGameParameters.remaningDeck[0].cost);
@@ -2327,6 +2328,7 @@
                 if(yourHand[i].type == "character"){
                     yourHand[i].attack += 1
                     yourHand[i].health += 1
+                    yourHand[i].maxhealth += 1
 
                     cardsInHandDoms[i].children[5].style.animation = "none"
                     cardsInHandDoms[i].children[5].offsetHeight
@@ -2342,8 +2344,7 @@
             CreateSGEndre()
         }
         function Balo(card,i){
-            function Tomi(card,i){
-                SummoningLocation(true)
+            SummoningLocation(true)
 
                 yourBoardPhs.fill("")
                 for (let i = 0; i<yourBoardPhs.length;i++){
@@ -2354,7 +2355,6 @@
                 yourBoardPhs = yourBoardPhs
 
                 SendGameData(yourGameParameters)
-            }
         }
         function Gitta(i){
             yourBoard[i].attack += 1
@@ -2500,7 +2500,8 @@
         }
         function ZalanOnatk(){
             giveDobi(".attack += 2")
-            giveDObi(".health += 2")
+            giveDobi(".health += 2")
+            giveDobi(".maxhealth += 2")
         }
         //#endregion
         //#region dökösök
@@ -2515,31 +2516,26 @@
             Dokosok()
         }
         yourGameParameters.remaningDeck.some(e => (e.bonusTraits.some(f => f == "dök"))) ? Dokosok() : {}
-        function Regina(card,i){
-
-
-            card.abilityType = "boardcon"
-            card.ability = "ReginaBoardcon"
-        }
-        async function ReginaBoardcon(card,i){
-            var dok = array.filter(obj => obj.name !== "Regina");
+        async function Regina(){
+            var dok = dokATablan.filter(obj => obj.name !== "Regina");
             for(let i=0;i<dok.length;i++){
-                dok[i].talent = `${dok[i].talent}, életelszívás-1`
+                var preTalent = dok[i].talent
+                dok[i].talent = `${preTalent}, életelszívás-1`
             }
-            await waitForUpdate
-
-            var isFarkasNew = yourBoard.some(element => element.name == "Dr. Farkas")
-            if(isFarkasNew == true && isFarkas == false){
-                cardsToDrawNewTurn += 1
-            }
-            else if(isFarkasNew == false && isFarkas == true){
-                cardsToDrawNewTurn -= 1
-            }
-
-            console.log("BOARDCON VÉGE")
             SendGameData(yourGameParameters)
-            MrsFarkasBoardcon(card,i)
-            
+            await waitForUpdate
+            var isRegina = yourBoard.some(e=>e.name == "Regina")
+            if(isRegina){
+                setTimeout(() => {
+                    ReginaBoardcon()
+                },100)  
+            }
+            else{
+                dokATablan.forEach(element => {
+                    var ogCard = Cards.allCardsArr.find(e => e.name == element.name)
+                    ogCard.talents.includes("életelszívás") == false ? element.talent.replace("életelszívás-1","") : {}
+                })
+            }
         }
         //#endregion
         //#region SPELLEK
@@ -2719,6 +2715,7 @@
 
                     result2.target.attack += 3
                     result2.target.health += 3
+                    result2.target.maxhealth += 3
 
                     yourBoardDoms[result.i].children[0].children[5].style.animation = "none"
                     yourBoardDoms[result.i].children[0].children[5].offsetHeight
@@ -2759,6 +2756,7 @@
                         yourBoardDoms[result.i].children[0].children[5].style.animation = "statHeal 1s"
                     }else {
                         result2.target.health += 3
+                        result2.target.maxhealth += 3
 
                         yourBoardDoms[result.i].children[0].children[6].style.animation = "none"
                         yourBoardDoms[result.i].children[0].children[6].offsetHeight
@@ -3017,10 +3015,7 @@
                     const result = await getUserChoice()
                     var domID = result.i
                     
-                    result.target.health += 3 
-                    yourBoardDoms[domID].children[0].children[6].style.animation = "none"
-                    yourBoardDoms[domID].children[0].children[6].offsetHeight
-                    yourBoardDoms[domID].children[0].children[6].style.animation = "statHeal 1s"
+                    Heal(result.target,yourBoardDoms[domID],3,"your")
 
                     var frozen = result.target.fieldEffects.findIndex(e => e.includes("frozen"))
                     var stunn = result.target.fieldEffects.findIndex(e => e.includes("stunn"))
@@ -3060,10 +3055,7 @@
                     var domID = result.i
                     
                     if(result.description == Lyukas1.description){
-                        result.target.health += 3 
-                        yourBoardDoms[domID].children[0].children[6].style.animation = "none"
-                        yourBoardDoms[domID].children[0].children[6].offsetHeight
-                        yourBoardDoms[domID].children[0].children[6].style.animation = "statHeal 1s"
+                        Heal(result.target,yourBoardDoms[domID],3,"your")
                     }
                     else{
                         var frozen = result.target.fieldEffects.findIndex(e => e.includes("frozen"))
@@ -3441,6 +3433,7 @@
             for(let i = 0;i<yourBoard.length;i++){
                 if(yourBoard[i] != ""){
                     yourBoard[i].health += 1
+                    yourBoard[i].maxhealth += 1
                     yourBoard[i].attack += 1
 
                     yourBoardDoms[i].children[0].children[6].style.animation = "none"
@@ -3873,6 +3866,22 @@
             else{
                 CardDmgAnimationClient(`td${i}`,"sebzés",side,card.type)
             }
+        }
+        function Heal(card,dom,amount,side){
+            if(card.health + amount > card.maxhealth ){
+                card.health = card.maxhealth
+                dom.children[6].style.animation = "none"
+                dom.children[6].offsetHeight
+                dom.children[6].style.animation = "statHeal 1s"
+            }
+            else if(card.health + amount < card.maxhealth){
+                card.health += amount
+                dom.children[6].style.animation = "none"
+                dom.children[6].offsetHeight
+                dom.children[6].style.animation = "statHeal 1s"
+            }
+            
+            side == "your" ? sendGameData(yourGameParameters) : sendGameData(enemyGameParameters)
         }
         function Evolve(card,i,amount){
             var cost = card.cost
