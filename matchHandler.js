@@ -70,7 +70,7 @@ export let youAreReady = false
 export let opponentIsReady = false
 export function PlayerReady(){
     var msg = yourGameID + "trueReady"
-    Client.socket.emit(gameKey,JSON.stringify(msg))
+    Client.socket.emit(gameKey,msg)
     youAreReady = true
     console.log("ready vagy te");
 
@@ -134,14 +134,13 @@ function ServerCode(){
     Client.socket.on(gameKey, msg => {
         console.log("msg");
         
-        if(msg.includes("Ready")){
+        if(msg.includes("trueReady")){
             console.log("Ready msg got: ",msg);
             if(msg.includes(opponentGameID)){
                 
             opponentIsReady = true
             console.log(youAreReady, opponentIsReady);
             if(youAreReady && opponentIsReady){
-                
                 console.log("LETS GOOOOOOOOOOOOOOOOOOOOOOOOO");
                 window.location.href = "./gameplayScreen"
             }
@@ -158,20 +157,19 @@ function ServerCode(){
         }
         else if(msg.includes("isFirst")){
             console.log(msg);
-            var u = JSON.parse(localStorage.getItem("yourGameParams"))
-            var notU = JSON.parse(localStorage.getItem("opponentGameParams"))
+            yourGameParametersClient.isYourTurn = true
             
             if(msg.includes(yourGameID)){
-                u.isYourTurn = true
-                notU.isYourTurn = false
+                yourGameParametersClient.isYourTurn = true
+                enemyGameParametersClient.isYourTurn = false
             }
             else{
-                u.isYourTurn = false
-                notU.isYourTurn = true
+                yourGameParametersClient.isYourTurn = false
+                enemyGameParametersClient.isYourTurn = true
                 
             }
-            localStorage.setItem("yourGameParams", JSON.stringify(u));
-            localStorage.setItem("opponentGameParams", JSON.stringify(notU));
+            localStorage.setItem("yourGameParams", JSON.stringify(yourGameParametersClient));
+            localStorage.setItem("opponentGameParams", JSON.stringify(enemyGameParametersClient));
         }
         else if(msg.includes("TurnEnded")){
             enemyGameParametersClient.isYourTurn = !enemyGameParametersClient.isYourTurn
@@ -238,8 +236,7 @@ function ServerCode(){
     })
 }
 Client.socket.on('disconnect', () => {
-    console.log(`Disonnected with ID: ${socket.id}`);
-    Client.socket.emit("disconnect",`${yourGameID}DisconnectedWithSocket`)
+    //Client.socket.emit("disconnect",`${yourGameID}DisconnectedWithSocket`)
 });
 
 export function SendGameDataClient(data){

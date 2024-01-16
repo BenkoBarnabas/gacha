@@ -77,7 +77,7 @@
     import KutiHuman from "./lib/assets/collection/extra/KutiHuman.png"
     import KutiReal from "./lib/assets/collection/extra/KutiReal.png"
     import KutiSport from "./lib/assets/collection/extra/KutiSport.png"
-    import Zsoblin from "./lib/assets/collection/extra/zsoblin.png"
+    import Zsoblin from "./lib/assets/collection/extra/Zsoblin.png"
     //boldizsár -
     //dolores -
     //david -

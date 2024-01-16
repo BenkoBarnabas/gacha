@@ -173,6 +173,7 @@
         yourGameParameters.yourBoard = Array.from(yourBoard)
         yourGameParameters.currentHand = Array.from(yourHand)
         enemyGameParameters.yourBoard = Array.from(enemyBoard)
+        yourGameParameters.ko = yourKo
 
         SendGameDataClient(data)
     }
@@ -248,6 +249,8 @@
 
         pageLoaded = true
         pageLoaded = pageLoaded
+
+        Dokosok()
         
     }
     let waitForUpdate
@@ -272,7 +275,8 @@
             waitForUpdate = new Promise((resolve) => {
                 promiseResolve = resolve
                 document.addEventListener('actionLog', function() {
-                    if(lastCardPlayedClient.side == "your" && lastCardPlayed.type == "character"){
+                    console.log("DÖKLOG: actionlog",lastCardPlayedClient)
+                    if(lastCardPlayedClient.side == "your" && lastCardPlayedClient.card.type == "character"){
                         resolveBoardconPromise(resolve)
                     }   
                 });
@@ -301,11 +305,11 @@
     });
     function resolveBoardconPromise(resolve){
         resolve();
-
+        console.log("DÖKLOG resolved")
         waitForUpdate = new Promise((resolvea) => {
             promiseResolve = resolvea
             document.addEventListener('actionLog', function() {
-                if(lastCardPlayedClient.side == "your" && lastCardPlayed.type == "character"){
+                if(lastCardPlayedClient.side == "your" && lastCardPlayedClient.card.type == "character"){
                     resolvea();
                 }   
             });
@@ -1087,6 +1091,9 @@
                         })
                         
                     }
+                    else if(type == "ko"){
+                        Reka()
+                    }
                     if(yourBoard[Number(dom.id.replace("td",""))].name != "Blazó" && yourBoard[Number(dom.id.replace("td",""))].name != "Nagy T"){
                         yourBoard[Number(dom.id.replace("td",""))] = ""
                     }
@@ -1810,7 +1817,8 @@
             }
             console.log("BOARDCON VÉGE")
             SendGameData(yourGameParameters)
-            FarkasBoardcon(card,i)
+            var isMrFarkas = yourBoard.some(element => element.name == "Dr. Farkas")
+            isMrFarkas == true ? FarkasBoardcon(card,i) : {}
             
         }
         function FiloReka(card,i){
@@ -2356,6 +2364,14 @@
 
                 SendGameData(yourGameParameters)
         }
+        function Eszter(card,i){
+
+            var cardToPush = Object.assign({},card)
+            cardToPush.health = 1
+            cardToPush.maxhealth = 1
+            yourHand.push(cardToPush )
+            cardsInYourHandClass.push("cardTemplate")
+        }
         function Gitta(i){
             yourBoard[i].attack += 1
             
@@ -2472,7 +2488,13 @@
             i<5 && yourBoard[i+5] != "" ? Evolve(yourBoard[i+5].cost,i-5,1) : {}
         }
         function Reka(){
-            yourBoard.some(e => e.name == "Barni") ? DrawOne() : {}
+            if(yourBoard.some(e => e.name == "Barni")){
+                yourKo += 1
+                SendGameData(yourGameParameters)
+            }
+        }
+        function Vendel(){
+            DrawOne()
         }
         function VBalint(){
             var Cost2Candidets = []
@@ -2503,38 +2525,235 @@
             giveDobi(".health += 2")
             giveDobi(".maxhealth += 2")
         }
+        function Zeno(deadCard){
+            var protoCard = Cards.allCardsArr.find(e => e.name == deadCard.name)
+            yourHand.push(protoCard)
+            cardsInYourHandClass.push("cardTemplate")
+
+            SendGameData(yourGameParameters)
+        }
         //#endregion
         //#region dökösök
         let dokATablan = []
         async function Dokosok(){
-            var dokATablanNew
-            yourBoard.forEach(element =>{
-                element.bonusTraits.some(e=>e == "dök") ? dokATablanNew.push(element) : {}
-            })
+            console.log("DÖKLOG: start",dokATablan,yourBoard)
+            var dokATablanNew = []
+            yourBoard.forEach(element => {
+                console.log("DÖKLOG: BENNT")
+                if(element != ""){
+                    console.log("DÖKLOG: ",element,yourBoard)
+                    element.bonusTraits.some(e => e == "dök") ? dokATablanNew.push(element) : {}
+                }
+            });
             dokATablan = dokATablanNew
+            console.log("DÖKLOG: ",dokATablan)
             await waitForUpdate
+            console.log("DÖKLOG UPDATE")
             Dokosok()
         }
-        yourGameParameters.remaningDeck.some(e => (e.bonusTraits.some(f => f == "dök"))) ? Dokosok() : {}
+
         async function Regina(){
-            var dok = dokATablan.filter(obj => obj.name !== "Regina");
+            var dok = dokATablan.filter(obj => obj.name !== "Redzsina");
+            console.log("REGLOG: ",dok,dokATablan)
             for(let i=0;i<dok.length;i++){
                 var preTalent = dok[i].talent
-                dok[i].talent = `${preTalent}, életelszívás-1`
+                preTalent.includes("életel") == false ? dok[i].talent = `${preTalent}, életelszívás-1` : {}
+                console.log("REGLOG",dok,yourBoard,dokATablan)
             }
             SendGameData(yourGameParameters)
             await waitForUpdate
-            var isRegina = yourBoard.some(e=>e.name == "Regina")
+            var isRegina = yourBoard.some(e=>e.name == "Redzsina")
+            console.log("REGLOG: isregina ",isRegina)
             if(isRegina){
+                
                 setTimeout(() => {
-                    ReginaBoardcon()
+                    Regina()
                 },100)  
             }
             else{
-                dokATablan.forEach(element => {
-                    var ogCard = Cards.allCardsArr.find(e => e.name == element.name)
-                    ogCard.talents.includes("életelszívás") == false ? element.talent.replace("életelszívás-1","") : {}
-                })
+                for(let i = 0;i<yourBoard.length;i++){
+                    if(yourBoard[i] != ""){
+                        if(dok.some(e => e.name == yourBoard[i].name)){
+                            var ogCard = Cards.allCardsArr.find(e => e.name == yourBoard[i].name)
+                            if(!ogCard.talent.includes("életel")){
+                                var newTalent = yourBoard[i].talent.replace(", életelszívás-1","")
+                                yourBoard[i].talent = newTalent
+                                console.log("REGLOG death: ",ogCard,yourBoard[i].talent.replace(', életelszívás-1',""),yourBOard[i],yourBoard)
+                            }
+                            
+                        }
+                    }
+                }
+                SendGameData(yourGameParameters)
+            }
+        }
+        async function Rebecca(){
+            var dok = dokATablan.filter(obj => obj.name !== "Manccinelli Rebecca");
+            for(let i=0;i<dok.length;i++){
+                dok[i].attack += 2
+            }
+            SendGameData(yourGameParameters)
+            await waitForUpdate
+            var isRegina = yourBoard.some(e=>e.name == "Manccinelli Rebecca")
+            if(isRegina){
+                setTimeout(() => {
+                    Rebecca()
+                },100)  
+            }
+            else{
+                for(let i = 0;i<yourBoard.length;i++){
+                    if(yourBoard[i] != ""){
+                        if(dok.some(e => e.name == yourBoard[i].name)){
+                            yourBoard[i].attack -2 >= 0 ? yourBoard[i].attack -= 2 : yourBoard[i].attack = 0
+                        }
+                    }
+                }
+                SendGameData(yourGameParameters)
+            }
+        }
+        async function TBotond(){
+            var dok = dokATablan.filter(obj => obj.name !== "Tanács Botond");
+            for(let i=0;i<dok.length;i++){
+                dok[i].health += 3
+                dok[i].maxhealth += 3
+            }
+            SendGameData(yourGameParameters)
+            await waitForUpdate
+            var isRegina = yourBoard.some(e=>e.name == "Tanács Botond")
+            if(isRegina){
+                setTimeout(() => {
+                    TBotond()
+                },100)  
+            }
+            else{
+                for(let i = 0;i<yourBoard.length;i++){
+                    if(yourBoard[i] != ""){
+                        if(dok.some(e => e.name == yourBoard[i].name)){
+                            yourBoard[i].maxhealth -= 3
+                            DealDmg(yourBoard[i],i,3,"your")
+                        }
+                    }
+                }
+                SendGameData(yourGameParameters)
+            }
+        }
+        function ZsPeter(card,i){
+            var dokLength = dokATablan.length -1
+            card.health += dokLength
+            card.maxhealth += dokLength*2
+            
+            SendGameData(yourGameParameters)
+        }
+        async function GLevente(){
+            var dok = dokATablan.filter(obj => obj.name !== "Gál Levente");
+
+            for(let i=0;i<dok.length;i++){
+                var preTalent = dok[i].aligment
+                preTalent.includes("veszett") == false ? dok[i].aligment = `${preTalent}, veszett` : {}
+
+            }
+            SendGameData(yourGameParameters)
+            await waitForUpdate
+            var isRegina = yourBoard.some(e=>e.name == "Gál Levente")
+
+            if(isRegina){
+                
+                setTimeout(() => {
+                    GLevente()
+                },100)  
+            }
+            else{
+                for(let i = 0;i<yourBoard.length;i++){
+                    if(yourBoard[i] != ""){
+                        if(!ogCard.aligment.includes("veszett")){
+                                var newTalent = yourBoard[i].aligment.replace(", veszett","")
+                                yourBoard[i].aligment = newTalen
+                        }
+                    }
+                }
+                SendGameData(yourGameParameters)
+            }
+        }
+        async function BKinga(){
+            var dok = dokATablan.filter(obj => obj.name !== "Boros Kinga");
+            for(let i=0;i<dok.length;i++){
+                dok[i].attack += 4
+            }
+            SendGameData(yourGameParameters)
+            await waitForUpdate
+            var isRegina = yourBoard.some(e=>e.name == "Boros Kinga")
+            if(isRegina){
+                setTimeout(() => {
+                    BKinga()
+                },100)  
+            }
+            else{
+                for(let i = 0;i<yourBoard.length;i++){
+                    if(yourBoard[i] != ""){
+                        if(dok.some(e => e.name == yourBoard[i].name)){
+                            yourBoard[i].attack -4 >= 0 ? yourBoard[i].attack -= 4 : yourBoard[i].attack = 0
+                        }
+                    }
+                }
+                SendGameData(yourGameParameters)
+            }
+        }
+        async function MReka(){
+            var dok = dokATablan.filter(obj => obj.name !== "Molnár Réka");
+            for(let i=0;i<dok.length;i++){
+                dok[i].attack += 5
+            }
+            SendGameData(yourGameParameters)
+            await waitForUpdate
+            var isRegina = yourBoard.some(e=>e.name == "Molnár Réka")
+            if(isRegina){
+                setTimeout(() => {
+                    MReka()
+                },100)  
+            }
+            else{
+                for(let i = 0;i<yourBoard.length;i++){
+                    if(yourBoard[i] != ""){
+                        if(dok.some(e => e.name == yourBoard[i].name)){
+                            yourBoard[i].attack -5 >= 0 ? yourBoard[i].attack -= 5 : yourBoard[i].attack = 0
+                        }
+                    }
+                }
+                SendGameData(yourGameParameters)
+            }
+        }
+        async function KDomonkos(){
+            var dok = dokATablan.filter(obj => obj.name !== "Kasza Domonkos");
+
+            for(let i=0;i<dok.length;i++){
+                var preTalent = dok[i].talent
+                preTalent.includes("robbanó támadás") == false ? dok[i].talent = `${preTalent}, robbanó támadás` : {}
+
+            }
+            SendGameData(yourGameParameters)
+            await waitForUpdate
+            var isRegina = yourBoard.some(e=>e.name == "Kasza Domonkos")
+
+            if(isRegina){
+                
+                setTimeout(() => {
+                    KDomonkos()
+                },100)  
+            }
+            else{
+                for(let i = 0;i<yourBoard.length;i++){
+                    if(yourBoard[i] != ""){
+                        if(dok.some(e => e.name == yourBoard[i].name)){
+                            var ogCard = Cards.allCardsArr.find(e => e.name == yourBoard[i].name)
+                            if(!ogCard.talent.includes("robbanó támadás")){
+                                var newTalent = yourBoard[i].talent.replace(", robbanó támadás","")
+                                yourBoard[i].talent = newTalent
+                            }
+                            
+                        }
+                    }
+                }
+                SendGameData(yourGameParameters)
             }
         }
         //#endregion
