@@ -3,7 +3,7 @@
   import {onMount} from "svelte"
 
   import {clientID,userData, getUserDataFromLocalStorage, deckData} from "../../client"
-  import {GetGameIDs, PlayerReady, SendGameDataClient, SveltePageLoaded, currentOpponentId} from "../../matchHandler"
+  import {GetGameIDs, PlayerReady, SendGameDataClient, SveltePageLoaded, currentOpponentId, yourGameParametersClient, enemyGameParametersClient} from "../../matchHandler"
   import * as Cards from "../../card"
 
 
@@ -26,7 +26,8 @@
         yourBoard: [],
         yourBoardStatus: "",
         isYourTurn: "",
-        type: "player"
+        type: "player",
+        secretSpells: []
     }
   let enemyGameParameters = {
         gameId: "",
@@ -40,7 +41,8 @@
         yourBoard: "",
         yourBoardStatus: "",
         isYourTurn: "",
-        type: "player"
+        type: "player",
+        secretSpells: []
     }
 
 
@@ -88,6 +90,8 @@
         }
       });
       console.log(yourGameParameters.remaningDeck);
+      yourGameParameters.isYourTurn = yourGameParametersClient.isYourTurn
+      enemyGameParameters.isYourTurn = enemyGameParametersClient.isYourTurn
       
 
       localStorage.setItem("yourGameParams", JSON.stringify(yourGameParameters));
