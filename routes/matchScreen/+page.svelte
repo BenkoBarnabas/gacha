@@ -22,7 +22,7 @@
         remaningDeck: [],
         mana: 2,
         spellMana: 0,
-        ko: 8,
+        ko: 5,
         yourBoard: [],
         yourBoardStatus: "",
         isYourTurn: "",
@@ -36,7 +36,7 @@
         remaningDeck: [],
         mana: 2,
         spellMana: 0,
-        ko: 8,
+        ko: 5,
         yourBoard: "",
         yourBoardStatus: "",
         isYourTurn: "",
@@ -92,7 +92,7 @@
 
       localStorage.setItem("yourGameParams", JSON.stringify(yourGameParameters));
       console.log("your and enemy params: ", yourGameParameters,enemyGameParameters);
-      SendGameDataClient(JSON.stringify(yourGameParameters))
+      SendGameDataClient(yourGameParameters)
 
     }
 
