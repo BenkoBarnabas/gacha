@@ -15,7 +15,6 @@
     import Matos from "./lib/assets/collection/tanar/Matos.png"
     import Meszaros from "./lib/assets/collection/tanar/Meszaros.png"
     import Marti from "./lib/assets/collection/tanar/Marti.png" //kell új kép
-    import Jeff from "./lib/assets/collection/extra/Jeff.png"
     import Tomi from "./lib/assets/collection/tanar/Tomi.png"
     import FiloReka from "./lib/assets/collection/tanar/FiloReka.png"
     import Izig from "./lib/assets/collection/tanar/Izig.png"
@@ -78,6 +77,8 @@
     import KutiReal from "./lib/assets/collection/extra/KutiReal.png"
     import KutiSport from "./lib/assets/collection/extra/KutiSport.png"
     import Zsoblin from "./lib/assets/collection/extra/Zsoblin.png"
+    import Jeff from "./lib/assets/collection/extra/Jeff.png"
+
     //boldizsár -
     //dolores -
     //david -
@@ -111,7 +112,6 @@
     import MatosGacha from "./lib/assets/collection/tanar/MatosGacha.png"
     import MeszarosGacha from "./lib/assets/collection/tanar/MeszarosGacha.png"
     import MartiGacha from "./lib/assets/collection/tanar/MartiGacha.png"
-    import JeffGacha from "./lib/assets/collection/tanar/JeffGacha.png"
     import TomiGacha from "./lib/assets/collection/tanar/TomiGacha.png"
     import FiloRekaGacha from "./lib/assets/collection/tanar/FiloRekaGacha.png"
     import IzigGacha from "./lib/assets/collection/tanar/IzigGacha.png"
@@ -166,6 +166,8 @@
     //dénes
     //#endregion
     //#region extra gacha SRC
+    import JeffGacha from "./lib/assets/collection/extra/JeffGacha.png"
+
     //kell új kép - aprono
     //nokedli
     //csontváz
