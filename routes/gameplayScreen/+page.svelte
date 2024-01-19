@@ -225,8 +225,8 @@
             yourHand = yourHand
         }
         yourHand[0] = Cards.YouCard
-        yourHand[1] = Cards.pikkDamaCard
-        yourHand[2] = Cards.SzaszLeventeCard
+        yourHand[1] = Cards.ParagiCard
+        yourHand[2] = Cards.JeffCard
         yourHand[3] = Cards.SzakonyiCard
         yourHand[4] = Cards.TritzCard    
          //UpdateLocalStorage()
@@ -2161,7 +2161,7 @@
                     yourBoardDoms[index].children[0].children[6].offsetHeight
                     yourBoardDoms[index].children[0].children[6].style.animation = "statHeal 1s"
 
-                    spellDmgMulti = 2
+                    spellDmgMulti += 1
                     
                 break;
                 case 'Kúti reál':
@@ -2174,12 +2174,16 @@
                     yourBoardDoms[index].children[0].children[5].style.animation = "none"
                     yourBoardDoms[index].children[0].children[5].offsetHeight
                     yourBoardDoms[index].children[0].children[5].style.animation = "statHeal 1s"
+
+                    spellDmgMulti -= 1
                 break;
                 case 'Kúti sport':
                     yourBoard[index].attack += 2
                     yourBoardDoms[index].children[0].children[5].style.animation = "none"
                     yourBoardDoms[index].children[0].children[5].offsetHeight
                     yourBoardDoms[index].children[0].children[5].style.animation = "statHeal 1s"
+
+                    spellDmgMulti -= 1
                     
                 break;
                 default:
@@ -2303,6 +2307,8 @@
         let tomiPlaces = []
         function Tomi(card,i){
             tomiPlaces[0] = i
+
+            if(yourBoard.some(e => e == "")){
             SummoningLocation(true)
             isTomiSummonLocation = true
             isTomiSummonLocation = isTomiSummonLocation
@@ -2314,7 +2320,7 @@
                 }
             }
             yourBoardPhs = yourBoardPhs
-
+            }
             card.abilityType = "onturnstart"
             card.ability = "TomiOfferSwitch"
             SendGameData(yourGameParameters)
@@ -2605,17 +2611,7 @@
             CreateSGEndre()
         }
         function Balo(card,i){
-            SummoningLocation(true)
-
-                yourBoardPhs.fill("")
-                for (let i = 0; i<yourBoardPhs.length;i++){
-                    if(yourBoard[i] == ""){
-                        yourBoardPhs[i] = Cards.NokedliCard
-                    }
-                }
-                yourBoardPhs = yourBoardPhs
-
-                SendGameData(yourGameParameters)
+            SummonLocationChoosing(Cards.NokedliCard)
         }
         function Eszter(card,i){
             console.log("a")
@@ -3020,6 +3016,9 @@
         }
         //#endregion
         //#region SPELLEK
+        //#region EXTRA CHARACTERS
+        functio
+        //#endregion
         async function Acelpajzs(){
             var targets = Array.from(yourBoard).concat(Array.from(enemyBoard))
             
@@ -3135,7 +3134,7 @@
             
                 var Sindex = targets[domID].fieldEffects.findIndex(element => element.includes('spellshield'));
                 if(Sindex === -1){
-                    DealDmg(result.target,result.i,3,result.side)
+                    DealDmg(result.target,result.i,3,result.side,"spell")
                     console.log("SPELLEKLOG: ",selectableCardDoms,selectableCardDoms[domID])
                     FreezEnemy(result.target,selectableCardDoms[domID],1,result.side)
                 }
@@ -3165,15 +3164,7 @@
                 
                 var Sindex = targets[domID].fieldEffects.findIndex(element => element.includes('spellshield'));
                 if(Sindex === -1){
-                    SummoningLocation(true)
-
-                    yourBoardPhs.fill("")
-                    for (let i = 0; i<yourBoardPhs.length+1;i++){
-                        if(yourBoard[i] == ""){
-                            yourBoardPhs[i] =result.target
-                        }
-                    }
-                    yourBoardPhs = yourBoardPhs
+                    SummonLocationChoosing(result.target)
                 }
                 else{
                     result.target.fieldEffects.splice(Sindex,1)
@@ -3302,7 +3293,7 @@
                 
                 var Sindex = targets[domID].fieldEffects.findIndex(element => element.includes('spellshield'));
                 if(Sindex === -1){
-                    result.target.bonusTraits.some(e => e.includes("diák")) ? DealDmg(result.target,result.i,5,result.side) : DealDmg(result.target,result.i,2,result.side)
+                    result.target.bonusTraits.some(e => e.includes("diák")) ? DealDmg(result.target,result.i,5,result.side,"spell") : DealDmg(result.target,result.i,2,result.side,"spell")
                 }
                 else{
                     result.target.fieldEffects.splice(Sindex,1)
@@ -3418,7 +3409,7 @@
             VisualAnimationEnabler(random)
             var randomDmg = random.cost
             for(let i=0; i<enemyBoard.length;i++){
-                enemyBoard[i] != "" ? DealDmg(enemyBoard[i],i,randomDmg,"enemy") : {}
+                enemyBoard[i] != "" ? DealDmg(enemyBoard[i],i,randomDmg,"enemy","spell") : {}
             }
             
         }
@@ -3437,15 +3428,7 @@
                 const result = await getUserChoice()
                 var domID = result.i
 
-                SummoningLocation(true)
-
-                yourBoardPhs.fill("")
-                for (let i = 0; i<yourBoardPhs.length+1;i++){
-                    if(yourBoard[i] == ""){
-                        yourBoardPhs[i] = result.target
-                    }
-                }
-                yourBoardPhs = yourBoardPhs
+                SummonLocationChoosing(result.target)
                 yourBoard[domID] = ""
 
                 SendGameData(yourGameParameters)
@@ -3631,14 +3614,7 @@
                 var domID = result.i
                 
 
-                SummoningLocation(true)
-                yourBoardPhs.fill("")
-                for (let i = 0; i<yourBoardPhs.length+1;i++){
-                    if(yourBoard[i] == ""){
-                        yourBoardPhs[i] = result.target
-                    }
-                }
-                yourBoardPhs = yourBoardPhs
+                SummonLocationChoosing(result.target)
                 
 
                 SendGameData(yourGameParameters)
@@ -3699,7 +3675,7 @@
         }
         function NemSzelloztettek(){
             for(let i= 0; i<enemyBoard.length;i++){
-                enemyBoard[i] != "" ? DealDmg(enemyBoard[i],i,1,"enemy") : {}
+                enemyBoard[i] != "" ? DealDmg(enemyBoard[i],i,1,"enemy","spell") : {}
             }
             enemyGameParameters.health -= 1
             SendGameData(enemyGameParameters)
@@ -3708,7 +3684,7 @@
             for(let i = 0;i<enemyBoard.length;i++){
                 if(enemyBoard[i] != ""){
                     var preHealth = enemyBoard[i].health
-                    DealDmg(enemyBoard[i],i,1,"enemy")
+                    DealDmg(enemyBoard[i],i,1,"enemy","spell")
                     if(preHealth == 1){
                         setTimeout(() => {
                         NemTudod()
@@ -3869,7 +3845,7 @@
                 if(random.type == "character" || random.type == "ko"){
                     var Sindex = enemyBoard[random].fieldEffects.findIndex(element => element.includes('spellshield'));
                     if(Sindex !== -1){
-                        DealDmg(enemyBoard[random],random1,1,"enemy")
+                        DealDmg(enemyBoard[random],random1,1,"enemy","spell")
                     }
                     else{
                         enemyBoard[random].fieldEffects.splice(Sindex,1)
@@ -3988,7 +3964,7 @@
                     var Sindex = enemyBoard[i].fieldEffects.findIndex(element => element.includes('spellshield'));
                     if(Sindex === -1){
                         FreezEnemy(enemyBoard[i],enemyBoardDoms[i],1,"enemy")
-                        DealDmg(enemyBoard[i],i,3,"enemy")
+                        DealDmg(enemyBoard[i],i,3,"enemy","spell")
                     }
                     else{
                         enemyBoard[i].fieldEffects.splice(Sindex,1)
@@ -4015,7 +3991,7 @@
                     
                     var Sindex = targets[domID].fieldEffects.findIndex(element => element.includes('spellshield'));
                     if(Sindex === -1){
-                        DealDmg(result.target,result.i,4,result.side)
+                        DealDmg(result.target,result.i,4,result.side,"spell")
                     }
                     else{
                         result.target.fieldEffects.splice(Sindex,1)
@@ -4045,7 +4021,7 @@
                 //target
                 var Sindex = targets[domID].fieldEffects.findIndex(element => element.includes('spellshield'));
                 if(Sindex === -1){
-                    DealDmg(result.target,result.i,5,result.side)
+                    DealDmg(result.target,result.i,5,result.side,"spell")
                 }
                 else{
                     result.target.fieldEffects.splice(Sindex,1)
@@ -4056,7 +4032,7 @@
                     if(enemyBoard[domID+1] != ""){
                         var Sindex2 = targets[domID+1].fieldEffects.findIndex(element => element.includes('spellshield'));
                         if(Sindex2 === -1){
-                            DealDmg(enemyBoard[domID+1],result.i+1,5,result.side)
+                            DealDmg(enemyBoard[domID+1],result.i+1,5,result.side,"spell")
                         }
                         else{
                             enemyBoard[domID+1].fieldEffects.splice(Sindex,1)
@@ -4067,7 +4043,7 @@
                     if(enemyBoard[domID-1] != ""){
                         var Sindex3 = targets[domID-1].fieldEffects.findIndex(element => element.includes('spellshield'));
                         if(Sindex3 === -1){
-                            DealDmg(enemyBoard[domID-1],result.i-1,5,result.side)
+                            DealDmg(enemyBoard[domID-1],result.i-1,5,result.side,"spell")
                         }
                         else{
                             enemyBoard[domID-1].fieldEffects.splice(Sindex,1)
@@ -4142,6 +4118,7 @@
         }
         //#endregion
         //#region EXTRA SPELLS, CHARACTER SPELLS
+        //#region EXTRA CHARACTERS
         async function CharmanderLangja(){
             var targets = Array.from(yourBoard).concat(Array.from(enemyBoard))
             targets.push(enemyGameParameters)
@@ -4161,7 +4138,7 @@
                     
                     var Sindex = targets[domID].fieldEffects.findIndex(element => element.includes('spellshield'));
                     if(Sindex === -1){
-                        DealDmg(result.target,result.i,5,result.side)
+                        DealDmg(result.target,result.i,5,result.side,"spell")
                     }
                     else{
                         result.target.fieldEffects.splice(Sindex,1)
@@ -4192,7 +4169,7 @@
                     
                     var Sindex = targets[domID].fieldEffects.findIndex(element => element.includes('spellshield'));
                     if(Sindex === -1){
-                        DealDmg(result.target,result.i,5,result.side)
+                        DealDmg(result.target,result.i,5,result.side,"spell")
                     }
                     else{
                         result.target.fieldEffects.splice(Sindex,1)
@@ -4223,7 +4200,7 @@
                     
                     var Sindex = targets[domID].fieldEffects.findIndex(element => element.includes('spellshield'));
                     if(Sindex === -1){
-                        DealDmg(result.target,result.i,7,result.side)
+                        DealDmg(result.target,result.i,7,result.side,"spell")
                     }
                     else{
                         result.target.fieldEffects.splice(Sindex,1)
@@ -4318,7 +4295,36 @@
             }
         }
         //#endregion
+        async function Jeff(card){
+            var isParagi = yourBoard.some(e=>e.name == "Paragi")
+            if(isParagi){
 
+                SummonLocationChoosing(Cards.BoldizsarCard)
+                await waitForUpdate
+
+                SummonLocationChoosing(Cards.DoloresCard)
+                await waitForUpdate
+
+                SummonLocationChoosing(Cards.DavidCard)
+                await waitForUpdate
+
+                SummonLocationChoosing(Cards.JennyCard)
+            
+            }
+            else{
+                
+                EnableChoosingMode([Cards.BoldizsarCard,Cards.DoloresCard,Cards.DavidCard,Cards.JennyCard])
+                const result = await getUserChoice();
+                DeleteChoosingMode()
+
+                SummonLocationChoosing(result)
+                
+            }
+            
+            SendGameData(yourGameParameters)
+        
+        }
+        //#endregion
         //#region bonus functions
         function giveDobi(what){
             for(let i = 0; i<yourBoard.length;i++){
@@ -4356,15 +4362,7 @@
             newSGEndre.health = SGEndreCounter
             newSGEndre.cost = SGEndreCounter
 
-            SummoningLocation(true)
-
-            yourBoardPhs.fill("")
-            for (let i = 0; i<yourBoardPhs.length+1;i++){
-                if(yourBoard[i] == ""){
-                    yourBoardPhs[i] = newSGEndre
-                }
-            }
-            yourBoardPhs = yourBoardPhs
+            SummonLocationChoosing(newSGEndre)
         }
         function GiveAttack(card,cardDom,amount){
             card.attack += amount
@@ -4431,7 +4429,8 @@
             SendGameData(yourGameParameters)
             SendGameData(enemyGameParameters)
         }
-        function DealDmg(card,i,amount,side){
+        function DealDmg(card,i,amount,side,source){
+            source == "spell" ? amount *= spellDmgMulti : {}
             card.health -= amount
             if(card.health <= 0){
                 CardDmgAnimationClient(`td${i}`,"halál",side,card.type)
@@ -4503,6 +4502,20 @@
             const randomIndex = Math.floor(Math.random() * (yourGameParameters.remaningDeck.length + 1));
             yourGameParameters.remaningDeck.splice(randomIndex, 0, card);
             SendGameData(yourGameParameters)
+        }
+        function SummonLocationChoosing(what){
+            if(yourBoard.some(e => e =="")){
+                SummoningLocation(true)
+
+                yourBoardPhs.fill("")
+                for (let i = 0; i<yourBoardPhs.length+1;i++){
+                    if(yourBoard[i] == ""){
+                        yourBoardPhs[i] = what
+                    }
+                }
+                yourBoardPhs = yourBoardPhs
+            }
+            
         }
         //#endregion
         
