@@ -15,7 +15,7 @@
     import Matos from "./lib/assets/collection/tanar/Matos.png"
     import Meszaros from "./lib/assets/collection/tanar/Meszaros.png"
     import Marti from "./lib/assets/collection/tanar/Marti.png" //kell új kép
-    import Jeff from "./lib/assets/collection/tanar/Jeff.png"
+    import Jeff from "./lib/assets/collection/extra/Jeff.png"
     import Tomi from "./lib/assets/collection/tanar/Tomi.png"
     import FiloReka from "./lib/assets/collection/tanar/FiloReka.png"
     import Izig from "./lib/assets/collection/tanar/Izig.png"
