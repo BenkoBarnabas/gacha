@@ -1,6 +1,77 @@
 it looks so ugly szóval kivettem de azért ha még kellene
 
 
+
+
+<div id="secretCont">
+        <div class="secretSpells" id="enemySecrets">
+            {#each enemyGameParameters.secretSpells as spell,i}
+                <img class="secret" src={secretIcons[i]} alt="?"><br>
+            {/each}
+        </div>
+        <div class="secretSpells" id="yourSecrets">
+            {#each yourGameParameters.secretSpells as spell,i}
+                <button class="secret" style="background: {secretIcons[i]}" on:mouseenter={() => AdjustSecretHover(true,i)} on:mouseleave={() => AdjustSecretHover(false,i)} ></button>
+            {/each}
+        </div>
+    </div>
+    <div id="secretHover">
+        {#each yourGameParameters.secretSpells as hover,i}
+            {#if secretHoverState[i]}
+            <div class="previewInVA">
+                <img draggable="false" class="cardTemplateVA" id="cardBackgroundVA" src={spellBackground} style="--colorr: {backgroundColorByCost[(hover.stars)-3]};" alt="cardBg">
+                <div id="rarityBGVA" style="background: {backgroundColorByCost[(hover.stars)-3]}; "></div>
+                <img draggable="false" id="curCardInViewVA" src={hover.source} alt="">
+                <img draggable="false" class="cardTemplateVA" src={spellForeground} alt="cardBg">
+                <div id="curCardDescVA" class="noScrollers">{@html hover.description}</div>
+                <div class="curCardCostVA">{hover.cost}</div>
+                <div class="curCardNameVA">{hover.name}</div>
+
+
+                <div id="curCardRarityVA" style="{starsColorByCost[(hover.stars)-3]}; top: 0">
+                    {#each Array(Number(hover.stars)) as card,index}
+                        <span style="font-size: calc(var(--cardsVAScale)*2.4vw">★</span>
+                    {/each}
+                </div>
+            </div>
+            {/if}
+        {/each}
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  :global(::-webkit-scrollbar) {
       width:2vw;
   }

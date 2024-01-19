@@ -1,59 +1,78 @@
 <script>
     import { onMount } from 'svelte';
-    onMount(() => {
-
-
-        isRunning()
-    });
-    function isAnimationOngoing() {
-    var elements = document.querySelectorAll('*');
-
-    for (var i = 0; i < elements.length; i++) {
-        var computedStyle = window.getComputedStyle(elements[i]);
-
-        if (computedStyle.transitionDuration !== '0s' || computedStyle.animationDuration !== '0s') {
-            // Transition or animation is ongoing for at least one element
-            return true;
-        }
-        }
-
-            // No ongoing transitions or animations found
-            return false;
-        }
-
-    function isRunning(){
-        if (isAnimationOngoing()) {
-            console.log('At least one animation is ongoing on the page.');
-        } else {
-            console.log('No ongoing animations on the page.');
-        }
-        setTimeout(() => {
-            isRunning()
-        }, 1000);
-    }
-
-
-
-
-
+    
 
 </script>
 
+<div id="playField">
 
-<div id="alma" style="height: 10vw;width:10vw;">aaa</div>
+    {#each Array(5) as cell,i}
+        <div id="etd{i}" class="boardsCells" style="top: 5%; left:{10+8+i*15}%">
+            <div id="cardPreviewListCont"></div>
+        </div>
+    {/each}
+    {#each Array(5) as cell,i}
+        <div id="etd{i+6}" class="boardsCells" style="top: 22%; left:{10+i*15}%">
+            <div id="cardPreviewListCont"></div>
+        </div>
+    {/each}
+
+    {#each Array(5) as cell,i}
+        <div id="td{i}" class="boardsCells" style="bottom: 5%; left:{10+i*15}%">
+            <div id="cardPreviewListCont"></div>
+        </div>
+    {/each}
+    {#each Array(5) as cell,i}
+        <div id="td{i+6}" class="boardsCells" style="bottom: 22%; left:{10+8+i*15}%">
+            <div id="cardPreviewListCont"></div>
+        </div>
+    {/each}
+</div>
+
 <style>
+    #cardPreviewListCont{
+        width: 8.151vw;
+        height: 9.69vw;
+        background-color: violet;
+        border: 2px solid black;
+    }
+    #playField{
+        background: url(../../lib/assets/gameplay/pad.png);
+        background-size: 100% 100%;
+        width: 80vw;
+        height: 66vh;
 
-    #alma{
-        animation: alma 3s 5s;
+        position: absolute;
+        left: 7vw;
+        top: 15vh;
     }
-    @keyframes alma {
-        0%{
-            background-color:violet;
-        }
-        100%{
-            background-color:red;
-        }
+    .gameFiledSides{
+        width: 74vw;
+        height: 29.5vh; 
+        position: relative;
     }
+    .boardRows{
+        width: 74vw;
+        height: 16.25vh;
+        position: absolute;
+        margin-left: 8vw;
+        margin-right: 8vw;
+    }
+    .boardsCells{
+        position: absolute;
+    }
+    .tierOne{
+        top: 0;
+    }
+    .tierTwo{
+        top: 11vh;
+    }
+    .BoardTierTwo{
+        display: block;
+        float: right;
+    }
+
+    
     
 </style>
 

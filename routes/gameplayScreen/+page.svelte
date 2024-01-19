@@ -4,7 +4,7 @@
     import * as Cards from "../../card"
     let enemyStartingHand = [Cards.BarniCard,Cards.BarniCard, Cards.FarkasCard, Cards.BizsoCard, Cards.BencusCard, Cards.ZenoCard]
     
-    import {SendGameDataClient,connectedToSocket, yourGameParametersClient, enemyGameParametersClient, DomLoaded, SveltePageLoaded, currentOpponentId, EndTurn, lastCardPlayedClient,LastActionLog,CellAligmentAnimation, CardDmgAnimationClient,BizsoEndTurnClient, SummoningLocationClient} from "../../matchHandler"
+    import {SendGameDataClient,connectedToSocket, yourGameParametersClient, enemyGameParametersClient, DomLoaded, SveltePageLoaded, currentOpponentId, EndTurn, lastCardPlayedClient,LastActionLog,CellAligmentAnimation, CardDmgAnimationClient,BizsoEndTurnClient, SummoningLocationClient, CardAttackAnimation} from "../../matchHandler"
 
     import cardBack from "../../lib/assets/global/cardBack.png"
 
@@ -90,6 +90,29 @@
         stunned: stunnGif
     }
 
+    import secret1 from "../../lib/assets/gameplay/Secret1.png"
+    import secret2 from "../../lib/assets/gameplay/Secret2.png"
+    import secret3 from "../../lib/assets/gameplay/Secret3.png"
+    let secretIcons = [secret1,secret2,secret3,secret1,secret2,secret3]
+
+    let secretHoverState = [false,false,false,false,false,false]
+    function AdjustSecretHover(wether,i){
+        secretHoverState[i] = wether
+        secretHoverState = secretHoverState
+        console.log("SECRETLOG: changed",wether,i)
+    }
+
+    import cClub from "../../lib/assets/gameplay/cardClub.png"
+    import cHeart from "../../lib/assets/gameplay/cardHeart.png"
+    import cDiamond from "../../lib/assets/gameplay/cardDiamond.png"
+    import cSpade from "../../lib/assets/gameplay/cardSpade.png"
+    
+    import cardShuffling from "../../lib/assets/gameplay/cardShuffle.png"
+
+    import tFej from "../../lib/assets/gameplay/tritzFej.png"
+    import tIras from "../../lib/assets/gameplay/tritzIras.png"
+
+
     let voicelines = {}
 
     //#region SEGÁDVÁLTOZÓK
@@ -101,8 +124,8 @@
     let opponentGameID
     let gameKey
 
-    let yourGameParameters = {currentHand: [],remaningDeck: [], yourBoard: Array(10).fill(""), mana: 0, spellMana: 0, username: "", hp: 0}
-    let enemyGameParameters = {currentHand: [],remaningDeck: [], yourBoard: Array(10).fill(""), mana: 0, spellMana: 0, username: "", hp: 0}
+    let yourGameParameters = {currentHand: [],remaningDeck: [], yourBoard: Array(10).fill(""), mana: 0, spellMana: 0, username: "", hp: 0, secretSpells: []}
+    let enemyGameParameters = {currentHand: [],remaningDeck: [], yourBoard: Array(10).fill(""), mana: 0, spellMana: 0, username: "", hp: 0, secretSpells: []}
 
     let allCardsInGame = []
 
@@ -134,36 +157,42 @@
         cardsInHandDoms[yourHand.length-1].addEventListener("dragstart", dragStart)
         cardsInHandDoms[yourHand.length-1].addEventListener("dragend", () => {
             dragged = ""
+            AdjustCellPointerEvents(true)
         })
         }
         if (cardsInHandDoms[0]) {
         cardsInHandDoms[0].addEventListener("dragstart", dragStart)
         cardsInHandDoms[0].addEventListener("dragend", () => {
             dragged = ""
+            AdjustCellPointerEvents(true)
         })
         }
         if (cardsInHandDoms[1]) {
         cardsInHandDoms[1].addEventListener("dragstart", dragStart)
         cardsInHandDoms[1].addEventListener("dragend", () => {
             dragged = ""
+            AdjustCellPointerEvents(true)
         })
         }
         if (cardsInHandDoms[2]) {
         cardsInHandDoms[2].addEventListener("dragstart", dragStart)
         cardsInHandDoms[2].addEventListener("dragend", () => {
             dragged = ""
+            AdjustCellPointerEvents(true)
         })
         }
         if (cardsInHandDoms[3]) {
         cardsInHandDoms[3].addEventListener("dragstart", dragStart)
         cardsInHandDoms[3].addEventListener("dragend", () => {
             dragged = ""
+            AdjustCellPointerEvents(true)
         })
         }
         if (cardsInHandDoms[4]) {
         cardsInHandDoms[4].addEventListener("dragstart", dragStart)
         cardsInHandDoms[4].addEventListener("dragend", () => {
             dragged = ""
+            AdjustCellPointerEvents(true)
         })
         }}
         // #endregion
@@ -186,16 +215,20 @@
             var random = Math.floor(Math.random() * yourGameParameters.remaningDeck.length)
             yourHand.push(yourGameParameters.remaningDeck[random])
 
+            if(yourGameParameters.remaningDeck[random].name == "Szász Levente"){
+                yourHand.push(Cards.pikkDamaCard)
+                cardsInYourHandClass.push("cardTemplate")
+            }
+
             yourGameParameters.remaningDeck.splice(random,1)
             cardsInYourHandClass.push("cardTemplate")
             yourHand = yourHand
-
         }
         yourHand[0] = Cards.YouCard
-        yourHand[1] = Cards.KutiCard
-        yourHand[2] = Cards.FarkasCard
-        yourHand[3] = Cards.BorosKingaCard
-        yourHand[4] = Cards.ReginaCard
+        yourHand[1] = Cards.pikkDamaCard
+        yourHand[2] = Cards.SzaszLeventeCard
+        yourHand[3] = Cards.SzakonyiCard
+        yourHand[4] = Cards.TritzCard    
          //UpdateLocalStorage()
         
         SendGameData(yourGameParameters)
@@ -204,10 +237,16 @@
         var random = Math.floor(Math.random() * yourGameParameters.remaningDeck.length)
             yourHand.push(yourGameParameters.remaningDeck[random])
 
+            if(yourGameParameters.remaningDeck[random].name == "Szász Levente"){
+                yourHand.push(Cards.pikkDamaCard)
+                cardsInYourHandClass.push("cardTemplate")
+            }
+
             yourGameParameters.remaningDeck.splice(random,1)
             cardsInYourHandClass.push("cardTemplate")
             yourHand = yourHand
             SendGameData(yourGameParameters)
+            
     }
     
     //#region VARS FOR GAMEPLAY
@@ -286,6 +325,7 @@
             document.addEventListener('cellAligmentAnim', CellAligmentAnim)
             document.addEventListener('cardDmgAnim',CardDmgAnimation)
             document.addEventListener('summoningLocationEvent',ChangeSummoningLocationStatus)
+            document.addEventListener('cardAttackAnimEvent',CardAttackAnimationEvent)
 
             document.addEventListener('bizsoEndTurn',BizsoEndTurn)
 
@@ -317,7 +357,13 @@
     }
     
 
+
     //#region DRAG AND DROP LOGIC
+    let cellPointerEvents = true
+    function AdjustCellPointerEvents(wether){
+        cellPointerEvents = wether
+        cellPointerEvents = cellPointerEvents
+    }
     function RemoveEventListenersFromCells(){
         for(let i = 0; i< yourBoard.length;i++){
             targetArea[i].removeEventListener("drop", drop)
@@ -351,13 +397,16 @@
                 targetArea[i].addEventListener("drop", drop)
                 targetArea[i].addEventListener("dragover", dragOver)
                 targetArea[i].addEventListener("dragleave", dragLeave)
-            } 
+            }
+            console.log("DDLOG: ",targetArea) 
         }
         }
     }
     function drop(event) {
         event.preventDefault()
         if(dragged.cost <= yourGameParameters.mana){
+            AdjustCellPointerEvents(true)
+
             yourBoardPhs[Number(event.target.id.replace("td",""))] = ""
             yourBoard[Number(event.target.id.replace("td",""))] = dragged
 
@@ -382,10 +431,19 @@
                 LastActionLog(dragged)
 
                 //#region ABILITIES
-                if(dragged.abilityType == "summon" || dragged.abilityType == "boardcon"){
+                
+                if(enemyGameParameters.secretSpells.some(e => e.name == "haggyá' má'!") && dragged.attack >= 10){
+                    DealDmg(dragged,placingModeHighlightedCardIndex,9999999,"your")
+                    enemyGameParameters.secretSpells.splice(enemyGameParameters.secretSpells.findIndex(e => e.name == "haggyá' má'!"),1)
+                    SendGameData(enemyGameParameters)
+                }
+                else{
+                    if((dragged.abilityType == "summon" || dragged.abilityType == "boardcon") && !dragged.fieldEffects.some(e => e.includes("silence"))){
                     console.log("uwulog1: ",yourBoard[Number(event.target.id.replace("td",""))]);
                         eval(`${dragged.ability}(yourBoard[Number(event.target.id.replace("td",""))]),${Number(event.target.id.replace("td",""))}`)
                     }
+                }
+                
                 //#endregion
 
             }
@@ -410,6 +468,8 @@
     function koDrop(event){
         console.log(event);
         event.preventDefault()
+        AdjustCellPointerEvents(true)
+
         enemyBoardPhs[Number(event.target.id.replace("etd",""))] = ""
         enemyBoard[Number(event.target.id.replace("etd",""))] = dragged
         enemyBoard = enemyBoard
@@ -427,6 +487,7 @@
         SendGameData(yourGameParameters)
         SendGameData(enemyGameParameters)
     }
+    //TIKTOK
     function spellDrop(event){
         event.preventDefault()
         var isAnder = yourBoard.some(e => e.name == "Anderléné")
@@ -439,20 +500,31 @@
             yourHand = yourHand
             cardsInYourHandClass = Array(yourHand.length).fill("cardTemplate")
             yourGameParameters.yourHand = Array.from(yourHand)
+
             console.log(yourGameParameters.spellMana,yourGameParameters.mana,manaCost);
+
             if(yourGameParameters.spellMana >= manaCost){
                 yourGameParameters.spellMana -= manaCost
             }
             else{
-                yourGameParameters.mana = manaCost-yourGameParameters.spellMana
+                manaCost -= yourGameParameters.spellMana
                 yourGameParameters.spellMana = 0
+                yourGameParameters.mana -= manaCost
             }
             console.log(yourGameParameters.spellMana,yourGameParameters.mana,manaCost);
 
             LastActionLog(dragged)
 
             //#region ABILITIES
-            eval(`${dragged.ability}()`)
+            if(enemyGameParameters.secretSpells.some(e => e.name == "álljon meg a menet!")){
+                LastActionLog(Cards.alljonMegAMenetCard)
+                enemyGameParameters.secretSpells.splice(enemyGameParameters.secretSpells.findIndex(e => e.name == "álljon meg a menet!"),1)
+                SendGameData(enemyGameParameters)
+            }
+            else{
+                dragged.abilityType == "summon" ? eval(`${dragged.ability}()`) : yourGameParameters.secretSpells.push(dragged)
+            }
+            
             //#endregion
 
             dragged = ""
@@ -470,6 +542,8 @@
     function dragStart(event) {
         if((yourHand[event.target.id].type == "character" || yourHand[event.target.id].type == "spell") && !isSummonLocationChoosing){
             ClearAttackModes()
+
+            AdjustCellPointerEvents(false)
 
             RemoveEventListenersFromCells()
             console.log(event);
@@ -489,6 +563,8 @@
     function koDragStart(event){
         if(!isKoHasBeenPutDownThisTurn  && !isSummonLocationChoosing){
             ClearAttackModes()
+
+            AdjustCellPointerEvents(false)
 
             RemoveEventListenersFromCells()
             var ko = {
@@ -678,6 +754,17 @@
         LastActionLog(card)
         //#endregion
 
+
+        if(enemyGameParameters.secretSpells.some(e => e.name == "haggyá' má'!") && card.attack >= 10){
+                    DealDmg(card,placingModeHighlightedCardIndex,9999999,"your")
+                    enemyGameParameters.secretSpells.splice(enemyGameParameters.secretSpells.findIndex(e => e.name == "haggyá' má'!"),1)
+                    SendGameData(enemyGameParameters)
+                }
+                else{
+                    if((card.abilityType == "summon" || dragged.abilityType == "boardcon") && !card.fieldEffects.some(e => e.includes("silence"))){
+                eval(`${card.ability}(yourBoard[i],${i})`)
+            }
+                }
         //#region ABILITIES
             if(card.abilityType == "summon" || dragged.abilityType == "boardcon"){
                 eval(`${card.ability}(yourBoard[i],${i})`)
@@ -945,7 +1032,9 @@
         logOpen = true
         logOpen = logOpen
 
-        lastCardPlayed = lastCardPlayedClient.card
+
+        lastCardPlayedClient.side == "enemy" && lastCardPlayedClient.card.type == "spell" && lastCardPlayedClient.card.abilityType == "secret" ? lastCardPlayed = Cards.secretCoverCard : lastCardPlayed = lastCardPlayedClient.card
+
         lastCardPlayed = lastCardPlayed
         actionLogList.push(lastCardPlayed)
 
@@ -961,11 +1050,22 @@
             logCard.style.animation = "none"
         }, 4000);
 
+        //ABILITIES
         if(lastCardPlayedClient.side == "your" && lastCardPlayed.type == "spell"){
             yourBoard.some(element => element.name == "Fehér Márta") ? eval(`${lastCardPlayed.ability}()`) : {}
             yourBoard.some(element => element.name == "Vörös Bálint") ? VBalint() : {}
             yourBoard.some(element => element.name == "Gitta") ? Gitta(yourBoard.findIndex(element => element.name == "Gitta")) : {}
         }
+        if(lastCardPlayedClient.side == "enemy" && lastCardPlayed.type == "character" && yourGameParameters.secretSpells.some(e => e.name == "Ctrl+C / Ctrl+V")){
+            var topush = Object.assign({},lastCardPlayed)
+            topush.cost == 2
+            yourHand.push(topush)
+            cardsInYourHandClass.push("cardTemplate")
+            yourGameParameters.secretSpells.splice(yourGameParameters.secretSpells.findIndex(e => e.name == "Ctrl+C / Ctrl+V"),1)
+            ActionLog(Cards.ctrlCCtrlVCard)
+            SendGameData(yourGameParameters)
+        }
+
     }
 
     let isVisualAnimation = false
@@ -1003,7 +1103,8 @@
     let AnimTargetLeft
     let AnimAttackerTop
     let AnimAttackerLeft
-    let AnimAttackerYRot
+    let AnimAttackerXRot
+    let AnimAttackerMarginTop
 
     let isCardAttackingAnimationOngoing
     function CardDmgAnimation(event){
@@ -1103,37 +1204,85 @@
             }, 1500);
         }  
     }
-    function CardAttackAnimation(enemyi){
+    function CardAttackAnimationEvent(event){
+        var defendingi = event.data.defenderI
+        var attackeri = event.data.attackerI
+        var side = event.data.side
+        console.log("ANIMLOG: ",event.data)
+
+        var attackingDom = document.getElementById(`${side}${attackeri}`).children[0]
+
+        function makeitvw(na,side){
+            console.log("animlog: asd",na)
+            var n = Number(na.replace("%",""))
+            if(side == "top"){
+                return (n/100)*66
+            }
+            else if(side =="left"){
+                return ((n/100)*80)
+            }
+            else{
+                return ((100-n)/100)*66
+            }
+        }
+        
         //ANIM----------
-        var attackeri = yourBoard.indexOf(cardInAttackingMode)
-        console.log(attackeri);
-        var row = enemyi
-        row < 5 ? row = 1 : row = 0
-        var attackerRow = attackeri
-        attackerRow < 5 ? attackerRow = 0 : attackerRow = 1
 
-        var cardHeight = window.innerHeight/window.innerWidth * 12.5*0.57 * (3/2)
-        console.log(window.innerWidth/window.innerHeight);
-        console.log("AnimLog cardH: ",cardHeight);
+        if(defendingi >= 10 || attackeri >= 10){
+            side == "etd" ? AnimAttackerTop =  makeitvw(attackingDom.parentNode.style.top,"top") : AnimAttackerTop =  makeitvw(attackingDom.parentNode.style.bottom,"bottom")
+            AnimAttackerLeft = attackingDom.parentNode.style.left
 
-        AnimAttackerYRot = `${((enemyi%5)-(attackeri%5))*10}deg`
+            var toppu = AnimAttackerTop
 
-        AnimAttackerTop = 15 + 32.5 + attackerRow*(16.25-11)
-        //margó + az enemy sávja + ahanyadik row-ba van annyiszor a row magassága - ha a másodikba van mert ők feljebb vannak a row-ban
-        var targetTop = 15 + row*16.25 - row*11 + cardHeight
-        //margó + ahanyadik row* raw magassága - ha a másodikba van mert az feljebb + egy kártya magasága
-        AnimTargetTop = `${-32.5+ row*11 +cardHeight -attackerRow*(11)}vh`
+            side == "etd" ? AnimTargetTop = `${45+(4-toppu)}vh` : AnimTargetTop = `-${39-(52-toppu)}vh`
 
-        AnimAttackerLeft = 13+(attackeri%5+1)*14.8 
-        var targetLeft = 13+(enemyi%5+1)*14.8
-        AnimTargetLeft = `${targetLeft-AnimAttackerLeft}vw`
+            var lefto = makeitvw(attackingDom.parentNode.style.left,"left")
+            AnimTargetLeft = `${(40 - lefto)}vw`
+            console.log("ANIMLOG: ENEMY: ",toppu,AnimTargetTop)
 
-        console.log("AnimLogTop: ",AnimAttackerTop,targetTop,AnimTargetTop);
-        console.log("AnimLogLeft: ",AnimAttackerLeft,targetLeft,AnimTargetLeft);
+        }
+        else{
+            var defendingDomId = ""
+        side == "etd" ? defendingDomId = "td" : defendingDomId="etd"
+        var defendingDom = document.getElementById(`${defendingDomId}${defendingi}`).children[0]
+        console.log("ANIMLOG: ",attackingDom,side,defendingDom,defendingDomId)
 
-        cardDomInAttackingMode.style.animation = "none"
-        cardDomInAttackingMode.offsetHeight;
-        cardDomInAttackingMode.style.animation = "attackAnim 0.6s"
+            if(side == "etd"){ //enemy támadt targetnek bottomja van
+                AnimAttackerTop =  makeitvw(attackingDom.parentNode.style.top,"top")
+                AnimAttackerLeft = makeitvw(attackingDom.parentNode.style.left,"left")
+                AnimTargetTop = makeitvw(defendingDom.parentNode.style.bottom,"bottom")
+                AnimTargetLeft = makeitvw(defendingDom.parentNode.style.left,"left")
+            }
+            else{
+                AnimAttackerTop =  makeitvw(attackingDom.parentNode.style.bottom,"bottom")
+                AnimAttackerLeft = makeitvw(attackingDom.parentNode.style.left,"left")
+                AnimTargetTop = makeitvw(defendingDom.parentNode.style.top,"top")
+                AnimTargetLeft = makeitvw(defendingDom.parentNode.style.left,"left")
+            }
+            
+            AnimTargetLeft -= AnimAttackerLeft
+
+            side == "etd" ? AnimTargetTop -= (AnimAttackerTop + 12) : AnimTargetTop -= (AnimAttackerTop - 12)
+            side == "etd" ? AnimAttackerTop =  attackingDom.parentNode.style.top : AnimAttackerTop =  attackingDom.parentNode.style.bottom
+            AnimAttackerLeft = attackingDom.parentNode.style.left
+            AnimTargetTop = `${AnimTargetTop}vh`
+            AnimTargetLeft = `${AnimTargetLeft}vw`
+            
+            
+
+        } 
+
+        side == "etd" ? AnimAttackerMarginTop = "-8vh" : AnimAttackerMarginTop = "8vh"
+        side == "etd" ? AnimAttackerXRot = "-10deg" : AnimAttackerXRot = "10deg"
+
+        console.log("AnimLogTop: ",AnimAttackerTop,AnimTargetTop);
+        console.log("AnimLogLeft: ",AnimAttackerLeft,AnimTargetLeft);
+
+
+
+        attackingDom.style.animation = "none"
+        attackingDom.offsetHeight;
+        attackingDom.style.animation = "attackAnim 0.6s"
 
         ClearAttackModes()
 
@@ -1261,7 +1410,7 @@
             console.log("SELECTLOG: chosen as Starget",i);
             return;
             }
-            if(cardInAttackingMode != "" && enemyBoard.includes(target)){
+            if(cardInAttackingMode != "" && (enemyBoard.includes(target) || target === enemyGameParameters)){
                 AttackCard(target,i)
                 console.log("SELECTLOG: chosen as atkTarget");
                 return;
@@ -1336,7 +1485,7 @@
                             }
                         }
                     }
-                    if(attackableCards == []){
+                    if(attackableCards.length == 0){
                         attackableCards.push(enemyGameParameters)
                         attackableCardsDoms.push(enemyPlayerNameDom)
                     }
@@ -1345,6 +1494,7 @@
                 console.log("thier doms: ",attackableCardsDoms);
 
                 isCardOnBoardInAttackingMode = true
+
             }
             else if (isCardOnBoardInAttackingMode && cardInAttackingMode == attackingCard){ //ATK CANCEL
                 isCardOnBoardInAttackingMode = false
@@ -1356,24 +1506,42 @@
             else if(cardInAttackingMode != attackingCard){ //MÁSIKRA VÁLTÁS
                 cardInAttackingMode = attackingCard
 
+                if(cardInAttackingMode.name == "Olívia"){
+                    for (let i = 0; i < enemyBoard.length; i++){
+                        if(enemyBoard[i] != ""){
+                            attackableCards.push(enemyBoard[i])
 
-                for (let i = 0; i < enemyBoard.length/2; i++){
-                    if(enemyBoard[i] != ""){
-                        attackableCards.push(enemyBoard[i])
-
-                        var dom = document.getElementById(`etd${i}`)
-                        attackableCardsDoms.push(dom)
-                        //dom.children[0].children[0].style = "transform: scale(1.1); width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute; filter: drop-shadow(calc(var(--cardOnBoardScale)*1vw*0.6) calc(var(--cardOnBoardScale)*1vw*0.6) 3px red) drop-shadow(calc(var(--cardOnBoardScale)*1vw*-0.6) calc(var(--cardOnBoardScale)*1vw*-0.6) 3px red);"
-                    }
-                    else{
-                        if(enemyBoard[i+(enemyBoard.length/2)] != ""){
-                            attackableCards.push(enemyBoard[i+(enemyBoard.length/2)])
-
-                            var dom = document.getElementById(`etd${i+(enemyBoard.length/2)}`)
+                            var dom = document.getElementById(`etd${i}`)
                             attackableCardsDoms.push(dom)
                             //dom.children[0].children[0].style = "transform: scale(1.1); width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute; filter: drop-shadow(calc(var(--cardOnBoardScale)*1vw*0.6) calc(var(--cardOnBoardScale)*1vw*0.6) 3px red) drop-shadow(calc(var(--cardOnBoardScale)*1vw*-0.6) calc(var(--cardOnBoardScale)*1vw*-0.6) 3px red);"
-
                         }
+                    }
+                    attackableCards.push(enemyGameParameters)
+                    attackableCardsDoms.push(enemyPlayerNameDom)
+                }
+                else{
+                    for (let i = 0; i < enemyBoard.length/2; i++){
+                        if(enemyBoard[i] != ""){
+                            attackableCards.push(enemyBoard[i])
+
+                            var dom = document.getElementById(`etd${i}`)
+                            attackableCardsDoms.push(dom)
+                            //dom.children[0].children[0].style = "transform: scale(1.1); width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute; filter: drop-shadow(calc(var(--cardOnBoardScale)*1vw*0.6) calc(var(--cardOnBoardScale)*1vw*0.6) 3px red) drop-shadow(calc(var(--cardOnBoardScale)*1vw*-0.6) calc(var(--cardOnBoardScale)*1vw*-0.6) 3px red);"
+                        }
+                        else{
+                            if(enemyBoard[i+(enemyBoard.length/2)] != ""){
+                                attackableCards.push(enemyBoard[i+(enemyBoard.length/2)])
+
+                                var dom = document.getElementById(`etd${i+(enemyBoard.length/2)}`)
+                                attackableCardsDoms.push(dom)
+                                //dom.children[0].children[0].style = "transform: scale(1.1); width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute; filter: drop-shadow(calc(var(--cardOnBoardScale)*1vw*0.6) calc(var(--cardOnBoardScale)*1vw*0.6) 3px red) drop-shadow(calc(var(--cardOnBoardScale)*1vw*-0.6) calc(var(--cardOnBoardScale)*1vw*-0.6) 3px red);"
+
+                            }
+                        }
+                    }
+                    if(attackableCards == []){
+                        attackableCards.push(enemyGameParameters)
+                        attackableCardsDoms.push(enemyPlayerNameDom)
                     }
                 }
                 console.log("you can attack these cards: ",attackableCards);
@@ -1384,16 +1552,20 @@
             console.log("yourCard: ",attackingCard);
 
             cardDomInAttackingMode = document.getElementById(`td${yourBoard.indexOf(attackingCard)}`).children[0]
+            cardInAttackingMode = cardInAttackingMode
+
             attackableCards = attackableCards
             attackableCardsDoms = attackableCardsDoms
-            cardInAttackingMode = cardInAttackingMode
+            
 
             enemyBoard = enemyBoard
         }
     }
     function AttackCard(target,i){
         console.log("target: ", target, " i: ", i);
-        if(target.tpye == "player"){
+        console.log("HITENEMYLOG: ",target.type == "player")
+        if(target.type == "player"){
+            
             enemyGameParameters.health -= cardInAttackingMode.attack
         }
         else{
@@ -1621,7 +1793,8 @@
         SendGameData(yourGameParameters)
 
         console.log("dom that attacked: ",cardDomInAttackingMode);
-        CardAttackAnimation(i)
+
+        CardAttackAnimation(i,Number(cardDomInAttackingMode.parentNode.id.replace("td","")))
     }
     //#endregion
     
@@ -2191,6 +2364,86 @@
             giveDobi(".health += 1")
             giveDobi(".maxhealth += 1")
         }
+        let isTritzCoinFlip = false
+        let tritzCoinFlips = []
+        function Tritz(){
+
+            isTritzCoinFlip = true
+            isTritzCoinFlip = isTritzCoinFlip
+
+            tritzCoinFlips = []
+            tritzCoinFlips = tritzCoinFlips
+        }
+        function TritzFlip(){
+            async function TritzMetamorfozis(){
+                var targets = Array.from(yourBoard)
+                
+                if(targets.some(element => element !== '')){
+                    for(let i = 0; i<targets.length; i++){
+                        if(targets[i] != ''){
+                            selectableCardDoms.push(yourBoardDoms[i])
+                        }
+                    }
+                    selectableCardDoms = selectableCardDoms
+                
+                    EnableTargetSelectionMode(targets)
+                    const result = await getUserChoice()
+                    var domID = result.i
+                
+                    Evolve(result.target,result.i,1)
+
+                    SendGameData(yourGameParameters)
+                    Tritz()
+                
+                    DeleteSelectTargetMode()
+                }
+            }
+
+            isTritzCoinFlip = true
+            isTritzCoinFlip = isTritzCoinFlip
+
+            tritzCoinFlips = []
+            tritzCoinFlips = tritzCoinFlips
+
+            function CoinFlip(){
+                Math.random() >= 0.5 ? tritzCoinFlips.push(tFej) : tritzCoinFlips.push(tIras)
+                tritzCoinFlips = tritzCoinFlips
+            }
+            setTimeout(() => {
+                CoinFlip()
+            }, 0*700);
+            setTimeout(() => {
+                CoinFlip()
+            }, 1*700);
+            setTimeout(() => {
+                CoinFlip()
+            }, 2*700);
+            setTimeout(() => {
+                CoinFlip()
+            }, 3*700);
+            setTimeout(() => {
+                CoinFlip()
+            }, 4*700);
+            
+
+            setTimeout(() => {
+                var coinCounter = 0
+                tritzCoinFlips.forEach(coin => {
+                    coin == tFej ? coinCounter++ : {}
+                })
+                if(coinCounter >= 2){
+                    TritzMetamorfozis()
+                }
+                isTritzCoinFlip = false
+                    isTritzCoinFlip = isTritzCoinFlip
+
+                tritzCoinFlips = []
+                tritzCoinFlips = tritzCoinFlips
+            }, 5*700);
+            
+            
+
+        }
         function NagyOra(card,i){
             card.health += 1
             yourBoardDoms[i].children[0].children[6].style.animation = 'none'
@@ -2493,6 +2746,14 @@
                 SendGameData(yourGameParameters)
             }
         }
+        function SzaszLevente(){
+            for(let i = 0; i<yourBoard.length;i++){
+                if(yourBoard[i] != ""){
+                    Evolve(yourBoard[i],i,2)
+                }
+            }
+        }
+        
         function Vendel(){
             DrawOne()
         }
@@ -2534,6 +2795,7 @@
         }
         //#endregion
         //#region dökösök
+
         let dokATablan = []
         async function Dokosok(){
             console.log("DÖKLOG: start",dokATablan,yourBoard)
@@ -2849,6 +3111,13 @@
                 SendGameData(yourGameParameters)
             
                 DeleteSelectTargetMode()
+            }
+        }
+        function Ebed(){
+            for(let i=0;i<enemyBoard.length;i++){
+                if(enemyBoard[i] != ""){
+                    enemyBoard[i].bonusTraits.some(e => e == "diák") ? StunnEnemy(enemyBoard[i],1,"enemy") : {}
+                }
             }
         }
         async function ElloptakAKabatod(){
@@ -3320,7 +3589,7 @@
             }
             SendGameData(enemyGameParameters)
         }
-        async function Metamorfózis(){
+        async function Metamorfozis(){
             var targets = Array.from(yourBoard)
             
             if(targets.some(element => element !== '')){
@@ -3966,6 +4235,81 @@
                 DeleteSelectTargetMode()
             }
         }
+
+        let frenchCardNumbers = ["2","3","4","5","6","7","8","9","10","J","Q","K","A"]
+        let frenchCardPool = []
+        for(let i=0;i<13;i++){
+            frenchCardPool.push([cClub,frenchCardNumbers[i]])
+            frenchCardPool.push([cHeart,frenchCardNumbers[i]])
+            frenchCardPool.push([cDiamond,frenchCardNumbers[i]])
+            frenchCardPool.push([cSpade,frenchCardNumbers[i]])
+        }
+        let pickedFrenchCard = []
+        let szaszShuffle = false
+        let frenchCardDom
+        function PikkDama(){
+            console.log("PICKLOG: benn")
+            szaszShuffle = true
+            szaszShuffle = szaszShuffle
+            
+            if(yourGameParameters.spellMana > 0 || yourGameParameters.mana > 0){
+                if(yourGameParameters.spellMana > 0){
+                    yourGameParameters.spellMana -= 1
+                }
+                else{
+                    //yourGameParameters.mana -= 1
+                }
+                var randomCardI = Math.floor(Math.random()*frenchCardPool.length)
+                var randomCard = frenchCardPool[randomCardI]
+                frenchCardPool.splice(randomCardI,1)
+                pickedFrenchCard.push({icon: randomCard[0],number: randomCard[1]})
+
+                pickedFrenchCard = pickedFrenchCard
+                console.log("DAMALOG: ",randomCard)
+                if(randomCard[1] == "Q" && randomCard[0] == cSpade){
+                    setTimeout(() => {
+                    console.log("DAMALOG: PIKKDAMA OMG")
+                    console.log("DAMALOG: ",`frenchCard${pickedFrenchCard.length-1}`);
+                    var lastCardPikk =  document.getElementById(`frenchCard${pickedFrenchCard.length-1}`)
+                   lastCardPikk.style.animation = "pikkDamaBingo 2s forwards"
+                },100)
+                    setTimeout(() => {
+                        szaszShuffle = false
+                        szaszShuffle = szaszShuffle
+                        pickedFrenchCard = []
+
+                        for(let i=0;i<yourHand.length;i++){
+                            if(yourHand[i].name == "Szász Levente"){
+                                yourHand[i].cost = 0
+                            }
+                        }
+                    },2100)
+                    
+                }
+
+                SendGameData(yourGameParameters)
+            }
+            else{
+                szaszShuffle = false
+                szaszShuffle = szaszShuffle
+                pickedFrenchCard = []
+
+                yourHand.push(Cards.pikkDamaCard)
+                cardsInYourHandClass.push("cardTemplate")
+            } 
+        }
+        function ClosePikkDamaTab(){
+            
+                szaszShuffle = false
+                    szaszShuffle = szaszShuffle
+                    pickedFrenchCard = []
+
+                    yourHand.push(Cards.pikkDamaCard)
+                    cardsInYourHandClass.push("cardTemplate")
+                    yourHand = yourHand
+                    SendGameData(yourGameParameters)
+                
+        }
         function Mag(){
             for(let i=0;i<yourBoard.length;i++){
                 if(yourBoard[i] != ""){
@@ -3978,12 +4322,15 @@
         //#region bonus functions
         function giveDobi(what){
             for(let i = 0; i<yourBoard.length;i++){
+                if(yourBoard[i] != ""){
                 if(yourBoard[i].name == "Dobi"){
                     eval(`yourBoard[i]${what}`)
                     
                     VisualAnimationEnabler(yourBoard[i])
                 }
             }
+            }
+
             for(let i = 0; i<yourGameParameters.remaningDeck.length;i++){
                 if(yourGameParameters.remaningDeck[i].name == "Dobi"){
                     eval(`yourGameParameters.remaningDeck[i]${what}`)
@@ -3991,7 +4338,14 @@
                     VisualAnimationEnabler(yourGameParameters.remaningDeck[i])
                     console.log(yourGameParameters.remaningDeck);
                 }
-            }  
+            }
+            for(let i = 0; i<yourHand.length;i++){
+                if(yourHand[i].name == "Dobi"){
+                    eval(`yyourHand[i]${what}`)
+                    
+                    VisualAnimationEnabler(yourHand[i])
+                }
+            }    
         }
         let SGEndreCounter = 0
         function CreateSGEndre(){
@@ -4100,7 +4454,7 @@
                 dom.children[6].style.animation = "statHeal 1s"
             }
             
-            side == "your" ? sendGameData(yourGameParameters) : sendGameData(enemyGameParameters)
+            side == "your" ? SendGameData(yourGameParameters) : SendGameData(enemyGameParameters)
         }
         function Evolve(card,i,amount){
             var cost = card.cost
@@ -4111,7 +4465,7 @@
             var random = evolveCandidets[Math.floor(Math.random() * evolveCandidets.length)]
             random.talent.includes("fürge") == false ? random.fieldEffects.push("asleep:") : {}
             console.log("EVOLVELOG: ",random,evolveCandidets)
-            if(card.name == "Szakonyi" && yourBoard.some(e => e == "")){
+            if(card.name == "Szakonyi Marcell" && yourBoard.some(e => e == "")){
                 function CheckPlaceing(index){
                     index == yourBoard.length ? index = 1 : {}
                     yourBoard[index] == "" ? yourBoard[index] = random : CheckPlaceing(index+1)
@@ -4125,6 +4479,24 @@
             if(yourBoard.some(e => e.name == "Németh Veronika")){
                 ShuffleIntoDeck(Cards.tanevnyitoCard)
             }
+            for(let i = 0; i<yourGameParameters.remaningDeck.length;i++){
+                if(yourGameParameters.remaningDeck[i].name == "Szász Levente"){
+                    yourGameParameters.remaningDeck[i].cost += 1
+                    yourGameParameters.remaningDeck[i].attack += 2
+                    yourGameParameters.remaningDeck[i].health += 1
+                    yourGameParameters.remaningDeck[i].maxhealth += 1
+                    VisualAnimationEnabler(yourGameParameters.remaningDeck[i])
+                }
+            }
+            for(let i = 0; i<yourHand.length;i++){
+                if(yourHand[i].name == "Szász Levente"){
+                    yourHand[i].cost += 1
+                    yourHand[i].attack += 2
+                    yourHand[i].health += 1
+                    yourHand[i].maxhealth += 1
+                    VisualAnimationEnabler(yourHand[i])
+                }
+            }    
             SendGameData(yourGameParameters)
         }
         function ShuffleIntoDeck(card){
@@ -4154,6 +4526,11 @@
 
         yourBoard = yourGameParameters.yourBoard
         yourBoard = yourBoard
+
+        yourGameParameters.secretSpells = yourGameParameters.secretSpells
+        enemyGameParameters.secretSpells = enemyGameParameters.secretSpells
+        console.log("SECRETLOG: ",yourGameParameters.secretSpells, secretHoverState)
+        
     }
 </script>
 {#if !pageLoaded}
@@ -4167,6 +4544,10 @@
 {#each allCardsInGame as card,i}
 <audio controls id="music" style="display: none;"  src={card.audio}   bind:this={voicelines[card.name]}></audio>
 {/each}
+
+
+
+
 
 <div id="gamePlayFiledCont">
     <div id="playerHps">
@@ -4192,337 +4573,331 @@
             <img class="scribble" style="bottom: 7%; right: 11%; width: 15vw;" src={scribble4} alt="scribble in a book">
             <img class="scribble" style="top: 50%; right: 11%; width: 5vw;" src={scribble5} alt="scribble in a book">
 
-            <div class="gameFiledSides" id="enemySide">
-                <tr class="tierTwo boardRows">
-                    {#each Array(enemyBoard.length/2) as card,i}
-                    <td class="boardsCells kotarget" id="etd{i}" bind:this={enemyBoardDoms[i]}>
-                    {#if enemyBoardPhs[i] != ""}
-                        <div class="BoardTierTwo ko" on:click={() => KoPlacedByClick(i,"enemySide")} style="filter: grayscale(0.5) contrast(50%);opacity: 0.7;" on:keydown role="button" tabindex="">{enemyBoardPhs[i].health}</div>
-                    {/if}
+            {#each Array(enemyBoard.length/2) as card,i}
+                <div class="boardsCells kotarget" id="etd{i}" style="top: 5%; left:{10+8+i*15}%" bind:this={enemyBoardDoms[i]}>
+                {#if enemyBoardPhs[i] != ""}
+                    <div class="BoardTierTwo ko" on:click={() => KoPlacedByClick(i,"enemySide")} class:pointerEventsNone={cellPointerEvents == false} class:pointerEventsAuto={cellPointerEvents == true} style="filter: grayscale(0.5) contrast(50%);opacity: 0.7;" on:keydown role="button" tabindex="">{enemyBoardPhs[i].health}</div>
+                {/if}
 
-                    {#if enemyBoard[i] != ""}
-                        {#if enemyBoard[i].type == "character"}
-                            <div on:click={() => SelectTargetCard(enemyBoard[i],i,"enemy")} class="BoardTierTwo" id="cardPreviewListCont" class:cardOnBoardInSelectMode={selectableCardDoms.includes(enemyBoardDoms[i])} class:cardOnBoardInTargetMode={attackableCardsDoms.includes(document.getElementById(`etd${i}`))}  class:NotcardOnBoardInTargetMode={isCardOnBoardInAttackingMode && !attackableCardsDoms.includes(document.getElementById(`etd${i}`))} on:keydown role="button" tabindex="">
-                                <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute"  src={cardV2Background} alt="cardBg">
-                                <div id="rarityBGList" style="background: {backgroundColorByCost[(enemyBoard[i].stars)-3]}; "></div>
-                                <img draggable="false" class = "cardButton" src={enemyBoard[i].source} alt="preview"/>
-                                <button class="cardListFrame" alt="cardBg"></button>
-                                <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*2.68);">{enemyBoard[i].attack}</div>
-                                <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*9.65);">{enemyBoard[i].health}</div>
-                                <div class="curCardCostList">{enemyBoard[i].cost}</div>
-                                <div class="curCardNameList">{enemyBoard[i].name}</div>
-
-                                {#if enemyBoard[i].fieldEffects != ""}
-                                        {#each enemyBoard[i].fieldEffects as effect,j}
-                                            {#if !effect.includes("kettős")}
-                                            <img class="curCardFieldEffectList" style="top: calc(var(--cardOnBoardScale)*1vw*{1.9+ j*3.1});" src={fieldEffectIcons[effect.substring(effect.indexOf(":"),-1)]} alt="effect">
-                                            {/if}
-                                        {/each}
-                                {/if}
-
-                                {#if enemyBoard[i].aligment != ""}
-                                {#if enemyBoard[i].aligment.includes(",")}
-                                        {#each enemyBoard[i].aligment.split(",") as aligment,j}
-                                        <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[aligment]}; border-radius: 0.5vw; top: calc(var(--cardOnBoardScale)*1vw*{4.8 + j* 2.55});"></div>
-                                        <img style="top: calc(var(--cardOnBoardScale)*1vw*{4.8 + j* 2.55});" class="curCardAligList" src={aligmentIcons[aligment]} alt="aligment">
-                                        {/each}
-                                    {:else}
-                                        <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[enemyBoard[i].aligment]}; border-radius: 0.5vw;"></div>
-                                        <img class="curCardAligList" src={aligmentIcons[enemyBoard[i].aligment]} alt="aligment">
-                                {/if}
-                                {/if}
-
-
-                                {#if enemyBoard[i].talent != ""}
-                                        {#if enemyBoard[i].talent.includes(",")}
-                                            <div class="curCardMultipleIconsContainerList">
-                                                {#each enemyBoard[i].talent.split(",") as icon, j}
-                                                <div style="width:calc(var(--cardOnBoardScale)*1vw*{0.57*3.9/enemyBoard[i].talent.split(",").length}); margin:auto">
-                                                    <img style="width:calc(var(--cardOnBoardScale)*1vw*1.4);" src={talentIcons[icon.replace(" ","")]} alt="talent">
-                                                </div>
-                                                {/each}
-                                            </div>
-                                            {:else}
-                                            <div class="curCardTalentList">{enemyBoard[i].talent.replace("támadás","")}</div>
-                                            <img style="left:calc(var(--cardOnBoardScale)*1vw*3.8);" class="curCardTalentIconList" src={talentIcons[enemyBoard[i].talent.replace(" ","")]} alt="talent">
-                                        {/if}
-                                {/if} 
-                    
-                                <div class="curCardRarityList" style="{starsColorByCost[(enemyBoard[i].stars)-3]}">
-                                    {#each Array(Number(enemyBoard[i].stars)) as card,index}
-                                        <span style="font-size: calc(var(--cardOnBoardScale)*1vw*1);">★</span>
-                                    {/each}
-                                </div>
-                            </div>
-                        {:else if enemyBoard[i].type == "ko"}
-                            <div on:click={() => SelectTargetCard(enemyBoard[i],i,"enemy")} class="BoardTierTwo ko" class:cardOnBoardInSelectMode={selectableCardDoms.includes(enemyBoardDoms[i])} class:cardOnBoardInTargetMode={attackableCardsDoms.includes(document.getElementById(`etd${i}`))}  class:NotKoOnBoardInTargetMode={isCardOnBoardInAttackingMode && !attackableCardsDoms.includes(document.getElementById(`etd${i}`))} on:keydown role="button" tabindex="">{enemyBoard[i].health}</div>
-                        {/if}
-                    {/if}
-                    </td>
-                    {/each}
-                </tr>
-                <tr class="tierOne boardRows">
-                    {#each Array((enemyBoard.length)/2) as cell,i}
-                    <td class="boardsCells kotarget" id="etd{(enemyBoard.length)/2+i}" bind:this={enemyBoardDoms[i+(enemyBoard.length/2)]}>
-                    {#if enemyBoardPhs[(enemyBoardPhs.length)/2+i] != ""}
-                        <div on:click={() => KoPlacedByClick((enemyBoardPhs.length)/2+i,"enemySide")} style="filter: grayscale(0.5) contrast(50%);opacity: 0.7;" class="ko" on:keydown role="button" tabindex="">{enemyBoardPhs[(enemyBoardPhs.length)/2+i].health}</div>
-                    {/if}
-
-                    {#if enemyBoard[(enemyBoard.length)/2+i] != ""}
-                        {#if enemyBoard[(enemyBoard.length)/2+i].type == "character"}
-                        <div on:click={() => SelectTargetCard(enemyBoard[(enemyBoard.length)/2+i],(enemyBoard.length)/2+i,"enemy")} id="cardPreviewListCont" class:cardOnBoardInSelectMode={selectableCardDoms.includes(enemyBoardDoms[(enemyBoard.length)/2+i])}  class:cardOnBoardInTargetMode={attackableCardsDoms.includes(document.getElementById(`etd${i+(enemyBoard.length/2)}`))}  class:NotcardOnBoardInTargetMode={isCardOnBoardInAttackingMode && !attackableCardsDoms.includes(document.getElementById(`etd${i+(enemyBoard.length/2)}`))} on:keydown role="button" tabindex="">
+                {#if enemyBoard[i] != ""}
+                    {#if enemyBoard[i].type == "character"}
+                        <div on:click={() => SelectTargetCard(enemyBoard[i],i,"enemy")} class="BoardTierTwo" id="cardPreviewListCont" class:cardOnBoardInSelectMode={selectableCardDoms.includes(enemyBoardDoms[i])} class:cardOnBoardInTargetMode={attackableCardsDoms.includes(document.getElementById(`etd${i}`))}  class:NotcardOnBoardInTargetMode={isCardOnBoardInAttackingMode && !attackableCardsDoms.includes(document.getElementById(`etd${i}`))} style="--AnimTargetTop: {AnimTargetTop}; --AnimTargetLeft: {AnimTargetLeft}; --AnimAttackerTop: {AnimAttackerTop}; --AnimAttackerLeft: {AnimAttackerLeft}; --AnimAttackerXRot: {AnimAttackerXRot};--AnimAttackerMarginTop: {AnimAttackerMarginTop};" on:keydown role="button" tabindex="">
                             <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute"  src={cardV2Background} alt="cardBg">
-                            <div id="rarityBGList" style="background: {backgroundColorByCost[(enemyBoard[i+(enemyBoard.length)/2].stars)-3]}; "></div>
-                            <img draggable="false" class = "cardButton" src={enemyBoard[i+(enemyBoard.length)/2].source} alt="preview"/>
+                            <div id="rarityBGList" style="background: {backgroundColorByCost[(enemyBoard[i].stars)-3]}; "></div>
+                            <img draggable="false" class = "cardButton" src={enemyBoard[i].source} alt="preview"/>
                             <button class="cardListFrame" alt="cardBg"></button>
-                            <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*2.68);">{enemyBoard[i+(enemyBoard.length)/2].attack}</div>
-                            <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*9.65);">{enemyBoard[i+(enemyBoard.length)/2].health}</div>
-                            <div class="curCardCostList">{enemyBoard[i+(enemyBoard.length)/2].cost}</div>
-                            <div class="curCardNameList">{enemyBoard[i+(enemyBoard.length)/2].name}</div>
+                            <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*2.68);">{enemyBoard[i].attack}</div>
+                            <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*9.65);">{enemyBoard[i].health}</div>
+                            <div class="curCardCostList">{enemyBoard[i].cost}</div>
+                            <div class="curCardNameList">{enemyBoard[i].name}</div>
 
-                            {#if enemyBoard[(enemyBoard.length)/2+i].fieldEffects != ""}
-                                        {#each enemyBoard[(enemyBoard.length)/2+i].fieldEffects as effect,j}
-                                            {#if !effect.includes("kettős")}
-                                            <img class="curCardFieldEffectList" style="top: calc(var(--cardOnBoardScale)*1vw*{1.9+ j*3.1});" src={fieldEffectIcons[effect.substring(effect.indexOf(":"),-1)]} alt="effect">
-                                            {/if}
-                                        {/each}
-                            {/if}
-
-                            {#if enemyBoard[(enemyBoard.length)/2+i].aligment != ""}
-                            {#if enemyBoard[(enemyBoard.length)/2+i].aligment.includes(",")}
-                                {#each enemyBoard[(enemyBoard.length)/2+i].aligment.split(",") as aligment,j}
-                                <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[aligment]}; border-radius: 0.5vw; top: calc(var(--cardOnBoardScale)*1vw*{4.8 + j* 2.55});"></div>
-                                <img style="top: calc(var(--cardOnBoardScale)*1vw*{4.8 + j* 2.55});" class="curCardAligList" src={aligmentIcons[aligment]} alt="aligment">
-                                {/each}
-                            {:else}
-                                <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[enemyBoard[(enemyBoard.length)/2+i].aligment]}; border-radius: 0.5vw;"></div>
-                                <img class="curCardAligList" src={aligmentIcons[enemyBoard[(enemyBoard.length)/2+i].aligment]} alt="aligment">
-                            {/if}
-                            {/if}
-
-                            {#if enemyBoard[(enemyBoard.length)/2+i].talent != ""}
-                                        {#if enemyBoard[(enemyBoard.length)/2+i].talent.includes(",")}
-                                            <div class="curCardMultipleIconsContainerList">
-                                                {#each enemyBoard[(enemyBoard.length)/2+i].talent.split(",") as icon, j}
-                                                <div style="width:calc(var(--cardOnBoardScale)*1vw*{0.57*3.9/enemyBoard[(enemyBoard.length)/2+i].talent.split(",").length}); margin:auto">
-                                                    <img style="width:calc(var(--cardOnBoardScale)*1vw*1.4);" src={talentIcons[icon.replace(" ","")]} alt="talent">
-                                                </div>
-                                                {/each}
-                                            </div>
-                                            {:else}
-                                            <div class="curCardTalentList">{enemyBoard[(enemyBoard.length)/2+i].talent.replace("támadás","")}</div>
-                                            <img style="left:calc(var(--cardOnBoardScale)*1vw*3.8);" class="curCardTalentIconList" src={talentIcons[enemyBoard[(enemyBoard.length)/2+i].talent.replace(" ","")]} alt="talent">
+                            {#if enemyBoard[i].fieldEffects != ""}
+                                    {#each enemyBoard[i].fieldEffects as effect,j}
+                                        {#if !effect.includes("kettős")}
+                                        <img class="curCardFieldEffectList" style="top: calc(var(--cardOnBoardScale)*1vw*{1.9+ j*3.1});" src={fieldEffectIcons[effect.substring(effect.indexOf(":"),-1)]} alt="effect">
                                         {/if}
+                                    {/each}
+                            {/if}
+
+                            {#if enemyBoard[i].aligment != ""}
+                            {#if enemyBoard[i].aligment.includes(",")}
+                                    {#each enemyBoard[i].aligment.split(",") as aligment,j}
+                                    <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[aligment]}; border-radius: 0.5vw; top: calc(var(--cardOnBoardScale)*1vw*{4.8 + j* 2.55});"></div>
+                                    <img style="top: calc(var(--cardOnBoardScale)*1vw*{4.8 + j* 2.55});" class="curCardAligList" src={aligmentIcons[aligment]} alt="aligment">
+                                    {/each}
+                                {:else}
+                                    <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[enemyBoard[i].aligment]}; border-radius: 0.5vw;"></div>
+                                    <img class="curCardAligList" src={aligmentIcons[enemyBoard[i].aligment]} alt="aligment">
+                            {/if}
+                            {/if}
+
+
+                            {#if enemyBoard[i].talent != ""}
+                                    {#if enemyBoard[i].talent.includes(",")}
+                                        <div class="curCardMultipleIconsContainerList">
+                                            {#each enemyBoard[i].talent.split(",") as icon, j}
+                                            <div style="width:calc(var(--cardOnBoardScale)*1vw*{0.57*3.9/enemyBoard[i].talent.split(",").length}); margin:auto">
+                                                <img style="width:calc(var(--cardOnBoardScale)*1vw*1.4);" src={talentIcons[icon.replace(" ","")]} alt="talent">
+                                            </div>
+                                            {/each}
+                                        </div>
+                                        {:else}
+                                        <div class="curCardTalentList">{enemyBoard[i].talent.replace("támadás","")}</div>
+                                        <img style="left:calc(var(--cardOnBoardScale)*1vw*3.8);" class="curCardTalentIconList" src={talentIcons[enemyBoard[i].talent.replace(" ","")]} alt="talent">
+                                    {/if}
                             {/if} 
                 
-                            <div class="curCardRarityList" style="{starsColorByCost[(enemyBoard[i+(enemyBoard.length)/2].stars)-3]}">
-                                {#each Array(Number(enemyBoard[i+(enemyBoard.length)/2].stars)) as card,index}
+                            <div class="curCardRarityList" style="{starsColorByCost[(enemyBoard[i].stars)-3]}">
+                                {#each Array(Number(enemyBoard[i].stars)) as card,index}
                                     <span style="font-size: calc(var(--cardOnBoardScale)*1vw*1);">★</span>
                                 {/each}
                             </div>
                         </div>
-                        {:else if enemyBoard[(enemyBoard.length)/2+i].type == "ko"}
-                            <div on:click={() => SelectTargetCard(enemyBoard[(enemyBoard.length)/2+i],(enemyBoard.length)/2+i,"enemy")} class="ko" class:cardOnBoardInSelectMode={selectableCardDoms.includes(enemyBoardDoms[(enemyBoard.length)/2+i])} class:cardOnBoardInTargetMode={attackableCardsDoms.includes(document.getElementById(`etd${i+(enemyBoard.length/2)}`))}  class:NotKoOnBoardInTargetMode={isCardOnBoardInAttackingMode && !attackableCardsDoms.includes(document.getElementById(`etd${i+(enemyBoard.length/2)}`))} on:keydown role="button" tabindex="">{enemyBoard[(enemyBoard.length)/2+i].health}</div>
-                        {/if}
+                    {:else if enemyBoard[i].type == "ko"}
+                        <div on:click={() => SelectTargetCard(enemyBoard[i],i,"enemy")} class="BoardTierTwo ko" class:cardOnBoardInSelectMode={selectableCardDoms.includes(enemyBoardDoms[i])} class:cardOnBoardInTargetMode={attackableCardsDoms.includes(document.getElementById(`etd${i}`))}  class:NotKoOnBoardInTargetMode={isCardOnBoardInAttackingMode && !attackableCardsDoms.includes(document.getElementById(`etd${i}`))} style="--AnimTargetTop: {AnimTargetTop}; --AnimTargetLeft: {AnimTargetLeft}; --AnimAttackerTop: {AnimAttackerTop}; --AnimAttackerLeft: {AnimAttackerLeft}; --AnimAttackerXRot: {AnimAttackerXRot};--AnimAttackerMarginTop: {AnimAttackerMarginTop};" on:keydown role="button" tabindex="">{enemyBoard[i].health}</div>
                     {/if}
+                {/if}
+                </div>
+            {/each}
 
-                    </td>
-                    {/each}
-                </tr>
-            </div>
-            <div class="gameFiledSides" id="yourSide">
-                <tr class="tierTwo boardRows">
-                    {#each Array((yourBoard.length)/2) as cell,i}
-                        <td class="target boardsCells" id="td{i+(yourBoard.length)/2}" bind:this={yourBoardDoms[i+(yourBoard.length/2)]}>
-                        {#if yourBoardPhs[i+(yourBoardPhs.length)/2] != ""}
-                            {#if yourBoardPhs[i+(yourBoardPhs.length)/2].type == "character"}
-                                <div class="BoardTierTwo" on:click={() => PlaceByClick(yourBoardPhs[i+(yourBoard.length)/2],i+(yourBoard.length)/2)} id="cardPreviewListCont" class:isPlacingModePh={isCardInYourHandInPlacingMode} style="filter: grayscale(0.5) contrast(50%);opacity: 0.7;" on:keydown role="button" tabindex="">
-                                    <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute" src={cardV2Background} alt="cardBg">
-                                    <div id="rarityBGList" style="background: {backgroundColorByCost[yourBoardPhs[i+(yourBoardPhs.length)/2]]}; "></div>
-                                    <img draggable="false" class = "cardButton" src={yourBoardPhs[i+(yourBoardPhs.length)/2].source} alt="preview"/>
-                                    <button class="cardListFrame" alt="cardBg"></button>
-                                    <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*2.68);">{yourBoardPhs[i+(yourBoardPhs.length)/2].attack}</div>
-                                    <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*9.65);">{yourBoardPhs[i+(yourBoardPhs.length)/2].health}</div>
-                                    <div class="curCardCostList">{yourBoardPhs[i+(yourBoardPhs.length)/2].cost}</div>
-                                    <div class="curCardNameList">{yourBoardPhs[i+(yourBoardPhs.length)/2].name}</div>
-                        
-                                    <div class="curCardRarityList" style="{starsColorByCost[(yourBoardPhs[i+(yourBoardPhs.length)/2].stars)-3]}">
-                                        {#each Array(Number(yourBoardPhs[i+(yourBoardPhs.length)/2].stars)) as card,index}
-                                            <span style="font-size: calc(var(--cardOnBoardScale)*1vw*1);">★</span>
-                                        {/each}
-                                    </div>
-                                </div>
-                            {:else if yourBoardPhs[i+(yourBoardPhs.length)/2].type == "ko"}
-                                <div class="BoardTierTwo ko" on:click={() => KoPlacedByClick((i + (yourBoard.length/2)),"yourSide")}  style="filter: grayscale(0.5) contrast(50%);opacity: 0.7;" class:isPlacingModePh={isKoInPlacingMode}  on:keydown role="button" tabindex="">{yourBoardPhs[i+(yourBoardPhs.length)/2].health}</div>
-                            {/if}
+            {#each Array((enemyBoard.length)/2) as cell,i}
+                <div class="boardsCells kotarget" id="etd{(enemyBoard.length)/2+i}" style="top: 22%; left:{10+i*15}%" bind:this={enemyBoardDoms[i+(enemyBoard.length/2)]}>
+                {#if enemyBoardPhs[(enemyBoardPhs.length)/2+i] != ""}
+                    <div on:click={() => KoPlacedByClick((enemyBoardPhs.length)/2+i,"enemySide")} class:pointerEventsNone={cellPointerEvents == false} class:pointerEventsAuto={cellPointerEvents == true} style="filter: grayscale(0.5) contrast(50%);opacity: 0.7;" class="ko" on:keydown role="button" tabindex="">{enemyBoardPhs[(enemyBoardPhs.length)/2+i].health}</div>
+                {/if}
+
+                {#if enemyBoard[(enemyBoard.length)/2+i] != ""}
+                    {#if enemyBoard[(enemyBoard.length)/2+i].type == "character"}
+                    <div on:click={() => SelectTargetCard(enemyBoard[(enemyBoard.length)/2+i],(enemyBoard.length)/2+i,"enemy")} id="cardPreviewListCont" class:cardOnBoardInSelectMode={selectableCardDoms.includes(enemyBoardDoms[(enemyBoard.length)/2+i])}  class:cardOnBoardInTargetMode={attackableCardsDoms.includes(document.getElementById(`etd${i+(enemyBoard.length/2)}`))}  class:NotcardOnBoardInTargetMode={isCardOnBoardInAttackingMode && !attackableCardsDoms.includes(document.getElementById(`etd${i+(enemyBoard.length/2)}`))} style="--AnimTargetTop: {AnimTargetTop}; --AnimTargetLeft: {AnimTargetLeft}; --AnimAttackerTop: {AnimAttackerTop}; --AnimAttackerLeft: {AnimAttackerLeft}; --AnimAttackerXRot: {AnimAttackerXRot};--AnimAttackerMarginTop: {AnimAttackerMarginTop};"on:keydown role="button" tabindex="">
+                        <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute"  src={cardV2Background} alt="cardBg">
+                        <div id="rarityBGList" style="background: {backgroundColorByCost[(enemyBoard[i+(enemyBoard.length)/2].stars)-3]}; "></div>
+                        <img draggable="false" class = "cardButton" src={enemyBoard[i+(enemyBoard.length)/2].source} alt="preview"/>
+                        <button class="cardListFrame" alt="cardBg"></button>
+                        <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*2.68);">{enemyBoard[i+(enemyBoard.length)/2].attack}</div>
+                        <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*9.65);">{enemyBoard[i+(enemyBoard.length)/2].health}</div>
+                        <div class="curCardCostList">{enemyBoard[i+(enemyBoard.length)/2].cost}</div>
+                        <div class="curCardNameList">{enemyBoard[i+(enemyBoard.length)/2].name}</div>
+
+                        {#if enemyBoard[(enemyBoard.length)/2+i].fieldEffects != ""}
+                                    {#each enemyBoard[(enemyBoard.length)/2+i].fieldEffects as effect,j}
+                                        {#if !effect.includes("kettős")}
+                                        <img class="curCardFieldEffectList" style="top: calc(var(--cardOnBoardScale)*1vw*{1.9+ j*3.1});" src={fieldEffectIcons[effect.substring(effect.indexOf(":"),-1)]} alt="effect">
+                                        {/if}
+                                    {/each}
                         {/if}
 
-                        {#if yourBoard[i+(yourBoard.length)/2] != ""}
-                            {#if yourBoard[i+(yourBoard.length)/2].type == "character"}
-                                <div class="BoardTierTwo" on:click={() => SelectTargetCard(yourBoard[i+(yourBoard.length)/2],i+(yourBoard.length)/2,"your")} class:cardOnBoardInSelectMode={selectableCardDoms.includes(yourBoardDoms[i+(yourBoard.length)/2])}  class:cardAwake={!yourBoard[i+(yourBoard.length)/2].fieldEffects.some(element => element.includes("frozen")) && !yourBoard[i+(yourBoard.length)/2].fieldEffects.some(element => element.includes("stunned")) && !yourBoard[i+(yourBoard.length)/2].fieldEffects.includes("asleep:") && isYourTurn && !isSelectTargetMode} style="--AnimTargetTop: {AnimTargetTop}; --AnimTargetLeft: {AnimTargetLeft}; --AnimAttackerYRot: {AnimAttackerYRot};" class:cardInAttackingMode={cardInAttackingMode == yourBoard[i+(yourBoard.length/2)]}  id="cardPreviewListCont" on:keydown role="button" tabindex="">
-                                    <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute" src={cardV2Background} alt="cardBg">
-                                    <div id="rarityBGList" style="background: {backgroundColorByCost[(yourBoard[i+(yourBoard.length)/2].stars)-3]}; "></div>
-                                    <img draggable="false" class = "cardButton" src={yourBoard[i+(yourBoard.length)/2].source} alt="preview"/>
-                                    <button class="cardListFrame" alt="cardBg"></button>
+                        {#if enemyBoard[(enemyBoard.length)/2+i].aligment != ""}
+                        {#if enemyBoard[(enemyBoard.length)/2+i].aligment.includes(",")}
+                            {#each enemyBoard[(enemyBoard.length)/2+i].aligment.split(",") as aligment,j}
+                            <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[aligment]}; border-radius: 0.5vw; top: calc(var(--cardOnBoardScale)*1vw*{4.8 + j* 2.55});"></div>
+                            <img style="top: calc(var(--cardOnBoardScale)*1vw*{4.8 + j* 2.55});" class="curCardAligList" src={aligmentIcons[aligment]} alt="aligment">
+                            {/each}
+                        {:else}
+                            <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[enemyBoard[(enemyBoard.length)/2+i].aligment]}; border-radius: 0.5vw;"></div>
+                            <img class="curCardAligList" src={aligmentIcons[enemyBoard[(enemyBoard.length)/2+i].aligment]} alt="aligment">
+                        {/if}
+                        {/if}
 
-                                    <div>
-                                    {#if yourBoard[i+(yourBoard.length)/2].fieldEffects != ""}
-                                        {#each yourBoard[i+(yourBoard.length)/2].fieldEffects as effect,j}
-                                            {#if !effect.includes("kettős")}
-                                            <img class="curCardFieldEffectList" style="top: calc(var(--cardOnBoardScale)*1vw*{1.9+ j*3.1});" src={fieldEffectIcons[effect.substring(effect.indexOf(":"),-1)]} alt="effect">
-                                            {/if}
-                                        {/each}
-                                    {/if}
-                                    </div>
-                                    <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*2.68);">{yourBoard[i+(yourBoard.length)/2].attack}</div>
-                                    <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*9.65);">{yourBoard[i+(yourBoard.length)/2].health}</div>
-                                    <div class="curCardCostList">{yourBoard[i+(yourBoard.length)/2].cost}</div>
-                                    <div class="curCardNameList">{yourBoard[i+(yourBoard.length)/2].name}</div>
-
-
-                                    
-                                    {#if yourBoard[i+(yourBoard.length)/2].aligment != ""}
-                                    {#if yourBoard[i+(yourBoard.length)/2].aligment.includes(",")}
-                                        {#each yourBoard[i+(yourBoard.length)/2].aligment.split(",") as aligment,j}
-                                        <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[aligment]}; border-radius: 0.5vw; top: calc(var(--cardOnBoardScale)*1vw*{4.8 + j* 2.55});"></div>
-                                        <img style="top: calc(var(--cardOnBoardScale)*1vw*{4.8 + j* 2.55});" class="curCardAligList" src={aligmentIcons[aligment]} alt="aligment">
-                                        {/each}
-                                    {:else}
-                                        <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[yourBoard[i+(yourBoard.length)/2].aligment]}; border-radius: 0.5vw;"></div>
-                                        <img class="curCardAligList" src={aligmentIcons[yourBoard[i+(yourBoard.length)/2].aligment]} alt="aligment">
-                                    {/if}
-                                    {/if}
-
-                                    {#if yourBoard[i+(yourBoard.length)/2].talent != ""}
-                                        {#if yourBoard[i+(yourBoard.length)/2].talent.includes(",")}
-                                            <div class="curCardMultipleIconsContainerList">
-                                                {#each yourBoard[i+(yourBoard.length)/2].talent.split(",") as icon, j}
-                                                <div style="width:calc(var(--cardOnBoardScale)*1vw*{0.57*3.9/yourBoard[i+(yourBoard.length)/2].talent.split(",").length}); margin:auto">
-                                                    <img style="width:calc(var(--cardOnBoardScale)*1vw*1.4);" src={talentIcons[icon.replace(" ","")]} alt="talent">
-                                                </div>
-                                                {/each}
+                        {#if enemyBoard[(enemyBoard.length)/2+i].talent != ""}
+                                    {#if enemyBoard[(enemyBoard.length)/2+i].talent.includes(",")}
+                                        <div class="curCardMultipleIconsContainerList">
+                                            {#each enemyBoard[(enemyBoard.length)/2+i].talent.split(",") as icon, j}
+                                            <div style="width:calc(var(--cardOnBoardScale)*1vw*{0.57*3.9/enemyBoard[(enemyBoard.length)/2+i].talent.split(",").length}); margin:auto">
+                                                <img style="width:calc(var(--cardOnBoardScale)*1vw*1.4);" src={talentIcons[icon.replace(" ","")]} alt="talent">
                                             </div>
-                                            {:else}
-                                            <div class="curCardTalentList">{yourBoard[i+(yourBoard.length)/2].talent.replace("támadás","")}</div>
-                                            <img style="left:calc(var(--cardOnBoardScale)*1vw*3.8);" class="curCardTalentIconList" src={talentIcons[yourBoard[i+(yourBoard.length)/2].talent.replace(" ","")]} alt="talent">
-                                            {/if}
-                                    {/if}      
-
-                                    <div class="curCardRarityList" style="{starsColorByCost[(yourBoard[i+(yourBoard.length)/2].stars)-3]}">
-                                        {#each Array(Number(yourBoard[i+(yourBoard.length)/2].stars)) as card,index}
-                                            <span style="font-size: calc(var(--cardOnBoardScale)*1vw*1);">★</span>
-                                        {/each}
-                                    </div>
-                                </div>
-                            {:else if yourBoard[i+(yourBoard.length)/2].type == "ko"}
-                                <div class="ko BoardTierTwo" on:click={() => SelectTargetCard(yourBoard[i+(yourBoard.length)/2],i+(yourBoard.length)/2,"your")} class:cardOnBoardInSelectMode={selectableCardDoms.includes(yourBoardDoms[i+(yourBoard.length)/2])} on:keydown role="button" tabindex="">{yourBoard[i+(yourBoard.length)/2].health}</div>
-                            {/if}
+                                            {/each}
+                                        </div>
+                                        {:else}
+                                        <div class="curCardTalentList">{enemyBoard[(enemyBoard.length)/2+i].talent.replace("támadás","")}</div>
+                                        <img style="left:calc(var(--cardOnBoardScale)*1vw*3.8);" class="curCardTalentIconList" src={talentIcons[enemyBoard[(enemyBoard.length)/2+i].talent.replace(" ","")]} alt="talent">
+                                    {/if}
                         {/if} 
-                        </td>
-                    {/each}
-                </tr>
-                <tr class="tierOne boardRows">
-                    {#each Array((yourBoard.length)/2) as cell,i}
-                        <td class="target boardsCells" id="td{i}" bind:this={yourBoardDoms[i]}>
-                        {#if yourBoardPhs[i] != ""}
-                            {#if yourBoardPhs[i].type == "character"}
-                                <div on:click={() => PlaceByClick(yourBoardPhs[i],i)} id="cardPreviewListCont" class:isPlacingModePh={isCardInYourHandInPlacingMode} style="filter: grayscale(0.5) contrast(50%);opacity: 0.7;" on:keydown role="button" tabindex="">
-                                    <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute" src={cardV2Background} alt="cardBg">
-                                    <div id="rarityBGList" style="background: {backgroundColorByCost[( yourBoardPhs[i].stars)-3]}; "></div>
-                                    <img draggable="false" class = "cardButton" src={yourBoardPhs[i].source} alt="preview"/>
-                                    <button class="cardListFrame" alt="cardBg"></button>
-                                    <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*2.68);">{ yourBoardPhs[i].attack}</div>
-                                    <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*9.65);">{ yourBoardPhs[i].health}</div>
-                                    <div class="curCardCostList">{ yourBoardPhs[i].cost}</div>
-                                    <div class="curCardNameList">{ yourBoardPhs[i].name}</div>
-                        
-                                    <div class="curCardRarityList" style="{starsColorByCost[( yourBoardPhs[i].stars)-3]}">
-                                        {#each Array(Number( yourBoardPhs[i].stars)) as card,index}
-                                            <span style="font-size: calc(var(--cardOnBoardScale)*1vw*1);">★</span>
-                                        {/each}
-                                    </div>
-                                </div>
-                            {:else if yourBoardPhs[i].type == "ko"}
-                                <div on:click={() => KoPlacedByClick(i,"yourSide")} style="filter: grayscale(0.5) contrast(50%);opacity: 0.7;" class:isPlacingModePh={isKoInPlacingMode} class="ko" on:keydown role="button" tabindex="">{yourBoardPhs[i].health}</div>
+            
+                        <div class="curCardRarityList" style="{starsColorByCost[(enemyBoard[i+(enemyBoard.length)/2].stars)-3]}">
+                            {#each Array(Number(enemyBoard[i+(enemyBoard.length)/2].stars)) as card,index}
+                                <span style="font-size: calc(var(--cardOnBoardScale)*1vw*1);">★</span>
+                            {/each}
+                        </div>
+                    </div>
+                    {:else if enemyBoard[(enemyBoard.length)/2+i].type == "ko"}
+                        <div on:click={() => SelectTargetCard(enemyBoard[(enemyBoard.length)/2+i],(enemyBoard.length)/2+i,"enemy")} class="ko" class:cardOnBoardInSelectMode={selectableCardDoms.includes(enemyBoardDoms[(enemyBoard.length)/2+i])} class:cardOnBoardInTargetMode={attackableCardsDoms.includes(document.getElementById(`etd${i+(enemyBoard.length/2)}`))}  class:NotKoOnBoardInTargetMode={isCardOnBoardInAttackingMode && !attackableCardsDoms.includes(document.getElementById(`etd${i+(enemyBoard.length/2)}`))} style="--AnimTargetTop: {AnimTargetTop}; --AnimTargetLeft: {AnimTargetLeft}; --AnimAttackerTop: {AnimAttackerTop}; --AnimAttackerLeft: {AnimAttackerLeft}; --AnimAttackerXRot: {AnimAttackerXRot};--AnimAttackerMarginTop: {AnimAttackerMarginTop};" on:keydown role="button" tabindex="">{enemyBoard[(enemyBoard.length)/2+i].health}</div>
+                    {/if}
+                {/if}
+
+                </div>
+            {/each}
+
+
+            {#each Array((yourBoard.length)/2) as cell,i}
+                <div class="target boardsCells" id="td{i}" style="bottom: 22%; left:{10+8+i*15}%" bind:this={yourBoardDoms[i]}>
+                {#if yourBoardPhs[i] != ""}
+                    {#if yourBoardPhs[i].type == "character"}
+                        <div on:click={() => PlaceByClick(yourBoardPhs[i],i)} id="cardPreviewListCont" class:isPlacingModePh={isCardInYourHandInPlacingMode} class:pointerEventsNone={cellPointerEvents == false} class:pointerEventsAuto={cellPointerEvents == true} style="filter: grayscale(0.5) contrast(50%);opacity: 0.7;" on:keydown role="button" tabindex="">
+                            <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute" src={cardV2Background} alt="cardBg">
+                            <div id="rarityBGList" style="background: {backgroundColorByCost[( yourBoardPhs[i].stars)-3]}; "></div>
+                            <img draggable="false" class = "cardButton" src={yourBoardPhs[i].source} alt="preview"/>
+                            <button class="cardListFrame" alt="cardBg"></button>
+                            <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*2.68);">{ yourBoardPhs[i].attack}</div>
+                            <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*9.65);">{ yourBoardPhs[i].health}</div>
+                            <div class="curCardCostList">{ yourBoardPhs[i].cost}</div>
+                            <div class="curCardNameList">{ yourBoardPhs[i].name}</div>
+                
+                            <div class="curCardRarityList" style="{starsColorByCost[( yourBoardPhs[i].stars)-3]}">
+                                {#each Array(Number( yourBoardPhs[i].stars)) as card,index}
+                                    <span style="font-size: calc(var(--cardOnBoardScale)*1vw*1);">★</span>
+                                {/each}
+                            </div>
+                        </div>
+                    {:else if yourBoardPhs[i].type == "ko"}
+                        <div on:click={() => KoPlacedByClick(i,"yourSide")} class:pointerEventsNone={cellPointerEvents == false} class:pointerEventsAuto={cellPointerEvents == true} style="filter: grayscale(0.5) contrast(50%);opacity: 0.7;" class:isPlacingModePh={isKoInPlacingMode} class="ko" on:keydown role="button" tabindex="">{yourBoardPhs[i].health}</div>
+                    {/if}
+                {/if}
+
+                {#if yourBoard[i] != ""}
+                    {#if yourBoard[i].type == "character"}
+                        <div on:click={() => SelectTargetCard(yourBoard[i],i,"your")} class:cardOnBoardInSelectMode={selectableCardDoms.includes(yourBoardDoms[i])} class:cardAwake={!yourBoard[i].fieldEffects.some(element => element.includes("frozen")) && !yourBoard[i].fieldEffects.some(element => element.includes("stunned")) && !yourBoard[i].fieldEffects.includes("asleep:") && isYourTurn && !isSelectTargetMode} style="--AnimTargetTop: {AnimTargetTop}; --AnimTargetLeft: {AnimTargetLeft}; --AnimAttackerTop: {AnimAttackerTop}; --AnimAttackerLeft: {AnimAttackerLeft}; --AnimAttackerXRot: {AnimAttackerXRot};--AnimAttackerMarginTop: {AnimAttackerMarginTop};"  class:cardInAttackingMode={cardInAttackingMode == yourBoard[i]}  id="cardPreviewListCont" on:keydown role="button" tabindex="">
+                            <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute" src={cardV2Background} alt="cardBg">
+                            <div id="rarityBGList" style="background: {backgroundColorByCost[(yourBoard[i].stars)-3]}; "></div>
+                            <img draggable="false" class = "cardButton" src={yourBoard[i].source} alt="preview"/>
+                            <button class="cardListFrame" alt="cardBg"></button>
+
+                            <div>
+                            {#if yourBoard[i].fieldEffects != ""}
+                                {#each yourBoard[i].fieldEffects as effect,j}
+                                    {#if !effect.includes("kettős") && !effect.includes("asleep")}
+                                    <img class="cardListFrame" src={fieldEffectOverlays[effect.substring(effect.indexOf(":"),-1)]} alt="overlay">
+                                    <img class="cardListFrame" style="mix-blend-mode: screen;" src={fieldEffectGifs[effect.substring(effect.indexOf(":"),-1)]} alt="overlay">
+                                    {/if}
+                                {/each}
                             {/if}
-                        {/if}
+                            </div>
+                            <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*2.68);">{yourBoard[i].attack}</div>
+                            <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*9.65);">{yourBoard[i].health}</div>
 
-                        {#if yourBoard[i] != ""}
-                            {#if yourBoard[i].type == "character"}
-                                <div on:click={() => SelectTargetCard(yourBoard[i],i,"your")} class:cardOnBoardInSelectMode={selectableCardDoms.includes(yourBoardDoms[i])} class:cardAwake={!yourBoard[i].fieldEffects.some(element => element.includes("frozen")) && !yourBoard[i].fieldEffects.some(element => element.includes("stunned")) && !yourBoard[i].fieldEffects.includes("asleep:") && isYourTurn && !isSelectTargetMode} style="--AnimTargetTop: {AnimTargetTop}; --AnimTargetLeft: {AnimTargetLeft}; --AnimAttackerYRot: {AnimAttackerYRot};"  class:cardInAttackingMode={cardInAttackingMode == yourBoard[i]}  id="cardPreviewListCont" on:keydown role="button" tabindex="">
-                                    <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute" src={cardV2Background} alt="cardBg">
-                                    <div id="rarityBGList" style="background: {backgroundColorByCost[(yourBoard[i].stars)-3]}; "></div>
-                                    <img draggable="false" class = "cardButton" src={yourBoard[i].source} alt="preview"/>
-                                    <button class="cardListFrame" alt="cardBg"></button>
+                            <div class="curCardCostList">{yourBoard[i].cost}</div>
+                            <div class="curCardNameList">{yourBoard[i].name}</div>
+                            
 
-                                    <div>
-                                    {#if yourBoard[i].fieldEffects != ""}
-                                        {#each yourBoard[i].fieldEffects as effect,j}
-                                            {#if !effect.includes("kettős") && !effect.includes("asleep")}
-                                            <img class="cardListFrame" src={fieldEffectOverlays[effect.substring(effect.indexOf(":"),-1)]} alt="overlay">
-                                            <img class="cardListFrame" style="mix-blend-mode: screen;" src={fieldEffectGifs[effect.substring(effect.indexOf(":"),-1)]} alt="overlay">
-                                            {/if}
-                                        {/each}
+
+                            {#if yourBoard[i].fieldEffects != ""}
+                                {#each yourBoard[i].fieldEffects as effect,j}
+                                    {#if !effect.includes("kettős")}
+                                    <img class="curCardFieldEffectList" style="top: calc(var(--cardOnBoardScale)*1vw*{1.9+ j*3.1});" src={fieldEffectIcons[effect.substring(effect.indexOf(":"),-1)]} alt="effect">
                                     {/if}
+                                {/each}
+                            {/if}
+
+                            {#if yourBoard[i].aligment != ""}
+                            {#if yourBoard[i].aligment.includes(",")}
+                                {#each yourBoard[i].aligment.split(",") as aligment,j}
+                                <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[aligment]}; border-radius: 0.5vw; top: calc(var(--cardOnBoardScale)*1vw*{4.8 + j* 2.55});"></div>
+                                <img style="top: calc(var(--cardOnBoardScale)*1vw*{4.8 + j* 2.55});" class="curCardAligList" src={aligmentIcons[aligment]} alt="aligment">
+                                {/each}
+                            {:else}
+                                <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[yourBoard[i].aligment]}; border-radius: 0.5vw;"></div>
+                                <img class="curCardAligList" src={aligmentIcons[yourBoard[i].aligment]} alt="aligment">
+                            {/if}
+                            {/if}
+
+                            {#if yourBoard[i].talent != ""}
+                                {#if yourBoard[i].talent.includes(",")}
+                                    <div class="curCardMultipleIconsContainerList">
+                                        {#each yourBoard[i].talent.split(",") as icon, j}
+                                        <div style="width:calc(var(--cardOnBoardScale)*1vw*{0.57*3.9/yourBoard[i].talent.split(",").length}); margin:auto">
+                                            <img style="width:calc(var(--cardOnBoardScale)*1vw*1.4);" src={talentIcons[icon.replace(" ","")]} alt="talent">
+                                        </div>
+                                        {/each}
                                     </div>
-                                    <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*2.68);">{yourBoard[i].attack}</div>
-                                    <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*9.65);">{yourBoard[i].health}</div>
-
-                                    <div class="curCardCostList">{yourBoard[i].cost}</div>
-                                    <div class="curCardNameList">{yourBoard[i].name}</div>
-                                    
-
-
-                                    {#if yourBoard[i].fieldEffects != ""}
-                                        {#each yourBoard[i].fieldEffects as effect,j}
-                                            {#if !effect.includes("kettős")}
-                                            <img class="curCardFieldEffectList" style="top: calc(var(--cardOnBoardScale)*1vw*{1.9+ j*3.1});" src={fieldEffectIcons[effect.substring(effect.indexOf(":"),-1)]} alt="effect">
-                                            {/if}
-                                        {/each}
-                                    {/if}
-
-                                    {#if yourBoard[i].aligment != ""}
-                                    {#if yourBoard[i].aligment.includes(",")}
-                                        {#each yourBoard[i].aligment.split(",") as aligment,j}
-                                        <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[aligment]}; border-radius: 0.5vw; top: calc(var(--cardOnBoardScale)*1vw*{4.8 + j* 2.55});"></div>
-                                        <img style="top: calc(var(--cardOnBoardScale)*1vw*{4.8 + j* 2.55});" class="curCardAligList" src={aligmentIcons[aligment]} alt="aligment">
-                                        {/each}
                                     {:else}
-                                        <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[yourBoard[i].aligment]}; border-radius: 0.5vw;"></div>
-                                        <img class="curCardAligList" src={aligmentIcons[yourBoard[i].aligment]} alt="aligment">
+                                    <div class="curCardTalentList">{yourBoard[i].talent.replace("támadás","")}</div>
+                                    <img style="left:calc(var(--cardOnBoardScale)*1vw*3.8);" class="curCardTalentIconList" src={talentIcons[yourBoard[i].talent.replace(" ","")]} alt="talent">
                                     {/if}
+                            {/if} 
+
+                            <div class="curCardRarityList" style="{starsColorByCost[(yourBoard[i].stars)-3]}">
+                                {#each Array(Number(yourBoard[i].stars)) as card,index}
+                                    <span style="font-size: calc(var(--cardOnBoardScale)*1vw*1);">★</span>
+                                {/each}
+                            </div>
+                        </div>
+                    {:else if yourBoard[i].type == "ko"}
+                        <div class="ko" on:click={() => SelectTargetCard(yourBoard[i],i,"your")} class:cardOnBoardInSelectMode={selectableCardDoms.includes(yourBoardDoms[i])} style="--AnimTargetTop: {AnimTargetTop}; --AnimTargetLeft: {AnimTargetLeft}; --AnimAttackerTop: {AnimAttackerTop}; --AnimAttackerLeft: {AnimAttackerLeft}; --AnimAttackerXRot: {AnimAttackerXRot};--AnimAttackerMarginTop: {AnimAttackerMarginTop};" on:keydown role="button" tabindex="">{yourBoard[i].health}</div>
+                    {/if}
+                {/if}
+                </div>
+            {/each}
+
+            {#each Array((yourBoard.length)/2) as cell,i}
+                <div class="target boardsCells" id="td{i+(yourBoard.length)/2}" style="bottom: 5%; left:{10+i*15}%" bind:this={yourBoardDoms[i+(yourBoard.length/2)]}>
+                {#if yourBoardPhs[i+(yourBoardPhs.length)/2] != ""}
+                    {#if yourBoardPhs[i+(yourBoardPhs.length)/2].type == "character"}
+                        <div class="BoardTierTwo" on:click={() => PlaceByClick(yourBoardPhs[i+(yourBoard.length)/2],i+(yourBoard.length)/2)} id="cardPreviewListCont" class:pointerEventsNone={cellPointerEvents == false} class:pointerEventsAuto={cellPointerEvents == true}  class:isPlacingModePh={isCardInYourHandInPlacingMode} style="filter: grayscale(0.5) contrast(50%);opacity: 0.7;" on:keydown role="button" tabindex="">
+                            <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute" src={cardV2Background} alt="cardBg">
+                            <div id="rarityBGList" style="background: {backgroundColorByCost[yourBoardPhs[i+(yourBoardPhs.length)/2]]}; "></div>
+                            <img draggable="false" class = "cardButton" src={yourBoardPhs[i+(yourBoardPhs.length)/2].source} alt="preview"/>
+                            <button class="cardListFrame" alt="cardBg"></button>
+                            <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*2.68);">{yourBoardPhs[i+(yourBoardPhs.length)/2].attack}</div>
+                            <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*9.65);">{yourBoardPhs[i+(yourBoardPhs.length)/2].health}</div>
+                            <div class="curCardCostList">{yourBoardPhs[i+(yourBoardPhs.length)/2].cost}</div>
+                            <div class="curCardNameList">{yourBoardPhs[i+(yourBoardPhs.length)/2].name}</div>
+                
+                            <div class="curCardRarityList" style="{starsColorByCost[(yourBoardPhs[i+(yourBoardPhs.length)/2].stars)-3]}">
+                                {#each Array(Number(yourBoardPhs[i+(yourBoardPhs.length)/2].stars)) as card,index}
+                                    <span style="font-size: calc(var(--cardOnBoardScale)*1vw*1);">★</span>
+                                {/each}
+                            </div>
+                        </div>
+                    {:else if yourBoardPhs[i+(yourBoardPhs.length)/2].type == "ko"}
+                        <div class="BoardTierTwo ko" on:click={() => KoPlacedByClick((i + (yourBoard.length/2)),"yourSide")} class:pointerEventsNone={cellPointerEvents == false} class:pointerEventsAuto={cellPointerEvents == true} style="filter: grayscale(0.5) contrast(50%);opacity: 0.7;" class:isPlacingModePh={isKoInPlacingMode}  on:keydown role="button" tabindex="">{yourBoardPhs[i+(yourBoardPhs.length)/2].health}</div>
+                    {/if}
+                {/if}
+
+                {#if yourBoard[i+(yourBoard.length)/2] != ""}
+                    {#if yourBoard[i+(yourBoard.length)/2].type == "character"}
+                        <div class="BoardTierTwo" on:click={() => SelectTargetCard(yourBoard[i+(yourBoard.length)/2],i+(yourBoard.length)/2,"your")} class:cardOnBoardInSelectMode={selectableCardDoms.includes(yourBoardDoms[i+(yourBoard.length)/2])}  class:cardAwake={!yourBoard[i+(yourBoard.length)/2].fieldEffects.some(element => element.includes("frozen")) && !yourBoard[i+(yourBoard.length)/2].fieldEffects.some(element => element.includes("stunned")) && !yourBoard[i+(yourBoard.length)/2].fieldEffects.includes("asleep:") && isYourTurn && !isSelectTargetMode} style="--AnimTargetTop: {AnimTargetTop}; --AnimTargetLeft: {AnimTargetLeft}; --AnimAttackerTop: {AnimAttackerTop}; --AnimAttackerLeft: {AnimAttackerLeft}; --AnimAttackerXRot: {AnimAttackerXRot};--AnimAttackerMarginTop: {AnimAttackerMarginTop};" class:cardInAttackingMode={cardInAttackingMode == yourBoard[i+(yourBoard.length/2)]}  id="cardPreviewListCont" on:keydown role="button" tabindex="">
+                            <img draggable="false" style="width: calc(var(--cardOnBoardScale)*1vw*12.5); position:absolute" src={cardV2Background} alt="cardBg">
+                            <div id="rarityBGList" style="background: {backgroundColorByCost[(yourBoard[i+(yourBoard.length)/2].stars)-3]}; "></div>
+                            <img draggable="false" class = "cardButton" src={yourBoard[i+(yourBoard.length)/2].source} alt="preview"/>
+                            <button class="cardListFrame" alt="cardBg"></button>
+
+                            <div>
+                            {#if yourBoard[i+(yourBoard.length)/2].fieldEffects != ""}
+                                {#each yourBoard[i+(yourBoard.length)/2].fieldEffects as effect,j}
+                                    {#if !effect.includes("kettős")}
+                                    <img class="curCardFieldEffectList" style="top: calc(var(--cardOnBoardScale)*1vw*{1.9+ j*3.1});" src={fieldEffectIcons[effect.substring(effect.indexOf(":"),-1)]} alt="effect">
                                     {/if}
+                                {/each}
+                            {/if}
+                            </div>
+                            <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*2.68);">{yourBoard[i+(yourBoard.length)/2].attack}</div>
+                            <div class="curCardStatsList" style="left: calc(var(--cardOnBoardScale)*1vw*9.65);">{yourBoard[i+(yourBoard.length)/2].health}</div>
+                            <div class="curCardCostList">{yourBoard[i+(yourBoard.length)/2].cost}</div>
+                            <div class="curCardNameList">{yourBoard[i+(yourBoard.length)/2].name}</div>
 
-                                    {#if yourBoard[i].talent != ""}
-                                        {#if yourBoard[i].talent.includes(",")}
-                                            <div class="curCardMultipleIconsContainerList">
-                                                {#each yourBoard[i].talent.split(",") as icon, j}
-                                                <div style="width:calc(var(--cardOnBoardScale)*1vw*{0.57*3.9/yourBoard[i].talent.split(",").length}); margin:auto">
-                                                    <img style="width:calc(var(--cardOnBoardScale)*1vw*1.4);" src={talentIcons[icon.replace(" ","")]} alt="talent">
-                                                </div>
-                                                {/each}
-                                            </div>
-                                            {:else}
-                                            <div class="curCardTalentList">{yourBoard[i].talent.replace("támadás","")}</div>
-                                            <img style="left:calc(var(--cardOnBoardScale)*1vw*3.8);" class="curCardTalentIconList" src={talentIcons[yourBoard[i].talent.replace(" ","")]} alt="talent">
-                                            {/if}
-                                    {/if} 
 
-                                    <div class="curCardRarityList" style="{starsColorByCost[(yourBoard[i].stars)-3]}">
-                                        {#each Array(Number(yourBoard[i].stars)) as card,index}
-                                            <span style="font-size: calc(var(--cardOnBoardScale)*1vw*1);">★</span>
+                            
+                            {#if yourBoard[i+(yourBoard.length)/2].aligment != ""}
+                            {#if yourBoard[i+(yourBoard.length)/2].aligment.includes(",")}
+                                {#each yourBoard[i+(yourBoard.length)/2].aligment.split(",") as aligment,j}
+                                <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[aligment]}; border-radius: 0.5vw; top: calc(var(--cardOnBoardScale)*1vw*{4.8 + j* 2.55});"></div>
+                                <img style="top: calc(var(--cardOnBoardScale)*1vw*{4.8 + j* 2.55});" class="curCardAligList" src={aligmentIcons[aligment]} alt="aligment">
+                                {/each}
+                            {:else}
+                                <div class="curAligListCont" style="background-color: {aligmentBackgroundColors[yourBoard[i+(yourBoard.length)/2].aligment]}; border-radius: 0.5vw;"></div>
+                                <img class="curCardAligList" src={aligmentIcons[yourBoard[i+(yourBoard.length)/2].aligment]} alt="aligment">
+                            {/if}
+                            {/if}
+
+                            {#if yourBoard[i+(yourBoard.length)/2].talent != ""}
+                                {#if yourBoard[i+(yourBoard.length)/2].talent.includes(",")}
+                                    <div class="curCardMultipleIconsContainerList">
+                                        {#each yourBoard[i+(yourBoard.length)/2].talent.split(",") as icon, j}
+                                        <div style="width:calc(var(--cardOnBoardScale)*1vw*{0.57*3.9/yourBoard[i+(yourBoard.length)/2].talent.split(",").length}); margin:auto">
+                                            <img style="width:calc(var(--cardOnBoardScale)*1vw*1.4);" src={talentIcons[icon.replace(" ","")]} alt="talent">
+                                        </div>
                                         {/each}
                                     </div>
-                                </div>
-                            {:else if yourBoard[i].type == "ko"}
-                                <div class="ko" on:click={() => SelectTargetCard(yourBoard[i],i,"your")} class:cardOnBoardInSelectMode={selectableCardDoms.includes(yourBoardDoms[i])} on:keydown role="button" tabindex="">{yourBoard[i].health}</div>
-                            {/if}
-                        {/if}
-                        </td>
-                    {/each}
-                </tr>
-                <div id="spellTargetDiv" class:displayBlock={dragged != "" && dragged.type == "spell"} class:displayNone={dragged == "" || dragged.tpye != "spell"}><span style="margin-top:10vh; display:block; pointer-events: none;">play spell</span></div>
-            </div>
+                                    {:else}
+                                    <div class="curCardTalentList">{yourBoard[i+(yourBoard.length)/2].talent.replace("támadás","")}</div>
+                                    <img style="left:calc(var(--cardOnBoardScale)*1vw*3.8);" class="curCardTalentIconList" src={talentIcons[yourBoard[i+(yourBoard.length)/2].talent.replace(" ","")]} alt="talent">
+                                    {/if}
+                            {/if}      
+
+                            <div class="curCardRarityList" style="{starsColorByCost[(yourBoard[i+(yourBoard.length)/2].stars)-3]}">
+                                {#each Array(Number(yourBoard[i+(yourBoard.length)/2].stars)) as card,index}
+                                    <span style="font-size: calc(var(--cardOnBoardScale)*1vw*1);">★</span>
+                                {/each}
+                            </div>
+                        </div>
+                    {:else if yourBoard[i+(yourBoard.length)/2].type == "ko"}
+                        <div class="ko BoardTierTwo" on:click={() => SelectTargetCard(yourBoard[i+(yourBoard.length)/2],i+(yourBoard.length)/2,"your")} class:cardOnBoardInSelectMode={selectableCardDoms.includes(yourBoardDoms[i+(yourBoard.length)/2])} style="--AnimTargetTop: {AnimTargetTop}; --AnimTargetLeft: {AnimTargetLeft}; --AnimAttackerTop: {AnimAttackerTop}; --AnimAttackerLeft: {AnimAttackerLeft}; --AnimAttackerXRot: {AnimAttackerXRot};--AnimAttackerMarginTop: {AnimAttackerMarginTop};" on:keydown role="button" tabindex="">{yourBoard[i+(yourBoard.length)/2].health}</div>
+                    {/if}
+                {/if} 
+                </div>
+            {/each}
+
+            <div id="spellTargetDiv" class:displayBlock={dragged != "" && dragged.type == "spell"} class:displayNone={dragged == "" || dragged.tpye != "spell"}><span style="margin-top:10vh; display:block; pointer-events: none;">play spell</span></div>
+
         </div>
         <div id="yourHand" class="handCont" >
             {#each yourHand as card,i}
@@ -4717,6 +5092,37 @@
         <button class="actionButtonClass hover-underline-animation" style="left: 15vw;" on:click={NextBattleLog}>Next</button>
     </div>
 
+    <div id="secretCont">
+        <div class="secretSpells" id="yourSecrets">
+            {#each yourGameParameters.secretSpells as spell,i}
+                <button class="secret" style="background-image: url({secretIcons[i]})" on:mouseenter={() => AdjustSecretHover(true,i)} on:mouseleave={() => AdjustSecretHover(false,i)} ></button><br>
+            {/each}
+        </div>
+    </div>
+    <div id="secretHover">
+        {#each yourGameParameters.secretSpells as hover,i}
+            {#if secretHoverState[i]}
+            <div class="previewInVA" style="position:absolute; left:0; top: {i*4}vw;">
+                <img draggable="false" class="cardTemplateVA" id="cardBackgroundVA" src={spellBackground} style="--colorr: {backgroundColorByCost[(hover.stars)-3]};" alt="cardBg">
+                <div id="rarityBGVA" style="background: {backgroundColorByCost[(hover.stars)-3]}; "></div>
+                <img draggable="false" id="curCardInViewVA" src={hover.source} alt="">
+                <img draggable="false" class="cardTemplateVA" src={spellForeground} alt="cardBg">
+                <div id="curCardDescVA" class="noScrollers">{@html hover.description}</div>
+                <div class="curCardCostVA">{hover.cost}</div>
+                <div class="curCardNameVA">{hover.name}</div>
+
+
+                <div id="curCardRarityVA" style="{starsColorByCost[(hover.stars)-3]}; top: 0">
+                    {#each Array(Number(hover.stars)) as card,index}
+                        <span style="font-size: calc(var(--cardsVAScale)*2.4vw">★</span>
+                    {/each}
+                </div>
+            </div>
+            {/if}
+        {/each}
+    </div>
+
+
     {#if isInChoosingMode}
     <div id="choosingMode">
         {#each cardChoosingModeOptions as option,i}
@@ -4856,6 +5262,50 @@
          </div>
         {/if}
     </div>
+
+    {#if szaszShuffle}
+    <div id="szaszShuffleBG">
+        <img id="shuffleGif" src={cardShuffling} alt="shuff shuff">
+        <div id="frenchCardCont">
+            {#each pickedFrenchCard as card,i}
+                <div id="frenchCard{i}" class="frenchCard">
+                    <img class="frenchCardIcon" style="left:1vw; top:1vw;" src={card.icon} alt="icon">
+                    <img class="frenchCardIcon" style="right:1vw; bottom:1vw;" src={card.icon} alt="icon">
+                    {#if card.icon == cClub || card.icon == cSpade}
+                    <div class="frenchCardNumber">{card.number}</div>
+                    {:else}
+                    <div class="frenchCardNumber" style="color:red">{card.number}</div>
+                    {/if}
+                </div>
+            {/each}
+        </div>
+        <div style="position: absolute; top: 15vh; left: 69vw;">
+            <button on:click={PikkDama} style=" margin-bottom: 5vh;">Újra</button><br>
+            <button on:click={ClosePikkDamaTab}>Vissza</button>
+        </div>
+        
+    </div>
+    {/if}
+    {#if isTritzCoinFlip}
+    <div id="tritzCoinFlipBG">
+        <div style="position:absolute;left:45vw;top:20vh;">
+        <button on:click={TritzFlip}>FLIP</button>
+        <button on:click={() => {
+            isTritzCoinFlip = false
+            isTritzCoinFlip = isTritzCoinFlip
+
+            tritzCoinFlips = []
+            tritzCoinFlips = tritzCoinFlips
+        }}>Exit</button></div>
+        <div id="TritzCoinCont">
+            {#each tritzCoinFlips as coin,i}
+            <div class="tritzCoinPerspCont">
+                <img class="tritzCoin" src={coin} alt="fej/iras">
+            </div>
+            {/each}
+        </div>
+    </div>
+{/if}
 </div>
 
 <button style="z-index: 100; position:absolute" id="fullScreenButton" on:click={requestFullScreen}>[]</button>
@@ -4863,7 +5313,7 @@
 <style>
     @font-face {
             font-family: 'SevenSwords';
-            src: url('../../lib/assets/fonts/SEVESBRG.ttf');
+            src: url('../../lib/assets/fonts/zh-cn.ttf');
     }
     @font-face {
         font-family: 'ShadowLight';
@@ -4904,7 +5354,8 @@
     }
     .displayNone{display: none;}
     .displayBlock{display: block;}
-
+    .pointerEventsNone{pointer-events:none;}
+    .pointerEventsAuto{pointer-events:auto;}
     .tomiCsere{
         z-index: 100000;
         position: absolute;
@@ -4934,6 +5385,30 @@
             scale: 1;
         }
     }
+
+    .secretSpells{
+        position:absolute;
+        width: 10vw;
+        left: 10vw;
+        top: 48vh;
+    }
+    .secret{
+        width:3.3vw;
+        height: 3.3vw;
+        background-color: transparent;
+        border:none;
+        background-size: 100% 100%;
+        margin: 0.1vw;
+    }
+    .secret:hover{
+        cursor:pointer;
+    }
+    #secretHover{
+        position:absolute;
+        left: 16vw;
+        top: 40vh;
+    }
+
 
     #selectingModeBG{
         width: 100vw;
@@ -5066,28 +5541,32 @@
     }
     @keyframes -global-attackAnim{
         0%{
-            position: absolute;
-            transform: rotateX(0deg) rotateZ(0deg) rotateY(0deg);
-            top:0;
-            left: auto;
+            
+            transform: rotateX(0deg);
+            top:var(--AnimAttackerTop);
+            left:var(--AnimAttackerLeft);
         }
         20%{
-            transform: rotateX(0deg) rotateZ(0deg) rotateY(0deg);
-        }
-        40%{
-            transform: rotateX(10deg) rotateZ(var(--AnimAttackerYRot)) rotateY(var(--AnimAttackerYRot));
-            top: 8vh;
+            transform: rotateX(var(--AnimAttackerXRot));
+
+            top:var(--AnimAttackerTop);
+            left:var(--AnimAttackerLeft);
         }
         60%{
-            transform: rotateX(10deg) rotateZ(var(--AnimAttackerYRot)) rotateY(var(--AnimAttackerYRot));
-            top: 8vh;
-            left: auto;
+            transform: rotateX(var(--AnimAttackerXRot));
+            margin-top: var(--AnimAttackerMarginTop);
+            top:var(--AnimAttackerTop);
+            left:var(--AnimAttackerLeft);
+        }
+        80%{
+            margin-top:0vh;
+            transform: rotateX(0deg);
         }
         100%{
-            position: absolute;
-            transform: rotateX(0deg) rotateZ(0deg) rotateY(0deg);
-            top: var(--AnimTargetTop);
-            left: var(--AnimTargetLeft);
+            
+            transform: rotateX(0deg);
+            top:var(--AnimTargetTop);
+            left:var(--AnimTargetLeft);
         }
     }
 
@@ -5125,6 +5604,134 @@
         100%{
             color: white;
             font-size: calc(var(--cardOnBoardScale)*1vw*1.9);
+        }
+    }
+
+
+    #tritzCoinFlipBG{
+        position:absolute;
+        top:0;
+        left:0;
+        width:100vw;
+        height:100vh;
+        margin:0;
+        padding:0;
+        z-index:16;
+
+        background-color: rgba(42, 100, 64, 0.74);
+    }
+    #TritzCoinCont{
+        position:absolute;
+        width: 55vw;
+        left:22.5vw;
+        top:39vh;
+
+        display:flex;
+        
+    }
+    .tritzCoinPerspCont{
+        perspective: 10vw; /* Adjust the perspective value as needed */
+        perspective-origin: 50% 50%;
+    }
+    .tritzCoin{
+        margin: 2vw;
+        width:7vw;
+        animation: tritzCoin 1s forwards;
+    }
+    @keyframes tritzCoin {
+        0%{
+            transform: rotateX(0deg);
+            margin-top: 0vh;
+        }
+        50%{
+            transform: rotateX(180deg);
+            margin-top: -10vh;
+        }
+        100%{
+            transform: rotateX(360deg);
+            margin-top: 0vh;
+        }
+    }
+    #szaszShuffleBG{
+        position:absolute;
+        top:0;
+        left:0;
+        width:100vw;
+        height:100vh;
+        margin:0;
+        padding:0;
+        z-index:16;
+
+        background-color: rgba(100, 55, 42, 0.74);
+    }
+    #shuffleGif{
+        width:30vw;
+        height:30vh;
+        position:absolute;
+        left:35vw;
+        top:6vh;
+    }
+    #frenchCardCont{
+        position:absolute;
+        width: 80vw;
+        left:10vw;
+        top:39vh;
+
+        display:grid;
+        grid-template-rows: auto auto; /* Two rows */
+        grid-template-columns: repeat(7, 1fr); /* Eight columns with equal width */
+        
+    }
+    .frenchCard{
+        margin:1vw;
+        width: 10vw;
+        height: 15vw;
+        background-color: antiquewhite;
+        border-radius: 1vw;
+
+        z-index:17;
+        animation: frenchCardInAnim 0.5s forwards;
+        position: relative;
+    }
+    .frenchCardIcon{
+        width: 2vw;
+        position:absolute;  
+    }
+    .frenchCardNumber{
+        position: absolute;
+        font-size:5vw;
+        left:35%;
+        top:30%;
+    }
+    @keyframes frenchCardInAnim {
+        0%{
+            opacity: 0;
+            margin-top:10vh;
+            scale: 0.6;
+        }
+        80%{
+            opacity: 1;
+            margin-top:-3vh;
+            scale: 1;
+        }
+        100%{
+            opacity: 1;
+            margin-top:0vh;
+            scale: 1;
+        }
+    }
+    @keyframes -global-pikkDamaBingo {
+        0%{
+            background-color: antiquewhite;
+            scale: 1;
+        }
+        50%{
+            background-color: green;
+            scale: 1.2;
+        }
+        100%{
+            background-color: antiquewhite;
+            scale: 1;
         }
     }
 
@@ -5546,14 +6153,15 @@
         margin-right: 8vw;
     }
     .boardsCells{
-        padding:0;
-        margin: 0;
-
-        width: 12.8vw; /*wanna kill myself*/
-        height: 16.25vh;
+        position:absolute;
 
         perspective: 10vw; /* Adjust the perspective value as needed */
         perspective-origin: 50% 50%;
+
+        z-index:15;
+
+        width:calc(var(--cardOnBoardScale)*1vw*14.3);
+        height: calc(var(--cardOnBoardScale)*1vw*17);
     }
     .tierOne{
         top: 0;
@@ -5756,7 +6364,6 @@
         display:inline-block;
         padding: 0;
         margin: 0;
-        
     }
     .cardListFrame{
         width: calc(var(--cardOnBoardScale)*1vw*12.5);

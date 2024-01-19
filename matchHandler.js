@@ -22,8 +22,8 @@ let gameKey = ""
 
 export let lastCardPlayedClient = ""
 
-export let yourGameParametersClient = {currentHand: [],remaningDeck: [], yourBoard: Array(10).fill(""), mana: 0, spellMana: 0, username: "", hp: 0}
-export let enemyGameParametersClient = {currentHand: [],remaningDeck: [], yourBoard: Array(10).fill(""), mana: 0, spellMana: 0, username: "", hp: 0}
+export let yourGameParametersClient = {isYourTurn: "",currentHand: [],remaningDeck: [], yourBoard: Array(10).fill(""), mana: 0, spellMana: 0, username: "", hp: 0, secretSpells: []}
+export let enemyGameParametersClient = {isYourTurn: "",currentHand: [],remaningDeck: [], yourBoard: Array(10).fill(""), mana: 0, spellMana: 0, username: "", hp: 0, secretSpells: []}
 
 
 export function DomLoaded(){
@@ -101,6 +101,7 @@ let actionLogEvent
 let aligmentAnimEvent
 let cardDmgAnimEvent
 let summoningLocationEvent
+let cardAttackAnimEvent
 
 let bizsoEndTurnEvent
 
@@ -118,6 +119,7 @@ function WaitForDomPage(){
         aligmentAnimEvent = new Event("cellAligmentAnim")
         cardDmgAnimEvent = new Event("cardDmgAnim")
         summoningLocationEvent = new Event("summoningLocationEvent")
+        cardAttackAnimEvent = new Event("cardAttackAnimEvent")
 
         bizsoEndTurnEvent = new Event("bizsoEndTurn")
         ServerCode()
@@ -157,19 +159,23 @@ function ServerCode(){
         }
         else if(msg.includes("isFirst")){
             console.log(msg);
-            yourGameParametersClient.isYourTurn = true
-            
-            if(msg.includes(yourGameID)){
+            if(yourGameParametersClient.isYourTurn == ""){
                 yourGameParametersClient.isYourTurn = true
-                enemyGameParametersClient.isYourTurn = false
+            
+                if(msg.includes(yourGameID)){
+                    yourGameParametersClient.isYourTurn = true
+                    enemyGameParametersClient.isYourTurn = false
+                }
+                else{
+                    yourGameParametersClient.isYourTurn = false
+                    enemyGameParametersClient.isYourTurn = true
+                    
+                }
+                console.log("FIRSTLOG: ",msg,yourGameParametersClient,enemyGameParametersClient)
+                localStorage.setItem("yourGameParams", JSON.stringify(yourGameParametersClient));
+                localStorage.setItem("opponentGameParams", JSON.stringify(enemyGameParametersClient));
             }
-            else{
-                yourGameParametersClient.isYourTurn = false
-                enemyGameParametersClient.isYourTurn = true
-                
-            }
-            localStorage.setItem("yourGameParams", JSON.stringify(yourGameParametersClient));
-            localStorage.setItem("opponentGameParams", JSON.stringify(enemyGameParametersClient));
+            
         }
         else if(msg.includes("TurnEnded")){
             enemyGameParametersClient.isYourTurn = !enemyGameParametersClient.isYourTurn
@@ -205,6 +211,12 @@ function ServerCode(){
             summoningLocationEvent.data = data
 
             document.dispatchEvent(summoningLocationEvent)
+        }
+        else if(msg.includes("CardAttackAnimation")){
+            var data = JSON.parse(msg.replace("CardAttackAnimation",""))
+            data.side == yourGameID ? data.side = "td" : data.side = "etd"
+            cardAttackAnimEvent.data = data
+            document.dispatchEvent(cardAttackAnimEvent)
         }
         else{
             msg = JSON.parse(msg)
@@ -252,6 +264,17 @@ export function SendGameDataClient(data){
 //-------------------------------------------------------------------------------------------
 export function EndTurn(){
     Client.socket.emit(gameKey,"TurnEnded")
+}
+
+export function CardAttackAnimation(enemyi,youri){
+    var msg = {
+        attackerI: youri,
+        defenderI: enemyi,
+        side: yourGameID
+    }
+    console.log("ANIMLOG client: ",msg)
+    
+    Client.socket.emit(gameKey,`CardAttackAnimation${JSON.stringify(msg)}`)
 }
 
 export function LastActionLog(card){
