@@ -102,7 +102,7 @@
     import NagyoraGacha from "./lib/assets/collection/tanar/NagyoraGacha.png"//kell új kép
     import RozgonyiGacha from "./lib/assets/collection/tanar/RozgonyiGacha.png"
     import TabiGacha from "./lib/assets/collection/tanar/TabiGacha.png"
-    import BencusGacha from "./lib/assets/collection/tanar/BencusGacha.png"//kell új kép
+    //kell új kép - bencusgacha
     import DobiGacha from "./lib/assets/collection/tanar/DobiGacha.png"
     import IvanEvaGacha from "./lib/assets/collection/tanar/IvanEvaGacha.png"
     import KocsiAndiGacha from "./lib/assets/collection/tanar/KocsiAndiGacha.png"
@@ -135,8 +135,8 @@
     //#region diák gacha SRC
     import ArhoGacha from "./lib/assets/collection/diak/ArhoGacha.png"
     import BarniGacha from "./lib/assets/collection/diak/BarniGacha.png"
-    import EszterGacha from "./lib/assets/collection/diak/EszterGacha.png" //kell új kép
-    import OliviaGacha from "./lib/assets/collection/diak/OliviaGacha.png" //kell új kép
+    //kell új kép - eszter
+    //kell új kép - olivia
     import ZalanGacha from "./lib/assets/collection/diak/ZalanGacha.png"
     import ZenoGacha from "./lib/assets/collection/diak/ZenoGacha.png"
     import EmmaGacha from "./lib/assets/collection/diak/EmmaGacha.png"
@@ -166,7 +166,7 @@
     //dénes
     //#endregion
     //#region extra gacha SRC
-    import AproNoGacha from "./lib/assets/collection/diak/AproNoGacha.png" //kell új kép
+    //kell új kép - aprono
     //nokedli
     //csontváz
     //the rock
@@ -280,40 +280,40 @@
     import puskazas from "./lib/assets/collection/spell/puskazas.png"
     import saratoborzas from "./lib/assets/collection/spell/saratoborzas.png"
     import visszaakezembe from "./lib/assets/collection/spell/visszaakezembe.png"
-    //acélpajzs -
-    //alázatosság -
-    //álljon meg a menet! -
-    //atomrobbanás -
-    //ctrl+C / ctrl+V -
-    //csere-bere -
-    //ellopták a kabátod -
-    //hagyyá' má'! -
-    //kommunizmus -
-    //leltározás -
-    //nem tudod? 1-es! következő! -
-    //NERF pisztoly a padban -
-    //nokedli leszel -
-    //nokedli vagy -
-    //piros lámpa -
-    //sítábor -
-    //tanári értekezlet -
-    //UNO visszafordító kártya -
-    //varázsköpönyeg -
-    //varázskötet -
-    //nem szellőztettek -
-    //tanévnyitó -
-    //metamorfózis -
-    //szoborfaragás -
-    //mitózis -
-    //nincs fűtés -
-    //ez vagy az -
-    //kiosztják a dogát -
-    //télen szellőztettek -
-    //RNG -
-    //fakard a DÖK irodából
-    //nagy testvér vigyáz rád -
-    //gravitáció -
-    //G osztály eltörlése -
+    import acelpajzs from "./lib/assets/collection/spell/acelpajzs.png"
+    import alazatossag from "./lib/assets/collection/spell/alazatossag.png"
+    import alljonmegamenet from "./lib/assets/collection/spell/alljonmegamenet.png"
+    import atomrobbanas from "./lib/assets/collection/spell/atomrobbanas.png"
+    import ctrlcctrlv from "./lib/assets/collection/spell/ctrlcctrlv.png"
+    import cserebere from "./lib/assets/collection/spell/cserebere.png"
+    import elloptakakabatod from "./lib/assets/collection/spell/elloptakakabatod.png"
+    import haggyama from "./lib/assets/collection/spell/haggyama.png"
+    import kommunizmus from "./lib/assets/collection/spell/kommunizmus.png"
+    import leltarozas from "./lib/assets/collection/spell/leltarozas.png"
+    import nemtudod1eskovetkezo from "./lib/assets/collection/spell/nemtudod1eskovetkezo.png"
+    import nerfapadban from "./lib/assets/collection/spell/nerfapadban.png"
+    import nokedlileszel from "./lib/assets/collection/spell/nokedlileszel.png"
+    import nokedlivagy from "./lib/assets/collection/spell/nokedlivagy.png"
+    import piroslampa from "./lib/assets/collection/spell/piroslampa.png"
+    import sitabor from "./lib/assets/collection/spell/sitabor.png"
+    import tanariertekezlet from "./lib/assets/collection/spell/tanariertekezlet.png"
+    import UNO from "./lib/assets/collection/spell/UNO.png"
+    import varazskoponyeg from "./lib/assets/collection/spell/varazskoponyeg.png"
+    import varazskonyv from "./lib/assets/collection/spell/varazskonyv.png"
+    import nemszelloztettek from "./lib/assets/collection/spell/nemszelloztettek.png"
+    import tanevnyito from "./lib/assets/collection/spell/tanevnyito.png"
+    import metamorfozis from "./lib/assets/collection/spell/metamorfozis.png"
+    import szoborfaragas from "./lib/assets/collection/spell/szoborfaragas.png"
+    import mitozis from "./lib/assets/collection/spell/mitozis.png"
+    import nincsfutes from "./lib/assets/collection/spell/nincsfutes.png"
+    import ezvagyaz from "./lib/assets/collection/spell/ezvagyaz.png"
+    import kiosztjakadogat from "./lib/assets/collection/spell/kiosztjakadogat.png"
+    import telenszelloztettek from "./lib/assets/collection/spell/telenszelloztettek.png"
+    import rng from "./lib/assets/collection/spell/rng.png"
+    import fakard from "./lib/assets/collection/extra/Te.png"
+    import nagytestvervigyazrad from "./lib/assets/collection/spell/nagytestvervigyazrad.png"
+    import gravitacio from "./lib/assets/collection/spell/gravitacio.png"
+    import visszaakezembe from "./lib/assets/collection/spell/visszaakezembe.png"
     //enyém! -
     //#endregion
 
