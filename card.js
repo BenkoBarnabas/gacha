@@ -313,7 +313,6 @@
     import fakard from "./lib/assets/collection/extra/Te.png"
     import nagytestvervigyazrad from "./lib/assets/collection/spell/nagytestvervigyazrad.png"
     import gravitacio from "./lib/assets/collection/spell/gravitacio.png"
-    import visszaakezembe from "./lib/assets/collection/spell/visszaakezembe.png"
     //enyém! -
     //#endregion
 
