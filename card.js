@@ -33,42 +33,42 @@
     import Anderlene from "./lib/assets/collection/tanar/Anderlene.png"
     import Sagine from "./lib/assets/collection/tanar/Sagine.png"
     import Blazó from "./lib/assets/collection/tanar/Blazó.png"
-    //moni
-    //erzsi
     //#endregion
+
     //#region diák képek
     import Arho from "./lib/assets/collection/diak/Arho.png"
     import Barni from "./lib/assets/collection/diak/Barni.png"
-    import Eszter from "./lib/assets/collection/diak/Eszter.png" //kell új kép
-    import Olivia from "./lib/assets/collection/diak/Olivia.png" //kell új kép
+    import Eszter from "./lib/assets/collection/extra/Te.png" //kell új kép
+    import Olivia from "./lib/assets/collection/extra/Te.png" //kell új kép
     import Zalan from "./lib/assets/collection/diak/Zalan.png"
     import Zeno from "./lib/assets/collection/diak/Zeno.png"
     import Regina from "./lib/assets/collection/diak/Regina.png"
     import Emma from "./lib/assets/collection/diak/Emma.png"
     import Reka from "./lib/assets/collection/diak/Reka.png"
     import Juli from "./lib/assets/collection/diak/Juli.png"
-    //balázs -
-    //abigél
-    //báló -
-    //árpád -
-    //szász levente
-    //vendel -
-    //nagy-györgy -
-    //szakonyi
-    //rebecca -
-    //tanács botond -
-    //zsíros péter -
-    //gál levente -
-    //boros kinga -
-    //molnár réka
-    //kasza domonkos -
-    //andris -
-    //miklós
-    //gitta -
-    //nagy benedek -
-    //vörös bálint -
-    //dénes -
+    import Balazs from "./lib/assets/collection/diak/Balazs.png"
+    import Abigel from "./lib/assets/collection/extra/Te.png" //kell új kép
+    import Balo from "./lib/assets/collection/diak/Balo.png"
+    import Arpad from "./lib/assets/collection/diak/Arpad.png"
+    import SzaszLevente from "./lib/assets/collection/extra/Te.png" //kell új kép
+    import Vendel from "./lib/assets/collection/diak/Vendel.png"
+    import Nagygyorgy from "./lib/assets/collection/diak/Nagygyorgy.png"
+    import Szakonyi from "./lib/assets/collection/extra/Te.png" //kell új kép
+    import Rebecca from "./lib/assets/collection/diak/Rebecca.png"
+    import Tanacsbotond from "./lib/assets/collection/diak/Tanacsbotond.png"
+    import Zsirospeter from "./lib/assets/collection/diak/Zsirospeter.png"
+    import Gallevente from "./lib/assets/collection/diak/Gallevente.png"
+    import BorosKinga from "./lib/assets/collection/diak/BorosKinga.png"
+    import Molnarreka from "./lib/assets/collection/extra/Te.png" //kell új kép
+    import Kaszadomonkos from "./lib/assets/collection/diak/Kaszadomonkos.png"
+    import Vighandris from "./lib/assets/collection/diak/Vighandris.png"
+    import Miklos from "./lib/assets/collection/extra/Te.png" //kell új kép
+    import Gitta from "./lib/assets/collection/diak/Gitta.png"
+    import Nagybenedek from "./lib/assets/collection/diak/Nagybenedek.png"
+    import Vorosbalint from "./lib/assets/collection/diak/Vorosbalint.png"
+    import Denes from "./lib/assets/collection/diak/Denes.png"
     //#endregion
+
     //#region extra képek
     import Te from "./lib/assets/collection/extra/Te.png"
     import SGEndre from "./lib/assets/collection/extra/SGEndre.png"
@@ -78,24 +78,25 @@
     import KutiSport from "./lib/assets/collection/extra/KutiSport.png"
     import Zsoblin from "./lib/assets/collection/extra/Zsoblin.png"
     import Jeff from "./lib/assets/collection/extra/Jeff.png"
-
-    //boldizsár -
-    //dolores -
-    //david -
-    //jenny -
-    //nokedli -
-    //csontváz -
-    //the rock -
-    //mikyx -
-    //tojas -
-    //charmander -
-    //charmeleon -
-    //charizard -
-    //mega charizard x -
-    //zozó
-    //strawberry
-    import GachaPH from "./lib/assets/collection/tanar/GachaPH.png"
+    import Boldizsar from "./lib/assets/collection/extra/Boldizsar.png"
+    import Dolores from "./lib/assets/collection/extra/Dolores.png"
+    import David from "./lib/assets/collection/extra/David.png"
+    import Jenny from "./lib/assets/collection/extra/Jenny.png"
+    import Nokedli from "./lib/assets/collection/extra/Nokedli.png"
+    import Csontvaz from "./lib/assets/collection/extra/Csontvaz.png"
+    import Therock from "./lib/assets/collection/extra/Therock.png"
+    import Mikyx from "./lib/assets/collection/extra/Mikyx.png"
+    import Sarkanytojas from "./lib/assets/collection/extra/Sarkanytojas.png"
+    import Charmander from "./lib/assets/collection/extra/Charmander.png"
+    import Charmeleon from "./lib/assets/collection/extra/Charmeleon.png"
+    import Charizard from "./lib/assets/collection/extra/Charizard.png"
+    import Megacharizardx from "./lib/assets/collection/extra/Megacharizardx.png"
+    import Zozo from "./lib/assets/collection/extra/Te.png" //kell új kép
+    import Starwberry from "./lib/assets/collection/extra/Te.png" //kell új kép
+    import BufesMoni from "./lib/assets/collection/extra/Te.png" //kell új kép
+    import Erzsi from "./lib/assets/collection/extra/Erzsi.png"
     //#endregion
+
     //#region tanárgacha SRC
     import BizsoGacha from "./lib/assets/collection/tanar/BizsoGacha.png" //kell új kép
     import FarkasGacha from "./lib/assets/collection/tanar/FarkasGacha.png"
@@ -103,7 +104,7 @@
     import NagyoraGacha from "./lib/assets/collection/tanar/NagyoraGacha.png"//kell új kép
     import RozgonyiGacha from "./lib/assets/collection/tanar/RozgonyiGacha.png"
     import TabiGacha from "./lib/assets/collection/tanar/TabiGacha.png"
-    //kell új kép - bencusgacha
+    import BencusGacha from "./lib/assets/collection/tanar/GachaPH.png" //kell új kép
     import DobiGacha from "./lib/assets/collection/tanar/DobiGacha.png"
     import IvanEvaGacha from "./lib/assets/collection/tanar/IvanEvaGacha.png"
     import KocsiAndiGacha from "./lib/assets/collection/tanar/KocsiAndiGacha.png"
@@ -129,57 +130,52 @@
     import SagineGacha from "./lib/assets/collection/tanar/SagineGacha.png"
     import AnderleneGacha from "./lib/assets/collection/tanar/AnderleneGacha.png"
     import TritzGacha from "./lib/assets/collection/tanar/TritzGacha.gif"
-    //moni
-    //erzsi
     //#endregion
+
     //#region diák gacha SRC
     import ArhoGacha from "./lib/assets/collection/diak/ArhoGacha.png"
     import BarniGacha from "./lib/assets/collection/diak/BarniGacha.png"
-    //kell új kép - eszter
-    //kell új kép - olivia
+    import EszterGacha from "./lib/assets/collection/tanar/GachaPH.png"//kell új kép
+    import OliviaGacha from "./lib/assets/collection/tanar/GachaPH.png"//kell új kép
     import ZalanGacha from "./lib/assets/collection/diak/ZalanGacha.png"
     import ZenoGacha from "./lib/assets/collection/diak/ZenoGacha.png"
     import EmmaGacha from "./lib/assets/collection/diak/EmmaGacha.png"
     import JuliGacha from "./lib/assets/collection/diak/JuliGacha.png"
     import RekaGacha from "./lib/assets/collection/diak/RekaGacha.png"
     import ReginaGacha from "./lib/assets/collection/diak/ReginaGacha.png"
-    //balázs
-    //abigél
-    //báló
-    //árpád
-    //szász levente
-    //vendel
-    //nagy-györgy
-    //szakonyi
-    //rebecca
-    //tanács botond
-    //zsíros péter
-    //gál levente
-    //boros kinga
-    //molnár réka
-    //kasza domonkos
-    //andris
-    //miklós
-    //gitta
-    //nagy benedek
-    //vörös bálint
-    //dénes
+    import BalazsGacha from "./lib/assets/collection/tanar/GachaPH.png"//kell új kép
+    import AbigelGacha from "./lib/assets/collection/tanar/GachaPH.png"//kell új kép
+    import BaloGacha from "./lib/assets/collection/tanar/GachaPH.png"//kell új kép
+    import ArpadGacha from "./lib/assets/collection/tanar/GachaPH.png"//kell új kép
+    import SzaszLeventeGacha from "./lib/assets/collection/tanar/GachaPH.png"//kell új kép
+    import VendelGacha from "./lib/assets/collection/tanar/GachaPH.png"//kell új kép
+    import NagygyorgyGacha from "./lib/assets/collection/tanar/GachaPH.png"//kell új kép
+    import SzakonyiGacha from "./lib/assets/collection/tanar/GachaPH.png"//kell új kép
+    import RebeccaGacha from "./lib/assets/collection/tanar/GachaPH.png"//kell új kép
+    import TanacsbotondGacha from "./lib/assets/collection/tanar/GachaPH.png"//kell új kép
+    import ZsirospeterGacha from "./lib/assets/collection/tanar/GachaPH.png"//kell új kép
+    import GalleventeGacha from "./lib/assets/collection/tanar/GachaPH.png"//kell új kép
+    import BorosKingaGacha from "./lib/assets/collection/tanar/GachaPH.png"//kell új kép
+    import MolnarrekaGacha from "./lib/assets/collection/tanar/GachaPH.png"//kell új kép
+    import KaszadomonkosGacha from "./lib/assets/collection/tanar/GachaPH.png"//kell új kép
+    import VighandrisGacha from "./lib/assets/collection/tanar/GachaPH.png"//kell új kép
+    import MiklosGacha from "./lib/assets/collection/tanar/GachaPH.png"//kell új kép
+    import GittaGacha from "./lib/assets/collection/tanar/GachaPH.png"//kell új kép
+    import NagybenedekGacha from "./lib/assets/collection/tanar/GachaPH.png"//kell új kép
+    import VorosbalintGacha from "./lib/assets/collection/tanar/GachaPH.png"//kell új kép
+    import DenesGacha from "./lib/assets/collection/tanar/GachaPH.png"//kell új kép
     //#endregion
+
     //#region extra gacha SRC
     import JeffGacha from "./lib/assets/collection/extra/JeffGacha.png"
-
-    //kell új kép - aprono
-    //nokedli
-    //csontváz
-    //the rock
-    //mikyx
-    //tojas
-    //charmander
-    //charmeleon
-    //charizard
-    //mega charizard x
-    //zozó
-    //strawberry
+    import AproNoGacha from "./lib/assets/collection/tanar/GachaPH.png"//kell új kép
+    import TherockGacha from "./lib/assets/collection/tanar/GachaPH.png"//kell új kép
+    import MikyxGacha from "./lib/assets/collection/tanar/GachaPH.png"//kell új kép
+    import SarkanytojasGacha from "./lib/assets/collection/tanar/GachaPH.png"//kell új kép
+    import ZozoGacha from "./lib/assets/collection/tanar/GachaPH.png"//kell új kép
+    import StrawberryGacha from "./lib/assets/collection/tanar/GachaPH.png"//kell új kép
+    import ErzsiGacha from "./lib/assets/collection/tanar/GachaPH.png"//kell új kép
+    import BufesMoniGacha from "./lib/assets/collection/tanar/GachaPH.png"//kell új kép
     //#endregion
 
     //#region voice lines
@@ -255,6 +251,8 @@
     //zozó
     //strawberry
     //blazó
+    //erzsi
+    //moni
     //#endregion
 
     //#region spell képek
@@ -315,7 +313,8 @@
     import fakard from "./lib/assets/collection/extra/Te.png"
     import nagytestvervigyazrad from "./lib/assets/collection/spell/nagytestvervigyazrad.png"
     import gravitacio from "./lib/assets/collection/spell/gravitacio.png"
-    //enyém! -
+    import geltorlese from "./lib/assets/collection/spell/geltorlese.png"
+    import enyem from "./lib/assets/collection/spell/enyem.png"
     //#endregion
 
     //#region spellGacha
@@ -343,62 +342,73 @@
     import puskazasGacha from "./lib/assets/collection/spell/puskazasGacha.png"
     import saratoborzasGacha from "./lib/assets/collection/spell/saratoborzasGacha.png"
     import visszaakezembeGacha from "./lib/assets/collection/spell/visszaakezembeGacha.png"
-    //acélpajzs
-    //alázatosság
-    //álljon meg a menet!
-    //atomrobbanás
-    //ctrl+C / ctrl+V
-    //csere-bere
-    //ellopták a kabátod
-    //hagyyá' má'!
-    //kommunizmus
-    //leltározás
-    //nem tudod? 1-es! következő!
-    //NERF pisztoly a padban
-    //nokedli leszel
-    //nokedli vagy
-    //piros lámpa
-    //sítábor
-    //tanári értekezlet
-    //UNO visszafordító kártya
-    //varázsköpönyeg
-    //varázskötet
-    //nem szellőztettek
-    //tanévnyitó
-    //metamorfózis
-    //szoborfaragás
-    //mitózis
-    //nincs fűtés
-    //ez vagy az
-    //kiosztják a dogát
-    //télen szellőztettek
-    //RNG
-    //fakard a DÖK irodából
-    //nagy testvér vigyáz rád
-    //gravitáció
-    //G osztály eltörlése
-    //enyém!
+    import acelpajzsGacha from "./lib/assets/collection/spell/GachaPHSpell.png"
+    import alazatossagGacha from "./lib/assets/collection/spell/GachaPHSpell.png"
+    import alljonmegamenetGacha from "./lib/assets/collection/spell/GachaPHSpell.png"
+    import atomrobbanasGacha from "./lib/assets/collection/spell/GachaPHSpell.png"
+    import ctrlcctrlvGacha from "./lib/assets/collection/spell/GachaPHSpell.png"
+    import cserebereGacha from "./lib/assets/collection/spell/GachaPHSpell.png"
+    import elloptakakabatodGacha from "./lib/assets/collection/spell/GachaPHSpell.png"
+    import haggyamaGacha from "./lib/assets/collection/spell/GachaPHSpell.png"
+    import kommunizmusGacha from "./lib/assets/collection/spell/GachaPHSpell.png"
+    import leltarozasGacha from "./lib/assets/collection/spell/GachaPHSpell.png"
+    import nemtudod1eskovetkezoGacha from "./lib/assets/collection/spell/GachaPHSpell.png"
+    import nerfapadbanGacha from "./lib/assets/collection/spell/GachaPHSpell.png"
+    import nokedlileszelGacha from "./lib/assets/collection/spell/GachaPHSpell.png"
+    import nokedlivagyGacha from "./lib/assets/collection/spell/GachaPHSpell.png"
+    import piroslampaGacha from "./lib/assets/collection/spell/GachaPHSpell.png"
+    import sitaborGacha from "./lib/assets/collection/spell/GachaPHSpell.png"
+    import tanariertekezletGacha from "./lib/assets/collection/spell/GachaPHSpell.png"
+    import UNOGacha from "./lib/assets/collection/spell/GachaPHSpell.png"
+    import varazskoponyegGacha from "./lib/assets/collection/spell/GachaPHSpell.png"
+    import varazskonyvGacha from "./lib/assets/collection/spell/GachaPHSpell.png"
+    import nemszelloztettekGacha from "./lib/assets/collection/spell/GachaPHSpell.png"
+    import tanevnyitoGacha from "./lib/assets/collection/spell/GachaPHSpell.png"
+    import metamorfozisGacha from "./lib/assets/collection/spell/GachaPHSpell.png"
+    import szoborfaragasGacha from "./lib/assets/collection/spell/GachaPHSpell.png"
+    import mitozisGacha from "./lib/assets/collection/spell/GachaPHSpell.png"
+    import nincsfutesGacha from "./lib/assets/collection/spell/GachaPHSpell.png"
+    import ezvagyazGacha from "./lib/assets/collection/spell/GachaPHSpell.png"
+    import kiosztjakadogatGacha from "./lib/assets/collection/spell/GachaPHSpell.png"
+    import telenszellozettekGacha from "./lib/assets/collection/spell/GachaPHSpell.png"
+    import rngGacha from "./lib/assets/collection/spell/GachaPHSpell.png"
+    import fakardGacha from "./lib/assets/collection/spell/GachaPHSpell.png"
+    import nagytestvervigyazradGacha from "./lib/assets/collection/spell/GachaPHSpell.png"
+    import gravitacioGacha from "./lib/assets/collection/spell/GachaPHSpell.png"
+    import geltorleseGacha from "./lib/assets/collection/spell/GachaPHSpell.png"
+    import enyemGacha from "./lib/assets/collection/spell/GachaPHSpell.png"
     //#endregion
+
     //#region character spells
-    //mag -
-    //minden Balázs -
-    //felvilágosodás -
-    //terminusdoga -
+    import mag from "./lib/assets/collection/spell/mag.png"
+    import mindenbalazs from "./lib/assets/collection/spell/mindenbalazs.png"
+    import felvilagosodas from "./lib/assets/collection/spell/felvilagosodas.png"
+    import terminusdoga from "./lib/assets/collection/spell/terminusdoga.png"
     //#endregion
+
+    //#region extraspell Gacha képek
+    //mag gacha
+    //mindenb gacha
+    //felvil gacha
+    //terminusdoga gacha
+    //#endregion
+
     //#region egyéb spell képek
     import KutiDiploma from "./lib/assets/collection/spell/KutiDiploma.png"
-    //pikk dáma -
-    //Charmander lángja -
-    //Charmeleon lángja -
-    //Charizard lángja -
-    //Mega Charizard X lángja -
+    import pikkdama from "./lib/assets/collection/spell/pikkdama.png"
+    import charmanderlangja from "./lib/assets/collection/spell/charmanderlangja.png"
+    import charmeleonlangja from "./lib/assets/collection/spell/charmeleonlangja.png"
+    import charizardlangja from "./lib/assets/collection/spell/charizardlangja.png"
+    import megacharizardxlangja from "./lib/assets/collection/spell/megacharizardxlangja.png"
     //#endregion
+
     //#region építmények
     //büfé
-    //tanári szoba
+    import tanariszoba from "./lib/assets/collection/epitmeny/tanariszoba.png"
     //#endregion
     //#endregion
 
+    import GachaPH from "./lib/assets/collection/tanar/GachaPH.png"
     import GachaPHSpell from "./lib/assets/collection/spell/GachaPHSpell.png"
     import gachaPHAudio from "./lib/assets/voicelines/Weisz.aac"
 
@@ -645,7 +655,7 @@
     export let ZozoCard = new diakCards("Zozó","veszett","","summon","EmptyAbility", "<b>Passzív:</b> Ha <b>'Strawberry'</b> a térfeleden van vele, a kör végén +2atk és +1 hp.", 2, 2, 2, Te, 3, 1, "character", GachaPH, "ZozoCard", gachaPHAudio, "", [],["fiú"]);
     export let StrawberryCard = new diakCards("Strawberry","vérszomjas","","summon","EmptyAbility", "<b>Passzív:</b> Ha <b>'Zozó'</b> a térfeleden van vele, a kör végén +1atk és +2 hp.", 2, 2, 2, Te, 3, 1, "character", GachaPH, "StrawberryCard", gachaPHAudio, "", [],["lány"]);
     export let BufesMoniCard = new diakCards("Büfés Móni","lelkiismeretes","","summon","EmptyAbility", "<b>Idézés:</b> Készít a térfeledre egy <b>'Büfé'</b> <b>építményt</b>.", 4, 7, 7, Te, 3, 3, "character", GachaPH, "BufesMoniCard", gachaPHAudio, "", [],["lány"]);
-    export let ErzsikeCard = new diakCards("Erzsike","vérszomjas","kihívó, fürge támadás","summon","EmptyAbility", "<b>Idézés:</b> Készít a térfeledre egy <b>'Porta'</b> <b>építményt</b>.", 2, 8, 8, Te, 3, 1, "character", GachaPH, "ErzsiCard", gachaPHAudio, "", [],["lány"]);
+    export let ErzsikeCard = new diakCards("Erzsike","vérszomjas","kihívó, fürge támadás","summon","EmptyAbility", "<b>Idézés:</b> Készít a térfeledre egy <b>'Porta'</b> <b>építményt</b>.", 2, 8, 8, Te, 3, 1, "character", GachaPH, "ErzsikeCard", gachaPHAudio, "", [],["lány"]);
     //#endregion
     //#region extra extra
     export let TomiCloneCard = new extraCards("Dr. Tamás Klónja","vérszomjas,veszett","kettős támadás,robbanó támadás,életelszívás_3","death","TomiCloneDeath", "<b>Passzív:</b> A kör elején készít magáról egy <b>kvantummásolatot</b> egy szabadon választott üres mezőre a térfeleden. Választhatsz, hogy titokban megcseréled-e a kettőt.", 5, 1, 1, Tomi, 6, 10, "character", TomiGacha, "TomiCard", TomiA, "Fogorvos és táncvilágbajnok. Unatkozott, ezért elment tanárnak. Ő is.", ["kettős:0"],["fiú", "tanár", "reálos"]);
