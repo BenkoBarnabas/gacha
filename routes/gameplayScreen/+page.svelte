@@ -1349,6 +1349,7 @@
         console.log("kinyo: ",selectableCards);
     }
     function EnableChoosingMode(targets){
+        console.log("TARGETLOG: ",targets)
         isInChoosingMode = true
         isInChoosingMode = isInChoosingMode
 
@@ -2791,213 +2792,6 @@
         }
         //#endregion
         //#region dökösök
-        //#region EXTRA CHARACTERS
-        async function CharmanderLangja(){
-            var targets = Array.from(yourBoard).concat(Array.from(enemyBoard))
-            targets.push(enemyGameParameters)
-            if(targets.some(element => element !== '')){
-                selectableCardDoms = Array.from(yourBoardDoms).concat(Array.from(enemyBoardDoms))
-                selectableCardDoms.push(enemyPlayerNameDom)
-                selectableCardDoms = selectableCardDoms
-            
-                EnableTargetSelectionMode(targets)
-                const result = await getUserChoice()
-                if(result.target.type == "player"){
-                    enemyGameParameters.health -= 5
-                }
-                else{
-                    var domID = result.i
-                    result.side == 'your' ? domID = domID : domID += yourBoard.length
-                    
-                    var Sindex = targets[domID].fieldEffects.findIndex(element => element.includes('spellshield'));
-                    if(Sindex === -1){
-                        DealDmg(result.target,result.i,5,result.side,"spell")
-                    }
-                    else{
-                        result.target.fieldEffects.splice(Sindex,1)
-                    }
-                }
-                SendGameData(yourGameParameters)
-                SendGameData(enemyGameParameters)
-            
-                DeleteSelectTargetMode()
-            }
-        }
-        async function CharmeleonLangja(){
-            var targets = Array.from(yourBoard).concat(Array.from(enemyBoard))
-            targets.push(enemyGameParameters)
-            if(targets.some(element => element !== '')){
-                selectableCardDoms = Array.from(yourBoardDoms).concat(Array.from(enemyBoardDoms))
-                selectableCardDoms.push(enemyPlayerNameDom)
-                selectableCardDoms = selectableCardDoms
-            
-                EnableTargetSelectionMode(targets)
-                const result = await getUserChoice()
-                if(result.target.type == "player"){
-                    enemyGameParameters.health -= 5
-                }
-                else{
-                    var domID = result.i
-                    result.side == 'your' ? domID = domID : domID += yourBoard.length
-                    
-                    var Sindex = targets[domID].fieldEffects.findIndex(element => element.includes('spellshield'));
-                    if(Sindex === -1){
-                        DealDmg(result.target,result.i,5,result.side,"spell")
-                    }
-                    else{
-                        result.target.fieldEffects.splice(Sindex,1)
-                    }
-                }
-                SendGameData(yourGameParameters)
-                SendGameData(enemyGameParameters)
-            
-                DeleteSelectTargetMode()
-            }
-        }
-        async function CharizardLangja(){
-            var targets = Array.from(yourBoard).concat(Array.from(enemyBoard))
-            targets.push(enemyGameParameters)
-            if(targets.some(element => element !== '')){
-                selectableCardDoms = Array.from(yourBoardDoms).concat(Array.from(enemyBoardDoms))
-                selectableCardDoms.push(enemyPlayerNameDom)
-                selectableCardDoms = selectableCardDoms
-            
-                EnableTargetSelectionMode(targets)
-                const result = await getUserChoice()
-                if(result.target.type == "player"){
-                    enemyGameParameters.health -= 7
-                }
-                else{
-                    var domID = result.i
-                    result.side == 'your' ? domID = domID : domID += yourBoard.length
-                    
-                    var Sindex = targets[domID].fieldEffects.findIndex(element => element.includes('spellshield'));
-                    if(Sindex === -1){
-                        DealDmg(result.target,result.i,7,result.side,"spell")
-                    }
-                    else{
-                        result.target.fieldEffects.splice(Sindex,1)
-                    }
-                }
-                SendGameData(yourGameParameters)
-                SendGameData(enemyGameParameters)
-            
-                DeleteSelectTargetMode()
-            }
-        }
-
-        let frenchCardNumbers = ["2","3","4","5","6","7","8","9","10","J","Q","K","A"]
-        let frenchCardPool = []
-        for(let i=0;i<13;i++){
-            frenchCardPool.push([cClub,frenchCardNumbers[i]])
-            frenchCardPool.push([cHeart,frenchCardNumbers[i]])
-            frenchCardPool.push([cDiamond,frenchCardNumbers[i]])
-            frenchCardPool.push([cSpade,frenchCardNumbers[i]])
-        }
-        let pickedFrenchCard = []
-        let szaszShuffle = false
-        let frenchCardDom
-        function PikkDama(){
-            console.log("PICKLOG: benn")
-            szaszShuffle = true
-            szaszShuffle = szaszShuffle
-            
-            if(yourGameParameters.spellMana > 0 || yourGameParameters.mana > 0){
-                if(yourGameParameters.spellMana > 0){
-                    yourGameParameters.spellMana -= 1
-                }
-                else{
-                    //yourGameParameters.mana -= 1
-                }
-                var randomCardI = Math.floor(Math.random()*frenchCardPool.length)
-                var randomCard = frenchCardPool[randomCardI]
-                frenchCardPool.splice(randomCardI,1)
-                pickedFrenchCard.push({icon: randomCard[0],number: randomCard[1]})
-
-                pickedFrenchCard = pickedFrenchCard
-                console.log("DAMALOG: ",randomCard)
-                if(randomCard[1] == "Q" && randomCard[0] == cSpade){
-                    setTimeout(() => {
-                    console.log("DAMALOG: PIKKDAMA OMG")
-                    console.log("DAMALOG: ",`frenchCard${pickedFrenchCard.length-1}`);
-                    var lastCardPikk =  document.getElementById(`frenchCard${pickedFrenchCard.length-1}`)
-                   lastCardPikk.style.animation = "pikkDamaBingo 2s forwards"
-                },100)
-                    setTimeout(() => {
-                        szaszShuffle = false
-                        szaszShuffle = szaszShuffle
-                        pickedFrenchCard = []
-
-                        for(let i=0;i<yourHand.length;i++){
-                            if(yourHand[i].name == "Szász Levente"){
-                                yourHand[i].cost = 0
-                            }
-                        }
-                    },2100)
-                    
-                }
-
-                SendGameData(yourGameParameters)
-            }
-            else{
-                szaszShuffle = false
-                szaszShuffle = szaszShuffle
-                pickedFrenchCard = []
-
-                yourHand.push(Cards.pikkDamaCard)
-                cardsInYourHandClass.push("cardTemplate")
-            } 
-        }
-        function ClosePikkDamaTab(){
-            
-                szaszShuffle = false
-                    szaszShuffle = szaszShuffle
-                    pickedFrenchCard = []
-
-                    yourHand.push(Cards.pikkDamaCard)
-                    cardsInYourHandClass.push("cardTemplate")
-                    yourHand = yourHand
-                    SendGameData(yourGameParameters)
-                
-        }
-        function Mag(){
-            for(let i=0;i<yourBoard.length;i++){
-                if(yourBoard[i] != ""){
-                    yourBoard[i].bonusTraits.some(e => e.includes("humános")) ? Evolve(yourBoard[i],i,2) : {}
-                }
-            }
-        }
-        //#endregion
-        async function Jeff(card){
-            var isParagi = yourBoard.some(e=>e.name == "Paragi")
-            if(isParagi){
-
-                SummonLocationChoosing(Cards.BoldizsarCard)
-                await waitForUpdate
-
-                SummonLocationChoosing(Cards.DoloresCard)
-                await waitForUpdate
-
-                SummonLocationChoosing(Cards.DavidCard)
-                await waitForUpdate
-
-                SummonLocationChoosing(Cards.JennyCard)
-            
-            }
-            else{
-                
-                EnableChoosingMode([Cards.BoldizsarCard,Cards.DoloresCard,Cards.DavidCard,Cards.JennyCard])
-                const result = await getUserChoice();
-                DeleteChoosingMode()
-
-                SummonLocationChoosing(result)
-                
-            }
-            
-            SendGameData(yourGameParameters)
-        
-        }
-
         let dokATablan = []
         async function Dokosok(){
             console.log("DÖKLOG: start",dokATablan,yourBoard)
@@ -4320,8 +4114,215 @@
             }
         }
         //#endregion
-        //#region EXTRA SPELLS, CHARACTER SPELLS
+        //#region EXTRA CHARACTERS
+        async function Jeff(card){
+            var isParagi = yourBoard.some(e=>e.name == "Paragi")
+            if(isParagi){
+                await waitForUpdate
+
+                SummonLocationChoosing(Cards.BoldizsarCard)
+                await waitForUpdate
+
+                SummonLocationChoosing(Cards.DoloresCard)
+                await waitForUpdate
+
+                SummonLocationChoosing(Cards.DavidCard)
+                await waitForUpdate
+
+                SummonLocationChoosing(Cards.JennyCard)
+            
+            }
+            else{
+                EnableChoosingMode([Cards.BoldizsarCard,Cards.DoloresCard,Cards.DavidCard,Cards.JennyCard])
+                const result = await getUserChoice();
+                DeleteChoosingMode()
+
+                SummonLocationChoosing(result)
+                
+            }
+            
+            SendGameData(yourGameParameters)
+        
+        }
         //#endregion
+        //#region EXTRA SPELLS
+        async function CharmanderLangja(){
+            var targets = Array.from(yourBoard).concat(Array.from(enemyBoard))
+            targets.push(enemyGameParameters)
+            if(targets.some(element => element !== '')){
+                selectableCardDoms = Array.from(yourBoardDoms).concat(Array.from(enemyBoardDoms))
+                selectableCardDoms.push(enemyPlayerNameDom)
+                selectableCardDoms = selectableCardDoms
+            
+                EnableTargetSelectionMode(targets)
+                const result = await getUserChoice()
+                if(result.target.type == "player"){
+                    enemyGameParameters.health -= 5
+                }
+                else{
+                    var domID = result.i
+                    result.side == 'your' ? domID = domID : domID += yourBoard.length
+                    
+                    var Sindex = targets[domID].fieldEffects.findIndex(element => element.includes('spellshield'));
+                    if(Sindex === -1){
+                        DealDmg(result.target,result.i,5,result.side,"spell")
+                    }
+                    else{
+                        result.target.fieldEffects.splice(Sindex,1)
+                    }
+                }
+                SendGameData(yourGameParameters)
+                SendGameData(enemyGameParameters)
+            
+                DeleteSelectTargetMode()
+            }
+        }
+        async function CharmeleonLangja(){
+            var targets = Array.from(yourBoard).concat(Array.from(enemyBoard))
+            targets.push(enemyGameParameters)
+            if(targets.some(element => element !== '')){
+                selectableCardDoms = Array.from(yourBoardDoms).concat(Array.from(enemyBoardDoms))
+                selectableCardDoms.push(enemyPlayerNameDom)
+                selectableCardDoms = selectableCardDoms
+            
+                EnableTargetSelectionMode(targets)
+                const result = await getUserChoice()
+                if(result.target.type == "player"){
+                    enemyGameParameters.health -= 5
+                }
+                else{
+                    var domID = result.i
+                    result.side == 'your' ? domID = domID : domID += yourBoard.length
+                    
+                    var Sindex = targets[domID].fieldEffects.findIndex(element => element.includes('spellshield'));
+                    if(Sindex === -1){
+                        DealDmg(result.target,result.i,5,result.side,"spell")
+                    }
+                    else{
+                        result.target.fieldEffects.splice(Sindex,1)
+                    }
+                }
+                SendGameData(yourGameParameters)
+                SendGameData(enemyGameParameters)
+            
+                DeleteSelectTargetMode()
+            }
+        }
+        async function CharizardLangja(){
+            var targets = Array.from(yourBoard).concat(Array.from(enemyBoard))
+            targets.push(enemyGameParameters)
+            if(targets.some(element => element !== '')){
+                selectableCardDoms = Array.from(yourBoardDoms).concat(Array.from(enemyBoardDoms))
+                selectableCardDoms.push(enemyPlayerNameDom)
+                selectableCardDoms = selectableCardDoms
+            
+                EnableTargetSelectionMode(targets)
+                const result = await getUserChoice()
+                if(result.target.type == "player"){
+                    enemyGameParameters.health -= 7
+                }
+                else{
+                    var domID = result.i
+                    result.side == 'your' ? domID = domID : domID += yourBoard.length
+                    
+                    var Sindex = targets[domID].fieldEffects.findIndex(element => element.includes('spellshield'));
+                    if(Sindex === -1){
+                        DealDmg(result.target,result.i,7,result.side,"spell")
+                    }
+                    else{
+                        result.target.fieldEffects.splice(Sindex,1)
+                    }
+                }
+                SendGameData(yourGameParameters)
+                SendGameData(enemyGameParameters)
+            
+                DeleteSelectTargetMode()
+            }
+        }
+
+        let frenchCardNumbers = ["2","3","4","5","6","7","8","9","10","J","Q","K","A"]
+        let frenchCardPool = []
+        for(let i=0;i<13;i++){
+            frenchCardPool.push([cClub,frenchCardNumbers[i]])
+            frenchCardPool.push([cHeart,frenchCardNumbers[i]])
+            frenchCardPool.push([cDiamond,frenchCardNumbers[i]])
+            frenchCardPool.push([cSpade,frenchCardNumbers[i]])
+        }
+        let pickedFrenchCard = []
+        let szaszShuffle = false
+        let frenchCardDom
+        function PikkDama(){
+            console.log("PICKLOG: benn")
+            szaszShuffle = true
+            szaszShuffle = szaszShuffle
+            
+            if(yourGameParameters.spellMana > 0 || yourGameParameters.mana > 0){
+                if(yourGameParameters.spellMana > 0){
+                    yourGameParameters.spellMana -= 1
+                }
+                else{
+                    //yourGameParameters.mana -= 1
+                }
+                var randomCardI = Math.floor(Math.random()*frenchCardPool.length)
+                var randomCard = frenchCardPool[randomCardI]
+                frenchCardPool.splice(randomCardI,1)
+                pickedFrenchCard.push({icon: randomCard[0],number: randomCard[1]})
+
+                pickedFrenchCard = pickedFrenchCard
+                console.log("DAMALOG: ",randomCard)
+                if(randomCard[1] == "Q" && randomCard[0] == cSpade){
+                    setTimeout(() => {
+                    console.log("DAMALOG: PIKKDAMA OMG")
+                    console.log("DAMALOG: ",`frenchCard${pickedFrenchCard.length-1}`);
+                    var lastCardPikk =  document.getElementById(`frenchCard${pickedFrenchCard.length-1}`)
+                   lastCardPikk.style.animation = "pikkDamaBingo 2s forwards"
+                },100)
+                    setTimeout(() => {
+                        szaszShuffle = false
+                        szaszShuffle = szaszShuffle
+                        pickedFrenchCard = []
+
+                        for(let i=0;i<yourHand.length;i++){
+                            if(yourHand[i].name == "Szász Levente"){
+                                yourHand[i].cost = 0
+                            }
+                        }
+                    },2100)
+                    
+                }
+
+                SendGameData(yourGameParameters)
+            }
+            else{
+                szaszShuffle = false
+                szaszShuffle = szaszShuffle
+                pickedFrenchCard = []
+
+                yourHand.push(Cards.pikkDamaCard)
+                cardsInYourHandClass.push("cardTemplate")
+            } 
+        }
+        function ClosePikkDamaTab(){
+            
+                szaszShuffle = false
+                    szaszShuffle = szaszShuffle
+                    pickedFrenchCard = []
+
+                    yourHand.push(Cards.pikkDamaCard)
+                    cardsInYourHandClass.push("cardTemplate")
+                    yourHand = yourHand
+                    SendGameData(yourGameParameters)
+                
+        }
+        function Mag(){
+            for(let i=0;i<yourBoard.length;i++){
+                if(yourBoard[i] != ""){
+                    yourBoard[i].bonusTraits.some(e => e.includes("humános")) ? Evolve(yourBoard[i],i,2) : {}
+                }
+            }
+        }
+        //#endregion
+        
         //#region bonus functions
         function giveDobi(what){
             for(let i = 0; i<yourBoard.length;i++){
@@ -4554,9 +4555,6 @@
 {#each allCardsInGame as card,i}
 <audio controls id="music" style="display: none;"  src={card.audio}   bind:this={voicelines[card.name]}></audio>
 {/each}
-
-
-
 
 
 <div id="gamePlayFiledCont">
@@ -5138,6 +5136,7 @@
         {#each cardChoosingModeOptions as option,i}
         <div id="cardChoosingModeCont">
             {#if option.type == "character"}
+                    
                     <div class="previewInChoosingMode" on:click={() => ChoosingModeResult(option)} on:keydown role="button" tabindex="">
                         <img draggable="false" class="cardTemplateChoosingMode" id="cardBackgroundChoosingMode" src={cardBackground} style="--colorr: {backgroundColorByCost[(option.stars)-3]};" alt="cardBg">
                         <div id="rarityBGChoosingMode" style="background: {backgroundColorByCost[(option.stars)-3]}; "></div>
@@ -5217,7 +5216,7 @@
         VÁLASSZ EGY CÉLPONTOT
         {/if}
         {#if isSummonLocationChoosingEnemy}
-        AZ ELLENSÉG IDÉZÉSI HELYET VÁLASZT
+        <span style="margin-top: 25vh">AZ ELLENSÉG IDÉZÉSI HELYET VÁLASZT</span>
         {/if}
     </div>
     {#if isTomiSummonLocation}
@@ -5455,13 +5454,13 @@
         background-color: #7ad35136;
 
         text-align: center;
-
-        padding-left: 10vw;
-        padding-right: 10vw;
         padding-top: 30vh;
     }
     #cardChoosingModeCont{
-        margin-right: 25vw;
+        width:100vw;
+        height: 50vh;
+        padding:0;
+        display: flex;
     }
 
     #visualInteractionInicators{
@@ -6787,7 +6786,6 @@
         position: relative;
         border: none;
         background: none;
-        margin: auto;
     }
     .previewInChoosingMode:hover{
         cursor: pointer;
