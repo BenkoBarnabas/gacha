@@ -27,7 +27,8 @@
         yourBoardStatus: "",
         isYourTurn: "",
         type: "player",
-        secretSpells: []
+        secretSpells: [],
+        yourBuildings: []
     }
   let enemyGameParameters = {
         gameId: "",
@@ -42,7 +43,8 @@
         yourBoardStatus: "",
         isYourTurn: "",
         type: "player",
-        secretSpells: []
+        secretSpells: [],
+        yourBuildings: []
     }
 
 

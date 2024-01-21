@@ -20,6 +20,8 @@
     import spellManaCrystal from "../../lib/assets/gameplay/spellManaCrystal.png"
     import manaCrystalPh from "../../lib/assets/gameplay/manaCrystalPh.png"
 
+    import buildingFG from "../../lib/assets/gameplay/buildingFG.png"
+
     import scribble1 from "../../lib/assets/gameplay/scribble1.png"
     import scribble2 from "../../lib/assets/gameplay/scribble2.png"
     import scribble3 from "../../lib/assets/gameplay/scribble3.png"
@@ -67,7 +69,8 @@
         lelkiismeretes: "rgb(113, 145, 166)",
         vérszomjas: "rgb(166, 113, 118)",
         veszett: "rgb(133, 113, 166)"
-    }
+    }  
+    import reshuffleOverlay from "../../lib/assets/gameplay/reshuffleOverlay.png"
 
     import freezFE from "../../lib/assets/gameplay/freezFE.png"
     import sleepFE from "../../lib/assets/gameplay/sleepFE.png"
@@ -124,8 +127,8 @@
     let opponentGameID
     let gameKey
 
-    let yourGameParameters = {currentHand: [],remaningDeck: [], yourBoard: Array(10).fill(""), mana: 0, spellMana: 0, username: "", hp: 0, secretSpells: []}
-    let enemyGameParameters = {currentHand: [],remaningDeck: [], yourBoard: Array(10).fill(""), mana: 0, spellMana: 0, username: "", hp: 0, secretSpells: []}
+    let yourGameParameters = {currentHand: [],remaningDeck: [], yourBoard: Array(10).fill(""), mana: 0, spellMana: 0, username: "", hp: 0, secretSpells: [], yourBuildings: [Cards.TanariSzobaCard,Cards.TanariSzobaCard,Cards.TanariSzobaCard]}
+    let enemyGameParameters = {currentHand: [],remaningDeck: [], yourBoard: Array(10).fill(""), mana: 0, spellMana: 0, username: "", hp: 0, secretSpells: [], yourBuildings: [Cards.TanariSzobaCard,Cards.TanariSzobaCard,Cards.TanariSzobaCard]}
 
     let allCardsInGame = []
 
@@ -208,7 +211,53 @@
     }
 
 
+    let isChooseStaringHandScreen = true
+    let startingHandTargets = []
+    let deletedStartingCards = []
+    function ReshuffleStartingHand(){
+        console.log("SHUFFLELOG: 1",startingHandTargets,deletedStartingCards)
+        deletedStartingCards.forEach(card => {
+            if(card != ""){
+                startingHandTargets.splice(card[1],1)
+                ShuffleIntoDeck(card[0])
 
+                var random = Math.floor(Math.random() * yourGameParameters.remaningDeck.length)
+                startingHandTargets.push(yourGameParameters.remaningDeck[random])
+                yourGameParameters.remaningDeck.splice(random,1)
+            }
+        })
+        console.log("SHUFFLELOG: 2",startingHandTargets,deletedStartingCards)
+
+        startingHandTargets = startingHandTargets
+        deletedStartingCards = Array(5).fill("")
+        deletedStartingCards = deletedStartingCards
+
+        VerifyStartingHand()
+
+    }
+    function VerifyStartingHand(){
+
+    }
+    function SelectDeleteStartingCard(data){
+        if(!deletedStartingCards.some(e => e[1] == data[1])){
+            console.log("SHUFFLELOG: delete this: ",data)
+            deletedStartingCards[data[1]] = data
+            deletedStartingCards = deletedStartingCards
+        }
+        else{
+            deletedStartingCards[data[1]] = ""
+            deletedStartingCards = deletedStartingCards
+        }
+        
+    }
+    function EnableStartingHandChoosing(targets,n){
+        isChooseStaringHandScreen = true
+        isChooseStaringHandScreen = isChooseStaringHandScreen
+        startingHandTargets = targets
+        startingHandTargets = startingHandTargets
+
+        deletedStartingCards=Array(n).fill("")
+    }
 
     function DrawStartingHand(n){
         for(let i = 0; i<n; i++){
@@ -226,11 +275,11 @@
         }
         yourHand[0] = Cards.YouCard
         yourHand[1] = Cards.ParagiCard
-        yourHand[2] = Cards.JeffCard
-        yourHand[3] = Cards.SzakonyiCard
-        yourHand[4] = Cards.TritzCard    
+        yourHand[2] = Cards.SzakonyiCard
+        yourHand[3] = Cards.TritzCard    
          //UpdateLocalStorage()
-        
+        EnableStartingHandChoosing(yourHand,n)
+
         SendGameData(yourGameParameters)
     }
     function DrawOne(){
@@ -245,7 +294,10 @@
             yourGameParameters.remaningDeck.splice(random,1)
             cardsInYourHandClass.push("cardTemplate")
             yourHand = yourHand
+
             SendGameData(yourGameParameters)
+
+            EnableStartingHandChoosing(yourHand)
             
     }
     
@@ -284,7 +336,7 @@
         opponentGameID = JSON.parse(localStorage.getItem("opponentGameID"))
         gameKey = JSON.parse(localStorage.getItem("gameKey"))
 
-        DrawStartingHand(5)
+        isYourTurn == true ? DrawStartingHand(4) : DrawStartingHand(5)
 
         pageLoaded = true
         pageLoaded = pageLoaded
@@ -766,7 +818,7 @@
             }
                 }
         //#region ABILITIES
-            if(card.abilityType == "summon" || dragged.abilityType == "boardcon"){
+            if((card.abilityType == "summon" || dragged.abilityType == "boardcon") && !card.fieldEffects.some(e => e.includes("silence"))){
                 eval(`${card.ability}(yourBoard[i],${i})`)
             }
         //#endregion
@@ -952,6 +1004,42 @@
                     }
                 }
 
+                //charzard
+                var isChar = yourBoard.some(e => e.fieldEffects.some(f => f.includes("turnCount")))
+                if(isChar){
+
+                    for(let i= 0;i<yourBoard.length;i++){
+                        var tCE = yourBoard[i].fieldEffects.findIndex(e => e.includes("turnCount"))
+                        if(tCE !== -1){
+                            var count = Number(tCE.replace("turnCount:",""))
+                            count += 1
+
+                            if(count == 2){
+                                switch (result.name) {
+                                case 'Sárkánytojás':
+                                    yourBoard[i] = Cards.CharmanderCard
+                                break;
+                                case 'Charmander':
+                                    yourBoard[i] = Cards.CharmeleonCard
+                                break;
+                                case 'Charmeleon':
+                                    yourBoard[i] = Cards.CharizardCard
+                                break;
+                                case 'Charizard':
+                                    yourBoard[i] = Cards.MegaCharizardXCard
+                                break;
+                                    default:
+                                    console.log('Invalid choice');
+                                    // Handle invalid choice
+                                }
+                            }
+                            else{
+                                yourBoard[i].fieldEffects[tCE] = `turnCount:${count}`
+                            }
+                        }
+                    }
+                }
+
                 enemyGameParameters.currentHand = []
                 SendGameData(yourGameParameters)             
         }
@@ -1053,8 +1141,12 @@
         //ABILITIES
         if(lastCardPlayedClient.side == "your" && lastCardPlayed.type == "spell"){
             yourBoard.some(element => element.name == "Fehér Márta") ? eval(`${lastCardPlayed.ability}()`) : {}
-            yourBoard.some(element => element.name == "Vörös Bálint") ? VBalint() : {}
-            yourBoard.some(element => element.name == "Gitta") ? Gitta(yourBoard.findIndex(element => element.name == "Gitta")) : {}
+
+            for(let i=0;yourBoard.length;i++){
+                if(yourBoard[i].abilityType =="onspell"){
+                    eval(`${yourBaord[i].ability}(yourBoard[i],${i})`)
+                }
+            }
         }
         if(lastCardPlayedClient.side == "enemy" && lastCardPlayed.type == "character" && yourGameParameters.secretSpells.some(e => e.name == "Ctrl+C / Ctrl+V")){
             var topush = Object.assign({},lastCardPlayed)
@@ -2622,7 +2714,7 @@
             yourHand.push(cardToPush )
             cardsInYourHandClass.push("cardTemplate")
         }
-        function Gitta(i){
+        function Gitta(card,i){
             yourBoard[i].attack += 1
             
             yourBoardDoms[i].children[0].children[5].style.animation = "none"
@@ -3950,6 +4042,10 @@
                 DeleteChoosingMode()
             }
         }
+        function TanariErtekezlet(){
+            yourGameParameters.yourBuildings.push(Cards.TanariSzobaCard)
+            SendGameData(yourGameParameters)
+        }
         function Tanevnyito(){
             for(let i= 0; i<yourBoard.length;i++){
                 yourBoard[i] != "" ? Evolve(yourBoard[i],i,1) : {}
@@ -4140,10 +4236,115 @@
                 SummonLocationChoosing(result)
                 
             }
+            card.ability = "JeffOnturnend"
+            card.abilityType ="ontrunend"
             
             SendGameData(yourGameParameters)
         
         }
+        function JeffOnturnend(){
+            for(let i=0;i<yourBoard.length;i++){
+                yourBOard[i].bonusTraits.some(e=>e.includes("sportos")) ? Heal(yourBoard[i],yourBoardDoms[i],2,"your") : {}
+            }
+        }
+        function Dolores(){
+            for(let i=0;i<yourBoard.length;i++){
+                yourBOard[i].bonusTraits.some(e=>e.includes("sportos")) ? yourBoard[i].fieldEffects.push("spellShield") : {}
+            }
+        }
+        function Charmander(){
+            yourHand.push(Cards.CharmanderLangjaCard)
+            cardsInYourHandClass.push("cardTemplate")
+
+            yourHand = yourHand
+            SendGameData(yourGameParameters)
+        }
+        function Carmeleon(){
+            yourHand.push(Cards.CharmeleonLangjaCard)
+            cardsInYourHandClass.push("cardTemplate")
+
+            yourHand = yourHand
+            SendGameData(yourGameParameters)
+        }
+        function Charizard(card){
+            yourHand.push(Cards.CharizardLangjaCard)
+            cardsInYourHandClass.push("cardTemplate")
+
+            yourHand = yourHand
+            SendGameData(yourGameParameters)
+        }
+        function MegaCharizardX(card){
+            yourHand.push(Cards.MegaCharizardXLangjaCard)
+            cardsInYourHandClass.push("cardTemplate")
+
+            yourHand = yourHand
+            SendGameData(yourGameParameters)
+        }
+        function FehetNo(card,i){
+            if(yourBoard[i+1].fieldEffects(e => e == "fiú") && yourBoard[i-1].fieldEffects(e => e == "fiú")){
+                yourBoard[i].attack += 3
+                yourBoard[i].health += 3
+                yourBoard[i].maxhealth += 3
+
+                yourBoardDoms[i].children[0].children[6].style.animation = "none"
+                yourBoardDoms[i].children[0].children[6].offsetHeight
+                yourBoardDoms[i].children[0].children[6].style.animation = "statHeal 1s"
+
+                yourBoardDoms[i].children[0].children[5].style.animation = "none"
+                yourBoardDoms[i].children[0].children[5].offsetHeight
+                yourBoardDoms[i].children[0].children[5].style.animation = "statHeal 1s"
+
+                SendGameData(yourGameParameters)
+            }
+            card.ability = "FehetNoBoardcon"
+            FeherNoBoardcon(card,i)
+        }
+        async function FeherNoBoardcon(card,i){
+            var isMrsFarkas = yourBoard[i+1].fieldEffects(e => e == "fiú") && yourBoard[i-1].fieldEffects(e => e == "fiú")
+            console.log("BOARDCON pre: ",isMrsFarkas)
+            SendGameData(yourGameParameters)
+
+            await waitForUpdate
+
+            var isMrsFarkasNew = yourBoard[i+1].fieldEffects(e => e == "fiú") && yourBoard[i-1].fieldEffects(e => e == "fiú")
+            if(isMrsFarkasNew){
+                if(yourBoard[i+1].health <= 0){isMrsFarkasNew = false}
+                if(yourBoard[i-1].health <= 0){isMrsFarkasNew = false}
+            }
+            console.log("BOARDCON pre: ",isMrsFarkasNew)
+
+            if(isMrsFarkas == true && isMrsFarkasNew == false){
+                yourBoard[i].attack -= 3
+                DealDmg(yourBoard[i],i,3,"your")
+
+                yourBoardDoms[i].children[0].children[5].style.animation = "none"
+                yourBoardDoms[i].children[0].children[5].offsetHeight
+                yourBoardDoms[i].children[0].children[5].style.animation = "statDmg 1s"
+
+                SendGameData(yourGameParameters)
+            }
+            else if(isMrsFarkas == false && isMrsFarkasNew == true){
+                yourBoard[i].attack += 3
+                yourBoard[i].health += 3
+                yourBoard[i].maxhealth += 3
+
+                yourBoardDoms[i].children[0].children[6].style.animation = "none"
+                yourBoardDoms[i].children[0].children[6].offsetHeight
+                yourBoardDoms[i].children[0].children[6].style.animation = "statHeal 1s"
+
+                yourBoardDoms[i].children[0].children[5].style.animation = "none"
+                yourBoardDoms[i].children[0].children[5].offsetHeight
+                yourBoardDoms[i].children[0].children[5].style.animation = "statHeal 1s"
+
+                SendGameData(yourGameParameters)
+            }
+            console.log("BOARDCON VÉGE")
+            SendGameData(yourGameParameters)
+            var isMrFarkas = yourBoard.some(element => element.name == "Apró Fehér Nő")
+            isMrFarkas == true ? FeherNoBoardcon(card,i) : {}
+            
+        }
+
         //#endregion
         //#region EXTRA SPELLS
         async function CharmanderLangja(){
@@ -4538,6 +4739,9 @@
         yourBoard = yourGameParameters.yourBoard
         yourBoard = yourBoard
 
+        yourGameParameters.yourBuildings = yourGameParameters.yourBuildings
+        enemyGameParameters.yourBuildings = enemyGameParameters.yourBuildings
+
         yourGameParameters.secretSpells = yourGameParameters.secretSpells
         enemyGameParameters.secretSpells = enemyGameParameters.secretSpells
         console.log("SECRETLOG: ",yourGameParameters.secretSpells, secretHoverState)
@@ -4556,6 +4760,89 @@
 <audio controls id="music" style="display: none;"  src={card.audio}   bind:this={voicelines[card.name]}></audio>
 {/each}
 
+{#if isChooseStaringHandScreen}
+    <div id="startingHandChooser">
+        {#each startingHandTargets as option,i}
+        <div id="cardChoosingModeCont">
+            {#if option.type == "character"} 
+                    <div class="previewInChoosingMode" on:click={() => SelectDeleteStartingCard([option,i])} on:keydown role="button" tabindex="">
+                        <img draggable="false" class="cardTemplateChoosingMode" id="cardBackgroundChoosingMode" src={cardBackground} style="--colorr: {backgroundColorByCost[(option.stars)-3]};" alt="cardBg">
+                        <div id="rarityBGChoosingMode" style="background: {backgroundColorByCost[(option.stars)-3]}; "></div>
+                        <img draggable="false" id="curCardInViewChoosingMode" src={option.source} alt="">
+                        <img draggable="false" class="cardTemplateChoosingMode" src={cardForeground} alt="cardBg">
+                        <div id="curCardDescChoosingMode" class="noScrollers">{@html option.description}</div>
+                        <div class="curCardStatsChoosingMode" style="left: calc(var(--cardsChoosingModeScale)*1vw*7.4);">{option.attack}</div>
+                        <div class="curCardStatsChoosingMode" style="left: calc(var(--cardsChoosingModeScale)*1vw*21.5)">{option.health}</div>
+                        <div class="curCardCostChoosingMode">{option.cost}</div>
+                        <div class="curCardNameChoosingMode">{option.name}</div>
+                        
+                        {#if option.talent != ""}
+                        {#if option.talent.includes(",")}
+                        <div class="curCardMultipleIconsContainerChoosingMode">
+                            {#each option.talent.split(",") as icon, i}
+                            <div style="width:{(0.65*5.2)/option.talent.split(",").length}vw; margin:auto">
+                                <img style="width:calc(var(--cardsChoosingModeScale)*1vw*3.1)" src={talentIcons[icon.replace(" ","")]} alt="talent">
+                            </div>
+                            {/each}
+                        </div>
+                        {:else}
+                            <div class="curCardTalentChoosingMode">{option.talent.replace("támadás","")}</div>
+                            <img style="left: calc(var(--cardsChoosingModeScale)*1vw*10);" class="curCardTalentIconChoosingMode" src={talentIcons[option.talent.replace(" ","")]} alt="talent">
+                            {/if}
+                        {/if}
+
+                        {#if option.aligment != ""}
+                        {#if option.aligment.includes(",")}
+                        {#each option.aligment.split(",") as aligment,i}
+                            <img style="top: {0.65*9.8 + i* 4.5*0.65}vw; background-color: {aligmentBackgroundColors[aligment]}; border-radius: 0.5vw;" class="curCardAligChoosingMode" src={aligmentIcons[aligment]} alt="aligment">
+                        {/each}
+                        {:else}
+                            <img style="background-color: {aligmentBackgroundColors[option.aligment]}; border-radius: 0.5vw;" class="curCardAligChoosingMode" src={aligmentIcons[option.aligment]} alt="aligment">
+                        {/if}
+                        {/if}
+
+                        <div id="curCardRarityChoosingMode" style="{starsColorByCost[(option.stars)-3]}; top: 0">
+                            {#each Array(Number(option.stars)) as card,index}
+                                <span style="font-size: calc(var(--cardsChoosingModeScale)*2.4vw">★</span>
+                            {/each}
+                        </div>
+
+                        {#if deletedStartingCards.some(e=> e[1] == i)}
+                        <img draggable="false" class="cardTemplateChoosingMode" src={reshuffleOverlay} alt="cardBg">
+                        {/if}
+
+                    </div>
+            {:else if option.type == "spell"}
+
+                <div class="previewInChoosingMode" on:click={() => SelectDeleteStartingCard([option,i])} on:keydown role="button" tabindex="">
+                    <img draggable="false" class="cardTemplateChoosingMode" id="cardBackgroundChoosingMode" src={spellBackground} style="--colorr: {backgroundColorByCost[(option.stars)-3]};" alt="cardBg">
+                    <div id="rarityBGChoosingMode" style="background: {backgroundColorByCost[(option.stars)-3]}; "></div>
+                    <img draggable="false" id="curCardInViewChoosingMode" src={option.source} alt="">
+                    <img draggable="false" class="cardTemplateChoosingMode" src={spellForeground} alt="cardBg">
+                    <div id="curCardDescChoosingMode" class="noScrollers">{@html option.description}</div>
+                    <div class="curCardCostChoosingMode" style="top: calc(var(--cardsChoosingModeScale)*1vw*4);">{option.cost}</div>
+                    <div class="curCardNameChoosingMode">{option.name}</div>
+
+                    <div id="curCardRarityChoosingMode" style="{starsColorByCost[(option.stars)-3]}; top: 0">
+                        {#each Array(Number(option.stars)) as card,index}
+                            <span style="font-size: calc(var(--cardsChoosingModeScale)*2.4vw">★</span>
+                        {/each}
+                    </div>
+
+                    {#if deletedStartingCards.some(e=> e[1] == i)}
+                    <img draggable="false" class="cardTemplateChoosingMode" src={reshuffleOverlay} alt="cardBg">
+                    {/if}
+                </div>
+            {/if}
+            
+        </div>
+        {/each}
+    </div>
+    <div id="startingHandChoosers">
+    <button on:click={VerifyStartingHand}>MEGERŐSÍT</button> 
+    <button on:click={ReshuffleStartingHand}>KICSERÉL</button>
+    </div>
+{/if}
 
 <div id="gamePlayFiledCont">
     <div id="playerHps">
@@ -4969,8 +5256,28 @@
                     </div>
                 </div>
             {/if}
+            {/each}  
+        </div>
+
+        <div class="buildingFlexCont" style="top:48vh;">
+            {#each yourGameParameters.yourBuildings as building,i}
+            <div class="buildingCont">
+                
+                <img draggable="false" class="buildingPic" src={building.source} alt="buidlingPic">
+                <img draggable="false" class="buildingFG" src={buildingFG} alt="buidling">
+                <div class="buildingName">{building.name}</div>
+            </div><br>
             {/each}
-            
+        </div>
+        <div class="buildingFlexCont" style="top:15vh;">
+            {#each enemyGameParameters.yourBuildings as building,i}
+            <div class="buildingCont">
+                
+                <img draggable="false" class="buildingPic" src={building.source} alt="buidlingPic">
+                <img draggable="false" class="buildingFG" src={buildingFG} alt="buidling">
+                <div class="buildingName">{building.name}</div>
+            </div><br>
+            {/each}
         </div>
         
     </div>
@@ -5418,6 +5725,63 @@
         top: 40vh;
     }
 
+    .buildingFlexCont{
+        position:absolute;
+        background-color: rgba(238, 130, 238, 0.103);
+        width: calc(var(--buildingScale)*15*1vw);
+        height: calc(var(--buildingScale)*40*1vh);
+        left: 78vw;
+    }
+    .buildingCont{
+        width: calc(var(--buildingScale)*10*1vw);
+        position: relative;
+        margin-bottom: calc(var(--buildingScale)*13.5*1vw);
+    }
+    .buildingFG{
+        width: calc(var(--buildingScale)*10*1vw);
+        position: absolute;
+
+    }
+    .buildingPic{
+        width: calc(var(--buildingScale)*8.4*1vw);
+        height: calc(var(--buildingScale)*12*1vw);
+        position: absolute;
+        border-radius: calc(var(--buildingScale)*5*1vw);
+        left: calc(var(--buildingScale)*0.8*1vw);
+        top: calc(var(--buildingScale)*0.2*1vw);
+    }
+    .buildingName{
+        position: absolute;
+        top: calc(var(--buildingScale)*9.8*1vw);
+        width: calc(var(--buildingScale)*10*1vw);
+        text-align: center;
+        font-size: calc(var(--buildingScale)*1*1vw);
+        color: rgba(247, 240, 221, 0.778);
+        font-family: Impact;
+    }
+
+    #startingHandChooser{
+        width: 100vw;
+        height: 100vh;
+        box-sizing: border-box;
+
+        position: fixed;
+        top:0;
+        left:0;
+        display: flex;
+        
+        z-index: 15;
+        background-color: #29252593;
+
+        text-align: center;
+        padding-top: 30vh;
+    }
+    #startingHandChoosers{
+        z-index:16;
+        position:absolute;
+        left:45vw;
+        top:70vh;
+    }
 
     #selectingModeBG{
         width: 100vw;
@@ -6077,6 +6441,7 @@
         --cardsLogScale: 0.6;
         --cardsChoosingModeScale: 0.65;
         --cardsVAScale: 0.33;
+        --buildingScale: 0.5;
     
         }
         #yourHand{

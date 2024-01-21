@@ -497,6 +497,21 @@
             this.quote = quote;
         }
     }
+    export class consturctionCards{
+        constructor(name,ability,abilityType,description,source,stars,cost,type,gachaSRC,cardSRCText,audio,quote) {
+            this.name = name;
+            this.ability = ability;
+            this.abilityType = abilityType;
+            this.description = description;
+            this.source = source;
+            this.stars = stars;
+            this.cost = cost;
+            this.type = type;
+            this.gachaSRC = gachaSRC;
+            this.cardSRCText = cardSRCText;
+        }
+    }
+
 
     //#region SPELLEK
     export let ebedCard = new spellCards("ebéd","EmptyAbility", "summon", "Az összes táblán lévő ellenséges <b>'diák'</b> kártya <b>elkábul</b> (1).",ebed,3,2,"spell",ebedGacha,"ebedCard",gachaPHAudio, "Ebédszünet! A diákok a diáktanyára vonulnak.")
@@ -540,7 +555,7 @@
     export let nokedliVagyCard = new spellCards("nokedli vagy","EmptyAbility", "summon", "<b>Némíts el</b> (1) és <b>kárhoztass el</b> egy 4 vagy az alatti atk-kal rendelkező kártyát a táblán!",Te,3,3,"spell",GachaPH,"nokedliVagyCard",gachaPHAudio, "")
     export let pirosLampaCard = new spellCards("piros lámpa","EmptyAbility", "summon", "<b>Kábíts el</b> (1) egy szabadon választott táblán lévő ellenséges kártyát!",Te,3,1,"spell",GachaPH,"pirosLampaCard",gachaPHAudio, "")
     export let sitaborCard = new spellCards("sítábor","EmptyAbility", "summon", "Az összes <b>'tunya'</b> kártya a térfeleden <b>metamorfozeál</b> (1).",Te,4,1,"spell",GachaPH,"sitaborCard",gachaPHAudio, "")
-    export let tanariErtekezletCard = new spellCards("tanári értekezlet","EmptyAbility", "summon", "Készíts egy <b>'Tanári szoba'</b> <b>építményt</b> a térfeledre!",Te,4,2,"spell",GachaPH,"tanariErtekezletCard",gachaPHAudio, "")
+    export let tanariErtekezletCard = new spellCards("tanári értekezlet","TanariErtekezlet", "summon", "Készíts egy <b>'Tanári szoba'</b> <b>építményt</b> a térfeledre!",Te,4,2,"spell",GachaPH,"tanariErtekezletCard",gachaPHAudio, "")
     export let UNOCard = new spellCards("UNO visszafordító kártya","EmptyAbility", "summon", "<b>Titok:</b> Az ellenfeled következő varázsigéjének hatását te használhatod fel.",Te,3,4,"spell",GachaPH,"UNOCard",gachaPHAudio, "")
     export let varazskoponyegCard = new spellCards("varázsköpönyeg","EmptyAbility", "summon", "Adj egy szabadon választott kártyának <b>varázs-pajzsot</b>!",Te,3,2,"spell",GachaPH,"varazskoponyegCard",gachaPHAudio, "")
     export let varazskotetCard = new spellCards("varázskötet","EmptyAbility", "summon", "Készíts egy random varázsigét a kezedbe!",Te,3,1,"spell",GachaPH,"varazskotetCard",gachaPHAudio, "")
@@ -651,7 +666,7 @@
     export let TheRockCard = new diakCards("Dwayne 'The Rock' Johnson","vérszomjas","","summon","EmptyAbility", "<b>Passzív:</b> Minden felé irányuló sebzés csökken 1-gyel.", 0, 10, 10, Te, 4, 3, "character", GachaPH, "TheRockCard", gachaPHAudio, "", [],["fiú", "sportos"]);
     export let SzerencsesZsoblinCard = new diakCards("Szerencsés Zsoblin","tunya","","summon","EmptyAbility", "<b>Passzív:</b> A <b>szerencséd</b> 30%-kal megnő.", 5, 5, 5, Te, 3, 3, "character", GachaPH, "SzerencsesZsoblinCard", gachaPHAudio, "", [],["fiú", "tanár", "reálos"]);
     export let MikyxCard = new diakCards("Mikyx","lelkiismeretes","fürge támadás","summon","EmptyAbility", "<b>Idézés:</b> Játszd ki újra az összes varázsige kártyát, amit a játék során kijátszottál! Varázsigénként +5%, hogy készít a térfeledre egy <b>'Mega Charizard X'</b> kártyát. <b>Passzív:</b> A kör végén <b>elkárhozik</b>.", 12, 15, 15, Te, 5, 9, "character", GachaPH, "MikyxCard", gachaPHAudio, "", [],["fiú", "tanár", "halott", "reálos", "sportos"]);
-    export let SarkanytojasCard = new diakCards("Sárkánytojás","","","summon","EmptyAbility", "<b>Idézés:</b> 2 kör után átváltozik <b>'Charmander'</b>-ré.", 0, 10, 10, Te, 3, 2, "character", GachaPH, "SarkanytojasCard", gachaPHAudio, "", [],[]);
+    export let SarkanytojasCard = new diakCards("Sárkánytojás","","","summon","EmptyAbility", "<b>Idézés:</b> 2 kör után átváltozik <b>'Charmander'</b>-ré.", 0, 10, 10, Te, 3, 2, "character", GachaPH, "SarkanytojasCard", gachaPHAudio, "", ["turnCount:0"],[]);
     export let ZozoCard = new diakCards("Zozó","veszett","","summon","EmptyAbility", "<b>Passzív:</b> Ha <b>'Strawberry'</b> a térfeleden van vele, a kör végén +2atk és +1 hp.", 2, 2, 2, Te, 3, 1, "character", GachaPH, "ZozoCard", gachaPHAudio, "", [],["fiú"]);
     export let StrawberryCard = new diakCards("Strawberry","vérszomjas","","summon","EmptyAbility", "<b>Passzív:</b> Ha <b>'Zozó'</b> a térfeleden van vele, a kör végén +1atk és +2 hp.", 2, 2, 2, Te, 3, 1, "character", GachaPH, "StrawberryCard", gachaPHAudio, "", [],["lány"]);
     export let BufesMoniCard = new diakCards("Büfés Móni","lelkiismeretes","","summon","EmptyAbility", "<b>Idézés:</b> Készít a térfeledre egy <b>'Büfé'</b> <b>építményt</b>.", 4, 7, 7, Te, 3, 3, "character", GachaPH, "BufesMoniCard", gachaPHAudio, "", [],["lány"]);
@@ -672,13 +687,16 @@
     export let NokedliCard = new extraCards("Nokedli 7/G-s","","","death","EmptyAbility", "<b>Elkárhozás:</b> Elnyeli az <b>átfolyó sebzést</b>.", 1, 1, 1, Te, 3, 0, "character", GachaPH, "NokedliCard", gachaPHAudio, "", [],["diák"]);
     export let SGEndreCard = new extraCards("Ságvári Endre szobor","","","summon","EmptyAbility", "<b>Idézés:</b> Annyi atk-ja és hp-ja van, ahányadik <b>'Ságvári Endre szobor'</b> a térfeleden.", 1, 1, 1, SGEndre, 3, 1, "character", GachaPH, "SGEndreCard", gachaPHAudio, "", [],["fiú", "halott"]);
     export let YouCard = new extraCards("Te","tunya","fürge támadás","summon","DrawOne", "Teszt kártya deveknek uwu", 2, 1, 1, Te, 5, 0, "character", GachaPH, "YouCard", gachaPHAudio, 'Te vagy e világ kiválasztottja. Írd meg a saját történeted és reméld, hogy utad végén sikerrel jársz. -???', [],[]);
-    export let CharmanderCard = new diakCards("Charmander","lelkiismeretes","","summon","EmptyAbility", "<b>Idézés:</b> 2 kör után átváltozik <b>'Charmeleon'</b>-né. <b>Passzív:</b> Ha kijátszol egy varázsige kártyát, készít a kezedbe egy <b>'Charmander lángja'</b> kártyát.", 6, 7, 7, Te, 3, 4, "character", GachaPH, "CharmanderCard", gachaPHAudio, "", [],[]);
-    export let CharmeleonCard = new diakCards("Charmeleon","","tövisesbőr","summon","EmptyAbility", "<b>Idézés:</b> 2 kör után átváltozik <b>'Charizard'</b>-dá. <b>Passzív:</b> Ha kijátszol egy varázsige kártyát, készít a kezedbe egy <b>'Charmeleon lángja'</b> kártyát.", 6, 11, 11, Te, 3, 6, "character", GachaPH, "CharmeleonCard", gachaPHAudio, "", [],[]);
-    export let CharizardCard = new diakCards("Charizard","vérszomjas","töviesbőr","summon","EmptyAbility", "<b>Passzív:</b> Ha kijátszol egy varázsige kártyát, készít a kezedbe egy <b>'Charizard lángja'</b> kártyát. <b>Idézés:</b> 2 kör után átváltozik <b>' Mega Charizard X'</b>-szé.", 6, 12, 12, Te, 3, 7, "character", GachaPH, "CharizardCard", gachaPHAudio, "", [],[]);
+    export let CharmanderCard = new diakCards("Charmander","lelkiismeretes","","summon","EmptyAbility", "<b>Idézés:</b> 2 kör után átváltozik <b>'Charmeleon'</b>-né. <b>Passzív:</b> Ha kijátszol egy varázsige kártyát, készít a kezedbe egy <b>'Charmander lángja'</b> kártyát.", 6, 7, 7, Te, 3, 4, "character", GachaPH, "CharmanderCard", gachaPHAudio, "", ["turnCount:0"],[]);
+    export let CharmeleonCard = new diakCards("Charmeleon","","tövisesbőr","summon","EmptyAbility", "<b>Idézés:</b> 2 kör után átváltozik <b>'Charizard'</b>-dá. <b>Passzív:</b> Ha kijátszol egy varázsige kártyát, készít a kezedbe egy <b>'Charmeleon lángja'</b> kártyát.", 6, 11, 11, Te, 3, 6, "character", GachaPH, "CharmeleonCard", gachaPHAudio, "", ["turnCount:0"],[]);
+    export let CharizardCard = new diakCards("Charizard","vérszomjas","töviesbőr","summon","EmptyAbility", "<b>Passzív:</b> Ha kijátszol egy varázsige kártyát, készít a kezedbe egy <b>'Charizard lángja'</b> kártyát. <b>Idézés:</b> 2 kör után átváltozik <b>' Mega Charizard X'</b>-szé.", 6, 12, 12, Te, 3, 7, "character", GachaPH, "CharizardCard", gachaPHAudio, "", ["turnCount:0"],[]);
     export let MegaCharizardXCard = new diakCards("Mega Charizard X","vérszomjas","tövisesbőr","summon","EmptyAbility", "<b>Passzív:</b> Ha kijátszol egy varázsige kártyát, készít a kezedbe egy <b>'Mega Charizard X lángja'</b> kártyát.", 8, 14, 14, Te, 3, 10, "character", GachaPH, "MegaCharizardXCard", gachaPHAudio, "", [],[]);
     //#endregion
     //#endregion
+    export let TanariSzobaCard = new consturctionCards("Tanári Szoba","EmptyAbility","summon","",tanariszoba,3,0,"building",GachaPH,"TanariSzobaCard")
+    //#region   CONSTRUCTIONS
 
+    //#endregion
 
     //#region LISTÁK/KATEGORIÁZÁS
     export let tanarCardsArr = [BizsoCard,FarkasCard,MartiCard,MoniCard,NagyoraCard,RozgonyiCard,TabiCard,BencusCard,DobiCard,IvanEvaCard,TomiCard,KocsiAndiCard,KoPaszCard,KutiCard,MatosCard,MeszarosCard,FiloRekaCard,IzigCard,KinyoCard, LaciNeniCard, MsFarkasCard,NagyTCard,BlazoCard,ParagiCard,RixerCard,SisakCard,SzaszakCard,TothKareszCard,VeronikaCard,WeiszCard,TritzCard,AnderleneCard,SagineCard]
@@ -690,6 +708,7 @@
     export let characterSpellCardsArr = [magCard,mindenBalazsCard,felvilagosodasCard,terminusdogaCard]
     export let extraSpellCardsArr = [KutiDiplomaCard,pikkDamaCard,CharmanderLangjaCard,CharmeleonLangjaCard,CharizardLangjaCard,MegaCharizardXLangjaCard]
     //epitmenycardsarr
+    export let buildingCardsArr = [TanariSzobaCard]
 
     export let allCardsArr = tanarCardsArr.concat(diakCardsArr)
     allCardsArr = allCardsArr.concat(spellCardsArr)
