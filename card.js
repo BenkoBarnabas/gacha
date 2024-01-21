@@ -406,6 +406,7 @@
     //#region építmények
     import bufe from "./lib/assets/collection/tanar/GachaPH.png"
     import tanariszoba from "./lib/assets/collection/epitmeny/tanariszoba.png"
+    import porta from "./lib/assets/collection/tanar/GachaPH.png"
     //#endregion
     //#endregion
 
@@ -498,6 +499,17 @@
             this.quote = quote;
         }
     }
+    export class epitmenyCards{
+        constructor(name,ability,abilityType,description,source,type,cardSRCText) {
+            this.name = name;
+            this.ability = ability;
+            this.abilityType = abilityType;
+            this.description = description;
+            this.source = source;
+            this.type = type;
+            this.cardSRCText = cardSRCText;
+        }
+    }
 
     //#region SPELLEK
     export let ebedCard = new spellCards("ebéd","EmptyAbility", "summon", "Az összes táblán lévő ellenséges <b>'diák'</b> kártya <b>elkábul</b> (1).",ebed,3,2,"spell",ebedGacha,"ebedCard",gachaPHAudio, "Ebédszünet! A diákok a diáktanyára vonulnak.")
@@ -563,7 +575,7 @@
     //#endregion
     //#region EGYÉB KARAKTERSPELLEK/SEGÉDSPELLEK
     export let KutiDiplomaCard = new spellCards("Tanári Diploma","KutiDiploma","summon","A térfeleden lévő <b>Kúti</b> kártya lediplomázott. Válaszd ki, milyen szakon. <b>Reál, humán vagy sport</b>.",KutiDiploma,5,0,"spell",GachaPHSpell,"KutiDiplomaCard",gachaPHAudio, "")
-    export let pikkDamaCard = new spellCards("pikk dáma","PikkDama", "summon", "Húzz fel egy kártyát a franciakártya paklidból! Ha a pikk dámát húzod, játszd ki <b>'Szász Leventét'</b> a kezedből! Kijátszás után készíts egy újabb <b>'Pikk dáma'</b> kártyát a kezedbe!",Te,5,1,"spell",GachaPH,"pikkDamaCard",gachaPHAudio, "")
+    export let pikkDamaCard = new spellCards("pikk dáma","PikkDama", "summon", "Húzz fel egy kártyát a franciakártya paklidból! Ha a pikk dámát húzod, játszd ki <b>'Szász Leventét'</b> a kezedből! Kijátszás után készíts egy újabb <b>'Pikk dáma'</b> kártyát a kezedbe!",pikkdama,5,1,"spell",GachaPH,"pikkDamaCard",gachaPHAudio, "")
     export let CharmanderLangjaCard = new spellCards("Charmander lángja","EmptyAbility", "summon", "Sebezz 5-öt egy szabadon választott célpontba!",charmanderlangja,5,4,"spell",GachaPHSpell,"CharmanderLangjaCard",gachaPHAudio, "")
     export let CharmeleonLangjaCard = new spellCards("Charmeleon lángja","EmptyAbility", "summon", "Sebezz 5-öt egy szabadon választott célpontba!",charmeleonlangja,5,3,"spell",GachaPHSpell,"CharmeleonLangjaCard",gachaPHAudio, "")
     export let CharizardLangjaCard = new spellCards("Charizard lángja","EmptyAbility", "summon", "Sebezz 7-et egy szabadon választott célpontba!",charizardlangja,5,3,"spell",GachaPHSpell,"CharizardLangjaCard",gachaPHAudio, "")
@@ -675,6 +687,12 @@
     export let CharizardCard = new diakCards("Charizard","vérszomjas","töviesbőr","summon","EmptyAbility", "<b>Passzív:</b> Ha kijátszol egy varázsige kártyát, készít a kezedbe egy <b>'Charizard lángja'</b> kártyát. <b>Idézés:</b> 2 kör után átváltozik <b>' Mega Charizard X'</b>-szé.", 6, 12, 12, Charizard, 3, 7, "character", GachaPH, "CharizardCard", gachaPHAudio, "", [],[]);
     export let MegaCharizardXCard = new diakCards("Mega Charizard X","vérszomjas","tövisesbőr","summon","EmptyAbility", "<b>Passzív:</b> Ha kijátszol egy varázsige kártyát, készít a kezedbe egy <b>'Mega Charizard X lángja'</b> kártyát.", 8, 14, 14, Megacharizardx, 3, 10, "character", GachaPH, "MegaCharizardXCard", gachaPHAudio, "", [],[]);
     //#endregion
+
+    //#region építmények
+    export let tanariSzobaCard = new epitmenyCards("tanári szoba","EmptyAbility","summon","Minden térfeleden lévő <b>'tanár'</b> közvetlenül támadhatja az ellenfelet. <b>Megsemmisül</b>, ha: egy <b>'diák'</b> kártya a térfeledre kerül.",tanariszoba,"epitmeny","tanariSzobaCard")
+    export let bufeCard = new epitmenyCards("büfé","EmptyAbility","summon","A kör végén minden első sorban lévő kártya a térfeleden gyógyul 1-gyel. <b>Megsemmisül</b>, ha: nincs kit gyógyítani.",bufe,"epitmeny","bufeCard")
+    export let portaCard = new epitmenyCards("porta","EmptyAbility","summon","Ha egy <b>'diák'</b> kártya a térfeleden <b>elkárhozik</b>, a kezedbe kerül vissza és 1-gyel kevesebb manába kerül (min 1). Ez az építmény csak akkor aktív, ha nincsen <b>'tanár'</b> kártya a térfeleden.",porta,"epitmeny","portaCard")
+    //#endregion
     //#endregion
 
 
@@ -683,6 +701,7 @@
     export let diakCardsArr = [ArhoCard,BarniCard,EszterCard,OliviaCard,ZalanCard,ZenoCard,ReginaCard,EmmaCard,RekaCard,JuliCard,BalazsCard,AbigelCard,BaloCard,ArpadCard,SzaszLeventeCard,VendelCard,NagyGyorgyCard,SzakonyiCard,RebeccaCard,TanacsBotondCard,GalLeventeCard,ZsirosPeterCard,BorosKingaCard,MolnarRekaCard,KaszaDomonkosCard,VighAndrisCard,MiklosCard,GittaCard,NagyBenedekCard,VorosBalintCard,DenesCard]
     export let spellCardsArr = [ebedCard,felelesCard,instantMerevedesCard,jegkremCard,lyukasoraCard,palacsintaFeszCard,sportSzeletCard,keszultelCard,nemKeszultelCard,ideAManaddalCard,tuzgolyoCard,lanchegysegCard,sagvarizmusEjszakajaCard,taktikaiTekergesCard,saraToborzasCard,saraSzurkolotaborCard,falanxCard,kiteresCard,kalodaCard,javitoDolgozatCard,mezeskalacsCard,osztalytalalkozoCard,puskazasCard,visszaakezembeCard,acelpajzsCard,alazatossagCard,alljonMegAMenetCard,atomrobbanasCard,ctrlCCtrlVCard,csereBereCard,elloptakAKabatodCard,haggyaMaCard,kommunizmusCard,leltarozasCard,nemTudodKovetkezoCard,NERFAPadbanCard,nokedliLeszelCard,nokedliVagyCard,pirosLampaCard,sitaborCard,tanariErtekezletCard,UNOCard,varazskoponyegCard,varazskotetCard,nemSzelloztettekCard,tanevnyitoCard,metamorfozisCard,szoborfaragasCard,mitozisCard,nincsFutesCard,ezVagyAzCard,kiosztjakADogatCard,telenSzelloztettekCard,RNGCard,fakardCard,nagyTestverVigyazRadCard,gravitacioCard,GOsztalyEltorleseCard,enyemCard]
     
+    export let epitmenyCardsArr = [tanariSzobaCard,bufeCard,portaCard]
     export let extraCardsArr = [AproNoCard,NokedliCard,JeffCard,TheRockCard,SzerencsesZsoblinCard,MikyxCard,SarkanytojasCard,ZozoCard,StrawberryCard]
     export let extraExtraCardsArr = [YouCard,TomiCloneCard,KutiHumanCard,KutiSportCard,KutiRealCard,BoldizsarCard,DoloresCard,DavidCard,JennyCard,CsontvazCard,SGEndreCard,CharmanderCard,CharmeleonCard,CharizardCard,MegaCharizardXCard]
     export let characterSpellCardsArr = [magCard,mindenBalazsCard,felvilagosodasCard,terminusdogaCard]
