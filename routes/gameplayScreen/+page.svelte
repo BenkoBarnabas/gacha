@@ -4,7 +4,7 @@
     import * as Cards from "../../card"
     let enemyStartingHand = [Cards.BarniCard,Cards.BarniCard, Cards.FarkasCard, Cards.BizsoCard, Cards.BencusCard, Cards.ZenoCard]
     
-    import {SendGameDataClient,connectedToSocket, yourGameParametersClient, enemyGameParametersClient, DomLoaded, SveltePageLoaded, currentOpponentId, EndTurn, lastCardPlayedClient,LastActionLog,CellAligmentAnimation, CardDmgAnimationClient,BizsoEndTurnClient, SummoningLocationClient, CardAttackAnimation} from "../../matchHandler"
+    import {SendGameDataClient,connectedToSocket, yourGameParametersClient, enemyGameParametersClient, DomLoaded, SveltePageLoaded, currentOpponentId, EndTurn, lastCardPlayedClient,LastActionLog,CellAligmentAnimation, CardDmgAnimationClient,BizsoEndTurnClient, SummoningLocationClient, CardAttackAnimation,StartingHandClient()} from "../../matchHandler"
 
     import cardBack from "../../lib/assets/global/cardBack.png"
 
@@ -214,6 +214,7 @@
     let isChooseStaringHandScreen = true
     let startingHandTargets = []
     let deletedStartingCards = []
+    let switchedStartingHandOnce = false
     function ReshuffleStartingHand(){
         console.log("SHUFFLELOG: 1",startingHandTargets,deletedStartingCards)
         deletedStartingCards.forEach(card => {
@@ -236,7 +237,10 @@
 
     }
     function VerifyStartingHand(){
-
+        yourHand = Array.from(startingHandTargets)
+        switchedStartingHandOnce = true
+        switchedStartingHandOnce = switchedStartingHandOnce
+        StartingHandClient()
     }
     function SelectDeleteStartingCard(data){
         if(!deletedStartingCards.some(e => e[1] == data[1])){
@@ -257,6 +261,11 @@
         startingHandTargets = startingHandTargets
 
         deletedStartingCards=Array(n).fill("")
+    }
+    function StartingHandVerifyEvent(event){
+        update()
+        isChooseStaringHandScreen = false
+        isChooseStaringHandScreen = isChooseStaringHandScreen
     }
 
     function DrawStartingHand(n){
@@ -378,6 +387,7 @@
             document.addEventListener('cardDmgAnim',CardDmgAnimation)
             document.addEventListener('summoningLocationEvent',ChangeSummoningLocationStatus)
             document.addEventListener('cardAttackAnimEvent',CardAttackAnimationEvent)
+            document.addEventListener('startingHandEvent',StartingHandVerifyEvent)
 
             document.addEventListener('bizsoEndTurn',BizsoEndTurn)
 
@@ -4839,8 +4849,8 @@
         {/each}
     </div>
     <div id="startingHandChoosers">
-    <button on:click={VerifyStartingHand}>MEGERŐSÍT</button> 
-    <button on:click={ReshuffleStartingHand}>KICSERÉL</button>
+    <button on:click={VerifyStartingHand} class:pointerEventsNone={switchedStartingHandOnce} class:pointerEventsAuto={!switchedStartingHandOnce}>MEGERŐSÍT</button> 
+    <button on:click={ReshuffleStartingHand} class:pointerEventsNone={switchedStartingHandOnce} class:pointerEventsAuto={!switchedStartingHandOnce}>KICSERÉL</button>
     </div>
 {/if}
 
