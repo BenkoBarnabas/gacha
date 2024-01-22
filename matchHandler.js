@@ -102,9 +102,12 @@ let aligmentAnimEvent
 let cardDmgAnimEvent
 let summoningLocationEvent
 let cardAttackAnimEvent
+let startingHandReadyEvent
 
 let bizsoEndTurnEvent
 
+let yourStartingHandReady = false
+let enemySfartingHandReady = false
 function WaitForDomPage(){
     if(!domLoaded && !connectedToSocket){
         setTimeout(() => {
@@ -120,6 +123,7 @@ function WaitForDomPage(){
         cardDmgAnimEvent = new Event("cardDmgAnim")
         summoningLocationEvent = new Event("summoningLocationEvent")
         cardAttackAnimEvent = new Event("cardAttackAnimEvent")
+        startingHandReadyEvent = new Event("startingHandEvent")
 
         bizsoEndTurnEvent = new Event("bizsoEndTurn")
         ServerCode()
@@ -218,6 +222,14 @@ function ServerCode(){
             cardAttackAnimEvent.data = data
             document.dispatchEvent(cardAttackAnimEvent)
         }
+        else if(msg.includes("StartingHandReady")){
+            var data = msg.replace("StartingHandReady","")
+            data == yourGameID ? yourStartingHandReady = true : enemyStartingHandReady = true
+            if(yourStartingHandReady && enemyStartingHandReady){
+                document.dispatchEvent(startingHandReadyEvent)
+            }
+            
+        }
         else{
             msg = JSON.parse(msg)
             if(msg.gameId != yourGameID){
@@ -264,6 +276,9 @@ export function SendGameDataClient(data){
 //-------------------------------------------------------------------------------------------
 export function EndTurn(){
     Client.socket.emit(gameKey,"TurnEnded")
+}
+export function StartingHandClient(){
+    Client.socket.emit(gameKey,`${yourGameID}StartingHandReady`)
 }
 
 export function CardAttackAnimation(enemyi,youri){
