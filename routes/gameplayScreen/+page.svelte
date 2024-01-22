@@ -264,8 +264,14 @@
     }
     function StartingHandVerifyEvent(event){
         update()
+
+        if(yourHand.some(e =>e.name == "Szász Levente")){
+            yourHand.push(Cards.pikkDamaCard)
+            cardsInYourHandClass.push("cardTemplate")
+        }
         isChooseStaringHandScreen = false
         isChooseStaringHandScreen = isChooseStaringHandScreen
+        SendGameData(yourGameParameters)
     }
 
     function DrawStartingHand(n){
