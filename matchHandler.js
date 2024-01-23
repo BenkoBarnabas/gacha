@@ -103,11 +103,12 @@ let cardDmgAnimEvent
 let summoningLocationEvent
 let cardAttackAnimEvent
 let startingHandReadyEvent
+let endGameEvent
 
 let bizsoEndTurnEvent
 
 let yourStartingHandReady = false
-let enemySfartingHandReady = false
+let enemyStartingHandReady = false
 function WaitForDomPage(){
     if(!domLoaded && !connectedToSocket){
         setTimeout(() => {
@@ -124,6 +125,7 @@ function WaitForDomPage(){
         summoningLocationEvent = new Event("summoningLocationEvent")
         cardAttackAnimEvent = new Event("cardAttackAnimEvent")
         startingHandReadyEvent = new Event("startingHandEvent")
+        endGameEvent = new Event('endGameEvent')
 
         bizsoEndTurnEvent = new Event("bizsoEndTurn")
         ServerCode()
@@ -230,6 +232,11 @@ function ServerCode(){
             }
             
         }
+        else if(msg.includes("JustWonTheGame")){
+            var data = msg.replace("JustWonTheGame","")
+            data == yourGameID ? endGameEvent.data = "victory" : endGameEvent.data = "defeat"
+            document.dispatchEvent(endGameEvent)
+        }
         else{
             msg = JSON.parse(msg)
             if(msg.gameId != yourGameID){
@@ -280,7 +287,6 @@ export function EndTurn(){
 export function StartingHandClient(){
     Client.socket.emit(gameKey,`${yourGameID}StartingHandReady`)
 }
-
 export function CardAttackAnimation(enemyi,youri){
     var msg = {
         attackerI: youri,
@@ -291,7 +297,6 @@ export function CardAttackAnimation(enemyi,youri){
     
     Client.socket.emit(gameKey,`CardAttackAnimation${JSON.stringify(msg)}`)
 }
-
 export function LastActionLog(card){
     
     Client.socket.emit(gameKey,`${yourGameID}ActionLog${JSON.stringify(card)}`)
@@ -300,7 +305,6 @@ export function LastActionLog(card){
 export function CellAligmentAnimation(targetId){
     Client.socket.emit(gameKey,`CellAligmentAnimation${targetId}`)
 }
-
 export function CardDmgAnimationClient(domId,dmg,side,type){
     side == "your" ? side = yourGameID : side = opponentGameID
     var params = {
@@ -312,11 +316,14 @@ export function CardDmgAnimationClient(domId,dmg,side,type){
     Client.socket.emit(gameKey,`CardDmgAnimation${JSON.stringify(params)}`)
 }
 
+export function EndGame(){
+    Client.socket.emit(gameKey,`${yourGameID}JustWonTheGame`)
+}
+
 //gameplay abilties
 export function BizsoEndTurnClient(){
     Client.socket.emit(gameKey,"BizsoEndTurn")
 }
-
 export function SummoningLocationClient(wether,side){
     var data ={
         side: yourGameID,

@@ -1,10 +1,18 @@
 <script>
     import loadingScreen from "../../lib/assets/global/loadingScreen.gif"
+    
+    import defeat from "../../lib/assets/gameplay/defeat.png"
+    import win from "../../lib/assets/gameplay/win.png"
+
 
     import * as Cards from "../../card"
     let enemyStartingHand = [Cards.BarniCard,Cards.BarniCard, Cards.FarkasCard, Cards.BizsoCard, Cards.BencusCard, Cards.ZenoCard]
+
+    function GoToPage(filePath) {
+        window.location = filePath; // Navigate to the parent directory
+    }
     
-    import {SendGameDataClient,connectedToSocket, yourGameParametersClient, enemyGameParametersClient, DomLoaded, SveltePageLoaded, currentOpponentId, EndTurn, lastCardPlayedClient,LastActionLog,CellAligmentAnimation, CardDmgAnimationClient,BizsoEndTurnClient, SummoningLocationClient, CardAttackAnimation,StartingHandClient} from "../../matchHandler"
+    import {SendGameDataClient,connectedToSocket, yourGameParametersClient, enemyGameParametersClient, DomLoaded, SveltePageLoaded, currentOpponentId, EndTurn, lastCardPlayedClient,LastActionLog,CellAligmentAnimation, CardDmgAnimationClient,BizsoEndTurnClient, SummoningLocationClient, CardAttackAnimation,StartingHandClient,EndGame} from "../../matchHandler"
 
     import cardBack from "../../lib/assets/global/cardBack.png"
 
@@ -288,10 +296,6 @@
             cardsInYourHandClass.push("cardTemplate")
             yourHand = yourHand
         }
-        yourHand[0] = Cards.YouCard
-        yourHand[1] = Cards.ParagiCard
-        yourHand[2] = Cards.SzakonyiCard
-        yourHand[3] = Cards.TritzCard    
          //UpdateLocalStorage()
         EnableStartingHandChoosing(yourHand,n)
 
@@ -311,8 +315,6 @@
             yourHand = yourHand
 
             SendGameData(yourGameParameters)
-
-            EnableStartingHandChoosing(yourHand)
             
     }
     
@@ -361,7 +363,51 @@
     }
     let waitForUpdate
     let promiseResolve
+
+    //#region LEVEL UP
+    let borderNumber = 6
+    import levelBarBg from "../../lib/assets/global/LevelupbarBg.png"
+    import levelBarFg from "../../lib/assets/global/LevelupbarBorder.png"
+
+    import ProfilePic from "../../lib/assets/profile/PP.jpg"
+
+    import pBorder1 from "../../lib/assets/profile/border1.png"
+    import pBorder2 from "../../lib/assets/profile/border2.png"
+    import pBorder3 from "../../lib/assets/profile/border3.png"
+    import pBorder4 from "../../lib/assets/profile/border4.png"
+    import pBorder5 from "../../lib/assets/profile/border5.png"
+    import pBorder6 from "../../lib/assets/profile/border6.png"
+    let pBorders = [pBorder1,pBorder2,pBorder3,pBorder4,pBorder5,pBorder6]
+
+    import gachaCurrencyIcon from "../../lib/assets/global/currencyIcon.png"
+    import shardIcon from "../../lib/assets/global/shardIcon.png"
+    
+    import * as Client from "../../client"
+    let localUserData
+
+    let winNotes = false
+    let xpToLevelUp = [0]
+    let lBarLength = 0
+    let LOGBarLength = 0
+    let gainedXp = 0
+    let gainedShards = 0
+    let gainedGachaCurrency = 0
+    //#endregion
     onMount(() => {
+            //#region LEVELUP
+            localUserData = JSON.parse(localStorage.getItem("userData"))
+            if (localUserData) {
+                //localPullData = JSON.parse(localStorage.getItem("userData"))
+                Client.getUserDataFromLocalStorage(localUserData, "userData")
+                localUserData = localUserData
+            } else {
+                console.log("Username not found in local storage.");
+            }
+
+            LOGBarLength = `${((localUserData.xp-xpToLevelUp[Number(localUserData.level)-1])/(xpToLevelUp[Number(localUserData.level)]-xpToLevelUp[Number(localUserData.level)-1]))*100}%`
+            //#endregion
+
+            //#region GAMEPLAY
             targetArea = document.getElementsByClassName("target")
             koTargetArea = document.getElementsByClassName("kotarget")
             spellTargetArea = document.getElementById("spellTargetDiv")
@@ -394,6 +440,7 @@
             document.addEventListener('summoningLocationEvent',ChangeSummoningLocationStatus)
             document.addEventListener('cardAttackAnimEvent',CardAttackAnimationEvent)
             document.addEventListener('startingHandEvent',StartingHandVerifyEvent)
+            document.addEventListener('endGameEvent',EndGameEvent)
 
             document.addEventListener('bizsoEndTurn',BizsoEndTurn)
 
@@ -409,6 +456,7 @@
                     isAnimationOngoing = false
                 }
             });
+            //#endregion
         
     });
     function resolveBoardconPromise(resolve){
@@ -1674,8 +1722,7 @@
         console.log("target: ", target, " i: ", i);
         console.log("HITENEMYLOG: ",target.type == "player")
         if(target.type == "player"){
-            
-            enemyGameParameters.health -= cardInAttackingMode.attack
+            DmgEnemyPlayer(cardInAttackingMode.attack)
         }
         else{
 
@@ -1777,19 +1824,18 @@
                             CardDmgAnimationClient(`td${i+5}`,"halál","enemy",targetType)
                             
 
-                            enemyGameParameters.health -= dmg
+                            DmgEnemyPlayer(dmg)
                             console.log("1 kezdés, 2 tovább, 3 megáll");
                         }
                     }
                     else{ //1kezdés, 2 nincs, 3 megáll
-                        enemyGameParameters.health -= dmg
+                        DmgEnemyPlayer(dmg)
                         console.log("1kezdés, 2 nincs, 3 megáll");
                     }
                 }
                 else{ //2 kezdés, tovább
                     //2 kezdés, 3 megáll
-                    enemyGameParameters.health -= dmg
-                    console.log("2 kezdés, 3 megáll")
+                    DmgEnemyPlayer(dmg)
                 }
             }
             }
@@ -1799,7 +1845,9 @@
             //---------------------------------------------------------------
             //KETTŐS TÁMADÁS
             if(!cardInAttackingMode.talent.includes("kettős támadás")){
-                //yourBoard[yourBoard.indexOf(cardInAttackingMode)].fieldEffects.push("asleep:")
+                setTimeout(() => {
+                    yourBoard[yourBoard.indexOf(cardInAttackingMode)].fieldEffects.push("asleep:")
+                }, 1000);
             }
             else{
                 var whichAttack = Number(yourBoard[yourBoard.indexOf(cardInAttackingMode)].fieldEffects[0].replace("kettős:",""))
@@ -1812,7 +1860,9 @@
                     
                     if(whichAttack == 2){
                     yourBoard[yourBoard.indexOf(cardInAttackingMode)].fieldEffects[0] = "kettős:0"
-                    yourBoard[yourBoard.indexOf(cardInAttackingMode)].fieldEffects.push("asleep:")
+                    setTimeout(() => {
+                        yourBoard[yourBoard.indexOf(cardInAttackingMode)].fieldEffects.push("asleep:")
+                    }, 1000);
                     }
                 }
             }
@@ -2163,12 +2213,8 @@
 
                 var domID = result.i
 
+                DealDmg(result.target,result.i,2,"enemy")
 
-                targets[domID].health -= 2
-                if(targets[domID].type == "character" || targets[domID].type == "ko"){
-                    targets[domID].health > 0 ? CardDmgAnimationClient(`td${domID}`,"sebzés","enemy",result.type) : CardDmgAnimationClient(`td${domID}`,"death","enemy",result.type)
-                }
-                console.log("playerDMGLOG: ",targets[domID].health,enemyGameParameters)
                 SendGameData(enemyGameParameters)
                 
                 DeleteSelectTargetMode()
@@ -2317,8 +2363,7 @@
             }
         }
         function Matos(card){
-            enemyGameParameters.health -= 2
-            SendGameData(enemyGameParameters)
+            DmgEnemyPlayer(2)
 
             card.abilityType = "death"
             card.ability = "MatosDeath"
@@ -3782,7 +3827,7 @@
             for(let i= 0; i<enemyBoard.length;i++){
                 enemyBoard[i] != "" ? DealDmg(enemyBoard[i],i,1,"enemy","spell") : {}
             }
-            enemyGameParameters.health -= 1
+            DmgEnemyPlayer(1)
             SendGameData(enemyGameParameters)
         }
         function NemTudod(){
@@ -3957,7 +4002,7 @@
                     }
                 }
                 else{
-                    enemyGameParameters.health -= 1
+                    DmgEnemyPlayer(1)
                 }
             }
             for(let i=0;i<3;i++){
@@ -4092,7 +4137,7 @@
                 EnableTargetSelectionMode(targets)
                 const result = await getUserChoice()
                 if(result.target.type == "player"){
-                    enemyGameParameters.health -= 4
+                    DmgEnemyPlayer(4)
                 }
                 else{
                     var domID = result.i
@@ -4374,7 +4419,7 @@
                 EnableTargetSelectionMode(targets)
                 const result = await getUserChoice()
                 if(result.target.type == "player"){
-                    enemyGameParameters.health -= 5
+                    DmgEnemyPlayer(5)
                 }
                 else{
                     var domID = result.i
@@ -4405,7 +4450,7 @@
                 EnableTargetSelectionMode(targets)
                 const result = await getUserChoice()
                 if(result.target.type == "player"){
-                    enemyGameParameters.health -= 5
+                    DmgEnemyPlayer(5)
                 }
                 else{
                     var domID = result.i
@@ -4436,7 +4481,7 @@
                 EnableTargetSelectionMode(targets)
                 const result = await getUserChoice()
                 if(result.target.type == "player"){
-                    enemyGameParameters.health -= 7
+                    DmgEnemyPlayer(7)
                 }
                 else{
                     var domID = result.i
@@ -4645,14 +4690,20 @@
             SendGameData(enemyGameParameters)
         }
         function DealDmg(card,i,amount,side,source){
-            source == "spell" ? amount *= spellDmgMulti : {}
-            card.health -= amount
-            if(card.health <= 0){
-                CardDmgAnimationClient(`td${i}`,"halál",side,card.type)
+            if(card.type == "player" && side == "enemy"){
+                DmgEnemyPlayer(amount)
+                return
+            }else{
+                source == "spell" ? amount *= spellDmgMulti : {}
+                card.health -= amount
+                if(card.health <= 0){
+                    CardDmgAnimationClient(`td${i}`,"halál",side,card.type)
+                }
+                else{
+                    CardDmgAnimationClient(`td${i}`,"sebzés",side,card.type)
+                }
             }
-            else{
-                CardDmgAnimationClient(`td${i}`,"sebzés",side,card.type)
-            }
+            
         }
         function Heal(card,dom,amount,side){
             if(card.health + amount > card.maxhealth ){
@@ -4736,6 +4787,15 @@
         
 
     //#endregion
+    function DmgEnemyPlayer(amount){
+        enemyGameParameters.health -= amount
+        SendGameData(enemyGameParameters)
+        if(enemyGameParameters.health <= 0){
+            setTimeout(() => {
+                EndGame()
+            }, 1000);
+        }
+    }
 
     //MAIN ---------------------------------------------
     function update() {
@@ -4763,12 +4823,159 @@
         console.log("SECRETLOG: ",yourGameParameters.secretSpells, secretHoverState)
         
     }
+    let isWinScreen = false
+    let isYourWin = false
+    let winLogo = defeat
+    function EndGameEvent(event){
+        event.data == "victory" ? isYourWin = true : isYourWin = false
+        isYourWin = isYourWin
+
+        isYourWin == true ? winLogo = win : winLogo = defeat
+        winLogo = winLogo
+
+        isWinScreen = true
+        isWinScreen = isWinScreen
+
+    }
+    for(let i=1;i <30;i++){
+        xpToLevelUp[i] = Math.ceil((100*i)**1.2)
+    }
+    console.log(xpToLevelUp)
+    function GainXp(){  
+
+        winNotes = true
+        winNotes = winNotes
+        setTimeout(() => {
+            document.getElementById("gainsXP").style.animation = "gainsAnim 0.3s 0.5s forwards"
+            document.getElementById("gainsGC").style.animation = "gainsAnim 0.3s 0.6s forwards"
+            document.getElementById("gainsS").style.animation = "gainsAnim 0.3s 0.7s forwards"
+
+            var winLogoDom = document.getElementById("winLogo")
+            winLogoDom.style.animation = "none"
+            winLogoDom.offsetHeight
+            winLogoDom.style.animation = "winLogoShift 1s forwards"
+
+            document.getElementById("winScreen").style.animation = "winScreenDarken 1s forwards"
+        }, 100);
+        
+        function GainXpAnim(xp){
+            if(gainedXp < xp){
+                gainedXp++
+                gainedXp = gainedXp
+                setTimeout(() => {
+                    GainXpAnim(xp)
+                }, 10);
+            }
+        }
+        function GainShardAnim(xp){
+            if(gainedShards < xp){
+                gainedShards++
+                gainedShards = gainedShards
+                setTimeout(() => {
+                    GainShardAnim(xp)
+                }, 10);
+            }
+        }
+        function GainGCAnim(xp){
+            if(gainedGachaCurrency < xp){
+                gainedGachaCurrency++
+                gainedGachaCurrency = gainedGachaCurrency
+                setTimeout(() => {
+                    GainGCAnim(xp)
+                }, 10);
+            }
+        }
+
+        if(isYourWin){
+            GainXpAnim(100)
+            setTimeout(() => {
+                GainGCAnim(200)
+            }, 900);
+            setTimeout(() => {
+                GainShardAnim(100) 
+            }, 1800);
+            
+            
+            localUserData.xp += 100
+        }
+        else{
+            GainXpAnim(50)
+            setTimeout(() => {
+                GainGCAnim(50)
+            }, 400);
+            localUserData.xp += 50
+        }       
+        console.log("1: ",localUserData.xp)
+        
+        CheckLevelUp()
+    }
+    function CheckLevelUp(){
+        if(localUserData.xp >= xpToLevelUp[Number(localUserData.level)]){
+            localUserData.level = Number(localUserData.level + 1)
+            //sendData("level",localUserData.level,localUserData.id,"account")
+            LOGBarLength = "0%"
+        }
+        
+        lBarLength = `${((localUserData.xp-xpToLevelUp[Number(localUserData.level)-1])/(xpToLevelUp[Number(localUserData.level)]-xpToLevelUp[Number(localUserData.level)-1]))*100}%`
+        console.log("2: ",localUserData.xp,localUserData.level,(localUserData.xp-xpToLevelUp[Number(localUserData.level)-1]),lBarLength)
+
+        setTimeout(() => {
+            document.getElementById("levelBar").style.animation = "levelBarAnim 0.7s forwards"
+        }, 500);
+        //sendData("gachaCurrency",localUserData.gachaCurrency,localUserData.id,"account")
+        //sendData("shards",localUserData.shards,localUserData.id,"account")
+        //sendData("xp",localUserData.xp,localUserData.id,"account")
+        localStorage.setItem("userData", JSON.stringify(localUserData));  
+    }
 </script>
 {#if !pageLoaded}
 <div id="loadingScreen">
   <img src={loadingScreen} alt="loading..." style="width: 15vw; display: block; margin-top:15%; margin-left:auto; margin-right:auto;">
   <h1 style="font-family: cursive; display: block; text-align:center;">LOADING...</h1>
 </div>
+{/if}
+
+{#if isWinScreen}
+    <div id="winScreen">
+        <img src={winLogo} alt="idkmilettlmao" id="winLogo">
+        {#if winNotes}
+        <div id="winNotesCont">
+            <div id="winNotes">
+                <div id="profileCont">
+                    <img id="profilePic" class="profilePicComp" src={ProfilePic} alt="border">
+                    <img id="profileBorder" class="profilePicComp" src={pBorders[borderNumber-1]} alt="border">
+                </div>
+                <div id="profileName">{localUserData.username}</div>
+                <div id="profileLevel">Szint: {localUserData.level}</div>
+                <div id="profileXp">TP szintlépéshez: {xpToLevelUp[localUserData.level]-localUserData.xp}</div>
+                <div id="levelCont">
+                    <img class="levelBar" id="levelBarFg" src={levelBarBg} alt="level">
+                    <div id="levelBar" style="--lBarLength: {lBarLength}; --LOGBarLength: {LOGBarLength}"></div>
+                    <img class="levelBar" id="levelBarBg" src={levelBarFg} alt="level">
+                </div>
+                <div id="gainsCont">
+                    <div id="gainsXP" style="opacity: 0;">TP: {gainedXp}</div>
+                    <div id="gainsGC" style="opacity: 0;"><img class="gainedIcon" src={gachaCurrencyIcon} alt="GachaCurrency: ">  {gainedGachaCurrency}</div>
+                    <div id="gainsS" style="opacity: 0;"><img class="gainedIcon" src={shardIcon} alt="Shard: ">  {gainedShards}</div>
+                </div>
+    
+                <div class="optionButtonCont" style="filter:hue-rotate(-90deg);">
+                    <div style="position: relative;">
+                    <button class="optionButtonShadow"></button>
+                    <button class="optionButton" on:click={() => GoToPage("../mainmenuScreen")}>Tovább</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {:else}
+        <div id="winGoBackButton" style="filter:hue-rotate(-90deg);">
+            <div style="position: relative;">
+            <button class="optionButtonShadow"></button>
+            <button class="optionButton" on:click={GainXp}>Tovább</button>
+            </div>
+        </div>
+        {/if}
+    </div>
 {/if}
 
 <div id="background"></div>
@@ -4823,7 +5030,7 @@
                             {/each}
                         </div>
 
-                        {#if deletedStartingCards.some(e=> e[1] == i)}
+                        {#if deletedStartingCards.some(e=> e[1] == i) && !switchedStartingHandOnce}
                         <img draggable="false" class="cardTemplateChoosingMode" src={reshuffleOverlay} alt="cardBg">
                         {/if}
 
@@ -4845,7 +5052,7 @@
                         {/each}
                     </div>
 
-                    {#if deletedStartingCards.some(e=> e[1] == i)}
+                    {#if deletedStartingCards.some(e=> e[1] == i) && !switchedStartingHandOnce}
                     <img draggable="false" class="cardTemplateChoosingMode" src={reshuffleOverlay} alt="cardBg">
                     {/if}
                 </div>
@@ -4854,10 +5061,12 @@
         </div>
         {/each}
     </div>
+    {#if !switchedStartingHandOnce}
     <div id="startingHandChoosers">
-    <button on:click={VerifyStartingHand} class:pointerEventsNone={switchedStartingHandOnce} class:pointerEventsAuto={!switchedStartingHandOnce}>MEGERŐSÍT</button> 
-    <button on:click={ReshuffleStartingHand} class:pointerEventsNone={switchedStartingHandOnce} class:pointerEventsAuto={!switchedStartingHandOnce}>KICSERÉL</button>
+    <button on:click={VerifyStartingHand} >MEGERŐSÍT</button> 
+    <button on:click={ReshuffleStartingHand} >KICSERÉL</button>
     </div>
+    {/if}
 {/if}
 
 <div id="gamePlayFiledCont">
@@ -5678,11 +5887,226 @@
         top: 0;
         left: 0;
     }
-    :root{
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+    #winScreen{
+        width: 100vw;
+        height: 100vh;
+        position: absolute;
+        top: 0;
+        left:0;
+        z-index: 15;
+        background-color: #29252593;
+        
+    }
+    @keyframes -global-winScreenDarken{
+        0%{
+            background-color: #29252593;
+        }
+        100%{
+            background-color: #141111EF;
+        }
+    }
+    #winLogo{
+        position:absolute;
+        width:40vw;
+        top: 30vh;
+        left:30vw;
+        opacity:0;
+        animation: winAnim 2s 1s forwards;
+    }
+    @keyframes -global-winLogoShift{
+        0%{
+            opacity:1;
+            left:30vw;
+        }
+        100%{
+            opacity:1;
+            left:5vw;
+        }
+    }
+    #winGoBackButton{
+        position:absolute;
+        top: 70vh;
+        left:45vw;
+        opacity:0;
+        animation: winAnim 2s 1s forwards;
+    }
+    @keyframes -global-winAnim{
+        0%{
+            opacity:0;
+        }
+        100%{
+            opacity:1;
+        }
+    }
+    #winNotesCont{
+        position: absolute;
+        top: 10vh;
 
+        animation: winNotesAnim 0.5s forwards ease-out;
+    }
+    @keyframes winNotesAnim{
+        0%{
+            left: 100vw;
+        }
+        100%{
+            left: 50vw;
+        }
+    }
+    #winNotes{
+        background-image: url(../../lib/assets/gameplay/pad.png);
+        background-size: 100% 100%;
+        width: 80vw;
+        height:80vh;
+        position: relative;
+
+    }
+    #profileName{
+        font-family: "ShadowLight";
+        font-size: 2vw;
+        position:absolute;
+        left:32%;
+        top: 27%;
+    }
+    #profileLevel{
+        font-family: "ShadowLight";
+        font-size: 1.9vw;
+        position:absolute;
+        left:13%;
+        top: 50%;
+    }
+    #profileXp{
+        font-family: "ShadowLight";
+        font-size: 1vw;
+        position:absolute;
+        left:16%;
+        top: 64%;
+    }
+    #profileCont{
+        position: absolute;
+        top:17%;
+        left:13%;
+        width:12vw;
+    }
+    #profileBorder{
+        position: absolute;
+        width: 100%;
+    }
+    #profilePic{
+        position: absolute;
+        width:70%;
+        left:15%;
+        top:2vh;
+        border-radius: 50%;
+    }
+
+    #gainsCont{
+        position: absolute;
+        font-family: "ShadowLight";
+        font-size: 1.5vw;
+        position:absolute;
+        left:13%;
+        top: 70%;
+    }
+    .gainedIcon{
+        width:2vw;
+    }
+    @keyframes -global-gainsAnim{
+        0%{
+            opacity: 1;
+            margin-left:-10vw;
+        }
+        100%{
+            opacity: 1;
+            margin-left:0vw;
+        }
+    }
+
+
+    #levelCont{
+        position: absolute;
+        top:60%;
+        left: 13%;
+        width: 35%;
+        background-color: violet;
+    }
+    .levelBar{
+        position: absolute;
+        width: 100%;
+    }
+    #levelBar{
+        position: absolute;
+        height: 1.7vh;
+        left:2%;
+        top:7%;
+        width: var(--LOGBarLength);
+        background: linear-gradient(0.25turn, #1774ee, #3dbb3d, #d38328);
+        border-radius: 2vw;
+    }
+    @keyframes -global-levelBarAnim{
+        0%{
+            width: var(--LOGBarLength);
+        }
+        100%{
+            width: var(--lBarLength);
+        }
+    }
+
+    .optionButtonCont{
+        position: absolute;
+        top: 77%;
+        left: 27%;
+        opacity: 0;
+        animation: tovabbButtonAnim 0.5s 3s forwards;
+    }
+    @keyframes tovabbButtonAnim{
+        0%{
+            opacity: 0;
+        }
+        100%{
+            opacity: 1;
+        }
+    }
+    .optionButton{
+        width:13.5vw;
+        height:5vw;
+        
+        background: url(../../lib/assets/mainmenu/optionButton.png);
+        background-size: 100% 100%;
+
+        border: none;
+
+        margin-bottom:1vw;
+        font-family: "sgGachaFont";
+        font-size: 0.8vw;
+
+        position:absolute;
+    }
+    .optionButtonShadow{
+        width:13.5vw;
+        height:5vw;
+        
+        background: url(../../lib/assets/mainmenu/optionButtonShadow.png);
+        background-size: 100% 100%;
+
+        border: none;
+        position: absolute;
+    }
+    .optionButton:hover{
+        cursor: pointer;
+        transform: scale(1.1);
+        margin-left: -0.6vw;
+        margin-top: -0.6vw;
+    }
+
+
+
+    :root{
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        overflow: hidden; /* This will hide any content that overflows the body */
+        margin: 0; /* Remove default margin to ensure full coverage */
+        padding: 0; /* Remove default padding to ensure full coverage */
     }
     .displayNone{display: none;}
     .displayBlock{display: block;}

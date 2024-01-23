@@ -479,6 +479,7 @@
         </div>
     </div>
 </div>
+    
     {:else if curCardInView.type == "spell"}
     <div id="cardPreview" >
         <div id="curCardQuote" class="noScrollers"><i>"{curCardInView.quote}"</i></div>
@@ -927,13 +928,12 @@
     #preview{
         position: absolute;
         top:18.5vh;
-        left:2vw;
+        left:60vw;
     }
     #cardPreview{
         width: 32vw;
         height: 40vw;
         position: relative;
-        margin-left:60vw;
         margin-top: 2vh;
     }
     .cardTemplate{
