@@ -1,15 +1,29 @@
 <script>
-    function GoToPage(filePath) {
-        window.location = filePath; // Navigate to the parent directory
-    }
     import { onMount } from 'svelte';
-    import * as Cards from "../../card"
-    let isYourWin =true
-    let borderNumber = 6
-    import levelBarBg from "../../lib/assets/global/LevelupbarBg.png"
-    import levelBarFg from "../../lib/assets/global/LevelupbarBorder.png"
+    import {clientID,userData, getUserDataFromLocalStorage, deckData} from "../../client"
+    //import {currentOpponentInfo} from "../../matchHandler"
+
+    let localUserData = {}
+    let localDeckData = {}
+    onMount(() => {
+
+        localDeckData = JSON.parse(localStorage.getItem("deckData"))
+        localUserData = JSON.parse(localStorage.getItem("userData"))
+        if (localUserData) {
+            //localUserData = JSON.parse(localStorage.getItem("userData"))
+            getUserDataFromLocalStorage(localDeckData, "deckData")
+            getUserDataFromLocalStorage(localUserData, "userData")
+        } else {
+            console.log("Username not found in local storage.");
+        }
+
+    });
+
+    import hourglass from "../../lib/assets/global/hourglass.gif"
 
     import ProfilePic from "../../lib/assets/profile/PP.jpg"
+    import ProfilePic2 from "../../lib/assets/profile/PP2.png"
+    let profilePics = [ProfilePic,ProfilePic2]
 
     import pBorder1 from "../../lib/assets/profile/border1.png"
     import pBorder2 from "../../lib/assets/profile/border2.png"
@@ -19,297 +33,122 @@
     import pBorder6 from "../../lib/assets/profile/border6.png"
     let pBorders = [pBorder1,pBorder2,pBorder3,pBorder4,pBorder5,pBorder6]
 
-    import gachaCurrencyIcon from "../../lib/assets/global/currencyIcon.png"
-    import shardIcon from "../../lib/assets/global/shardIcon.png"
-    
-    import * as Client from "../../client"
-    let localUserData
-
-    let winNotes = false
-    let xpToLevelUp = [0]
-    let lBarLength = 0
-    let LOGBarLength = 0
-    let gainedXp = 0
-    let gainedShards = 0
-    let gainedGachaCurrency = 0
-    onMount(() => {
-      localUserData = JSON.parse(localStorage.getItem("userData"))
-      if (localUserData) {
-        //localPullData = JSON.parse(localStorage.getItem("userData"))
-        Client.getUserDataFromLocalStorage(localUserData, "userData")
-        localUserData = localUserData
-      } else {
-        console.log("Username not found in local storage.");
-      }
-
-      LOGBarLength = `${((localUserData.xp-xpToLevelUp[Number(localUserData.level)-1])/(xpToLevelUp[Number(localUserData.level)]-xpToLevelUp[Number(localUserData.level)-1]))*100}%`
-
-    });
-
-
-    for(let i=1;i <30;i++){
-        xpToLevelUp[i] = Math.ceil((100*i)**1.2)
-    }
-    console.log(xpToLevelUp)
-    function GainXp(){  
-        winNotes = true
-        winNotes = winNotes
-        setTimeout(() => {
-            document.getElementById("gainsXP").style.animation = "gainsAnim 0.3s 0.5s forwards"
-            document.getElementById("gainsGC").style.animation = "gainsAnim 0.3s 0.6s forwards"
-            document.getElementById("gainsS").style.animation = "gainsAnim 0.3s 0.7s forwards"
-        }, 100);
-        
-        function GainXpAnim(xp){
-            if(gainedXp < xp){
-                gainedXp++
-                gainedXp = gainedXp
-                setTimeout(() => {
-                    GainXpAnim(xp)
-                }, 10);
-            }
-        }
-        function GainShardAnim(xp){
-            if(gainedShards < xp){
-                gainedShards++
-                gainedShards = gainedShards
-                setTimeout(() => {
-                    GainShardAnim(xp)
-                }, 10);
-            }
-        }
-        function GainGCAnim(xp){
-            if(gainedGachaCurrency < xp){
-                gainedGachaCurrency++
-                gainedGachaCurrency = gainedGachaCurrency
-                setTimeout(() => {
-                    GainGCAnim(xp)
-                }, 10);
-            }
-        }
-
-        if(isYourWin){
-            GainXpAnim(100)
-            setTimeout(() => {
-                GainGCAnim(200)
-            }, 900);
-            setTimeout(() => {
-                GainShardAnim(100) 
-            }, 1800);
-            
-            
-            localUserData.xp += 100
-        }
-        else{
-            GainXpAnim(50)
-            setTimeout(() => {
-                GainGCAnim(50)
-            }, 400);
-            localUserData.xp += 50
-        }       
-        console.log("1: ",localUserData.xp)
-        
-        CheckLevelUp()
-    }
-    function CheckLevelUp(){
-        if(localUserData.xp >= xpToLevelUp[Number(localUserData.level)]){
-            localUserData.level = Number(localUserData.level + 1)
-            //sendData("level",localUserData.level,localUserData.id,"account")
-            LOGBarLength = "0%"
-        }
-        
-        lBarLength = `${((localUserData.xp-xpToLevelUp[Number(localUserData.level)-1])/(xpToLevelUp[Number(localUserData.level)]-xpToLevelUp[Number(localUserData.level)-1]))*100}%`
-        console.log("2: ",localUserData.xp,localUserData.level,(localUserData.xp-xpToLevelUp[Number(localUserData.level)-1]),lBarLength)
-
-        setTimeout(() => {
-            document.getElementById("levelBar").style.animation = "levelBarAnim 0.7s forwards"
-        }, 500);
-        //sendData("gachaCurrency",localUserData.gachaCurrency,localUserData.id,"account")
-        //sendData("shards",localUserData.shards,localUserData.id,"account")
-        //sendData("xp",localUserData.xp,localUserData.id,"account")
-        localStorage.setItem("userData", JSON.stringify(localUserData));
-        
-    }
-
+    let currentOpponentInfo = {border: 2, profilPic: 2, username: "móni",level:23}
 </script>
+<div id = "background"></div>
 
-<div id="winScreen">
-    <button on:click={GainXp}>bbb</button>
-    {#if winNotes}
-    <div id="winNotesCont">
-        <div id="winNotes">
-            <div id="profileCont">
-                <img id="profilePic" class="profilePicComp" src={ProfilePic} alt="border">
-                <img id="profileBorder" class="profilePicComp" src={pBorders[borderNumber-1]} alt="border">
-            </div>
-            <div id="profileName">{localUserData.username}</div>
-            <div id="profileLevel">Szint: {localUserData.level}</div>
-            <div id="profileXp">TP szintlépéshez: {xpToLevelUp[localUserData.level]-localUserData.xp}</div>
-            <div id="levelCont">
-                <img class="levelBar" id="levelBarFg" src={levelBarBg} alt="level">
-                <div id="levelBar" style="--lBarLength: {lBarLength}; --LOGBarLength: {LOGBarLength}"></div>
-                <img class="levelBar" id="levelBarBg" src={levelBarFg} alt="level">
-            </div>
-            <div id="gainsCont">
-                <div id="gainsXP" style="opacity: 0;">TP: {gainedXp}</div>
-                <div id="gainsGC" style="opacity: 0;"><img class="gainedIcon" src={gachaCurrencyIcon} alt="GachaCurrency: ">  {gainedGachaCurrency}</div>
-                <div id="gainsS" style="opacity: 0;"><img class="gainedIcon" src={shardIcon} alt="Shard: ">  {gainedShards}</div>
-            </div>
+<div class="yourDataCont" style="left: 5vw;">
+    <div style="position: relative; width:80%; height:100%;">
+        <div class="profileCont">
+            <img class="profilePic profilePicComp" src={profilePics[localUserData.profilPic-1]} alt="border">
+            <img class="profileBorder profilePicCom" src={pBorders[localUserData.border-1]} alt="border">
+        </div>
+        <div style="font-size: 3vw; width:100%; text-align: center;">{localUserData.level}</div>
+        <div style="font-family: sgGachaFont; font-size:2vw; width:100%; text-align: center;">{localUserData.username}</div>
 
-            <div class="optionButtonCont">
-                <div style="position: relative;">
-                <button class="optionButtonShadow"></button>
-                <button class="optionButton" on:click={() => GoToPage("../mainmenuScreen")}>Tovább</button>
-                </div>
-            </div>
+        <div class="deckChooserContainer" style="text-align:center">
+            <button class="deckChooser" ><span class="deckNumbering">1</span>{localDeckData[`deckname${0}`]}</button>
+            <button class="deckChooser" ><span class="deckNumbering">2</span>{localDeckData[`deckname${1}`]}</button><br><br>
+            <button class="deckChooser" ><span class="deckNumbering">3</span>{localDeckData[`deckname${2}`]}</button>
+            <button class="deckChooser" ><span class="deckNumbering">4</span>{localDeckData[`deckname${3}`]}</button>
         </div>
     </div>
-    {/if}
-    
+</div>
+<div class="optionButtonCont" style="filter:hue-rotate(0deg);">
+    <div style="position: relative;">
+    <button class="optionButtonShadow"></button>
+    <button class="optionButton" >Készenáll</button>
+    </div>
+</div>
+<div style="position: absolute; top:30vh;left:38vw; width: 20vw;"><img src={hourglass} alt="waiting..."></div>
+<div class="yourDataCont" style="right: 5vw;">
+    <div style="position: relative; width:80%; height:100%;">
+        <div class="profileCont">
+            <img class="profilePic profilePicComp" src={profilePics[currentOpponentInfo.profilPic-1]} alt="border">
+            <img class="profileBorder profilePicComp" src={pBorders[currentOpponentInfo.border-1]} alt="border">
+        </div>
+        <div style="font-size: 3vw; width:100%; text-align: center;">{currentOpponentInfo.level}</div>
+        <div style="font-family: sgGachaFont; font-size:2vw; width:100%; text-align: center;">{currentOpponentInfo.username}</div>
+    </div>
 </div>
 
 <style>
-    :root{
-        overflow: hidden; /* This will hide any content that overflows the body */
-            margin: 0; /* Remove default margin to ensure full coverage */
-            padding: 0; /* Remove default padding to ensure full coverage */
-    }
-    #winScreen{
-        width: 100vw;
-        height: 100vh;
-        position: absolute;
+    #background {
+        background: url("../../lib/assets/collection/bg.png");
+        overflow: hidden;
+        position: fixed;
         top: 0;
-        left:0;
-        z-index: 15;
-        background-color: #141111EF;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background-size: cover; /* Adjust as needed: cover, contain, etc. */
+        background-repeat: no-repeat;
+        background-position: center center;
+        z-index: -3;
     }
-    #winNotesCont{
+    @font-face {
+      font-family: 'sgGachaFont';
+      src: url('../../lib/assets/fonts/MyFont-Regular.otf');
+    }
+    @font-face {
+      font-family: 'mainFont';
+      src: url('../../lib/assets/fonts/zh-cn.ttf');
+    }
+    .yourDataCont{
         position: absolute;
-        top: 10vh;
+        height: 80vh;
+        width: 30vw;
+        top:10vh;
 
-        animation: winNotesAnim 0.5s forwards ease-out;
-    }
-    @keyframes winNotesAnim{
-        0%{
-            left: 100vw;
-        }
-        100%{
-            left: 50vw;
-        }
-    }
-    #winNotes{
-        background-image: url(../../lib/assets/gameplay/pad.png);
+        background-image: url("../../lib/assets/gameplay/ActionLog.png");
         background-size: 100% 100%;
-        width: 80vw;
-        height:80vh;
+    }
+    .profileCont{
         position: relative;
-
+        width:50%;
+        height: 10vw;
+        margin-top: 37%;
+        margin-left: auto;
+        margin-right: auto;
     }
-    #profileName{
-        font-family: "ShadowLight";
-        font-size: 2vw;
-        position:absolute;
-        left:32%;
-        top: 27%;
-    }
-    #profileLevel{
-        font-family: "ShadowLight";
-        font-size: 1.9vw;
-        position:absolute;
-        left:13%;
-        top: 50%;
-    }
-    #profileXp{
-        font-family: "ShadowLight";
-        font-size: 1vw;
-        position:absolute;
-        left:16%;
-        top: 64%;
-    }
-    #profileCont{
-        position: absolute;
-        top:17%;
-        left:13%;
-        width:12vw;
-    }
-    #profileBorder{
+    .profileBorder{
         position: absolute;
         width: 100%;
     }
-    #profilePic{
+    .profilePic{
         position: absolute;
         width:70%;
         left:15%;
         top:2vh;
         border-radius: 50%;
     }
+    .deckChooserContainer{
+        margin-top:1vh;
+        width:100%;
+    }
+    .deckChooser{
+        width: 30%;
+        height: 10vh;
+        margin-right:1vw;
 
-    #gainsCont{
-        position: absolute;
+        background: url(../../lib/assets/deck/deckThumbnail.png);
+        background-size: 100% 100%;
+    }
+    .deckChooser:hover{
+        transform: scale(1.1);
+    }
+    .deckNumbering{
+        font-size: 3vw;
+        color: rgb(72, 72, 149);
+
         font-family: "ShadowLight";
-        font-size: 1.5vw;
-        position:absolute;
-        left:13%;
-        top: 70%;
-    }
-    .gainedIcon{
-        width:2vw;
-    }
-    @keyframes -global-gainsAnim{
-        0%{
-            opacity: 1;
-            margin-left:-10vw;
-        }
-        100%{
-            opacity: 1;
-            margin-left:0vw;
-        }
-    }
-
-
-    #levelCont{
-        position: absolute;
-        top:60%;
-        left: 13%;
-        width: 35%;
-        background-color: violet;
-    }
-    .levelBar{
-        position: absolute;
-        width: 100%;
-    }
-    #levelBar{
-        position: absolute;
-        height: 1.7vh;
-        left:2%;
-        top:7%;
-        width: var(--LOGBarLength);
-        background: linear-gradient(0.25turn, #1774ee, #3dbb3d, #d38328);
-        border-radius: 2vw;
-    }
-    @keyframes -global-levelBarAnim{
-        0%{
-            width: var(--LOGBarLength);
-        }
-        100%{
-            width: var(--lBarLength);
-        }
+        display: block;
     }
 
     .optionButtonCont{
         position: absolute;
-        top: 77%;
-        left: 27%;
-        opacity: 0;
-        animation: tovabbButtonAnim 0.5s 3s forwards;
-    }
-    @keyframes tovabbButtonAnim{
-        0%{
-            opacity: 0;
-        }
-        100%{
-            opacity: 1;
-        }
+        left: 10vw;
+        top: 83vh;
     }
     .optionButton{
         width:13.5vw;
@@ -342,18 +181,5 @@
         margin-left: -0.6vw;
         margin-top: -0.6vw;
     }
-
-
-
-    @font-face {
-      font-family: 'sgGachaFont';
-      src: url('../../lib/assets/fonts/MyFont-Regular.otf');
-    }
-    @font-face {
-        font-family: 'ShadowLight';
-        src: url('../../lib/assets/fonts/ShadowsIntoLight-Regular.ttf');
-    }
-
-
 </style>
 

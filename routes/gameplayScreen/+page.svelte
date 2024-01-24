@@ -370,6 +370,8 @@
     import levelBarFg from "../../lib/assets/global/LevelupbarBorder.png"
 
     import ProfilePic from "../../lib/assets/profile/PP.jpg"
+    import ProfilePic2 from "../../lib/assets/profile/PP2.png"
+    let profilePics = [ProfilePic,ProfilePic2]
 
     import pBorder1 from "../../lib/assets/profile/border1.png"
     import pBorder2 from "../../lib/assets/profile/border2.png"
@@ -4942,8 +4944,8 @@
         <div id="winNotesCont">
             <div id="winNotes">
                 <div id="profileCont">
-                    <img id="profilePic" class="profilePicComp" src={ProfilePic} alt="border">
-                    <img id="profileBorder" class="profilePicComp" src={pBorders[borderNumber-1]} alt="border">
+                    <img id="profilePic" class="profilePicComp" src={profilePics[localUserData.profilPic-1]} alt="border">
+                    <img id="profileBorder" class="profilePicComp" src={pBorders[localUserData.border-1]} alt="border">
                 </div>
                 <div id="profileName">{localUserData.username}</div>
                 <div id="profileLevel">Szint: {localUserData.level}</div>

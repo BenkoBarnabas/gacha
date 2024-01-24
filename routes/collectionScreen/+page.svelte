@@ -532,19 +532,7 @@
         font-family: "talentFont";
         src: url('../../lib/assets/fonts/CenturyGothic.ttf');
     }
-    #background {
-        background: url("../../lib/assets/collection/bg.png");
-        overflow: hidden;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100vh;
-        background-size: cover; /* Adjust as needed: cover, contain, etc. */
-        background-repeat: no-repeat;
-        background-position: center center;
-        z-index: -3;
-    }
+
 
     #lefele{
         position:absolute;
