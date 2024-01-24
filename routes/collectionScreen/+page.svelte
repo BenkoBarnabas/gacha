@@ -427,7 +427,7 @@
         <div class = "cardcollection  noScrollers" id = "spellcollection">
             {#each Cards.spellCardsArr as card}
             <div id="cardPreviewListCont">
-                <img style="width: 12.5vw; position:absolute" src={cardV2Background} alt="cardBg">
+                <img style="width: 12.5vw; position:absolute" src={spellBackground} alt="cardBg">
                 <div id="rarityBGList" style="background: {backgroundColorByCost[(card.stars)-3]}; "></div>
                 <img class = "cardButton" src={card.source} alt="preview"/>
                 <button class="spellListFrame" alt="cardBg" on:click={() => handleSpellClick(card.source,card.name,card.cost,card.stars,card.description,card.quote)}></button>
