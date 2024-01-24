@@ -427,7 +427,7 @@
         <div class = "cardcollection  noScrollers" id = "spellcollection">
             {#each Cards.spellCardsArr as card}
             <div id="cardPreviewListCont">
-                <img style="width: 12.5vw; position:absolute" src={cardV2Background} alt="cardBg">
+                <img style="width: 12.5vw; position:absolute" src={spellBackground} alt="cardBg">
                 <div id="rarityBGList" style="background: {backgroundColorByCost[(card.stars)-3]}; "></div>
                 <img class = "cardButton" src={card.source} alt="preview"/>
                 <button class="spellListFrame" alt="cardBg" on:click={() => handleSpellClick(card.source,card.name,card.cost,card.stars,card.description,card.quote)}></button>
@@ -479,6 +479,7 @@
         </div>
     </div>
 </div>
+    
     {:else if curCardInView.type == "spell"}
     <div id="cardPreview" >
         <div id="curCardQuote" class="noScrollers"><i>"{curCardInView.quote}"</i></div>
@@ -531,19 +532,7 @@
         font-family: "talentFont";
         src: url('../../lib/assets/fonts/CenturyGothic.ttf');
     }
-    #background {
-        background: url("../../lib/assets/collection/bg.png");
-        overflow: hidden;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100vh;
-        background-size: cover; /* Adjust as needed: cover, contain, etc. */
-        background-repeat: no-repeat;
-        background-position: center center;
-        z-index: -3;
-    }
+
 
     #lefele{
         position:absolute;
@@ -927,13 +916,12 @@
     #preview{
         position: absolute;
         top:18.5vh;
-        left:2vw;
+        left:60vw;
     }
     #cardPreview{
         width: 32vw;
         height: 40vw;
         position: relative;
-        margin-left:60vw;
         margin-top: 2vh;
     }
     .cardTemplate{

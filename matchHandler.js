@@ -14,6 +14,7 @@ export let currentMatch = {
     player2: undefined
 }
 export let currentOpponentId = ""
+let currentOpponentInfo = {}
 
 
 let yourGameID = ""
@@ -41,30 +42,42 @@ export function GetGameIDs(you,opponent,gk){
     gameKey = gk
 }
 
-
-export function sendMatchRequest(id){
-    currentOpponentId = id
-    console.log(Client.clientID+currentOpponentId);
-    Client.socket.emit("makeMatchSocket",Client.clientID+currentOpponentId)
-    Client.socket.on(Client.clientID+currentOpponentId, msg => {
-      console.log(msg);
-    })
+let matchMadeEvent
+let socketLoadedEvent
+let matchDeclinedEvent
+let lobbyLoaded = false
+export function LobbyDomLoaded(){
+    lobbyLoaded = true
+    matchMadeEvent = new Event("matchMadeEvent")
+    socketLoadedEvent = new Event("socketLoaded")
+    matchDeclinedEvent = new Event("matchDeclinedEvent")
+}
+export function sendMatchRequest(member,data){
+    currentOpponentId = member.id
+    currentOpponentInfo = member
+    console.log("MATCHLOG: ",member.id,data);
+    Client.socket.emit("makeMatchSocket",`${currentOpponentId}${JSON.stringify(data)}`)
 }
 Client.socket.on("makeMatchSocket", msg => {
-    console.log("socket on makeMatch: ",msg);
-    if(msg.includes(Client.clientID)){
-        currentOpponentId = msg.replace(Client.clientID,"")
+    if(msg.substring(0, 23).includes(Client.clientID)){
+        console.log("socket on makeMatch: ",msg);
 
-        
-        localStorage.setItem("yourGameID", JSON.stringify(Client.clientID));
-        localStorage.setItem("opponentGameID", JSON.stringify(currentOpponentId));
-        localStorage.setItem("gameKey", JSON.stringify(msg))
+        var data = JSON.parse(msg.replace(Client.clientID,""))
+        matchMadeEvent.data = data
+        currentOpponentId = data.id
+        currentOpponentInfo = data
+        document.dispatchEvent(matchMadeEvent)
 
-        window.alert(`made match with: ${currentOpponentId}`)
     }
     //window.alert("made match with: ",currentOpponentId)
 })
-
+export function AcceptMatchRequest(){
+    Client.socket.emit("MatchAccepted",`${Client.clientID}${currentOpponentId}`)
+}
+export function DeclineMatchRequest(opId){
+    console.log("MATCHLOG: ",opId)
+    Client.socket.emit(`MatchDeclined`,opId)
+}
 
 export let youAreReady = false
 export let opponentIsReady = false
@@ -83,10 +96,28 @@ export function PlayerReady(){
 }
 
 export let connectedToSocket = false
-
 Client.socket.on('connect', () => {
     console.log(`${Date.now()}: Connected with ID: ${Client.socket.id}`);
     connectedToSocket = true
+    if(lobbyLoaded){
+        document.dispatchEvent(socketLoadedEvent)
+    }
+    
+    Client.socket.on(`${Client.clientID}MatchDeclined`, ()=> {
+        console.log("MATCHDECLINED")
+        document.dispatchEvent(matchDeclinedEvent)
+    })
+    Client.socket.on("MatchAccepted", msg => {
+        if(msg.includes(Client.clientID)){
+            localStorage.setItem("yourGameID", JSON.stringify(Client.clientID));
+            localStorage.setItem("opponentGameID", JSON.stringify(currentOpponentId));
+            localStorage.setItem("gameKey", JSON.stringify(msg))
+            localStorage.setItem("opponentInfo",JSON.stringify(currentOpponentInfo))
+
+            window.location.href = "./matchScreen"
+        }
+    })
+    
 });
 
 
@@ -103,11 +134,12 @@ let cardDmgAnimEvent
 let summoningLocationEvent
 let cardAttackAnimEvent
 let startingHandReadyEvent
+let endGameEvent
 
 let bizsoEndTurnEvent
 
 let yourStartingHandReady = false
-let enemySfartingHandReady = false
+let enemyStartingHandReady = false
 function WaitForDomPage(){
     if(!domLoaded && !connectedToSocket){
         setTimeout(() => {
@@ -124,6 +156,7 @@ function WaitForDomPage(){
         summoningLocationEvent = new Event("summoningLocationEvent")
         cardAttackAnimEvent = new Event("cardAttackAnimEvent")
         startingHandReadyEvent = new Event("startingHandEvent")
+        endGameEvent = new Event('endGameEvent')
 
         bizsoEndTurnEvent = new Event("bizsoEndTurn")
         ServerCode()
@@ -134,6 +167,7 @@ function ServerCode(){
     yourGameID = JSON.parse(localStorage.getItem("yourGameID"))
     opponentGameID = JSON.parse(localStorage.getItem("opponentGameID"))
     gameKey = JSON.parse(localStorage.getItem("gameKey"))
+    console.log("GAMEKEY: ",gameKey)
 
     Client.socket.emit(gameKey,JSON.stringify(`${yourGameID}SocketConnectionEstablished`))
 
@@ -230,6 +264,11 @@ function ServerCode(){
             }
             
         }
+        else if(msg.includes("JustWonTheGame")){
+            var data = msg.replace("JustWonTheGame","")
+            data == yourGameID ? endGameEvent.data = "victory" : endGameEvent.data = "defeat"
+            document.dispatchEvent(endGameEvent)
+        }
         else{
             msg = JSON.parse(msg)
             if(msg.gameId != yourGameID){
@@ -280,7 +319,6 @@ export function EndTurn(){
 export function StartingHandClient(){
     Client.socket.emit(gameKey,`${yourGameID}StartingHandReady`)
 }
-
 export function CardAttackAnimation(enemyi,youri){
     var msg = {
         attackerI: youri,
@@ -291,7 +329,6 @@ export function CardAttackAnimation(enemyi,youri){
     
     Client.socket.emit(gameKey,`CardAttackAnimation${JSON.stringify(msg)}`)
 }
-
 export function LastActionLog(card){
     
     Client.socket.emit(gameKey,`${yourGameID}ActionLog${JSON.stringify(card)}`)
@@ -300,7 +337,6 @@ export function LastActionLog(card){
 export function CellAligmentAnimation(targetId){
     Client.socket.emit(gameKey,`CellAligmentAnimation${targetId}`)
 }
-
 export function CardDmgAnimationClient(domId,dmg,side,type){
     side == "your" ? side = yourGameID : side = opponentGameID
     var params = {
@@ -312,11 +348,14 @@ export function CardDmgAnimationClient(domId,dmg,side,type){
     Client.socket.emit(gameKey,`CardDmgAnimation${JSON.stringify(params)}`)
 }
 
+export function EndGame(){
+    Client.socket.emit(gameKey,`${yourGameID}JustWonTheGame`)
+}
+
 //gameplay abilties
 export function BizsoEndTurnClient(){
     Client.socket.emit(gameKey,"BizsoEndTurn")
 }
-
 export function SummoningLocationClient(wether,side){
     var data ={
         side: yourGameID,
