@@ -23,8 +23,8 @@ let gameKey = ""
 
 export let lastCardPlayedClient = ""
 
-export let yourGameParametersClient = {isYourTurn: "",currentHand: [],remaningDeck: [], yourBoard: Array(10).fill(""), mana: 0, spellMana: 0, username: "", hp: 0, secretSpells: [], yourBuildings: []}
-export let enemyGameParametersClient = {isYourTurn: "",currentHand: [],remaningDeck: [], yourBoard: Array(10).fill(""), mana: 0, spellMana: 0, username: "", hp: 0, secretSpells: [], yourBuildings: []}
+export let yourGameParametersClient = {isYourTurn: "",currentHand: [],remaningDeck: [], yourBoard: Array(10).fill(""), mana: 2, spellMana: 0, username: "", hp: 0, secretSpells: [], yourBuildings: []}
+export let enemyGameParametersClient = {isYourTurn: "",currentHand: [],remaningDeck: [], yourBoard: Array(10).fill(""), mana: 2, spellMana: 0, username: "", hp: 0, secretSpells: [], yourBuildings: []}
 
 
 export function DomLoaded(){
@@ -32,7 +32,6 @@ export function DomLoaded(){
     enemyGameParametersClient = JSON.parse(localStorage.getItem("opponentGameParams"))
     console.log("enemy and your game paramts, clinet: ",yourGameParametersClient, enemyGameParametersClient);
     gameplayScreenLoaded = true
-    yourGameParametersClient.mana = 10
 }
 
 

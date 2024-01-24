@@ -31,7 +31,7 @@
   let yourGameParameters = {
         gameId: yourGameID,
         username: "esztix",
-        health: 10,
+        health: 40,
         currentHand: "",
         remaningDeck: [],
         mana: 2,
@@ -47,7 +47,7 @@
   let enemyGameParameters = {
         gameId: "",
         username: "",
-        health: 10,
+        health: 40,
         currentHand: "",
         remaningDeck: [],
         mana: 2,
