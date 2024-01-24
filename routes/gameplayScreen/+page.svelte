@@ -83,10 +83,12 @@
     import freezFE from "../../lib/assets/gameplay/freezFE.png"
     import sleepFE from "../../lib/assets/gameplay/sleepFE.png"
     import stunnFE from "../../lib/assets/gameplay/stunnFE.png"
+    import silenceFE from "../../lib/assets/gameplay/silenceFE.png"
     let fieldEffectIcons = {
         frozen: freezFE,
         asleep: sleepFE,
-        stunned: stunnFE
+        stunned: stunnFE,
+        silence: silenceFE
     }
     import frozenOverlay from "../../lib/assets/gameplay/frozenOverlay.png"
     import frozenGif from "../../lib/assets/gameplay/frozenGif.gif"
@@ -1051,17 +1053,14 @@
                     DrawOne()
                 }
 
-                yourBoard.forEach(element => {
-                    if(element != ""){
-                        if(element.type == "character"){
-                        if(!element.fieldEffects.includes("asleep:"))
-                        element.fieldEffects.push("asleep:")
-                        if(element.talent.includes("kettős támadás")){
-                            yourBoard[yourBoard.indexOf(element)].fieldEffects[0] = "kettős:0"
-                        }
+                for(let i= 0; i<yourBoard.length;i++){
+                    if(yourBoard[i] != ""){
+                        yourBoard[i].fieldEffects.some(e => e.includes("asleep:")) == true ? yourBoard[i].fieldEffects.push("asleep:") : {}
+                        if(yourBoard[i].talent.includes("kettős támadás")){
+                            yourBoard[i].fieldEffects[0] = "kettős:0"
                         }
                     }
-                });
+                }
 
                 for(let i= 0; i<yourHand.length;i++){
                     if(yourHand[i].name.includes("Elillanó")){
@@ -1071,7 +1070,11 @@
                 }
 
                 //charzard
-                var isChar = yourBoard.some(e => e.fieldEffects.some(f => f.includes("turnCount")))
+                //var isChar = yourBoard.some(e => e.fieldEffects.some(f => f.includes("turnCount")))
+                var isChar
+                yourBoard.forEach(e => {
+                    if(e.fieldEffects.some(f => f.includes("turnCount"))){isChar = true}
+                })
                 if(isChar){
 
                     for(let i= 0;i<yourBoard.length;i++){
@@ -1210,7 +1213,7 @@
 
             for(let i=0;yourBoard.length;i++){
                 if(yourBoard[i].abilityType =="onspell"){
-                    eval(`${yourBaord[i].ability}(yourBoard[i],${i})`)
+                    eval(`${yourBoard[i].ability}(yourBoard[i],${i})`)
                 }
             }
         }
@@ -1848,8 +1851,10 @@
             //---------------------------------------------------------------
             //KETTŐS TÁMADÁS
             if(!cardInAttackingMode.talent.includes("kettős támadás")){
+                console.log("ASLEEPLOG: ",yourBoard[atkCardI],atkCardI)
                 setTimeout(() => {
                     yourBoard[atkCardI].fieldEffects.push("asleep:")
+                    console.log("ASLEEPLOG: ",yourBoard)
                 }, 1000);
             }
             else{
@@ -2027,11 +2032,13 @@
             yourBoardDoms[i].children[0].children[5].offsetHeight
             yourBoardDoms[i].children[0].children[5].style.animation = "statHeal 1s"
         }
-        function Blazó(card){
+        function Blazo(card){
             card.source = BlazóS
             card.attack = Math.floor(card.attack*1.5)
             card.health = card.attack
             yourBoard = yourBoard
+
+            SendGameData(yourGameParameters)
         }
         function Dobi(card){
             var targets = []
@@ -2899,14 +2906,7 @@
                 SendGameData(yourGameParameters)
             }
         }
-        function SzaszLevente(){
-            for(let i = 0; i<yourBoard.length;i++){
-                if(yourBoard[i] != ""){
-                    Evolve(yourBoard[i],i,2)
-                }
-            }
-        }
-        
+     
         function Vendel(){
             DrawOne()
         }
@@ -2955,9 +2955,10 @@
             yourBoard.forEach(element => {
                 console.log("DÖKLOG: BENNT")
                 if(element != ""){
+                    if(element.type == "character"){
                     console.log("DÖKLOG: ",element,yourBoard)
                     element.bonusTraits.some(e => e == "dök") ? dokATablanNew.push(element) : {}
-                }
+                }}
             });
             dokATablan = dokATablanNew
             console.log("DÖKLOG: ",dokATablan)
@@ -5241,7 +5242,7 @@
             <img class="scribble" style="top: 50%; right: 11%; width: 5vw;" src={scribble5} alt="scribble in a book">
 
             {#each Array(enemyBoard.length/2) as card,i}
-                <div class="boardsCells kotarget" id="etd{i}" style="top: 5%; left:{10+8+i*15}%" bind:this={enemyBoardDoms[i]}>
+                <div class="boardsCells kotarget" id="etd{i}" style="top: 22%; left:{10+i*15}%"bind:this={enemyBoardDoms[i]}>
                 {#if enemyBoardPhs[i] != ""}
                     <div class="BoardTierTwo ko" on:click={() => KoPlacedByClick(i,"enemySide")} class:pointerEventsNone={cellPointerEvents == false} class:pointerEventsAuto={cellPointerEvents == true} style="filter: grayscale(0.5) contrast(50%);opacity: 0.7;" on:keydown role="button" tabindex="">{enemyBoardPhs[i].health}</div>
                 {/if}
@@ -5308,7 +5309,7 @@
             {/each}
 
             {#each Array((enemyBoard.length)/2) as cell,i}
-                <div class="boardsCells kotarget" id="etd{(enemyBoard.length)/2+i}" style="top: 22%; left:{10+i*15}%" bind:this={enemyBoardDoms[i+(enemyBoard.length/2)]}>
+                <div class="boardsCells kotarget" id="etd{(enemyBoard.length)/2+i}" style="top: 5%; left:{10+8+i*15}%"  bind:this={enemyBoardDoms[i+(enemyBoard.length/2)]}>
                 {#if enemyBoardPhs[(enemyBoardPhs.length)/2+i] != ""}
                     <div on:click={() => KoPlacedByClick((enemyBoardPhs.length)/2+i,"enemySide")} class:pointerEventsNone={cellPointerEvents == false} class:pointerEventsAuto={cellPointerEvents == true} style="filter: grayscale(0.5) contrast(50%);opacity: 0.7;" class="ko" on:keydown role="button" tabindex="">{enemyBoardPhs[(enemyBoardPhs.length)/2+i].health}</div>
                 {/if}
