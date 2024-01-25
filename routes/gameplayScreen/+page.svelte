@@ -1569,6 +1569,7 @@
     let cardInAttackingMode = ""
     let cardDomInAttackingMode = ""
     let isCardOnBoardInAttackingMode = false
+    let cardIndexInAttackingMode =0
 
     function SelectTargetCard(target,i,side){
         if(!isSummonLocationChoosing){
@@ -1584,7 +1585,7 @@
                 return;
             }
             if(cardInAttackingMode == "" || isCardOnBoardInAttackingMode){
-                CardInAttackMode(target)
+                CardInAttackMode(target,i)
                 console.log("SELECTLOG: chosen as attackingCard");
                 return;
             }
@@ -1605,7 +1606,7 @@
         attackableCardsDoms = []
         attackableCardsDoms = attackableCardsDoms
     }
-    function CardInAttackMode(attackingCard){
+    function CardInAttackMode(attackingCard,i){
         var cardNotCCd = !attackingCard.fieldEffects.some(element => element.includes("frozen")) && !attackingCard.fieldEffects.some(element => element.includes("stunned")) 
         var canAttack = isYourTurn && isYourRally && !attackingCard.fieldEffects.includes("asleep:")
         var cardHasQuickAttack = isYourTurn && !attackingCard.fieldEffects.includes("asleep:")
@@ -1719,8 +1720,9 @@
             }
             console.log("yourCard: ",attackingCard);
 
-            cardDomInAttackingMode = document.getElementById(`td${yourBoard.indexOf(attackingCard)}`).children[0]
+            cardDomInAttackingMode = yourBoardDoms[i]
             cardInAttackingMode = cardInAttackingMode
+            cardIndexInAttackingMode = i
 
             attackableCards = attackableCards
             attackableCardsDoms = attackableCardsDoms
@@ -1732,7 +1734,6 @@
     function AttackCard(target,i){
         console.log("target: ", target, " i: ", i);
         console.log("HITENEMYLOG: ",target.type == "player")
-        var atkCardI = Number(cardDomInAttackingMode.id.replace("td",""))
         if(target.type == "player"){
             DmgEnemyPlayer(cardInAttackingMode.attack)
         }
@@ -1862,27 +1863,27 @@
             //---------------------------------------------------------------
             //KETTŐS TÁMADÁS
             setTimeout(() => {
-                    yourBoard[atkCardI].fieldEffects.push("asleep:")
+                    yourBoard[cardIndexInAttackingMode].fieldEffects.push("asleep:")
                     console.log("ASLEEPLOG: ",yourBoard)
             }, 1000);
             if(!cardInAttackingMode.talent.includes("kettős")){
-                console.log("ASLEEPLOG: ",yourBoard[atkCardI],atkCardI)
+                console.log("ASLEEPLOG: ",yourBoard[cardIndexInAttackingMode],cardIndexInAttackingMode)
                 
             }
             else{
-                var whichAttack = Number(yourBoard[atkCardI].fieldEffects[0].replace("kettős:",""))
-                yourBoard[atkCardI].splice(yourBoard[atkCardI].indexOf("asleep:"),1)
-                console.log("KETTŐSLOG: ",yourBoard[atkCardI],whichAttack);
+                var whichAttack = Number(yourBoard[cardIndexInAttackingMode].fieldEffects[0].replace("kettős:",""))
+                yourBoard[cardIndexInAttackingMode].splice(yourBoard[cardIndexInAttackingMode].indexOf("asleep:"),1)
+                console.log("KETTŐSLOG: ",yourBoard[cardIndexInAttackingMode],whichAttack);
                 
                 if(whichAttack < 2){
                     whichAttack++
-                    yourBoard[atkCardI].fieldEffects[0] = `kettős:${whichAttack}`
-                    console.log("KETTŐSLOG: after ++",yourBoard[atkCardI].fieldEffects[0]);
+                    yourBoard[cardIndexInAttackingMode].fieldEffects[0] = `kettős:${whichAttack}`
+                    console.log("KETTŐSLOG: after ++",yourBoard[cardIndexInAttackingMode].fieldEffects[0]);
                     
                     if(whichAttack == 2){
-                    yourBoard[atkCardI].fieldEffects[0] = "kettős:0"
+                    yourBoard[cardIndexInAttackingMode].fieldEffects[0] = "kettős:0"
                     setTimeout(() => {
-                        yourBoard[atkCardI].fieldEffects.push("asleep:")
+                        yourBoard[cardIndexInAttackingMode].fieldEffects.push("asleep:")
                     }, 1000);
                     }
                 }
@@ -1896,7 +1897,7 @@
             //TÖVISES BŐR
             if(target.type == "character"){
                 if(target.talent.includes("tövisesbőr")){
-                    yourBoard[atkCardI].health -= 1
+                    yourBoard[cardIndexInAttackingMode].health -= 1
                 }
             }
             
@@ -1937,20 +1938,20 @@
             if(target.health == 0 && target.type == "character" && cardInAttackingMode.health > 0){
                 if(cardInAttackingMode.aligment.includes("vérszomjas")){
                     cardInAttackingMode.attack += 1
-                    CellAligmentAnimation(`${atkCardI}vérszomjas`)
+                    CellAligmentAnimation(`${cardIndexInAttackingMode}vérszomjas`)
                 }
                 if(cardInAttackingMode.aligment.includes("veszett")){
                     cardInAttackingMode.health += 1
                     cardInAttackingMode.maxhealth += 1
-                    CellAligmentAnimation(`${atkCardI}veszett`)
+                    CellAligmentAnimation(`${cardIndexInAttackingMode}veszett`)
                 }
                 if(cardInAttackingMode.aligment.includes("tunya") && cardInAttackingMode.attack != 1){
                     cardInAttackingMode.attack -= 1
-                    CellAligmentAnimation(`${atkCardI}tunya`)
+                    CellAligmentAnimation(`${cardIndexInAttackingMode}tunya`)
                 }
                 if(cardInAttackingMode.aligment.includes("lelkiismeretes")){
                     cardInAttackingMode.health -= 1
-                    CellAligmentAnimation(`${atkCardI}lelkiismeretes`)
+                    CellAligmentAnimation(`${cardIndexInAttackingMode}lelkiismeretes`)
                 }
 
                 //#region CHARACTER ABILITIES
