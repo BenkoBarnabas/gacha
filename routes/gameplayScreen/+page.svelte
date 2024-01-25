@@ -1073,7 +1073,9 @@
                 //var isChar = yourBoard.some(e => e.fieldEffects.some(f => f.includes("turnCount")))
                 var isChar
                 yourBoard.forEach(e => {
-                    if(e.fieldEffects.some(f => f.includes("turnCount"))){isChar = true}
+                    if(yourBoard != ""){
+                        if(e.fieldEffects.some(f => f.includes("turnCount"))){isChar = true}
+                    }
                 })
                 if(isChar){
 
@@ -1143,12 +1145,16 @@
             yourBoardDoms[Aindex].children[0].children[5].style.animation = "none"
             yourBoardDoms[Aindex].children[0].children[5].offsetHeight
             yourBoardDoms[Aindex].children[0].children[5].style.animation = "statDmg 1s"
+
+            SendGameData(yourGameParameters)
         }
         else if(Aindex != -1 && !isYourTurn){
             yourBoard[Aindex].attack += 3
             yourBoardDoms[Aindex].children[0].children[5].style.animation = "none"
             yourBoardDoms[Aindex].children[0].children[5].offsetHeight
             yourBoardDoms[Aindex].children[0].children[5].style.animation = "statHeal 1s"
+
+            SendGameData(yourGameParameters)
         }
         
     }
@@ -1777,8 +1783,13 @@
                     dmg -= 1
                 }
                 else{
-                    if(target.aligment.includes(powerModType)){
+                    if(target.type == "character"){
+                        if(target.aligment.includes(powerModType)){
                         target.health -= eval(`(Math.ceil(${dmg}${powerModDmg}))`)
+                        }
+                    else{
+                        target.health -= dmg
+                    }
                     }
                     else{
                         target.health -= dmg
@@ -1850,15 +1861,17 @@
             //#region TALENTS
             //---------------------------------------------------------------
             //KETTŐS TÁMADÁS
-            if(!cardInAttackingMode.talent.includes("kettős támadás")){
-                console.log("ASLEEPLOG: ",yourBoard[atkCardI],atkCardI)
-                setTimeout(() => {
+            setTimeout(() => {
                     yourBoard[atkCardI].fieldEffects.push("asleep:")
                     console.log("ASLEEPLOG: ",yourBoard)
-                }, 1000);
+            }, 1000);
+            if(!cardInAttackingMode.talent.includes("kettős")){
+                console.log("ASLEEPLOG: ",yourBoard[atkCardI],atkCardI)
+                
             }
             else{
                 var whichAttack = Number(yourBoard[atkCardI].fieldEffects[0].replace("kettős:",""))
+                yourBoard[atkCardI].splice(yourBoard[atkCardI].indexOf("asleep:"),1)
                 console.log("KETTŐSLOG: ",yourBoard[atkCardI],whichAttack);
                 
                 if(whichAttack < 2){
