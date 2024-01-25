@@ -50,7 +50,7 @@
     import Abigel from "./lib/assets/collection/extra/Te.png" //kell új kép
     import Balo from "./lib/assets/collection/diak/Balo.png"
     import Arpad from "./lib/assets/collection/diak/Arpad.png"
-    import SzaszLevente from "./lib/assets/collection/extra/Te.png" //kell új kép
+    import SzaszLevente from "./lib/assets/collection/diak/SzaszLevente.png"
     import Vendel from "./lib/assets/collection/diak/Vendel.png"
     import Nagygyorgy from "./lib/assets/collection/diak/Nagygyorgy.png"
     import Szakonyi from "./lib/assets/collection/extra/Te.png" //kell új kép

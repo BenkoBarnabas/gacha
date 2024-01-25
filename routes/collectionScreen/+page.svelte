@@ -300,6 +300,8 @@
     <button style="background: URL({SNCover}), no-repeat; background-size:cover" class="bannerIcon" on:click={() => selectedCollection = 1}></button>
     <button style="background: URL({YCCover}), no-repeat; background-size:cover" class="bannerIcon" on:click={() => selectedCollection = 2}></button>
     <button style="background: URL({SpellCover}), no-repeat; background-size:cover" class="bannerIcon" on:click={() => selectedCollection = 3}></button>
+    <button style="background: URL({SpellCover}), no-repeat; background-size:cover" class="bannerIcon" on:click={() => selectedCollection = 4}></button>
+
     <div id="filtersCont">
         <tr>
         <td style="height:2vw;">
@@ -381,6 +383,51 @@
     {:else if selectedCollection == 2}
     <div class = "cardcollection  noScrollers" id = "diakcollection">
         {#each Cards.diakCardsArr as card}
+        <div id="cardPreviewListCont">
+            <img style="width: 12.5vw; position:absolute" src={cardV2Background} alt="cardBg">
+            <div id="rarityBGList" style="background: {backgroundColorByCost[(card.stars)-3]}; "></div>
+            <img class = "cardButton" src={card.source} alt="preview"/>
+            <button class="cardListFrame" alt="cardBg" on:click={() => handleClick(card.source,card.name,card.attack,card.health,card.cost,card.stars,card.description,card.quote,card.talent,card.aligment)}></button>
+            <div class="curCardStatsList" style="left: 2.68vw;">{card.attack}</div>
+            <div class="curCardStatsList" style="left: 9.65vw;">{card.health}</div>
+            <div class="curCardCostList">{card.cost}</div>
+            <div class="curCardNameList">{card.name}</div>
+
+            {#if card.talent != ""}
+                {#if card.talent.includes(",")}
+                <div class="curCardMultipleIconsContainer">
+                    {#each card.talent.split(",") as icon, i}
+                    <div style="width:{5.2/card.talent.split(",").length}vw; margin:auto">
+                        <img style="width:1.4vw" src={talentIcons[icon.replace(" ","")]} alt="talent">
+                    </div>
+                    {/each}
+                </div>
+                {:else}
+                <div class="curCardTalentList">{card.talent.replace("támadás","")}</div>
+                <img style="left: 3.8vw;" class="curCardTalentIconList" src={talentIcons[card.talent.replace(" ","")]} alt="talent">
+                {/if}
+            {/if}
+
+
+            {#if card.aligment.includes(",")}
+            {#each card.aligment.split(",") as aligment,i}
+                <img style="top: {4.8 + i* 2.55}vw; background-color: {aligmentBackgroundColors[aligment]}; border-radius: 0.5vw;" class="curCardAligList" src={aligmentIcons[aligment]} alt="aligment">
+            {/each}
+            {:else}
+                <img style="background-color: {aligmentBackgroundColors[card.aligment]}; border-radius: 0.5vw;" class="curCardAligList" src={aligmentIcons[card.aligment]} alt="aligment">
+            {/if}
+
+            <div class="curCardRarityList" style="{starsColorByCost[(card.stars)-3]}">
+                {#each Array(Number(card.stars)) as card}
+                    <span style="font-size: 1vw;">★</span>
+                {/each}
+            </div>
+        </div>
+        {/each}
+    </div>
+    {:else if selectedCollection == 4}
+    <div class = "cardcollection  noScrollers" id = "extracollection">
+        {#each Cards.extraCardsArr as card}
         <div id="cardPreviewListCont">
             <img style="width: 12.5vw; position:absolute" src={cardV2Background} alt="cardBg">
             <div id="rarityBGList" style="background: {backgroundColorByCost[(card.stars)-3]}; "></div>
