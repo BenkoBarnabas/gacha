@@ -1870,9 +1870,8 @@
             //---------------------------------------------------------------
             //KETTŐS TÁMADÁS
             if(!cardInAttackingMode.talent.includes("kettős")){
-                console.log("ASLEEPLOG: ",yourBoard[cardIndexInAttackingMode],cardIndexInAttackingMode)
+                console.log("ASLEEPLOG: kettős nem",yourBoard[cardIndexInAttackingMode],cardIndexInAttackingMode)
                 yourBoard[cardIndexInAttackingMode].fieldEffects.push("asleep:")
-                console.log("ASLEEPLOG: ",yourBoard,cardInAttackingMode.talent,cardInAttackingMode)
             }
             else{
                 var whichAttack = Number(yourBoard[cardIndexInAttackingMode].fieldEffects[0].replace("kettős:",""))
