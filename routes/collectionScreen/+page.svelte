@@ -188,7 +188,7 @@
 
     refTanarDeck = refTanarDeck
     return arr;
-}
+    }
 
     let activeFilters = [["AZ", true],["CostAsc",false],Array(10).fill(true),Array(7).fill(true),["RarityAsc",false],refTanarDeck]
     $: {ReduceList()
@@ -337,9 +337,7 @@
 <audio controls id="music" style="display: none;"  src={card.audio}   bind:this={voicelines[card.name]}></audio>
 {/each}
 
-
-
-<div id="list" >
+<div id="list">
     {#if selectedCollection == 1}
     <div class = "cardcollection noScrollers" id = "tanarcollection" >
         {#each refTanarDeck as card}
@@ -548,13 +546,12 @@
         </div>
     </div>
     {/if}
-    <div >
-        <button>Senior Bölcsesség</button>
+    <div id="fabricateButton">
         <button>Fabrikál</button>
     </div>
 </div>
 
-<button on:click={scrollDown} id="lefele"></button>
+<button on:click={scrollDown} id="nyil" class="lefele"></button>
 
 
 
@@ -579,9 +576,19 @@
         font-family: "talentFont";
         src: url('../../lib/assets/fonts/CenturyGothic.ttf');
     }
+    #background{
+        width: 100vw;
+        height: 100vh;
+        position: fixed;
+        z-index: -1;
+        background-image: url("../../lib/assets/collection/bg.png");
+        background-size: 100% 100%;
+        top: 0;
+        left: 0;
+    }
 
-
-    #lefele{
+    .lefele{
+        display:block;
         position:absolute;
         width: 3vw;
         height: 3vw;
@@ -594,7 +601,7 @@
 
         border: none;
     }
-    #lefele:hover{
+    .lefele:hover{
         cursor: pointer;
     }
     @keyframes arrowUpDown {
@@ -729,10 +736,11 @@
     }
 
     #filtersCont{
+        position: absolute;
         width: 30vw;
         height: 5vw;
-        float: right;
-        margin-right:4vw;
+        top:9vw;
+        left:32vw;
     }
     #searchBar{
         width: 23vw;
@@ -798,6 +806,7 @@
         width:14.3vw;
         height: 17vw;
         display:inline-block;
+        padding-top:12px;
     }
     .cardcollection {
         width: 60vw;
@@ -861,17 +870,17 @@
                 0.08vw 0.08vw 0 #000; /* Bottom-right shadow */
 
         position: absolute;
-        top: 13.3vw;
+        top: 14vw;
     }
     .curCardCostList{
-        font-size: 3vw;
+        font-size: 2.8vw;
         font-weight: bold;
         font: italic;
         font-family: 'ShadowLight';
         color: rgb(184, 11, 11);
 
         position: absolute;
-        top: 1vw;
+        top: 1.8vw;
         left: 2.5vw;
     }
     .curCardNameList{
@@ -881,7 +890,7 @@
         text-shadow: 0 0 1vw rgba(0, 0, 0, 0.536);
 
         position: absolute;
-        top: 12.8vw;
+        top: 13.8vw;
         left: 2vw;
 
         text-align: center;
@@ -912,14 +921,14 @@
     .curCardTalentIconList{
         position: absolute;
         width: 1.4vw;
-        top: 13.6vw;
+        top: 14.6vw;
     }
     .curCardTalentList{
         position: absolute;
         font-family: "talentFont";
         color: antiquewhite;
         font-size: 0.7vw;
-        top: 14vw;
+        top: 15vw;
         left: 3.9vw;
         width: 3.6vw;
         height: 1vw;
@@ -929,11 +938,11 @@
         position: absolute;
         width: 2.2vw;
         left: 1.8vw;
-        top: 4.8vw;
+        top: 5.8vw;
     }
     .curCardMultipleIconsContainer{
             position: absolute;
-            top: 13.5vw;
+            top: 14.5vw;
             left: 3.9vw;
             width: 5.2vw;
             height: 2vw;
@@ -1044,7 +1053,7 @@
         width: 14vw;
         text-align: center;
         overflow: auto;
-        height: 6vw;
+        height: 6.4vw;
     }
     .noScrollers::-webkit-scrollbar {
         width: 0;
