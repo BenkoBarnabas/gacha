@@ -1314,7 +1314,7 @@
                     dom.children[0].children[3].style.background = '../../lib/assets/global/cardV2Top.png'
                     if(side == "your"){
                         var ybIndex = Number(domId.replace("td",""))
-                        if(yourBoard[ybIndex].abilityType == "onhit"){
+                        if(yourBoard[ybIndex].abilityType == "onhit" && !yourBoard[ybIndex].fieldEffects.some(e => e.includes('silence'))){
                         eval(`${yourBoard[ybIndex].ability}(yourBoard[ybIndex],${ybIndex})`)
                         }
                     }
@@ -1612,7 +1612,7 @@
         var cardNotCCd = !attackingCard.fieldEffects.some(element => element.includes("frozen")) && !attackingCard.fieldEffects.some(element => element.includes("stunned")) 
         var canAttack = isYourTurn && isYourRally && !attackingCard.fieldEffects.includes("asleep:")
         var cardHasQuickAttack = isYourTurn && !attackingCard.fieldEffects.includes("asleep:")
-        console.log("ASLEEPLOG can attack: ",cardNotCCd,canAttck,cardHasQuickAttack)
+        console.log("ASLEEPLOG can attack: ",cardNotCCd,canAttack,cardHasQuickAttack)
     
         if((canAttack || cardHasQuickAttack) && !isSelectTargetMode && !isCardAttackingAnimationOngoing && cardNotCCd){
             ClearBoardPhs()
