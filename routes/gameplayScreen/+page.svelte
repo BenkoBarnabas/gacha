@@ -1605,11 +1605,14 @@
         attackableCards = attackableCards
         attackableCardsDoms = []
         attackableCardsDoms = attackableCardsDoms
+        cardIndexInAttackingMode = ""
+        cardIndexInAttackingMode = cardIndexInAttackingMode
     }
     function CardInAttackMode(attackingCard,i){
         var cardNotCCd = !attackingCard.fieldEffects.some(element => element.includes("frozen")) && !attackingCard.fieldEffects.some(element => element.includes("stunned")) 
         var canAttack = isYourTurn && isYourRally && !attackingCard.fieldEffects.includes("asleep:")
         var cardHasQuickAttack = isYourTurn && !attackingCard.fieldEffects.includes("asleep:")
+        console.log("ASLEEPLOG can attack: ",cardNotCCd,canAttck,cardHasQuickAttack)
     
         if((canAttack || cardHasQuickAttack) && !isSelectTargetMode && !isCardAttackingAnimationOngoing && cardNotCCd){
             ClearBoardPhs()
@@ -1870,8 +1873,13 @@
             //---------------------------------------------------------------
             //KETTŐS TÁMADÁS
             if(!cardInAttackingMode.talent.includes("kettős")){
-                console.log("ASLEEPLOG: kettős nem",yourBoard[cardIndexInAttackingMode],cardIndexInAttackingMode)
-                yourBoard[cardIndexInAttackingMode].fieldEffects.push("asleep:")
+                var cardIndex = cardIndexInAttackingMode
+                setTimeout(() => {
+                    yourBoard[cardIndex].fieldEffects.push("asleep:")
+                    console.log("ASLEEPLOG: kettős nem",yourBoard[cardIndexInAttackingMode],cardIndexInAttackingMode)
+                },1000)
+                
+                
             }
             else{
                 var whichAttack = Number(yourBoard[cardIndexInAttackingMode].fieldEffects[0].replace("kettős:",""))
@@ -1884,9 +1892,11 @@
                     
                     if(whichAttack == 2){
                     yourBoard[cardIndexInAttackingMode].fieldEffects[0] = "kettős:0"
+                    var cardIndex = cardIndexInAttackingMode
                     setTimeout(() => {
-                        yourBoard[cardIndexInAttackingMode].fieldEffects.push("asleep:")
-                    }, 1000);
+                        yourBoard[cardIndex].fieldEffects.push("asleep:")
+                        console.log("ASLEEPLOG: kettős nem",yourBoard[cardIndexInAttackingMode],cardIndexInAttackingMode)
+                    },1000)
                     }
                 }
             }
@@ -1962,7 +1972,7 @@
                 }
                 //#endregion
             }
-            var cardInAPId = cardDomInAttackingMode.parentNode.id
+            var cardInAPId = `td${cardIndexInAttackingMode}`
             if(cardInAttackingMode.health <= 0){
             setTimeout(() => {
                 CardDmgAnimationClient(cardInAPId,"halál","your","character")
@@ -1977,7 +1987,7 @@
 
         console.log("dom that attacked: ",cardDomInAttackingMode);
 
-        CardAttackAnimation(i,Number(cardDomInAttackingMode.parentNode.id.replace("td","")))
+        CardAttackAnimation(i,cardIndexInAttackingMode)
     }
     //#endregion
     
