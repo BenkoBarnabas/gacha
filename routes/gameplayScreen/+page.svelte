@@ -1074,7 +1074,7 @@
                 var isChar
                 yourBoard.forEach(e => {
                     if(yourBoard != ""){
-                        if(e.fieldEffects.some(f => f.includes("turnCount"))){isChar = true}
+                        //if(e.fieldEffects.some(f => f.includes("turnCount"))){isChar = true}
                     }
                 })
                 if(isChar){
@@ -1620,6 +1620,9 @@
 
             if(!isCardOnBoardInAttackingMode && cardInAttackingMode != attackingCard){ //ÚJ KÁRTYA KATT
                 cardInAttackingMode = attackingCard
+                cardIndexInAttackingMode = i
+                cardDomInAttackingMode = yourBoardDoms[i]
+
 
                 if(cardInAttackingMode.name == "Olívia"){
                     for (let i = 0; i < enemyBoard.length; i++){
@@ -1671,9 +1674,13 @@
                 attackableCardsDoms = []
 
                 cardInAttackingMode = ""
+                cardIndexInAttackingMode = ""
+                cardDomInAttackingMode = ""
             }
             else if(cardInAttackingMode != attackingCard){ //MÁSIKRA VÁLTÁS
                 cardInAttackingMode = attackingCard
+                cardIndexInAttackingMode = i
+                cardDomInAttackingMode = yourBoardDoms[i]
 
                 if(cardInAttackingMode.name == "Olívia"){
                     for (let i = 0; i < enemyBoard.length; i++){
@@ -1720,12 +1727,10 @@
             }
             console.log("yourCard: ",attackingCard);
 
-            cardIndexInAttackingMode = i
-
-            cardDomInAttackingMode = yourBoardDoms[i]
+            
             cardInAttackingMode = cardInAttackingMode
             
-            console.log("ASLEEP: ",cardIndexInAttackingMode,cardDomInAttackingMode)
+            console.log("ASLEEP: select ",cardIndexInAttackingMode,cardDomInAttackingMode)
             attackableCards = attackableCards
             attackableCardsDoms = attackableCardsDoms
             
@@ -1864,15 +1869,13 @@
             //#region TALENTS
             //---------------------------------------------------------------
             //KETTŐS TÁMADÁS
-            yourBoard[cardIndexInAttackingMode].fieldEffects.push("asleep:")
-            console.log("ASLEEPLOG: ",yourBoard,cardInAttackingMode.talent,cardInAttackingMode)
             if(!cardInAttackingMode.talent.includes("kettős")){
                 console.log("ASLEEPLOG: ",yourBoard[cardIndexInAttackingMode],cardIndexInAttackingMode)
-                
+                yourBoard[cardIndexInAttackingMode].fieldEffects.push("asleep:")
+                console.log("ASLEEPLOG: ",yourBoard,cardInAttackingMode.talent,cardInAttackingMode)
             }
             else{
                 var whichAttack = Number(yourBoard[cardIndexInAttackingMode].fieldEffects[0].replace("kettős:",""))
-                yourBoard[cardIndexInAttackingMode].splice(yourBoard[cardIndexInAttackingMode].indexOf("asleep:"),1)
                 console.log("KETTŐSLOG: ",yourBoard[cardIndexInAttackingMode],whichAttack);
                 
                 if(whichAttack < 2){
