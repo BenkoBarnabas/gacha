@@ -151,7 +151,7 @@
     <div id="logo"><img src={logo} alt="SG gacha" style="width: 16vw;"></div>
     <table id="headerTable">
         <tr>
-            <td class="headerTd"><button id="homeButton" on:click={() => GoToPage("../mainmenuScreen")} ></button></td>
+            <td class="headerTd"><button id="homeButton" on:click={() => GoToPage("./mainmenuScreen")} ></button></td>
             <td class="headerTd"></td>
             <td class="headerTd">
                 <div class="money" id="gachaCurrency" style="margin-right: 2vw;"><p style="margin-top:1.2vw;">{localUserData.gachaCurrency}</p></div>
@@ -177,22 +177,22 @@
             <div class="tag" style="background-image: url({tag}); filter:hue-rotate(30deg) brightness(1.2);"><p class="tagText" style="top: 68%; left: 17%;">Story mode</p></div>
             
         </div>
-        <div on:click={() => GoToPage("../lobbyScreen")} style="width: 37.5%; height: 60%; left: 34.5%; top: 2%;" class="contentPicsDiv" id="kartyazz" on:keydown role="button" tabindex="">
+        <div on:click={() => GoToPage("./lobbyScreen")} style="width: 37.5%; height: 60%; left: 34.5%; top: 2%;" class="contentPicsDiv" id="kartyazz" on:keydown role="button" tabindex="">
                 
             <div class="tag" style="background-image: url({tag}); filter:hue-rotate(-10deg);"><p class="tagText" style="top: 68%; left: 17%;">Kártyázz</p></div>
             
         </div>
-        <div on:click={() => GoToPage("../gachaScreen")} style="width: 42%; height: 30%; left: 31%; bottom: 5%;" class="contentPicsDiv" id="szerencses" on:keydown role="button" tabindex="">
+        <div on:click={() => GoToPage("./gachaScreen")} style="width: 42%; height: 30%; left: 31%; bottom: 5%;" class="contentPicsDiv" id="szerencses" on:keydown role="button" tabindex="">
             
             <div class="tag" style="background-image: url({tag2}); filter:hue-rotate(-50deg);"><p class="tagText"  style="top: 47%; left: 12%;">Zsákbamacska</p></div>
             
         </div>
-        <div on:click={() => GoToPage("../collectionScreen")} style="width: 25%; height: 45%; right: 2%; top: 2%;" class="contentPicsDiv" id="gyujtemeny" on:keydown role="button" tabindex="">
+        <div on:click={() => GoToPage("./collectionScreen")} style="width: 25%; height: 45%; right: 2%; top: 2%;" class="contentPicsDiv" id="gyujtemeny" on:keydown role="button" tabindex="">
                 
             <div class="tag" style="background-image: url({tag}); filter:hue-rotate(90deg);"><p class="tagText"  style="top: 64%; left: 17%;">Gyüjtemény</p></div>
             
         </div>
-        <div on:click={() => GoToPage("../selectionScreen")} style="width: 24%; height: 48%; right:1%; bottom: 2%;" class="contentPicsDiv" id="paklim" on:keydown role="button" tabindex="">
+        <div on:click={() => GoToPage("./selectionScreen")} style="width: 24%; height: 48%; right:1%; bottom: 2%;" class="contentPicsDiv" id="paklim" on:keydown role="button" tabindex="">
             
             <div class="tag" style="background-image: url({tag}); filter:hue-rotate(180deg);"><p class="tagText"  style="top: 64.6%; left: 17%;">Paklim</p></div>
         </div>

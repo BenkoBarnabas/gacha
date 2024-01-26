@@ -163,7 +163,7 @@
     <div id="logo"><h1 style="margin-top:2vh; font-size:2.5vw; text-align:center; color:white;">Lobby</h1></div>
     <table id="headerTable">
         <tr>
-            <td class="headerTd"><button id="homeButton" on:click={() => GoToPage("../mainmenuScreen")} ></button></td>
+            <td class="headerTd"><button id="homeButton" on:click={() => GoToPage("./mainmenuScreen")} ></button></td>
             <td class="headerTd"></td>
             <td class="headerTd">
                 <div class="money" id="gachaCurrency" style="margin-right: 2vw;"><p style="margin-top:1.2vw;">{localUserData.gachaCurrency}</p></div>

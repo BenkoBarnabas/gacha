@@ -1720,10 +1720,12 @@
             }
             console.log("yourCard: ",attackingCard);
 
-            cardDomInAttackingMode = yourBoardDoms[i]
-            cardInAttackingMode = cardInAttackingMode
             cardIndexInAttackingMode = i
 
+            cardDomInAttackingMode = yourBoardDoms[i]
+            cardInAttackingMode = cardInAttackingMode
+            
+            console.log("ASLEEP: ",cardIndexInAttackingMode,cardDomInAttackingMode)
             attackableCards = attackableCards
             attackableCardsDoms = attackableCardsDoms
             
@@ -1862,10 +1864,8 @@
             //#region TALENTS
             //---------------------------------------------------------------
             //KETTŐS TÁMADÁS
-            setTimeout(() => {
-                    yourBoard[cardIndexInAttackingMode].fieldEffects.push("asleep:")
-                    console.log("ASLEEPLOG: ",yourBoard)
-            }, 1000);
+            yourBoard[cardIndexInAttackingMode].fieldEffects.push("asleep:")
+            console.log("ASLEEPLOG: ",yourBoard,cardInAttackingMode.talent,cardInAttackingMode)
             if(!cardInAttackingMode.talent.includes("kettős")){
                 console.log("ASLEEPLOG: ",yourBoard[cardIndexInAttackingMode],cardIndexInAttackingMode)
                 

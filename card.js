@@ -789,5 +789,7 @@
     //#region GAMEPLAY
     //-------------------------------------------------------------
 
-
+    //BANNEREK:
+    let standardCards = [BizsoCard,BencusCard,IvanEva,IzigCard,LaciNeni,MsFarkasCard,NagyTCard,ParagiCard,RixerCard,RozgonyiCard,MoniCard,WeiszCard,AbigelCard,BaloCard,VendelCard,VighAndrisCard,NagyBenedekCard,AproNoCard,]
+    let standardPlusCards = [BlazoCard,FarkasCard,KoPaszCard,KutiCard,NagyoraCard,SisakCard,SagineCard,TabiCard,EszterCard,OliviaCard,ArpadCard,DenesCard,JeffCard,BizsoCard,BufesMoni,ErzsikeCard]
     //#endregion
