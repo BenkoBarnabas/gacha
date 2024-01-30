@@ -51,6 +51,7 @@
 
     import SNCover from "../../lib/assets/gacha/SWCover.png" //cover for the buttons for switching banners
     import YCCover from "../../lib/assets/gacha/YCCover.png" //^^^
+    import ExtraCover from "../../lib/assets/gacha/ExtraCover.png"
     import SpellCover from "../../lib/assets/gacha/SpellCover.png"
 
     import * as Cards from "../../card"
@@ -89,9 +90,9 @@
     function GoToPage(filePath) {
         window.location = filePath; // Navigate to the parent directory
     }
-
-
     
+    let searchInput = ""
+
     let selectedCollection = 1
     let refTanarDeck = Array.from(Cards.tanarCardsArr)
     let curCardInView = {
@@ -113,7 +114,6 @@
     var starSizeTop = [1,1,0,0]
     var backgroundColorByCost = ["#2672ed","#8626ed","#ed7c26","linear-gradient(180deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235))"]
     var starsColorByCost = ["color: #2672ed;","color: #8626ed;","color: #ed7c26;","background-image: linear-gradient(90deg, rgb(235, 160, 160), rgb(240, 216, 171), rgb(233, 233, 169), rgb(174, 236, 174), rgb(168, 213, 240), rgb(200, 155, 231), rgb(235, 159, 235));-webkit-background-clip: text;background-clip: text;color: transparent;"]
-    
     let voicelines = {}
     function handleClick(source,name,atk,hp,cost,rarity,desc,quote,talent,aligment) {
         curCardInView.type = "character"
@@ -299,13 +299,13 @@
     <!-- buttons to choose the active banner -->
     <button style="background: URL({SNCover}), no-repeat; background-size:cover" class="bannerIcon" on:click={() => selectedCollection = 1}></button>
     <button style="background: URL({YCCover}), no-repeat; background-size:cover" class="bannerIcon" on:click={() => selectedCollection = 2}></button>
+    <button style="background: URL({ExtraCover}), no-repeat; background-size:cover" class="bannerIcon" on:click={() => selectedCollection = 4}></button>
     <button style="background: URL({SpellCover}), no-repeat; background-size:cover" class="bannerIcon" on:click={() => selectedCollection = 3}></button>
-    <button style="background: URL({SpellCover}), no-repeat; background-size:cover" class="bannerIcon" on:click={() => selectedCollection = 4}></button>
 
     <div id="filtersCont">
         <tr>
         <td style="height:2vw;">
-            <input type="text" id="searchBar">
+            <input type="text" id="searchBar" bind:value={searchInput}>
         </td>
         <td style="height:2vw;">
             <div id="filterChooser">
@@ -341,6 +341,7 @@
     {#if selectedCollection == 1}
     <div class = "cardcollection noScrollers" id = "tanarcollection" >
         {#each refTanarDeck as card}
+        {#if card.name.includes(searchInput)}
         <div id="cardPreviewListCont">
             <img style="width: 12.5vw; position:absolute" src={cardV2Background} alt="cardBg">
             <div id="rarityBGList" style="background: {backgroundColorByCost[(card.stars)-3]}; "></div>
@@ -349,7 +350,7 @@
             <div class="curCardStatsList" style="left: 2.68vw;">{card.attack}</div>
             <div class="curCardStatsList" style="left: 9.65vw;">{card.health}</div>
             <div class="curCardCostList">{card.cost}</div>
-            <div class="curCardNameList">{card.name}</div>
+            <div class="curCardNameList curNonSpellNameList">{card.name}</div>
 
             {#if card.talent != ""}
                 {#if card.talent.includes(",")}
@@ -373,14 +374,20 @@
             {:else}
                 <img style="background-color: {aligmentBackgroundColors[card.aligment]}; border-radius: 0.5vw;" class="curCardAligList" src={aligmentIcons[card.aligment]} alt="aligment">
             {/if}
-            
+            <div class="curCardRarityList" style="{starsColorByCost[(card.stars)-3]}">
+                {#each Array(Number(card.stars)) as card}
+                    <span style="font-size: 1vw;">★</span>
+                {/each}
+            </div>
                 
         </div>
+        {/if}
         {/each}
     </div>
     {:else if selectedCollection == 2}
     <div class = "cardcollection  noScrollers" id = "diakcollection">
         {#each Cards.diakCardsArr as card}
+        {#if card.name.includes(searchInput)}
         <div id="cardPreviewListCont">
             <img style="width: 12.5vw; position:absolute" src={cardV2Background} alt="cardBg">
             <div id="rarityBGList" style="background: {backgroundColorByCost[(card.stars)-3]}; "></div>
@@ -389,7 +396,7 @@
             <div class="curCardStatsList" style="left: 2.68vw;">{card.attack}</div>
             <div class="curCardStatsList" style="left: 9.65vw;">{card.health}</div>
             <div class="curCardCostList">{card.cost}</div>
-            <div class="curCardNameList">{card.name}</div>
+            <div class="curCardNameList curNonSpellNameList">{card.name}</div>
 
             {#if card.talent != ""}
                 {#if card.talent.includes(",")}
@@ -421,11 +428,13 @@
                 {/each}
             </div>
         </div>
+        {/if}
         {/each}
     </div>
     {:else if selectedCollection == 4}
     <div class = "cardcollection  noScrollers" id = "extracollection">
         {#each Cards.extraCardsArr as card}
+        {#if card.name.includes(searchInput)}
         <div id="cardPreviewListCont">
             <img style="width: 12.5vw; position:absolute" src={cardV2Background} alt="cardBg">
             <div id="rarityBGList" style="background: {backgroundColorByCost[(card.stars)-3]}; "></div>
@@ -434,7 +443,7 @@
             <div class="curCardStatsList" style="left: 2.68vw;">{card.attack}</div>
             <div class="curCardStatsList" style="left: 9.65vw;">{card.health}</div>
             <div class="curCardCostList">{card.cost}</div>
-            <div class="curCardNameList">{card.name}</div>
+            <div class="curCardNameList curNonSpellNameList">{card.name}</div>
 
             {#if card.talent != ""}
                 {#if card.talent.includes(",")}
@@ -466,11 +475,13 @@
                 {/each}
             </div>
         </div>
+        {/if}
         {/each}
     </div>
     {:else}
         <div class = "cardcollection  noScrollers" id = "spellcollection">
             {#each Cards.spellCardsArr as card}
+            {#if card.name.includes(searchInput)}
             <div id="cardPreviewListCont">
                 <img style="width: 12.5vw; position:absolute" src={spellBackground} alt="cardBg">
                 <div id="rarityBGList" style="background: {backgroundColorByCost[(card.stars)-3]}; "></div>
@@ -478,7 +489,7 @@
                 <button class="spellListFrame" alt="cardBg" on:click={() => handleSpellClick(card.source,card.name,card.cost,card.stars,card.description,card.quote)}></button>
 
                 <div class="curCardCostList">{card.cost}</div>
-                <div style="top: 13.2vw" class="curCardNameList">{card.name}</div>
+                <div class="curCardNameList curSpellNameList">{card.name}</div>
 
                 <div class="curCardRarityList" style="{starsColorByCost[(card.stars)-3]}">
                     {#each Array(Number(card.stars)) as card}
@@ -486,12 +497,14 @@
                     {/each}
                 </div>
             </div>
+            {/if}
             {/each}
         </div>
     {/if}
 </div>
 
 <div id="preview">
+{#if curCardInView.type != ""}
     {#if curCardInView.type == "character"}
 <div id="cardPreview" >
     <div id="curCardQuote" class="noScrollers"><i>"{curCardInView.quote}"</i></div>
@@ -534,7 +547,7 @@
             <img id="curCardInView" src={curCardInView.source} alt="">
             <img class="cardTemplate" src={spellForeground} alt="cardBg">
             <div id="curCardDesc" class="noScrollers">{@html curCardInView.desc}</div>
-            <div class="curCardCost">{curCardInView.cost}</div>
+            <div class="curCardCost" style="top:3vw; left:8vw;">{curCardInView.cost}</div>
             <div style="top: 19.4vw" class="curCardName">{curCardInView.name}</div>
             
             <div id="curCardRarity" style="{starsColorByCost[(curCardInView.rarity)-3]}; top: {starSizeTop[(curCardInView.rarity)-3]}vw;">
@@ -549,8 +562,8 @@
     <div id="fabricateButton">
         <button>Fabrikál</button>
     </div>
+{/if}
 </div>
-
 <button on:click={scrollDown} id="nyil" class="lefele"></button>
 
 
@@ -739,7 +752,7 @@
         position: absolute;
         width: 30vw;
         height: 5vw;
-        top:9vw;
+        top:7.3vw;
         left:32vw;
     }
     #searchBar{
@@ -890,11 +903,16 @@
         text-shadow: 0 0 1vw rgba(0, 0, 0, 0.536);
 
         position: absolute;
-        top: 13.8vw;
         left: 2vw;
 
         text-align: center;
         width: 9.5vw;
+    }
+    .curSpellNameList{
+        top:14.1vw;
+    }
+    .curNonSpellNameList{
+        top:13.8vw;
     }
     .curCardRarityList{
         width: 6vw;
@@ -903,7 +921,7 @@
 
         position: absolute;
         left: 3.7vw;
-        top: 0.4vw;
+        top: 1.4vw;
     }
     #curCardQuote{
         background-color: rgba(192, 101, 134, 0.533);
