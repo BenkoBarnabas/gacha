@@ -244,7 +244,6 @@
 
 <div style="display:flex; margin-inline:5vw; margin-block:4vh;">
 <div id="deckBox">
-    <h1>Paklid</h1>
     {#if isSelectingDeck}
         <div id="deckChooserContainer" style="text-align:center">
             <button class="deckChooser" on:click={()=>selectDeck(0)}><span class="deckNumbering">1</span>{localDeckData[`deckname${0}`]}</button>
@@ -253,14 +252,13 @@
             <button class="deckChooser" on:click={()=>selectDeck(3)}><span class="deckNumbering">4</span>{localDeckData[`deckname${3}`]}</button>
         </div>
     {:else}
-        <input type="text" bind:value={curDeckName} placeholder="Nevezd el a paklid" style="width:80%;">
-        <button style="width: 15%;" on:click={() => SaveDeckName(curDeckName)}>Mentés</button>
+        <button style="float: left; margin-block:1vw;" on:click={()=> ChangeDeck()}>Vissza a paklikhoz</button>
+        <input type="text" bind:value={curDeckName} placeholder="Nevezd el a paklid" style="width:58%;">
+        <button style="width: 37%;" on:click={() => SaveDeckName(curDeckName)}>Név mentése</button>
         
-        <button style="float: right;" on:click={()=> ChangeDeck()}>Change Deck</button>
-
         {#each allcardnames as cardname, i}
             {#if currDeckArray.includes(cardname)}
-                <button style="display:block;" id={cardname} on:click={() => deleteCard(cardname, i)}>{cardname} {i}</button>
+                <button class="selectedCardButton" style="display:block;" id={cardname} on:click={() => deleteCard(cardname, i)}>{cardname}</button>
             {/if}
         {/each}
     {/if}
@@ -268,7 +266,7 @@
 </div>
 <div id = "cardcollection">
     {#each Cards.allCardsArr as card, i}
-        <div class={cardsClassName[i]}  on:keydown role="button" tabindex="">
+        <div class={cardsClassName[i]}  on:keydown role="button" tabindex="" style="margin:1vw;">
                 {#if card.type == "character"}
                     <div class="previewInHand" on:click={() => selectByClick(card,i)} on:keydown role="button" tabindex="">
                         <img draggable="false" class="cardTemplate" id="cardBackground" src={cardBackground} style="--colorr: {backgroundColorByCost[(card.stars)-3]}; --colorr2: #{(parseInt((backgroundColorByCost[(card.stars)-3].replace("#","")), 16)+663552).toString(16)};" alt="cardBg">
@@ -372,7 +370,6 @@
         height:90vh;
         width:20vw;
         margin:auto;
-        border:2px solid goldenrod;
     }
 
     .deckChooser{
@@ -394,6 +391,13 @@
         margin-top: 50%;
     }
 
+    .selectedCardButton{
+        width:100%;
+        background-color: #001630;
+        opacity: 80%;
+        color:white;
+        text-align:left;
+    }
 
     .cardPreviewListCont{
         position: relative;
@@ -417,10 +421,10 @@
     }
 
     #cardcollection {
-        width: 60vw;
+        width: 75vw;
         height: 90vh;
         overflow: auto;
-        margin-right:10vw
+        padding:0;
     }
 
     .cardTemplate{
@@ -624,6 +628,7 @@
         text-align: center;
         overflow: auto;
         height: calc(var(--cardsScale)*1vw*6);
+        padding:0;
     }
     .noScrollers::-webkit-scrollbar {
         width: 0;
