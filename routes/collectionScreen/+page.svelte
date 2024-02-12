@@ -72,6 +72,12 @@
         }
     }
 
+    let fabrikalScreenLathato = 0
+    let shardCosts = [400, 900, 3000, 5000]
+    let shardSpan
+
+    
+
     let localUserData = userData
     let pageLoaded = false
     import { onMount } from 'svelte';
@@ -560,8 +566,13 @@
     </div>
     {/if}
     <div id="fabricateButton">
-        <button>Fabrikál</button>
+        <button on:click={fabrikalScreenLathato = 1}>Fabrikál</button>
     </div>
+    {#if fabrikalScreenLathato == 1}
+    <div id="fabrikalScreen">
+        <p><span bind:this={shardSpan} id="redOrGreen">{Number(localUserData.shards)}</span> / {shardCosts[curCardInView.rarity-3]}</p>
+    </div>
+    {/if}
 {/if}
 </div>
 <button on:click={scrollDown} id="nyil" class="lefele"></button>
@@ -1090,7 +1101,6 @@
         left: 5.8vw;
         top: 10vw;
     }
-
 
     #cardPreviewListCont:hover{
         cursor:pointer;
