@@ -300,7 +300,7 @@
         }
          //UpdateLocalStorage()
         EnableStartingHandChoosing(yourHand,n)
-
+        yourGameParameters.mana = 10
         SendGameData(yourGameParameters)
     }
     function DrawOne(){
@@ -1874,10 +1874,10 @@
             //KETTŐS TÁMADÁS
             if(!cardInAttackingMode.talent.includes("kettős")){
                 var cardIndex = cardIndexInAttackingMode
-                setTimeout(() => {
-                    yourBoard[cardIndex].fieldEffects.push("asleep:")
+                yourBoard[cardIndex].fieldEffects.push("asleep:")
                     console.log("ASLEEPLOG: kettős nem",yourBoard[cardIndexInAttackingMode],cardIndexInAttackingMode)
-                },1000)
+
+                SendGameData(yourGameParameters)
                 
                 
             }

@@ -520,38 +520,23 @@
 {/if}
 
 {#if isBannerUp}
-
 <div id="header">
-    <table style="width:100vw;">
+    <div id="logo">
+        <button style="background: URL({SNCover}), no-repeat;" class="bannerIcon" on:click={() => ActivateBanner(true)}></button>
+        <button style="background: URL({YCCover}), no-repeat;" class="bannerIcon" on:click={() => ActivateBanner(false)}></button>
+    </div>
+    <table id="headerTable">
         <tr>
-            <td style="width: 30vw; padding-left:1.5vw;text-align:center">
-                <div class="pageTitle">«( Karakter Gacha )»</div>
-            </td>
-            <td style="width: 40vw; text-align:center;">
-                    <!-- buttons to choose the active banner -->
-                    <button style="background: URL({SNCover}), no-repeat; " class="bannerIcon" on:click={() => ActivateBanner(true)}></button>
-                    <button style="background: URL({YCCover}), no-repeat;" class="bannerIcon" on:click={() => ActivateBanner(false)}></button>
-            </td>
-            <td style="width: 30vw; padding-right:1.5vw;text-align:center">
-                <div class="accountInfoHeader">
-                    <td>
-                        <div class="money" id="gachaCurrency"><p style="margin-top:1.2vw;">{localUserData.gachaCurrency}</p></div>
-                        
-                    </td>
-                    <td>
-                        <div class="money" id="tickets"><p style="margin-top:1.2vw;">{localUserData.tickets}</p></div>
-                        
-                    </td>
-                    <td>
-                        <button class="closeButton" on:click={() => GoToPage("../mainmenuScreen")}></button>
-                        <button style="z-index: 100; position:absolute" id="fullScreenButton" on:click={requestFullScreen}>[]</button>
-                    </td>
-                </div>
+            <td class="headerTd"><button id="homeButton" on:click={() => GoToPage("../mainmenuScreen")} >HAZA</button></td>
+            <td class="headerTd"></td>
+            <td class="headerTd">
+                <div class="money" id="gachaCurrency" style="margin-right: 2vw;"><p style="margin-top:1.2vw;">{localUserData.gachaCurrency}</p></div>
+                <div class="money" id="tickets" style="margin-right: 2vw;"><p style="margin-top:1.2vw;">{localUserData.tickets}</p></div>
+                <button id="fullScreenButton" on:click={requestFullScreen}>[]</button>
             </td>
         </tr>
     </table>
 </div>
-
 
 <!-- the banner covers -->
 <div id="banner">  
@@ -638,6 +623,10 @@
       font-family: 'mainFont';
       src: url('../../lib/assets/fonts/zh-cn.ttf');
   }
+  @font-face {
+      font-family: 'sgGachaFont';
+      src: url('../../lib/assets/fonts/MyFont-Regular.otf');
+    }
 
   #loadingScreen {
     z-index: 9999;
@@ -748,10 +737,89 @@
 
 
 
-    #header {
-        margin-top: 2vw;
+    #header{
+        
+        margin: auto;
+
+        width: 90vw;
+        height: 12vh;
+
+        font-family: "sgGachaFont";
     }
-    
+    #headerTable{
+
+        width: 90vw;
+        height: 12vh;
+
+        font-family: 'sgGachaFont';
+    }
+    .headerTd{
+        width: 30vw;
+        text-align: center;
+    }
+    #homeButton{
+        background: url(../../lib/assets/mainmenu/optionButton.png);
+        background-size: 100% 100%;
+        width: 12vw;
+        height: 5vw;
+
+        float: left;
+
+        border: none;
+        font-family: "sgGachaFont";
+        font-size: 1.25vw;
+
+        margin-left: 1vw;
+        margin-top: 2.5vh;
+
+        text-shadow:
+                -0.09vw -0.09vw 0 white, /* Top-left shadow */
+                0.09vw -0.09vw 0 white, /* Top-right shadow */
+                -0.09vw 0.09vw 0 white, /* Bottom-left shadow */
+                0.09vw 0.09vw 0 white; /* Bottom-right shadow */
+    }
+    #homeButton:hover{
+        transform: scale(1.1);
+        animation: homeButton 4s infinite;
+    }
+    @keyframes homeButton{
+        0%{
+            filter: hue-rotate(0deg);
+        }
+        100%{
+            filter: hue-rotate(360deg);
+        }
+    }
+    #logo{
+        position: absolute;
+
+        left: 40vw;
+        top:1vw;
+    }
+    .money{
+        width: 9vw;
+        height: 3.5vw;
+        display: inline-block;
+ 
+    }
+    #gachaCurrency{
+        background-image: url(../../lib/assets/global/headerMoney.png);
+        background-size: 100% 100%;
+
+        font-family: 'mainFont';
+        font-size: 1.7vw;
+    }
+    #tickets{
+        background-image: url(../../lib/assets/global/headerMoney.png);
+        background-size: 100% 100%;
+
+        font-family: 'mainFont';
+        font-size: 1.7vw;
+
+    }
+
+
+
     .bannerIcon {   /*the selectors itself */
         height: 8vh;
         width: 12.6vh;
@@ -1216,16 +1284,19 @@
         display: inline-block;
 
         font-family: "impact";
+        
  
     }
     #gachaCurrency{
         background-image: url(../../lib/assets/global/headerMoney.png);
         background-size: 100% 100%;
+        font-size: 1.2vw;
 
     }
     #tickets{
         background-image: url(../../lib/assets/global/headerTicket.png);
         background-size: 100% 100%;
+        font-size: 1.2vw;
 
 
     }

@@ -181,6 +181,7 @@ function ServerCode(){
             console.log(youAreReady, opponentIsReady);
             if(youAreReady && opponentIsReady){
                 console.log("LETS GOOOOOOOOOOOOOOOOOOOOOOOOO");
+                
                 window.location.href = "./gameplayScreen"
             }
             }
@@ -197,7 +198,7 @@ function ServerCode(){
         else if(msg.includes("isFirst")){
             console.log(msg);
             if(yourGameParametersClient.isYourTurn == ""){
-                yourGameParametersClient.isYourTurn = true
+                //yourGameParametersClient.isYourTurn = true
             
                 if(msg.includes(yourGameID)){
                     yourGameParametersClient.isYourTurn = true
