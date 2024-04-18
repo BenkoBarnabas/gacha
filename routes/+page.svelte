@@ -34,18 +34,19 @@
   let isLogin = true //false a sign up
   let isVerifying = false
 
-  let email = "zseszti42@gmail.com"
-  let password = "alma"
-  let username = "esztix"
+  let email = ""
+  let password = ""
+  let username = ""
   let verificationCode = ""
 
   function ChangeAccountStatus(){isLogin = !isLogin; isLogin = isLogin}
-
+  function GoToPage(filePath) {
+        window.location = filePath; // Navigate to the parent directory
+    }
   function Login(email, password){
     getAccountData(email)
-
-    isAuthenticationUp = false
-    isAuthenticationUp = isAuthenticationUp
+    GoToPage("./mainmenuScreen")
+    
   }
   function Signup(email,password,username){
     verifyEmail(email,username)
@@ -69,16 +70,16 @@
       Lépj be a fiókodba<br>
       <input type="text" placeholder="email cím" bind:value={email}><br>
       <input type="password" placeholder="jelszó" bind:value={password}><br>
-      <button id="bejBut" on:click={() =>Login(email,password)}>Bejelentkezés</button><br>
+      <button class="bejBut" on:click={() =>Login(email,password)}>Bejelentkezés</button><br>
       <button class="accountStatusButton" on:click={ChangeAccountStatus}>Nincs fiókom :(</button>
     </div>
   {:else}
     {#if isVerifying}
-    <div style="width: 30vw;position: absolute;left: 35vw;top: 1vw;background-color: aquamarine;" id="verify">
+    <div class="login" id="verify">
       Elküldünk egy ellenőrző kódot a következő email címre:<br>
       <span style="font-weight: bold;">{email}</span>
       <input type="text" placeholder="ellenőrző kód" bind:value={verificationCode}><br>
-      <button on:click={() =>Verify(verificationCode)}>Ellenőrzés</button><br>
+      <button class="bejBut" on:click={() =>Verify(verificationCode)}>Ellenörzés</button><br>
     </div>
     {:else}
       <div class="login" id="signup">
@@ -86,7 +87,7 @@
         <input type="text" placeholder="email cím" bind:value={email}><br>
         <input type="text" placeholder="felhasználónév" bind:value={username}><br>
         <input type="password" placeholder="jelszó" bind:value={password}><br>
-        <button on:click={() =>Signup(email,password,username)}>Regisztráció</button><br>
+        <button class="bejBut" on:click={() =>Signup(email,password,username)}>Regisztráció</button><br>
         <button class="accountStatusButton" on:click={ChangeAccountStatus}>Már van fiókom :)</button>
       </div>
     {/if}
@@ -135,19 +136,44 @@
   #mainLogoLogo{
     width: 20vw;
   }
-  #bejBut{
-    background: url(../lib/assets/mainmenu/home.png);
+  @font-face {
+      font-family: 'sgGachaFont';
+      src: url('../lib/assets/fonts/MyFont-Regular.otf');
+    }
+  .bejBut{
+    background: url(../lib/assets/mainmenu/optionButton.png);
         background-size: 100% 100%;
         width: 12vw;
-        height: 4vw;
+        height: 5vw;
 
         float: left;
 
         border: none;
         font-family: "sgGachaFont";
+        font-size: 1vw;
 
         margin-left: 1vw;
+        margin-top: 2.5vh;
+
+        text-shadow:
+                -0.09vw -0.09vw 0 white, /* Top-left shadow */
+                0.09vw -0.09vw 0 white, /* Top-right shadow */
+                -0.09vw 0.09vw 0 white, /* Bottom-left shadow */
+                0.09vw 0.09vw 0 white; /* Bottom-right shadow */
   }
+  .bejBut:hover{
+        transform: scale(1.1);
+        animation: homeButton 4s infinite;
+    }
+    @keyframes homeButton{
+        0%{
+            filter: hue-rotate(0deg);
+        }
+        100%{
+            filter: hue-rotate(360deg);
+        }
+    }
+    
   
   .login{
     width: 18vw;
@@ -160,13 +186,20 @@
     padding: 2vw;
     border-radius: 1vw;
   }
+
+  @font-face {
+      font-family: 'mainFont';
+      src: url('../../lib/assets/fonts/zh-cn.ttf');
+    }
   .accountStatusButton{
     background: none;
     border: none;
     color: black;
     text-decoration: underline;
     text-align: center;
+    font-family: "mainFont";
   }
+
   .accountStatusButton:hover{
     color: rgb(106, 104, 122);
   }

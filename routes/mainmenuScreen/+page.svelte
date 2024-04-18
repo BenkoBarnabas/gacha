@@ -172,7 +172,7 @@
             <div class="tag" style="background-image: url({tag}); filter: grayscale(0.9) hue-rotate(150deg);"><p class="tagText" style="top: 68%; left: 17%;">Beállítások</p></div>
             
         </div>
-        <div style="width: 25.5%; height: 43%; left: 3.5%; bottom: 2%;" class="contentPicsDiv" id="kartyazz" on:keydown role="button" tabindex="">
+        <div style="width: 25.5%; height: 43%; left: 3.5%; bottom: 2%;" class="contentPicsDiv" id="storyMode" on:keydown role="button" tabindex="">
                 
             <div class="tag" style="background-image: url({tag}); filter:hue-rotate(30deg) brightness(1.2);"><p class="tagText" style="top: 68%; left: 17%;">Story mode</p></div>
             
@@ -197,7 +197,7 @@
             <div class="tag" style="background-image: url({tag}); filter:hue-rotate(180deg);"><p class="tagText"  style="top: 64.6%; left: 17%;">Paklim</p></div>
         </div>
     </div>
-    <a href="../" style="font-family: Arial;font-weight:bold; color:black; font-size:1.5vw;">Admin</a>
+    <a href="../" style="font-family: Arial;font-weight:bold; color:black; font-size:1.5vw;">Kijelentkezés</a>
 </div>
 
 
@@ -397,6 +397,7 @@
     #szerencses{background-image: url('../../lib/assets/mainmenu/szerencses.png');}
     #gyujtemeny{background-image: url('../../lib/assets/mainmenu/gyujtemeny.png');}
     #kartyazz{background-image: url('../../lib/assets/mainmenu/kartyazz.png');}
+    #storyMode{background-image: url('../../lib/assets/mainmenu/storyMode.png');}
     #beallitas{background-image: url('../../lib/assets/mainmenu/beallitas.png');}
     
     .contentPicsDiv:hover {
