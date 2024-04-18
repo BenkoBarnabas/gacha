@@ -72,12 +72,6 @@
         }
     }
 
-    let fabrikalScreenLathato = 0
-    let shardCosts = [400, 900, 3000, 5000]
-    let shardSpan
-
-    
-
     let localUserData = userData
     let pageLoaded = false
     import { onMount } from 'svelte';
@@ -285,7 +279,7 @@
     <div id="logo"><h1 style="margin-top:2vh; font-size:2.5vw; text-align:center; color:white;">Gyüjtemény</h1></div>
     <table id="headerTable">
         <tr>
-            <td class="headerTd"><button id="homeButton" on:click={() => GoToPage("../mainmenuScreen")} ></button></td>
+            <td class="headerTd"><button id="homeButton" on:click={() => GoToPage("../mainmenuScreen")} >HAZA</button></td>
             <td class="headerTd"></td>
             <td class="headerTd">
                 <div class="money" id="gachaCurrency" style="margin-right: 2vw;"><p style="margin-top:1.2vw;">{localUserData.gachaCurrency}</p></div>
@@ -565,14 +559,6 @@
         </div>
     </div>
     {/if}
-    <div id="fabricateButton">
-        <button on:click={fabrikalScreenLathato = 1}>Fabrikál</button>
-    </div>
-    {#if fabrikalScreenLathato == 1}
-    <div id="fabrikalScreen">
-        <p><span bind:this={shardSpan} id="redOrGreen">{Number(localUserData.shards)}</span> / {shardCosts[curCardInView.rarity-3]}</p>
-    </div>
-    {/if}
 {/if}
 </div>
 <button on:click={scrollDown} id="nyil" class="lefele"></button>
@@ -673,20 +659,38 @@
         text-align: center;
     }
     #homeButton{
-        background: url(../../lib/assets/mainmenu/home.png);
+        background: url(../../lib/assets/mainmenu/optionButton.png);
         background-size: 100% 100%;
         width: 12vw;
-        height: 4vw;
+        height: 5vw;
 
         float: left;
 
         border: none;
         font-family: "sgGachaFont";
+        font-size: 1.25vw;
 
         margin-left: 1vw;
+        margin-top: 2.5vh;
+
+        text-shadow:
+                -0.09vw -0.09vw 0 white, /* Top-left shadow */
+                0.09vw -0.09vw 0 white, /* Top-right shadow */
+                -0.09vw 0.09vw 0 white, /* Bottom-left shadow */
+                0.09vw 0.09vw 0 white; /* Bottom-right shadow */
+        
     }
     #homeButton:hover{
         transform: scale(1.1);
+        animation: homeButton 4s infinite;
+    }
+    @keyframes homeButton{
+        0%{
+            filter: hue-rotate(0deg);
+        }
+        100%{
+            filter: hue-rotate(360deg);
+        }
     }
     #logo{
         width:1vw;

@@ -1880,6 +1880,8 @@
                 var cardIndex = cardIndexInAttackingMode
                 yourBoard[cardIndex].fieldEffects.push("asleep:")
                     console.log("ASLEEPLOG: kettős nem",yourBoard[cardIndexInAttackingMode],cardIndexInAttackingMode)
+
+                SendGameData(yourGameParameters)
                 
                 
             }

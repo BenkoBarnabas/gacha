@@ -197,7 +197,7 @@ function ServerCode(){
         else if(msg.includes("isFirst")){
             console.log(msg);
             if(yourGameParametersClient.isYourTurn == ""){
-                yourGameParametersClient.isYourTurn = true
+                //yourGameParametersClient.isYourTurn = true
             
                 if(msg.includes(yourGameID)){
                     yourGameParametersClient.isYourTurn = true

@@ -2,6 +2,8 @@
     import { onMount } from 'svelte';
     import cardBack from "../../lib/assets/global/cardBack.png"
 
+
+    let i = "smort"
     let deckCoverDoms = []
     function deckCoverAnim(n){
         for(let i=0;i<3;i++){

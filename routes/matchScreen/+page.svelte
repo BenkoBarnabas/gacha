@@ -112,7 +112,7 @@
       enemyGameParameters.isYourTurn = enemyGameParametersClient.isYourTurn
       
 
-      localStorage.setItem("yourGameParams", JSON.stringify(yourGameParameters));
+      //localStorage.setItem("yourGameParams", JSON.stringify(yourGameParameters));
       console.log("your and enemy params: ", yourGameParameters,enemyGameParameters);
       SendGameDataClient(yourGameParameters)
 
@@ -234,7 +234,7 @@
         height: 10vh;
         margin-right:1vw;
 
-        background: url(../../lib/assets/deck/deckThumbnail.png);
+        background: url(../../lib/assets/global/cardBack.png);
         background-size: 100% 100%;
     }
     .deckChooser:hover{
