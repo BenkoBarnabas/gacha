@@ -778,10 +778,12 @@
             }
         }
     }
-
-    CountStars(tanarCardsArr,"tanar")
-    CountStars(diakCardsArr,"diak")
-    CountStars(spellCardsArr,"spell")
+    export let TanarGacha = [AnderleneCard,BlazoCard,DobiCard,FarkasCard,FiloRekaCard,IvanEvaCard,IzigCard,KinyoCard,KocsiAndiCard,KoPaszCard,KutiCard,LaciNeniCard,MatosCard,MeszarosCard,MoniCard,MsFarkasCard,NagyoraCard,NagyTCard,ParagiCard,RixerCard,RozgonyiCard,SagineCard,SisakCard,SzaszakCard,TabiCard,TomiCard,TothKareszCard,TritzCard,VeronikaCard,WeiszCard]
+    export let DiakGacha = [ArhoCard,BarniCard,EmmaCard,JuliCard,ReginaCard,RekaCard,ZalanCard,ZenoCard]
+    export let SpellGacha = [ebedCard,falanxCard,felelesCard,ideAManaddalCard,instantMerevedesCard,javitoDolgozatCard,keszultelCard,kiteresCard,lanchegysegCard,lyukasoraCard,mezeskalacsCard,nemKeszultelCard,osztalytalalkozoCard,palacsintaFeszCard,puskazasCard,sagvarizmusEjszakajaCard,saraToborzasCard,sportSzeletCard,taktikaiTekergesCard,tuzgolyoCard,visszaakezembeCard]
+    CountStars(TanarGacha,"tanar")
+    CountStars(DiakGacha,"diak")
+    CountStars(SpellGacha,"spell")
 
     //#endregion
     //#endregion

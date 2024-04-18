@@ -175,6 +175,8 @@
         s5: 750,
         s6: 2000
     }
+
+
     function CalculatePulls(num){ //loads the pull cards and already calculates their content
         if(localUserData.tickets < num && localUserData.gachaCurrency < num*200){
             window.alert("nincs elég pénzed haver")

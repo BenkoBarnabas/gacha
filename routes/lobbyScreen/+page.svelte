@@ -163,7 +163,7 @@
     <div id="logo"><h1 style="margin-top:2vh; font-size:2.5vw; text-align:center; color:white;">Lobby</h1></div>
     <table id="headerTable">
         <tr>
-            <td class="headerTd"><button id="homeButton" on:click={() => GoToPage("./mainmenuScreen")} ></button></td>
+            <td class="headerTd"><button id="homeButton" on:click={() => GoToPage("./mainmenuScreen")} >HAZA</button></td>
             <td class="headerTd"></td>
             <td class="headerTd">
                 <div class="money" id="gachaCurrency" style="margin-right: 2vw;"><p style="margin-top:1.2vw;">{localUserData.gachaCurrency}</p></div>
@@ -188,7 +188,7 @@
             <div style="font-family: sgGachaFont; font-size: 2vw;">{localUserData.username}</div>
             <div style="font-family: mainFont; font-size: 1vw;">{localUserData.level}. Szint</div><br>
             
-            <button on:click={RealodLobbyAndSvelte}>Reload</button>
+            <button id="ujratolt" on:click={RealodLobbyAndSvelte}>Újratölt</button>
         </div>
     </div>
     
@@ -237,7 +237,30 @@
         background-position: center center;
         z-index: -3;
     }
+    #ujratolt{
+        background: url(../../lib/assets/mainmenu/optionButton.png);
+        background-size: 100% 100%;
+        width: 10vw;
+        height: 4vw;
 
+        float: left;
+
+        border: none;
+        font-family: "sgGachaFont";
+        font-size: 0.8vw;
+
+        margin-left: 1vw;
+
+        text-shadow:
+                -0.09vw -0.09vw 0 white, /* Top-left shadow */
+                0.09vw -0.09vw 0 white, /* Top-right shadow */
+                -0.09vw 0.09vw 0 white, /* Bottom-left shadow */
+                0.09vw 0.09vw 0 white; /* Bottom-right shadow */
+    }
+    #ujratolt:hover{
+        transform: scale(1.1);
+
+    }
     #matchRequest{
         width: 100vw;
         height: 100vh;
@@ -320,7 +343,8 @@
         margin-bottom: 5vh;
         margin-left: auto;
         margin-right: auto;
-        background-color: red;
+        border-radius: 1vw;
+        background: rgba(95, 156, 235, 0.582);
     }
     .yourStats{
         position: absolute;
@@ -331,7 +355,7 @@
     }
     #onlinePlayersCont{
         position: relative;
-        background-color: violet;
+        background: linear-gradient(to right,rgba(57, 141, 219, 0.528) 5%,rgba(134, 226, 176,0.527) 60%,rgba(188, 223, 132,0.527),rgba(224, 176, 137,0.527),rgba(223, 153, 186, 0.527));
         width: 90vw;
         height: 55vh;
         margin: auto;
@@ -402,20 +426,37 @@
         text-align: center;
     }
     #homeButton{
-        background: url(../../lib/assets/mainmenu/home.png);
+        background: url(../../lib/assets/mainmenu/optionButton.png);
         background-size: 100% 100%;
         width: 12vw;
-        height: 4vw;
+        height: 5vw;
 
         float: left;
 
         border: none;
         font-family: "sgGachaFont";
+        font-size: 1.25vw;
 
         margin-left: 1vw;
+        margin-top: 2.5vh;
+
+        text-shadow:
+                -0.09vw -0.09vw 0 white, /* Top-left shadow */
+                0.09vw -0.09vw 0 white, /* Top-right shadow */
+                -0.09vw 0.09vw 0 white, /* Bottom-left shadow */
+                0.09vw 0.09vw 0 white; /* Bottom-right shadow */
     }
     #homeButton:hover{
         transform: scale(1.1);
+        animation: homeButton 4s infinite;
+    }
+    @keyframes homeButton{
+        0%{
+            filter: hue-rotate(0deg);
+        }
+        100%{
+            filter: hue-rotate(360deg);
+        }
     }
     #logo{
         width:1vw;
