@@ -301,6 +301,9 @@
          //UpdateLocalStorage()
         EnableStartingHandChoosing(yourHand,n)
 
+        yourGameParameters.mana = 10
+        enemyGameParameters.mana = 10
+        SendGameData(enemyGameParameters)
         SendGameData(yourGameParameters)
     }
     function DrawOne(){
@@ -1364,6 +1367,7 @@
                     }
                     if(yourBoard[Number(dom.id.replace("td",""))].name != "Blazó" && yourBoard[Number(dom.id.replace("td",""))].name != "Nagy T"){
                         yourBoard[Number(dom.id.replace("td",""))] = ""
+                        SendGameData(yourGameParameters)
                     }
                     
                 }
@@ -1874,10 +1878,8 @@
             //KETTŐS TÁMADÁS
             if(!cardInAttackingMode.talent.includes("kettős")){
                 var cardIndex = cardIndexInAttackingMode
-                setTimeout(() => {
-                    yourBoard[cardIndex].fieldEffects.push("asleep:")
+                yourBoard[cardIndex].fieldEffects.push("asleep:")
                     console.log("ASLEEPLOG: kettős nem",yourBoard[cardIndexInAttackingMode],cardIndexInAttackingMode)
-                },1000)
                 
                 
             }

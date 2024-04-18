@@ -2,7 +2,7 @@
 
 
   import {sendData, getData, DeleteAll, AddEmptyRow, sendSocketValue,  DeleteRow, getAccountData,makeNewAccount, userData, verifyEmail, verifyCode, clientID, getUserDataFromLocalStorage, setProfilePicture, requestFullScreen} from "../client.js" //we import all the functions
-
+  import logo from "../lib/assets/global/logoTextv3.png"
   let dataToSend = ""
   let selectedColumn = "username"
   let id = "1"
@@ -25,21 +25,12 @@
 
 
 
-  let isAdminUp = true
+  let isAdminUp = false
   function ChangeAdmin(){isAdminUp = !isAdminUp; isAdminUp = isAdminUp}
 
   
 
-  let isAuthenticationUp
-  if(userData.email == ""){
-    isAuthenticationUp = true
-    isAuthenticationUp = isAuthenticationUp
-  }
-  else{
-    isAuthenticationUp = false
-    isAuthenticationUp = isAuthenticationUp
-  }
-
+  let isAuthenticationUp = true
   let isLogin = true //false a sign up
   let isVerifying = false
 
@@ -78,7 +69,7 @@
       Lépj be a fiókodba<br>
       <input type="text" placeholder="email cím" bind:value={email}><br>
       <input type="password" placeholder="jelszó" bind:value={password}><br>
-      <button on:click={() =>Login(email,password)}>Bejelentkezés</button><br>
+      <button id="bejBut" on:click={() =>Login(email,password)}>Bejelentkezés</button><br>
       <button class="accountStatusButton" on:click={ChangeAccountStatus}>Nincs fiókom :(</button>
     </div>
   {:else}
@@ -103,11 +94,8 @@
   
 </div>
 {/if}
-your username: {userData.username}<br>
-your email: {userData.email}<br>
 
 
-<br><button on:click={ChangeAdmin}>Admin</button>
 {#if isAdminUp}
 <main>
   <h1>Svelte Webes Applikáció Node.js és Express.js használatával<br>Nyomd le az F11 gombot a teljes élményhez!</h1>
@@ -123,22 +111,9 @@ your email: {userData.email}<br>
   
   </main>
 {/if}
+<div id="mainLogo"><img id="mainLogoLogo" src={logo} alt="SG×Gacha"></div>
 
-
-<form id="uploadForm" enctype="multipart/form-data">
-  <input type="file" id="profilePicture" name="profilePicture" accept="image/*">
-  <button type="submit">Upload Profile Picture</button>
-</form>
-
-<div class = "links">
-  <a href="/mainmenuScreen">actual game menu</a><br>
-  <a href="/gachaScreen">itt fizess</a><br>
-  <a href="/gachaScreen">itt fizess</a><br>
-  <a href="/collectionScreen">kártyáid</a><br>
-  <a href="/selectionScreen">paklid</a><br>
-  <a href="/test">testGround</a><br>
-  <a href="/lobbyScreen" style="color: black; text-align:center;font-size:larger; ">JÁTTSZ JÁTTSZ JÁTTSZ!!! JÁTSZ TE ITT MOST</a>
-</div>
+<div id = "background"></div>
 
 
 
@@ -150,21 +125,40 @@ your email: {userData.email}<br>
     user-select: none;
 
   }
-  
-  #authenticationBox{
-  border: 2px solid black;
-  height: 25vw;
-  background-color: rgba(196, 172, 164, 0.377);
-  position: relative;
+  #mainLogo{
+    margin: auto;
+    display: block;
+    width: 20vw;
+    margin-top: 5vh;
+
   }
+  #mainLogoLogo{
+    width: 20vw;
+  }
+  #bejBut{
+    background: url(../lib/assets/mainmenu/home.png);
+        background-size: 100% 100%;
+        width: 12vw;
+        height: 4vw;
+
+        float: left;
+
+        border: none;
+        font-family: "sgGachaFont";
+
+        margin-left: 1vw;
+  }
+  
   .login{
     width: 18vw;
 
     position: absolute;
     left: 41vw;
-    top: 1vw;
+    top: 30vh;
     
-    background-color: aquamarine;
+    background: linear-gradient(to bottom,rgba(57, 141, 219, 0.528) 5%,rgba(134, 226, 176,0.527) 60%,rgba(188, 223, 132,0.527),rgba(224, 176, 137,0.527),rgba(223, 153, 186, 0.527));
+    padding: 2vw;
+    border-radius: 1vw;
   }
   .accountStatusButton{
     background: none;
@@ -206,13 +200,19 @@ your email: {userData.email}<br>
     font-family: "mainFont";
     color: rgb(37, 36, 39);
   }
-  :global(body){  /*body styling format of svelte */ 
-        background: url("../lib/assets/global/bg.jpeg") no-repeat;
-        background-size: 100% 100%;
-        /*animation: backgroundLoop 120s linear infinite;*/
-        background-size: var(--bgWidth);
-        margin: 0;
-  }
+  #background {
+        background: url("../lib/assets/global/background.gif");
+        overflow: hidden;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background-size: cover; /* Adjust as needed: cover, contain, etc. */
+        background-repeat: no-repeat;
+        background-position: center center;
+        z-index: -3;
+    }
 
   :global(.links){
       position:absolute;

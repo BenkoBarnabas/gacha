@@ -23,7 +23,7 @@ let gameKey = ""
 
 export let lastCardPlayedClient = ""
 
-export let yourGameParametersClient = {isYourTurn: "",currentHand: [],remaningDeck: [], yourBoard: Array(10).fill(""), mana: 2, spellMana: 0, username: "", hp: 0, secretSpells: [], yourBuildings: []}
+export let yourGameParametersClient = {isYourTurn: "",currentHand: [],remaningDeck: [], yourBoard: Array(10).fill(""), mana: 10, spellMana: 0, username: "", hp: 0, secretSpells: [], yourBuildings: []}
 export let enemyGameParametersClient = {isYourTurn: "",currentHand: [],remaningDeck: [], yourBoard: Array(10).fill(""), mana: 2, spellMana: 0, username: "", hp: 0, secretSpells: [], yourBuildings: []}
 
 
@@ -113,7 +113,7 @@ Client.socket.on('connect', () => {
             localStorage.setItem("gameKey", JSON.stringify(msg))
             localStorage.setItem("opponentInfo",JSON.stringify(currentOpponentInfo))
 
-            window.location.href = "./matchScreen"
+            window.location.href = "../matchScreen"
         }
     })
     
@@ -181,7 +181,7 @@ function ServerCode(){
             console.log(youAreReady, opponentIsReady);
             if(youAreReady && opponentIsReady){
                 console.log("LETS GOOOOOOOOOOOOOOOOOOOOOOOOO");
-                window.location.href = "./gameplayScreen"
+                window.location.href = "../gameplayScreen"
             }
             }
         }

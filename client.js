@@ -1,6 +1,6 @@
-let ip = "10.7.105.209";
+//let ip = "10.7.105.209";
 //let ip = "localhost";
-//let ip = "192.168.0.16//";
+let ip = "192.168.0.19";
 
 let isFullScreen = false
 export function requestFullScreen() {
@@ -82,7 +82,7 @@ export function getUserDataFromLocalStorage(data, key){
 // ES modules
 import io from "socket.io-client";
 
-export const socket = io(`http://${ip}:3000` , { transports : ['websocket'] }); // Replace with your server's URL
+export const socket = io(`http://${ip}:3000` , { transports : ['websocket'] });
 export let clientID
 
 socket.on('connect', () => {
